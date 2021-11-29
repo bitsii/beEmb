@@ -12,7 +12,7 @@
 ../brace/source/base/Int.be
 ../brace/source/base/String.be
 ../brace/source/base/Logic.be
-../brace/source/base/Float.be
+#../brace/source/base/Float.be
 ../brace/source/base/Encode.be
 ../brace/source/base/LinkedList.be
 ../brace/source/base/List.be
@@ -21,5 +21,5 @@
 ../brace/source/base/Exceptions.be
 ../brace/source/base/Tokenize.be
 #../brace/source/base/Time.be
-../brace/source/base/Functions.be
+#../brace/source/base/Functions.be
 ../brace/source/base/OpiFc.be
