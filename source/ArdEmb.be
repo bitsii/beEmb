@@ -314,7 +314,7 @@ class Embedded:Wifi {
         Serial.println("AP Started");
         String lip = WiFi.softAPIP().toString();
         std::string lips = std::string(lip.c_str());
-        bevp_localIP = (new BEC_2_4_6_TextString())->bems_ccsnew(lips);
+        bevp_localIP = new BEC_2_4_6_TextString(lips);
         bevp_up = BECS_Runtime::boolTrue;
       }
       else
@@ -344,7 +344,7 @@ class Embedded:Wifi {
       Serial.println(WiFi.localIP()); 
       String lip = WiFi.localIP().toString();
       std::string lips = std::string(lip.c_str());
-      bevp_localIP = (new BEC_2_4_6_TextString())->bems_ccsnew(lips);
+      bevp_localIP = new BEC_2_4_6_TextString(lips);
       bevp_up = BECS_Runtime::boolTrue;
     } else {
       Serial.println("no luck connecting to wifi");

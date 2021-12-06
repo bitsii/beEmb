@@ -17,12 +17,17 @@ class Embedded:LedApp {
        auto delay = 500; //ms
        String ssidf = "/lawifissid.txt";
        String secf = "/lawifisec.txt";
+       String domourlf = "/ladomourl.txt";
+       String domousrf = "/ladomousr.txt";
+       String domosecf = "/ladomosec.txt";
        Files files = Files.new();
-       //auto upcheckFrequency = 1800; //15 mins at 500ms
-       auto upcheckFrequency = 600;
+       auto upcheckFrequency = 1800; //15 mins at 500ms
+       //auto upcheckFrequency = 600;
        auto upcheckCount = 0;
      }
      app.plugin = self;
+     "opening files".print();
+     files.open();
    }
    
    startLoop() {
@@ -49,7 +54,6 @@ class Embedded:LedApp {
    
    startWifi() {
      "in startWifi".print();
-     files.open();
      if (files.exists(ssidf)) {
       String ssid = files.read(ssidf);
       if (TS.notEmpty(ssid)) {
@@ -64,7 +68,6 @@ class Embedded:LedApp {
      } else {
        sec = "";
      }
-     files.close();
      if (TS.notEmpty(ssid)) {
        "setting up wifi".print();
        Wifi.new(ssid, sec).start();
@@ -94,16 +97,15 @@ class Embedded:LedApp {
    //Content-type: text/html\n\n<html><body>Hello there</body></html>
    handleWeb(request) {
      "in ledapp handleweb".print();
-     //"getting params".print();
+     "getting params".print();
       String wifiform = request.getParameter("wifiform");
-      String ssid = request.getParameter("ssid");
-      String sec = request.getParameter("sec");
-      //"checking wifiform".print();
+      String domoset = request.getParameter("domoset");
+      "checking wifiform".print();
       Bool needsWifiSetup = false;
       if (TS.notEmpty(wifiform) && wifiform == "wifiform") {
-        //"opening files".print();
-        files.open();
-        //"checking ssid".print();
+        String ssid = request.getParameter("ssid");
+        String sec = request.getParameter("sec");
+        "checking ssid".print();
         if (TS.notEmpty(ssid)) {
           ("got ssid " + ssid).print();
           files.write(ssidf, ssid);
@@ -119,14 +121,48 @@ class Embedded:LedApp {
           files.delete(ssidf);
           files.delete(secf);
         }
-        files.close();
         needsWifiSetup = true;
+      }
+      
+      "checking domoset".print();
+      if (TS.notEmpty(domoset) && domoset == "domoset") {
+        String domourl = request.getParameter("domourl");
+        String domousr = request.getParameter("domousr");
+        String domosec = request.getParameter("domosec");
+        "checking domovars".print();
+        if (TS.notEmpty(domourl) && TS.notEmpty(domousr) && TS.notEmpty(domosec)) {
+          ("got domourl " + domourl).print();
+          ("got domousr " + domousr).print();
+          ("got domosec " + domosec).print();
+          files.write(domourlf, domourl);
+          files.write(domousrf, domousr);
+          files.write(domosecf, domosec);
+        } else {
+          ("domovars missing").print();
+          files.delete(domourlf);
+          files.delete(domousrf);
+          files.delete(domosecf);
+        }
       }
       
       //"trying to send".print();
       try {
-        String oc = "<form action=\"/\" method=\"get\"><input type=\"hidden\" name=\"wifiform\" id=\"wifiform\" value=\"wifiform\"/><label for=\"fname\">SSID:</label><input type=\"text\" id=\"ssid\" name=\"ssid\"><br><br><label for=\"lname\">Secret:</label><input type=\"text\" id=\"sec\" name=\"sec\"><br><br><input type=\"submit\" value=\"Submit\"></form></body></html>";
-        //"sending".print();
+      
+        String oc = '''
+        <html><body>
+        
+        <form action="/" method="get"><input type="hidden" name="wifiform" id="wifiform" value="wifiform"/><label for="fname">SSID:</label><input type="text" id="ssid" name="ssid"><br>
+        <br><label for="lname">Secret:</label><input type="text" id="sec" name="sec"><br>
+        <br><input type="submit" value="Setup Wifi"></form>
+        
+        <form action="/" method="get"><input type="hidden" name="domoset" id="domoset" value="domoset"/><label for="fname">Domoticz Url</label><input type="text" id="domourl" name="domourl"><br>
+        <br><label for="lname">Domoticz User B64:</label><input type="text" id="domousr" name="domousr"><br>
+        <br><label for="lname">Domoticz Password B64:</label><input type="text" id="domosec" name="domosec"><br>
+        <br><input type="submit" value="Setup Domoticz"></form>
+        
+        </body></html>
+        ''';
+        
         request.outputContent = oc;
       } catch (any e) {
         "got an except sending out".print();

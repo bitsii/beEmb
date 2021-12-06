@@ -7,7 +7,6 @@
 -ccdInclude=../brace/system/cc/be/BED_Object.hpp
 -cchInclude=../brace/system/cc/be/BEH_Object.hpp
 -ccInclude=../brace/system/cc/be/BECS_Object.cpp
-#EncodeUrl not part of strict min
 ../brace/source/base/Uses.be
 ../brace/source/base/Object.be
 ../brace/source/base/Int.be
@@ -19,3 +18,7 @@
 ../brace/source/base/System.be
 ../brace/source/base/Exceptions.be
 ../brace/source/base/OpiFc.be
+../brace/source/base/Stack.be
+../brace/source/base/LinkedList.be
+../brace/source/base/Tokenize.be
+../brace/source/extended/Json.be
