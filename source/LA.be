@@ -24,10 +24,24 @@ class Embedded:LedApp {
        auto upcheckFrequency = 1800; //15 mins at 500ms
        //auto upcheckFrequency = 600;
        auto upcheckCount = 0;
+       String webPage;
      }
      app.plugin = self;
      "opening files".print();
      files.open();
+     
+     "making webPage".print();
+     webPage = '''
+     <html><body>hi</html></body>
+     <form action="/" method="get"><input type="hidden" name="wifiform" id="wifiform" value="wifiform"/><label for="fname">SSID:</label><input type="text" id="ssid" name="ssid"><br>
+     <br><label for="lname">Secret:</label><input type="text" id="sec" name="sec"><br>
+     <br><input type="submit" value="Setup Wifi"></form>
+     <form action="/" method="get"><input type="hidden" name="domoset" id="domoset" value="domoset"/><label for="fname">Domoticz Url</label><input type="text" id="domourl" name="domourl"><br>
+     <br><label for="lname">Domoticz User B64:</label><input type="text" id="domousr" name="domousr"><br>
+     <br><label for="lname">Domoticz Password B64:</label><input type="text" id="domosec" name="domosec"><br>
+     <br><input type="submit" value="Setup Domoticz"></form>
+     </body></html>
+     ''';
    }
    
    startLoop() {
@@ -101,7 +115,7 @@ class Embedded:LedApp {
       String wifiform = request.getParameter("wifiform");
       String domoset = request.getParameter("domoset");
       "checking wifiform".print();
-      Bool needsWifiSetup = false;
+      Bool needsRestart = false;
       if (TS.notEmpty(wifiform) && wifiform == "wifiform") {
         String ssid = request.getParameter("ssid");
         String sec = request.getParameter("sec");
@@ -121,7 +135,7 @@ class Embedded:LedApp {
           files.delete(ssidf);
           files.delete(secf);
         }
-        needsWifiSetup = true;
+        needsRestart = true;
       }
       
       "checking domoset".print();
@@ -144,30 +158,11 @@ class Embedded:LedApp {
           files.delete(domosecf);
         }
       }
-      
-      //"trying to send".print();
-      try {
-      
-        String oc = '''
-        <html><body>
-        
-        <form action="/" method="get"><input type="hidden" name="wifiform" id="wifiform" value="wifiform"/><label for="fname">SSID:</label><input type="text" id="ssid" name="ssid"><br>
-        <br><label for="lname">Secret:</label><input type="text" id="sec" name="sec"><br>
-        <br><input type="submit" value="Setup Wifi"></form>
-        
-        <form action="/" method="get"><input type="hidden" name="domoset" id="domoset" value="domoset"/><label for="fname">Domoticz Url</label><input type="text" id="domourl" name="domourl"><br>
-        <br><label for="lname">Domoticz User B64:</label><input type="text" id="domousr" name="domousr"><br>
-        <br><label for="lname">Domoticz Password B64:</label><input type="text" id="domosec" name="domosec"><br>
-        <br><input type="submit" value="Setup Domoticz"></form>
-        
-        </body></html>
-        ''';
-        
-        request.outputContent = oc;
-      } catch (any e) {
-        "got an except sending out".print();
-      }
-      if (needsWifiSetup) {
+    
+        "sending".print();
+        request.outputContent = webPage;
+      "done sending".print();
+      if (needsRestart) {
         "restarting for new settings".print();
           Wifi.stop();
           Wifi.clearAll();
