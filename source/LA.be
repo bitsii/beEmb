@@ -15,7 +15,7 @@ class Embedded:LedApp {
        auto app = Embedded:App.new();
        auto webserver = Embedded:WebServer.new(app);
        auto tcpserver = Embedded:TCPServer.new(app, 55443);
-       auto delay = 5; //ms
+       auto delay = 2; //ms
        String ssidf = "/lawifissid.txt";
        String secf = "/lawifisec.txt";
        String domourlf = "/ladomourl.txt";
@@ -26,6 +26,7 @@ class Embedded:LedApp {
        //auto upcheckFrequency = 600;
        auto upcheckCount = 0;
        String webPage;
+       Int swpin = 2;
      }
      app.plugin = self;
      "opening files".print();
@@ -47,6 +48,8 @@ class Embedded:LedApp {
    
    startLoop() {
      "in startLoop LedApp".print();
+     app.pinModeOutput(swpin);
+     app.digitalWriteHigh(swpin);
      checkWifiAp();
      if (def(Wifi.localIP)) {
       ("Local ip " + Wifi.localIP).print();
@@ -107,8 +110,24 @@ class Embedded:LedApp {
      //"in la hl".print();
      maybeCheckWifiUp();
      webserver.checkHandleWeb();
-     tcpserver.checkGetPayload();
+     String payload = tcpserver.checkGetPayload();
+     if (TS.notEmpty(payload)) {
+       doPayload(payload);
+     }
      app.delay(delay);
+   }
+   
+   doPayload(String payload) {
+     "in doPayload".print();
+     if (payload.has("\"set_power\"")) {
+        if (payload.has("\"on\"")) {
+          "should turn on".print();
+          app.digitalWriteLow(swpin);
+        } elseIf (payload.has("\"off\"")) {
+          "should turn off".print();
+          app.digitalWriteHigh(swpin);
+        }
+     }
    }
    
    //Content-type: text/html\n\n<html><body>Hello there</body></html>
