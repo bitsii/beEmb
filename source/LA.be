@@ -14,7 +14,8 @@ class Embedded:LedApp {
      fields {
        auto app = Embedded:App.new();
        auto webserver = Embedded:WebServer.new(app);
-       auto delay = 500; //ms
+       auto tcpserver = Embedded:TCPServer.new(app, 55443);
+       auto delay = 5; //ms
        String ssidf = "/lawifissid.txt";
        String secf = "/lawifisec.txt";
        String domourlf = "/ladomourl.txt";
@@ -51,6 +52,7 @@ class Embedded:LedApp {
       ("Local ip " + Wifi.localIP).print();
       "starting ws".print();
       webserver.start();
+      tcpserver.start();
      }
    }
    
@@ -105,6 +107,7 @@ class Embedded:LedApp {
      //"in la hl".print();
      maybeCheckWifiUp();
      webserver.checkHandleWeb();
+     tcpserver.checkGetPayload();
      app.delay(delay);
    }
    

@@ -18,7 +18,3 @@
 ../brace/source/base/System.be
 ../brace/source/base/Exceptions.be
 ../brace/source/base/OpiFc.be
-../brace/source/base/Stack.be
-../brace/source/base/LinkedList.be
-../brace/source/base/Tokenize.be
-../brace/source/extended/Json.be

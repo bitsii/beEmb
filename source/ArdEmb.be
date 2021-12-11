@@ -80,6 +80,97 @@ class Embedded:App {
 
 }
 
+class Embedded:TCPServer {
+
+   emit(cc_classHead) {
+   """
+   WiFiServer* server;
+   """
+   }
+  
+  default() self { 
+    fields {
+      any app;
+      Int port = 9999; //light 55443
+    }
+  }
+  
+  new(_app) self {
+    app = _app;
+  }
+  
+  new(_app, Int _port) self {
+    app = _app;
+    port = _port;
+  }
+  
+  start() {
+    emit(cc) {
+    """
+    server = new WiFiServer(bevp_port->bevi_int);
+    server->begin();
+    """
+    }
+  }
+  
+  checkGetPayload() {
+    emit(cc) {
+    """
+    unsigned long currentTime = millis();
+    unsigned long previousTime = 0; 
+    long timeoutTime = 2000;
+    WiFiClient client = server->available();
+    if (client) {  
+    """
+    }
+    String payload = String.new();
+    Int chari = Int.new();
+    String chars = String.new(1);
+    chars.setCodeUnchecked(0, 32);
+    chars.size.setValue(1);
+    Int zero = 0;
+    Int ten = 10;
+    Int one = 1;
+    Int thirteen = 13;
+    emit(cc) {
+    """                          
+      currentTime = millis();
+      previousTime = currentTime;
+      while (client.connected() && currentTime - previousTime <= timeoutTime) {
+        currentTime = millis();         
+        if (client.available()) {        
+          char c = client.read(); 
+          //Serial.write(c);  
+          bevl_chari->bevi_int = c;
+          """
+          }
+          //("got int " + chari).print();
+          chars.setCodeUnchecked(zero, chari);
+          //("got char").print();
+          //chars.print();
+          if (chari != thirteen) {
+            payload += chars;
+          }
+          
+emit(cc) {
+"""        
+        }
+      }
+    }
+    if (client) {  
+      client.stop();
+    }
+    """
+    }
+    if (TS.notEmpty(payload)) {
+    "got request, payload".print();
+    payload.print();
+    }
+    return(payload);
+  }
+  
+}
+
 class Embedded:WebServer {
 
    emit(cc_classHead) {
@@ -113,6 +204,17 @@ class Embedded:WebServer {
   }
   
   checkHandleWeb() {
+    
+    emit(cc) {
+    """
+    unsigned long currentTime = millis();
+    unsigned long previousTime = 0; 
+    long timeoutTime = 2000;
+    WiFiClient client = server->available();
+    if (client) { 
+    """
+    }
+    
     List headers = List.new();
     String line = String.new();
     Int chari = Int.new();
@@ -123,13 +225,9 @@ class Embedded:WebServer {
     Int ten = 10;
     Int one = 1;
     Int thirteen = 13;
+    
     emit(cc) {
-    """
-    unsigned long currentTime = millis();
-    unsigned long previousTime = 0; 
-    long timeoutTime = 2000;
-    WiFiClient client = server->available();
-    if (client) {                            
+    """                           
       currentTime = millis();
       previousTime = currentTime;
       while (client.connected() && currentTime - previousTime <= timeoutTime) {
