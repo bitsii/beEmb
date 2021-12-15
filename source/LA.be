@@ -18,9 +18,10 @@ class Embedded:LedApp {
        auto delay = 2; //ms
        String ssidf = "/lawifissid.txt";
        String secf = "/lawifisec.txt";
-       String domourlf = "/ladomourl.txt";
-       String domousrf = "/ladomousr.txt";
-       String domosecf = "/ladomosec.txt";
+       String swstatef = "/laswstate.txt";
+       String iauturlf = "/laiauturl.txt";
+       String iautusrf = "/laiautusr.txt";
+       String iautsecf = "/laiautsec.txt";
        Files files = Files.new();
        auto upcheckFrequency = 1800; //15 mins at 500ms
        //auto upcheckFrequency = 600;
@@ -38,9 +39,9 @@ class Embedded:LedApp {
      <form action="/" method="get"><input type="hidden" name="wifiform" id="wifiform" value="wifiform"/><label for="fname">SSID:</label><input type="text" id="ssid" name="ssid"><br>
      <br><label for="lname">Secret:</label><input type="text" id="sec" name="sec"><br>
      <br><input type="submit" value="Setup Wifi"></form>
-     <form action="/" method="get"><input type="hidden" name="domoset" id="domoset" value="domoset"/><label for="fname">Domoticz Url</label><input type="text" id="domourl" name="domourl"><br>
-     <br><label for="lname">Domoticz User B64:</label><input type="text" id="domousr" name="domousr"><br>
-     <br><label for="lname">Domoticz Password B64:</label><input type="text" id="domosec" name="domosec"><br>
+     <form action="/" method="get"><input type="hidden" name="iautset" id="iautset" value="iautset"/><label for="fname">Domoticz Url</label><input type="text" id="iauturl" name="iauturl"><br>
+     <br><label for="lname">Domoticz User B64:</label><input type="text" id="iautusr" name="iautusr"><br>
+     <br><label for="lname">Domoticz Password B64:</label><input type="text" id="iautsec" name="iautsec"><br>
      <br><input type="submit" value="Setup Domoticz"></form>
      </body></html>
      ''';
@@ -49,7 +50,6 @@ class Embedded:LedApp {
    startLoop() {
      "in startLoop LedApp".print();
      app.pinModeOutput(swpin);
-     app.digitalWriteHigh(swpin);
      checkWifiAp();
      if (def(Wifi.localIP)) {
       ("Local ip " + Wifi.localIP).print();
@@ -57,6 +57,7 @@ class Embedded:LedApp {
       webserver.start();
       tcpserver.start();
      }
+     checkswstate();
    }
    
    checkWifiAp() {
@@ -117,15 +118,28 @@ class Embedded:LedApp {
      app.delay(delay);
    }
    
+   checkswstate() {
+     if (files.exists(swstatef)) {
+       String payload = files.read(swstatef);
+       if (TS.notEmpty(payload)) {
+         doPayload(payload);
+       }
+     } else {
+       app.digitalWriteHigh(swpin);
+     }
+   }
+   
    doPayload(String payload) {
      "in doPayload".print();
      if (payload.has("\"set_power\"")) {
         if (payload.has("\"on\"")) {
           "should turn on".print();
           app.digitalWriteLow(swpin);
+          files.write(swstatef, "\"set_power\" \"on\"");
         } elseIf (payload.has("\"off\"")) {
           "should turn off".print();
           app.digitalWriteHigh(swpin);
+          files.write(swstatef, "\"set_power\" \"off\"");
         }
      }
    }
@@ -135,7 +149,7 @@ class Embedded:LedApp {
      "in ledapp handleweb".print();
      "getting params".print();
       String wifiform = request.getParameter("wifiform");
-      String domoset = request.getParameter("domoset");
+      String iautset = request.getParameter("iautset");
       "checking wifiform".print();
       Bool needsRestart = false;
       if (TS.notEmpty(wifiform) && wifiform == "wifiform") {
@@ -160,24 +174,24 @@ class Embedded:LedApp {
         needsRestart = true;
       }
       
-      "checking domoset".print();
-      if (TS.notEmpty(domoset) && domoset == "domoset") {
-        String domourl = request.getParameter("domourl");
-        String domousr = request.getParameter("domousr");
-        String domosec = request.getParameter("domosec");
-        "checking domovars".print();
-        if (TS.notEmpty(domourl) && TS.notEmpty(domousr) && TS.notEmpty(domosec)) {
-          ("got domourl " + domourl).print();
-          ("got domousr " + domousr).print();
-          ("got domosec " + domosec).print();
-          files.write(domourlf, domourl);
-          files.write(domousrf, domousr);
-          files.write(domosecf, domosec);
+      "checking iautset".print();
+      if (TS.notEmpty(iautset) && iautset == "iautset") {
+        String iauturl = request.getParameter("iauturl");
+        String iautusr = request.getParameter("iautusr");
+        String iautsec = request.getParameter("iautsec");
+        "checking iautvars".print();
+        if (TS.notEmpty(iauturl) && TS.notEmpty(iautusr) && TS.notEmpty(iautsec)) {
+          ("got iauturl " + iauturl).print();
+          ("got iautusr " + iautusr).print();
+          ("got iautsec " + iautsec).print();
+          files.write(iauturlf, iauturl);
+          files.write(iautusrf, iautusr);
+          files.write(iautsecf, iautsec);
         } else {
-          ("domovars missing").print();
-          files.delete(domourlf);
-          files.delete(domousrf);
-          files.delete(domosecf);
+          ("iautvars missing").print();
+          files.delete(iauturlf);
+          files.delete(iautusrf);
+          files.delete(iautsecf);
         }
       }
     
