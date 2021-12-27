@@ -28,7 +28,6 @@ class Embedded:LedApp {
        auto upcheckCount = 0;
        String webPage;
        Int swpin = 2;
-       String state;
      }
      app.plugin = self;
      "opening files".print();
@@ -133,16 +132,14 @@ class Embedded:LedApp {
    doPayload(String payload) {
      "in doPayload".print();
      if (payload.has("\"set_power\"")) {
-        if (payload.has("\"on\"") && (undef(state) || state != "on")) {
+        if (payload.has("\"on\"")) {
           "should turn on".print();
           app.digitalWriteLow(swpin);
           files.write(swstatef, "\"set_power\" \"on\"");
-          state = "on";
-        } elseIf (payload.has("\"off\"") && (undef(state) || state != "off")) {
+        } elseIf (payload.has("\"off\"")) {
           "should turn off".print();
           app.digitalWriteHigh(swpin);
           files.write(swstatef, "\"set_power\" \"off\"");
-          state = "off";
         }
      }
    }

@@ -171,16 +171,11 @@ emit(cc) {
   
 }
 
-//#include <WiFiClientSecureBearSSL.h>
-
-//class Embedded:TCPClientSecure { }
-
 class Embedded:TCPClient {
 
 emit(cc_classHead) {
 """
 
-//BearSSL::WiFiClientSecure client;
 WiFiClient client;
 
 """
@@ -188,8 +183,6 @@ WiFiClient client;
 
   new() self {
     fields {
-      //Bool insecure = false;
-      //String certificateThumbprint;
       String host;
       Int port;
       Bool opened;
@@ -203,10 +196,8 @@ WiFiClient client;
   }
   
   open() self {
-    unless (opened) {
     emit(cc) {
     """
-    //client.setInsecure();
     client.connect(bevp_host->bems_toCcString().c_str(), bevp_port->bevi_int);
     if (client.connected()) {
     """
@@ -215,14 +206,9 @@ WiFiClient client;
     emit(cc) {
     """
     } else {
-      //char buf[256];
-      //client.getLastSSLError(buf,256);
-      //Serial.print("WiFiClientSecure SSL error: ");
-      //Serial.println(buf);
       Serial.println("connection failed");
     }
     """
-    }
     }
     return(self);
   }
@@ -236,7 +222,6 @@ WiFiClient client;
   }
   
   checkGetPayload(String endmark) String {
-  //"in cgp".print();
     emit(cc) {
     """
     unsigned long currentTime = millis();
@@ -245,39 +230,36 @@ WiFiClient client;
     if (client) {
     """
     }
-    //"in client".print();
     String payload = String.new();
     Int chari = Int.new();
     String chars = String.new(1);
     chars.setCodeUnchecked(0, 32);
     chars.size.setValue(1);
     Int zero = 0;
-    Bool keepGoing = true;
     emit(cc) {
     """                          
       currentTime = millis();
       previousTime = currentTime;
-      if (client.available()) {
-        while (client.connected() && currentTime - previousTime <= timeoutTime && bevl_keepGoing != nullptr) {
-          currentTime = millis();         
-          if (client.available()) {      
-            char c = client.read(); 
-            //Serial.write(c);  
-            bevl_chari->bevi_int = c;
-            """
-            }
-            //("got int " + chari).print();
-            chars.setCodeUnchecked(zero, chari);
-            //("got char").print();
-            //chars.print();
-            payload += chars;
-            if (def(endmark) && payload.has(endmark)) {
-              "got endmark".print();
-              keepGoing = null;
-            }
-  emit(cc) {
-  """        
+      while (client.connected() && currentTime - previousTime <= timeoutTime) {
+        currentTime = millis();         
+        if (client.available()) {      
+          char c = client.read(); 
+          //Serial.write(c);  
+          bevl_chari->bevi_int = c;
+          """
           }
+          //("got int " + chari).print();
+          chars.setCodeUnchecked(zero, chari);
+          //("got char").print();
+          //chars.print();
+          payload += chars;
+          if (def(endmark) && payload.has(endmark)) {
+            "got endmark".print();
+            payload.print();
+            return(payload);
+          }
+emit(cc) {
+"""        
         }
       }
     }
@@ -291,16 +273,14 @@ WiFiClient client;
   }
   
   close() {
-    if (opened) {
-      emit(cc) {
-      """
-      if (client) {  
-        client.stop();
-      }
-      """
-      }
-      opened = false;
+    emit(cc) {
+    """
+    if (client) {  
+      client.stop();
     }
+    """
+    }
+    opened = false;
   }
 
 }
