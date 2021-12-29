@@ -58,6 +58,12 @@ class Embedded:LedApp {
       tcpserver.start();
      }
      checkswstate();
+     checkaes();
+   }
+   
+   checkaes() {
+     "trying aes".print();
+     Embedded:Aes.new().encDecTest();
    }
    
    checkWifiAp() {
