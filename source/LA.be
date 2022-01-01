@@ -63,7 +63,10 @@ class Embedded:LedApp {
    
    checkaes() {
      "trying aes".print();
-     Embedded:Aes.new().encDecTest();
+     String crypted = Embedded:Aes.new().encrypt(null, null, "turn it on or off");
+     String decrypted = Embedded:Aes.new().decrypt(null, null, crypted);
+     "decrypted".print();
+     decrypted.print();
    }
    
    checkWifiAp() {

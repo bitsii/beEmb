@@ -11,12 +11,12 @@ class Embedded:Aes {
   
   }
   
-  encDecTest() {
+  encrypt(String iv, String key, String val) String {
+    String res;
     emit(cc) {
-    """
-    
-uint8_t cipher_key[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-uint8_t cipher_iv[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+    """  
+  uint8_t cipher_key[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+  uint8_t cipher_iv[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
   String plain_data = "quick brown fox jumps over the lazy dog";
   int i;
   // PKCS#7 Padding (Encryption), Block Size : 16
@@ -39,24 +39,52 @@ uint8_t cipher_iv[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
   // reset the encryption context and encrypt the data
   br_aes_big_cbcenc_init(&encCtx, key, 16);
   br_aes_big_cbcenc_run( &encCtx, iv, data, n_blocks*16 );
+  
+  int32_t finlen = n_blocks*16;
+  unsigned char* x = data;
+  
+  std::vector<unsigned char>sdata(x, x + finlen);
+  bevl_res = new BEC_2_4_6_TextString(finlen, sdata);
+    """
+    }
+    return(res);
+  }
+  
+  decrypt(String iv, String key, String val) String {
+    val = val.copy();
+    Int len = val.size;
+    String res;
+    emit(cc) {
+    """
+  uint8_t cipher_key[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+  uint8_t cipher_iv[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 
-  //dec
+  int len = bevl_len->bevi_int;
+  std::vector<unsigned char> vdata = beva_val->bevi_bytes;
+  unsigned char* cdata = vdata.data();
+
+  uint8_t key[16], iv[16];
+  memcpy(key, cipher_key, 16);
+  memcpy(iv, cipher_iv, 16);
+
+  int n_blocks = len / 16;
 
   br_aes_big_cbcdec_keys decCtx;
 
   br_aes_big_cbcdec_init(&decCtx, key, 16);
-  br_aes_big_cbcdec_run( &decCtx, iv, data, n_blocks*16 );
-
-  // PKCS#7 Padding (Decryption)
-  uint8_t n_paddingd = data[n_blocks*16-1];
-  len = n_blocks*16 - n_paddingd;
-  char plain_datad[len + 1];
-  memcpy(plain_datad, data, len);
-  plain_datad[len] = '\0';
-  Serial.println("aes done");
-  Serial.println(plain_datad);
+  br_aes_big_cbcdec_run( &decCtx, iv, cdata, n_blocks*16 );
+  
+  uint8_t n_padding = cdata[n_blocks*16-1];
+  len = n_blocks*16 - n_padding;
+  char plain_data[len];
+  memcpy(plain_data, cdata, len);
+  
+  std::vector<unsigned char>sdata(plain_data, plain_data + len);
+  bevl_res = new BEC_2_4_6_TextString(len, sdata);
+  
     """
     }
+    return(res);
   }
 
 }
