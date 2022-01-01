@@ -63,8 +63,10 @@ class Embedded:LedApp {
    
    checkaes() {
      "trying aes".print();
-     String crypted = Embedded:Aes.new().encrypt(null, null, "turn it on or off");
-     String decrypted = Embedded:Aes.new().decrypt(null, null, crypted);
+     String iv = "0123456789012345";
+     String key = "0123456789012345";
+     String crypted = Embedded:Aes.new().encrypt(iv, key, "turn it on or off maybe");
+     String decrypted = Embedded:Aes.new().decrypt(iv, key, crypted);
      "decrypted".print();
      decrypted.print();
    }

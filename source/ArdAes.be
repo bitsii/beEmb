@@ -15,9 +15,13 @@ class Embedded:Aes {
     String res;
     emit(cc) {
     """  
-  uint8_t cipher_key[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-  uint8_t cipher_iv[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-  String plain_data = "quick brown fox jumps over the lazy dog";
+  //uint8_t cipher_key[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5};
+  //uint8_t cipher_iv[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5};
+  unsigned char* cipher_key = beva_key->bevi_bytes.data();
+  unsigned char* cipher_iv = beva_iv->bevi_bytes.data();
+  
+  //String plain_data = "quick brown fox jumps over the lazy dog";
+  String plain_data = beva_val->bems_toCcString().c_str();
   int i;
   // PKCS#7 Padding (Encryption), Block Size : 16
   int len = plain_data.length();
@@ -56,8 +60,10 @@ class Embedded:Aes {
     String res;
     emit(cc) {
     """
-  uint8_t cipher_key[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-  uint8_t cipher_iv[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+  //uint8_t cipher_key[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5};
+  //uint8_t cipher_iv[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5};
+  unsigned char* cipher_key = beva_key->bevi_bytes.data();
+  unsigned char* cipher_iv = beva_iv->bevi_bytes.data();
 
   int len = bevl_len->bevi_int;
   std::vector<unsigned char> vdata = beva_val->bevi_bytes;
