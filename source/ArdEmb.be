@@ -88,14 +88,11 @@ class Embedded:TCPServer {
    """
    }
   
-  default() self { 
+  new(_app) self {
     fields {
       any app;
       Int port = 9999; //light 55443
     }
-  }
-  
-  new(_app) self {
     app = _app;
   }
   
@@ -113,55 +110,25 @@ class Embedded:TCPServer {
     }
   }
   
-  checkGetPayload() String {
+  
+  
+  checkGetClient() Embedded:TCPClient {
+    Embedded:TCPClient res;
     emit(cc) {
     """
-    unsigned long currentTime = millis();
-    unsigned long previousTime = 0; 
-    long timeoutTime = 2000;
     WiFiClient client = server->available();
-    if (client) {  
+    if (client) {
     """
     }
-    String payload = String.new();
-    Int chari = Int.new();
-    String chars = String.new(1);
-    chars.setCodeUnchecked(0, 32);
-    chars.size.setValue(1);
-    Int zero = 0;
+    res = Embedded:TCPClient.new();
+    res.opened = true;
     emit(cc) {
-    """                          
-      currentTime = millis();
-      previousTime = currentTime;
-      while (client.connected() && currentTime - previousTime <= timeoutTime) {
-        currentTime = millis();         
-        if (client.available()) {        
-          char c = client.read(); 
-          //Serial.write(c);  
-          bevl_chari->bevi_int = c;
-          """
-          }
-          //("got int " + chari).print();
-          chars.setCodeUnchecked(zero, chari);
-          //("got char").print();
-          //chars.print();
-          payload += chars;
-          
-emit(cc) {
-"""        
-        }
-      }
-    }
-    if (client) {  
-      client.stop();
+    """
+    bevl_res->client = client;
     }
     """
     }
-    if (TS.notEmpty(payload)) {
-    "got request, payload".print();
-    payload.print();
-    }
-    return(payload);
+    return(res);
   }
   
 }
@@ -216,6 +183,10 @@ WiFiClient client;
     }
   }
   
+  checkGetPayload() String {
+    return(checkGetPayload(null));
+  }
+  
   checkGetPayload(String endmark) String {
     emit(cc) {
     """
@@ -248,7 +219,7 @@ WiFiClient client;
           //("got char").print();
           //chars.print();
           payload += chars;
-          if (def(endmark) && payload.has(endmark)) {
+          if (def(endmark) && payload.ends(endmark)) {
             "got endmark".print();
             payload.print();
             return(payload);

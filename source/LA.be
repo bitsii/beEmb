@@ -126,7 +126,11 @@ class Embedded:LedApp {
      //"in la hl".print();
      maybeCheckWifiUp();
      webserver.checkHandleWeb();
-     String payload = tcpserver.checkGetPayload();
+     auto client = tcpserver.checkGetClient();
+     if (def(client)) {
+       String payload = client.checkGetPayload();
+       client.close();
+     }
      if (TS.notEmpty(payload)) {
        doPayload(payload);
      }
