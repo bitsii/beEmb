@@ -65,8 +65,12 @@ class Embedded:LedApp {
      "trying aes".print();
      String iv = "0123456789012345";
      String key = "0123456789012345";
-     String crypted = Embedded:Aes.new().encrypt(iv, key, "turn it on or off maybe");
-     String decrypted = Embedded:Aes.new().decrypt(iv, key, crypted);
+     String crypted = Embedded:Aes.new().encrypt(iv, key, "turn it on or off maybe yeah");
+     String cryptedHex = Encode:Hex.encode(crypted);
+     "cryptedHex".print();
+     cryptedHex.print();
+     String cryptedDeHex = Encode:Hex.decode(cryptedHex);
+     String decrypted = Embedded:Aes.new().decrypt(iv, key, cryptedDeHex);
      "decrypted".print();
      decrypted.print();
    }
