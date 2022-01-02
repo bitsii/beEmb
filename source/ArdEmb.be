@@ -129,9 +129,6 @@ class Embedded:TCPServer {
     chars.setCodeUnchecked(0, 32);
     chars.size.setValue(1);
     Int zero = 0;
-    Int ten = 10;
-    Int one = 1;
-    Int thirteen = 13;
     emit(cc) {
     """                          
       currentTime = millis();
@@ -148,9 +145,7 @@ class Embedded:TCPServer {
           chars.setCodeUnchecked(zero, chari);
           //("got char").print();
           //chars.print();
-          if (chari != thirteen) {
-            payload += chars;
-          }
+          payload += chars;
           
 emit(cc) {
 """        
