@@ -14,7 +14,7 @@ class Embedded:LedApp {
      fields {
        auto app = Embedded:App.new();
        auto webserver = Embedded:WebServer.new(app);
-       auto tcpserver = Embedded:TCPServer.new(app, 55443);
+       auto tcpserver = Embedded:TCPServer.new(55443);
        auto delay = 2; //ms
        String ssidf = "/lawifissid.txt";
        String secf = "/lawifisec.txt";

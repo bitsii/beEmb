@@ -88,17 +88,10 @@ class Embedded:TCPServer {
    """
    }
   
-  new(_app) self {
+  new(Int _port) self {
     fields {
-      any app;
-      Int port = 9999; //light 55443
+      Int port = _port; //light 55443
     }
-    app = _app;
-  }
-  
-  new(_app, Int _port) self {
-    app = _app;
-    port = _port;
   }
   
   start() {
