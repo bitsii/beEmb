@@ -19,9 +19,9 @@ class Embedded:LedApp {
        String ssidf = "/lawifissid.txt";
        String secf = "/lawifisec.txt";
        String swstatef = "/laswstate.txt";
-       String iauturlf = "/laiauturl.txt";
-       String iautusrf = "/laiautusr.txt";
-       String iautsecf = "/laiautsec.txt";
+       String iataddrf = "/laiataddr.txt";
+       String iatportf = "/laiatport.txt";
+       String iatsecf = "/laiatsec.txt";
        Files files = Files.new();
        auto upcheckFrequency = 1800; //15 mins at 500ms
        //auto upcheckFrequency = 600;
@@ -35,14 +35,14 @@ class Embedded:LedApp {
      
      "making webPage".print();
      webPage = '''
-     <html><body>hi</html></body>
+     <html><body>
      <form action="/" method="get"><input type="hidden" name="wifiform" id="wifiform" value="wifiform"/><label for="fname">SSID:</label><input type="text" id="ssid" name="ssid"><br>
      <br><label for="lname">Secret:</label><input type="text" id="sec" name="sec"><br>
      <br><input type="submit" value="Setup Wifi"></form>
-     <form action="/" method="get"><input type="hidden" name="iautset" id="iautset" value="iautset"/><label for="fname">Domoticz Url</label><input type="text" id="iauturl" name="iauturl"><br>
-     <br><label for="lname">Domoticz User B64:</label><input type="text" id="iautusr" name="iautusr"><br>
-     <br><label for="lname">Domoticz Password B64:</label><input type="text" id="iautsec" name="iautsec"><br>
-     <br><input type="submit" value="Setup Domoticz"></form>
+     <form action="/" method="get"><input type="hidden" name="iatset" id="iatset" value="iatset"/><label for="fname">Itsii Addr:</label><input type="text" id="iataddr" name="iataddr"><br>
+     <br><label for="lname">Itsii Port:</label><input type="text" id="iatport" name="iatport"><br>
+     <br><label for="lname">Itsii Secret:</label><input type="text" id="iatsec" name="iatsec"><br>
+     <br><input type="submit" value="Setup Itsii"></form>
      </body></html>
      ''';
    }
@@ -150,6 +150,9 @@ class Embedded:LedApp {
    
    doPayload(String payload) {
      "in doPayload".print();
+     if (TS.notEmpty(payload)) {
+       ("payload " + payload).print();
+     }
      if (payload.has("\"set_power\"")) {
         if (payload.has("\"on\"")) {
           "should turn on".print();
@@ -168,7 +171,7 @@ class Embedded:LedApp {
      "in ledapp handleweb".print();
      "getting params".print();
       String wifiform = request.getParameter("wifiform");
-      String iautset = request.getParameter("iautset");
+      String iatset = request.getParameter("iatset");
       "checking wifiform".print();
       Bool needsRestart = false;
       if (TS.notEmpty(wifiform) && wifiform == "wifiform") {
@@ -193,24 +196,24 @@ class Embedded:LedApp {
         needsRestart = true;
       }
       
-      "checking iautset".print();
-      if (TS.notEmpty(iautset) && iautset == "iautset") {
-        String iauturl = request.getParameter("iauturl");
-        String iautusr = request.getParameter("iautusr");
-        String iautsec = request.getParameter("iautsec");
-        "checking iautvars".print();
-        if (TS.notEmpty(iauturl) && TS.notEmpty(iautusr) && TS.notEmpty(iautsec)) {
-          ("got iauturl " + iauturl).print();
-          ("got iautusr " + iautusr).print();
-          ("got iautsec " + iautsec).print();
-          files.write(iauturlf, iauturl);
-          files.write(iautusrf, iautusr);
-          files.write(iautsecf, iautsec);
+      "checking iatset".print();
+      if (TS.notEmpty(iatset) && iatset == "iatset") {
+        String iataddr = request.getParameter("iataddr");
+        String iatport = request.getParameter("iatport");
+        String iatsec = request.getParameter("iatsec");
+        "checking iatvars".print();
+        if (TS.notEmpty(iataddr) && TS.notEmpty(iatport) && TS.notEmpty(iatsec)) {
+          ("got iataddr " + iataddr).print();
+          ("got iatport " + iatport).print();
+          ("got iatsec " + iatsec).print();
+          files.write(iataddrf, iataddr);
+          files.write(iatportf, iatport);
+          files.write(iatsecf, iatsec);
         } else {
-          ("iautvars missing").print();
-          files.delete(iauturlf);
-          files.delete(iautusrf);
-          files.delete(iautsecf);
+          ("iatvars missing").print();
+          files.delete(iataddrf);
+          files.delete(iatportf);
+          files.delete(iatsecf);
         }
       }
     
