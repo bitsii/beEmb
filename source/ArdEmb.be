@@ -231,6 +231,36 @@ emit(cc) {
     return(payload);
   }
   
+  connectedGet() Bool {
+    emit(cc) {
+    """
+    if (client && client.connected()) {
+     """
+     }
+     return(true);
+     emit(cc) {
+     """
+     }
+     """
+     }
+     return(false);
+  }  
+  
+  availableGet() Bool {
+    emit(cc) {
+    """
+    if (client && client.connected() && client.available()) {
+     """
+     }
+     return(true);
+     emit(cc) {
+     """
+     }
+     """
+     }
+     return(false);
+  }  
+  
   close() {
     emit(cc) {
     """

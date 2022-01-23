@@ -7,6 +7,8 @@ use Embedded:Wifi;
 use Text:String;
 use Text:Strings as TS;
 use Embedded:Files;
+use Encode:Hex as Hex;
+use Embedded:Aes as Crypt;
 
 class Embedded:LedApp {
    
@@ -58,9 +60,74 @@ class Embedded:LedApp {
       tcpserver.start();
      }
      checkswstate();
-     checkaes();
+     //checkaes();
    }
    
+   checkIatLogin() {
+     fields {
+       Embedded:TCPClient client;
+     }
+     if (def(client) && client.connected) {
+       //"iat logged in".print();
+       return(self);
+     }
+     //iat addr port sec
+     //if have configs and not logged in do it
+     //"in checkIatLogin".print();
+     if (files.exists(iataddrf)) {
+      String addr = files.read(iataddrf);
+     }
+     if (files.exists(iatportf)) {
+      String port = files.read(iatportf);
+     }
+     if (files.exists(iatsecf)) {
+      String token = files.read(iatsecf);
+     }
+     if (TS.isEmpty(addr) || TS.isEmpty(port) || TS.isEmpty(token)) {
+       return(self);
+     }
+     ("token not empty is " + token).print();
+     String deviceid = token.substring(0, 16);
+     String iv = token.substring(16, 32);
+     String key = token.substring(32, 48);
+     client = Embedded:TCPClient.new(addr, Int.new(port));
+     client.open();
+     client.write(deviceid + "\n");
+     Int tries = 20;
+     while(client.connected && tries > 0) {
+       String payload = client.checkGetPayload("\n");
+       if (TS.notEmpty(payload)) {
+         ("payload " + payload).print();
+         payload = payload.substring(0, payload.size - 1);
+         String crn = Hex.decode(payload);
+         String nonces = Crypt.decrypt(iv, key, crn);
+         ("nonces " + nonces).print();
+         Int nonce = Int.new(nonces);
+         nonce++=;
+         crn = Crypt.encrypt(iv, key, nonce.toString());
+         payload = Hex.encode(crn);
+         client.write(payload + "\n");
+         break;
+       }
+       tries--=;
+       app.delay(50);
+     }
+     if (client.connected! || tries <= 0) {
+       //didn't really login
+       "login failed".print();
+       auto cl2 = client;
+       client = null;
+       cl2.close();
+     }
+     "login succeeded".print();
+   }
+   
+   checkIatState() {
+     //if iatlogged in see if we got anything
+     //also maybe ping every once in a while
+   }
+   
+   /*
    checkaes() {
      "trying aes".print();
      String iv = "0123456789012345";
@@ -74,6 +141,7 @@ class Embedded:LedApp {
      "decrypted".print();
      decrypted.print();
    }
+   */
    
    checkWifiAp() {
      "in checkWifiAp".print();
@@ -134,6 +202,8 @@ class Embedded:LedApp {
      if (TS.notEmpty(payload)) {
        doPayload(payload);
      }
+     checkIatLogin();
+     //checkIatState();
      app.delay(delay);
    }
    
