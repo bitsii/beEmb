@@ -66,6 +66,9 @@ class Embedded:LedApp {
    checkIatLogin() {
      fields {
        Embedded:TCPClient client;
+       String deviceid;
+       String iv;
+       String key;
      }
      if (def(client) && client.connected) {
        //"iat logged in".print();
@@ -87,9 +90,9 @@ class Embedded:LedApp {
        return(self);
      }
      ("token not empty is " + token).print();
-     String deviceid = token.substring(0, 16);
-     String iv = token.substring(16, 32);
-     String key = token.substring(32, 48);
+     deviceid = token.substring(0, 16);
+     iv = token.substring(16, 32);
+     key = token.substring(32, 48);
      client = Embedded:TCPClient.new(addr, Int.new(port));
      client.open();
      client.write(deviceid + "\n");
@@ -125,6 +128,17 @@ class Embedded:LedApp {
    checkIatState() {
      //if iatlogged in see if we got anything
      //also maybe ping every once in a while
+     if (def(client) && client.connected) {
+       String payload = client.checkGetPayload("\n");
+       if (TS.notEmpty(payload)) {
+         ("payload " + payload).print();
+         payload = payload.substring(0, payload.size - 1);
+         String crn = Hex.decode(payload);
+         String payloadin = Crypt.decrypt(iv, key, crn);
+         ("payloadin " + payloadin).print();
+         doPayload(payloadin);
+       }
+     }
    }
    
    /*
@@ -203,7 +217,7 @@ class Embedded:LedApp {
        doPayload(payload);
      }
      checkIatLogin();
-     //checkIatState();
+     checkIatState();
      app.delay(delay);
    }
    
