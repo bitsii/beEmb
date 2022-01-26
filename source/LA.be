@@ -89,7 +89,7 @@ class Embedded:LedApp {
      if (TS.isEmpty(addr) || TS.isEmpty(port) || TS.isEmpty(token)) {
        return(self);
      }
-     ("token not empty is " + token).print();
+     //("token not empty is " + token).print();
      deviceid = token.substring(0, 16);
      iv = token.substring(16, 32);
      key = token.substring(32, 48);
@@ -117,12 +117,13 @@ class Embedded:LedApp {
      }
      if (client.connected! || tries <= 0) {
        //didn't really login
-       "login failed".print();
+       //"login failed".print();
        auto cl2 = client;
        client = null;
        cl2.close();
+     } else {
+       "login succeeded".print();
      }
-     "login succeeded".print();
    }
    
    checkIatState() {

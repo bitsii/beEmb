@@ -161,7 +161,7 @@ WiFiClient client;
     emit(cc) {
     """
     } else {
-      Serial.println("connection failed");
+      //Serial.println("connection failed");
     }
     """
     }
