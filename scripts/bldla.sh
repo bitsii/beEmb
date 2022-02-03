@@ -14,7 +14,7 @@ rm -rf targets/ard/Base/target/cc
 
 #--emitFlag relocMain
 
-mono --debug ../brace/target5/BEX_E_mcs.exe -deployPath=targets/ard -buildPath=targets/ard --buildFile build/embBase.txt --emitLang cc --singleCC true --emitFlag ccSgc --emitFlag ccNoRtti --emitFlag relocMain --emitFlag holdMain --emitFlag embPlat --emitFlag noSmap --emitFlag noRfl -cchImport=../braceEmb/system/cc/be/BEAR_Imports.hpp -ccImport=../braceEmb/system/cc/be/BEAR_Imports.cpp --mainClass Embedded:LedApp ../brace/source/base/Uses.be source/ArdEmb.be source/ArdAes.be source/LA.be
+mono --debug ../brace/target5/BEX_E_mcs.exe -deployPath=targets/ard -buildPath=targets/ard --buildFile build/embBase.txt --emitLang cc --singleCC true --emitFlag ccSgc --emitFlag ccNoRtti --emitFlag relocMain --emitFlag holdMain --emitFlag embPlat --emitFlag noSmap --emitFlag noRfl -cchImport=../braceEmb/system/cc/be/BEAR_Imports.hpp -ccImport=../braceEmb/system/cc/be/BEAR_Imports.cpp --mainClass Embedded:LedApp ../brace/source/base/Uses.be source/ArdEmb.be source/ArdAes.be source/ArdUdp.be source/LA.be
 
 lae=$?;if [[ $lae -ne 0 ]]; then exit $lae; fi
 

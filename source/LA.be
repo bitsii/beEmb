@@ -17,6 +17,7 @@ class Embedded:LedApp {
        auto app = Embedded:App.new();
        auto webserver = Embedded:WebServer.new(app);
        auto tcpserver = Embedded:TCPServer.new(55443);
+       auto udpserver = Embedded:Udp.new();
        auto delay = 2; //ms
        String ssidf = "/lawifissid.txt";
        String secf = "/lawifisec.txt";
@@ -58,6 +59,7 @@ class Embedded:LedApp {
       "starting ws".print();
       webserver.start();
       tcpserver.start();
+      udpserver.start();
      }
      checkswstate();
      //checkaes();
@@ -219,6 +221,7 @@ class Embedded:LedApp {
      }
      checkIatLogin();
      checkIatState();
+     udpserver.checkGetPayload();
      app.delay(delay);
    }
    
