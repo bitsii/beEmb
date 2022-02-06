@@ -31,6 +31,7 @@ class Embedded:LedApp {
        auto upcheckCount = 0;
        String webPage;
        Int swpin = 2;
+       String udpRes;
      }
      app.plugin = self;
      "opening files".print();
@@ -48,6 +49,27 @@ class Embedded:LedApp {
      <br><input type="submit" value="Setup Itsii"></form>
      </body></html>
      ''';
+     
+     udpRes = '''HTTP/1.1 200 OK
+Cache-Control: max-age=3600
+Date: 
+Ext: 
+Location: yeelight://192.168.1.173:55443
+Server: POSIX UPnP/1.0 YGLC/1
+id: 0x0000000018800000
+model: monoa
+fw_ver: 6
+support: get_prop set_default set_power toggle set_bright set_scene cron_add cron_get cron_del start_cf stop_cf set_name set_adjust adjust_bright
+power: off
+bright: 94
+color_mode: 2
+ct: 2700
+rgb: 0
+hue: 0
+sat: 0
+name: 
+''';
+
    }
    
    startLoop() {
@@ -221,7 +243,14 @@ class Embedded:LedApp {
      }
      checkIatLogin();
      checkIatState();
-     udpserver.checkGetPayload();
+     auto ures = udpserver.checkGetRequest();
+     if (def(ures)) {
+       "got udp res req".print();
+       ures.remoteAddress.print();
+       ures.remotePort.toString().print();
+       ures.inputContent.print();
+       ures.write(udpRes);
+     }
      app.delay(delay);
    }
    
