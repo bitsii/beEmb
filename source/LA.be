@@ -16,8 +16,6 @@ class Embedded:LedApp {
      fields {
        auto app = Embedded:App.new();
        auto webserver = Embedded:WebServer.new(app);
-       auto tcpserver = Embedded:TCPServer.new(55443);
-       auto udpserver = Embedded:Udp.new();
        auto delay = 2; //ms
        String ssidf = "/lawifissid.txt";
        String secf = "/lawifisec.txt";
@@ -31,7 +29,6 @@ class Embedded:LedApp {
        auto upcheckCount = 0;
        String webPage;
        Int swpin = 2;
-       String udpRes;
      }
      app.plugin = self;
      "opening files".print();
@@ -50,26 +47,6 @@ class Embedded:LedApp {
      </body></html>
      ''';
      
-     udpRes = '''HTTP/1.1 200 OK
-Cache-Control: max-age=3600
-Date: 
-Ext: 
-Location: yeelight://192.168.1.173:55443
-Server: POSIX UPnP/1.0 YGLC/1
-id: 0x0000000018800000
-model: monoa
-fw_ver: 6
-support: get_prop set_default set_power toggle set_bright set_scene cron_add cron_get cron_del start_cf stop_cf set_name set_adjust adjust_bright
-power: off
-bright: 94
-color_mode: 2
-ct: 2700
-rgb: 0
-hue: 0
-sat: 0
-name: 
-''';
-
    }
    
    startLoop() {
@@ -80,8 +57,6 @@ name:
       ("Local ip " + Wifi.localIP).print();
       "starting ws".print();
       webserver.start();
-      tcpserver.start();
-      udpserver.start();
      }
      checkswstate();
      //checkaes();
@@ -233,24 +208,8 @@ name:
      //"in la hl".print();
      maybeCheckWifiUp();
      webserver.checkHandleWeb();
-     auto client = tcpserver.checkGetClient();
-     if (def(client)) {
-       String payload = client.checkGetPayload();
-       client.close();
-     }
-     if (TS.notEmpty(payload)) {
-       doPayload(payload);
-     }
      checkIatLogin();
      checkIatState();
-     auto ures = udpserver.checkGetRequest();
-     if (def(ures)) {
-       "got udp res req".print();
-       ures.remoteAddress.print();
-       ures.remotePort.toString().print();
-       ures.inputContent.print();
-       ures.write(udpRes);
-     }
      app.delay(delay);
    }
    
