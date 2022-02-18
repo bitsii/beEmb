@@ -359,6 +359,7 @@ class Embedded:Wifi {
     }
     """
     }
+    ("Connected to " + ssid).print();
   }
   
     isConnectedGet() Bool {
