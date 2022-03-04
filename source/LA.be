@@ -79,12 +79,17 @@ class Embedded:LedApp {
             </script>
           </head>
      <body>
+     <form id="dpformid" action="/" method="get" onsubmit="ajaxSubmit('dpformid');return false;"><input type="hidden" name="dpform" id="dpform" value="dpform"/><label for="fname">Olddevpass:</label><input type="text" id="oldpass" name="oldpass"><br>
+     <br><label for="lname">Newdevpass:</label><input type="text" id="newpass" name="newpass"><br>
+     <br><input type="submit" value="Set Device Password"></form>
      <form id="wififormid" action="/" method="get" onsubmit="ajaxSubmit('wififormid');return false;"><input type="hidden" name="wifiform" id="wifiform" value="wifiform"/><label for="fname">SSID:</label><input type="text" id="ssid" name="ssid"><br>
      <br><label for="lname">Secret:</label><input type="text" id="sec" name="sec"><br>
+     <br><label for="lname">Devpass:</label><input type="text" id="wifidpass" name="wifidpass"><br>
      <br><input type="submit" value="Setup Wifi"></form>
      <form id="iatformid" action="/" method="get" onsubmit="ajaxSubmit('iatformid');return false;"><input type="hidden" name="iatset" id="iatset" value="iatset"/><label for="fname">Itsii Addr:</label><input type="text" id="iataddr" name="iataddr"><br>
      <br><label for="lname">Itsii Port:</label><input type="text" id="iatport" name="iatport"><br>
      <br><label for="lname">Itsii Secret:</label><input type="text" id="iatsec" name="iatsec"><br>
+     <br><label for="lname">Devpass:</label><input type="text" id="iatdpass" name="iatdpass"><br>
      <br><input type="submit" value="Setup Itsii"></form>
      </body></html>
      ''';
