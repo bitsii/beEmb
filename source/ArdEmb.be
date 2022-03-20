@@ -177,6 +177,18 @@ class Embedded:WebServer {
                 """
                 }
               }
+              List ocl = request.outputContents;
+              if (def(ocl)) {
+                for (oc in ocl) {
+                  emit(cc) {
+                  """
+                  client.println(bevl_oc->bems_toCcString().c_str());
+                  """
+                  }
+                }
+              } else {
+               "no ocl".print();
+              }
             } else {
               //"got line".print();
               //line.print();
@@ -213,6 +225,7 @@ class Embedded:WebRequest {
   new() self {
     fields {
       String outputContent;
+      List outputContents;
     }
   }
   
