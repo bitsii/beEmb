@@ -14,7 +14,8 @@ rm -rf targets/ard/Base/target/cc
 
 #--emitFlag relocMain
 
-mono --debug ../brace/target5/BEX_E_mcs.exe -deployPath=targets/ard -buildPath=targets/ard --buildFile build/embBase.txt --emitLang cc --singleCC true --emitFlag ccSgc --emitFlag ccNoRtti --emitFlag relocMain --emitFlag holdMain --emitFlag embPlat --emitFlag noSmap --emitFlag noRfl -cchImport=../braceEmb/system/cc/be/BEAR_Imports.hpp -ccImport=../braceEmb/system/cc/be/BEAR_Imports.cpp --mainClass EmbeddedTest:TestBlink source/ArdEmb.be source/test/TestBlink.be
+export CLASSPATH=../brace/target5/*
+java -XX:-UsePerfData -XX:TieredStopAtLevel=1 -XX:+UseSerialGC be.BEL_Base -deployPath=targets/ard -buildPath=targets/ard --buildFile build/embBase.txt --emitLang cc --singleCC true --emitFlag ccSgc --emitFlag ccNoRtti --emitFlag relocMain --emitFlag holdMain --emitFlag embPlat --emitFlag noSmap --emitFlag noRfl -cchImport=../braceEmb/system/cc/be/BEAR_Imports.hpp -ccImport=../braceEmb/system/cc/be/BEAR_Imports.cpp --mainClass EmbeddedTest:TestBlink source/ArdEmb.be source/test/TestBlink.be
 
 lae=$?;if [[ $lae -ne 0 ]]; then exit $lae; fi
 

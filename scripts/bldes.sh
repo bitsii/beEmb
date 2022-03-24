@@ -14,7 +14,8 @@ rm -rf targets/es/Base/target/cc
 
 #--emitFlag relocMain
 
-mono --debug ../brace/target5/BEX_E_mcs.exe -deployPath=targets/es -buildPath=targets/es --buildFile build/embBase.txt --emitFlag embPlat --emitFlag noSmap --emitFlag noRfl --emitLang js -mainClass=Test:TestBlink source/test/TestBlinkEs.be
+export CLASSPATH=../brace/target5/*
+java -XX:-UsePerfData -XX:TieredStopAtLevel=1 -XX:+UseSerialGC be.BEL_Base -deployPath=targets/es -buildPath=targets/es --buildFile build/embBase.txt --emitFlag embPlat --emitFlag noSmap --emitFlag noRfl --emitLang js -mainClass=Test:TestBlink source/test/TestBlinkEs.be
 
 lae=$?;if [[ $lae -ne 0 ]]; then exit $lae; fi
 
