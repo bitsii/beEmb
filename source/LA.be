@@ -19,6 +19,7 @@ class Embedded:LedApp {
        auto delay = 2; //ms
        String ssidf = "/lawifissid.txt";
        String secf = "/lawifisec.txt";
+       String passf = "/ladevpass.txt";
        Int swpin = 2;
        Int tick = 0;
        Files files = Files.new();
@@ -69,6 +70,18 @@ class Embedded:LedApp {
                  }
                }
                req.open('GET', fs, true);
+               req.onreadystatechange = function(){
+                   if (req.readyState != 4) return;
+                   if (req.status != 200 && req.status != 304) {
+                       //logmsg('HTTP error ' + req.status);
+                       //location.reload();
+                       return;
+                   }
+                   if (req.responseText != null && req.responseText != '') {
+                     console.log(req.responseText);
+                     alert(req.responseText);
+                   }
+               }
                req.send();
                console.log("submitted");
                //}
@@ -78,12 +91,12 @@ class Embedded:LedApp {
           ''';
      String htmlBody = '''
      <body>
-     <form id="dpformid" action="/" method="get" onsubmit="ajaxSubmit('dpformid');return false;"><input type="hidden" name="dpform" id="dpform" value="dpform"/><label for="fname">Olddevpass:</label><input type="text" id="oldpass" name="oldpass"><br>
-     <br><label for="lname">Newdevpass:</label><input type="text" id="newpass" name="newpass"><br>
+     <form id="dpformid" action="/" method="get" onsubmit="ajaxSubmit('dpformid');return false;"><input type="hidden" name="dpform" id="dpform" value="dpform"/><label for="fname">Oldpass:</label><input type="text" id="oldpass" name="oldpass"><br>
+     <br><label for="lname">Newpass:</label><input type="text" id="newpass" name="newpass"><br>
      <br><input type="submit" value="Set Device Password"></form>
      <form id="wififormid" action="/" method="get" onsubmit="ajaxSubmit('wififormid');return false;"><input type="hidden" name="wifiform" id="wifiform" value="wifiform"/><label for="fname">SSID:</label><input type="text" id="ssid" name="ssid"><br>
      <br><label for="lname">Secret:</label><input type="text" id="sec" name="sec"><br>
-     <br><label for="lname">Devpass:</label><input type="text" id="wifidpass" name="wifidpass"><br>
+     <br><label for="lname">Device Password:</label><input type="text" id="wifidpass" name="wifidpass"><br>
      <br><input type="submit" value="Setup Wifi"></form>
      </body>
      ''';
@@ -169,12 +182,33 @@ class Embedded:LedApp {
      "in ledapp handleweb".print();
      "getting params".print();
       String wifiform = request.getParameter("wifiform");
-      "checking wifiform".print();
+      String dpform = request.getParameter("dpform");
+      "checking forms".print();
       Bool needsRestart = false;
       if (TS.notEmpty(wifiform) && wifiform == "wifiform") {
+        "got wifiform".print();
         String ssid = request.getParameter("ssid");
         String sec = request.getParameter("sec");
+        String wifidpass = request.getParameter("wifidpass");
         "checking ssid".print();
+        if (TS.isEmpty(wifidpass)) {
+          request.outputContent = "Device Password Required";
+          return(self);
+        }
+        if (files.exists(passf)) {
+         pass = files.read(passf);
+         if (TS.isEmpty(pass)) {
+           request.outputContent = "Device Password Must Be Set";
+           return(self);
+           }
+           if (wifidpass != pass) {
+             request.outputContent = "Device Password Incorrect";
+             return(self);
+           }
+         } else {
+           request.outputContent = "Device Password Must Be Set";
+           return(self);
+         }
         if (TS.notEmpty(ssid)) {
           ("got ssid " + ssid).print();
           files.write(ssidf, ssid);
@@ -185,12 +219,38 @@ class Embedded:LedApp {
             ("sec missing").print();
             files.delete(secf);
           }
+          request.outputContent = "Wifi Setup";
         } else {
-      ("ssid missing").print();
+          ("ssid missing").print();
           files.delete(ssidf);
           files.delete(secf);
+          request.outputContent = "Wifi Setup cleared";
         }
         needsRestart = true;
+      } elseIf (TS.notEmpty(dpform) && dpform == "dpform") {
+        "got dpform".print();
+        String oldpass = request.getParameter("oldpass");
+        String newpass = request.getParameter("newpass");
+        if (files.exists(passf)) {
+         String pass = files.read(passf);
+         if (TS.notEmpty(pass)) {
+           ("currpass " + pass).print();
+           if (TS.isEmpty(oldpass)) {
+             request.outputContent = "Error, password is set but oldpass was not sent";
+             return(self);
+           } elseIf (pass != oldpass) {
+             request.outputContent = "Error, oldpass is incorrect";
+             return(self);
+           }
+         }
+        }
+        if (TS.isEmpty(newpass)) {
+         files.delete(passf);
+         request.outputContent = "Password cleared";
+        } else {
+         files.write(passf, newpass);
+         request.outputContent = "Password set";
+        }
       } else {
         "sending".print();
         request.outputContents = webPageL;
