@@ -20,6 +20,7 @@ class Embedded:LedApp {
        String ssidf = "/lawifissid.txt";
        String secf = "/lawifisec.txt";
        String passf = "/ladevpass.txt";
+       String onstatef = "/laonstate.txt";
        Int swpin = 2;
        Int tick = 0;
        Files files = Files.new();
@@ -98,6 +99,9 @@ class Embedded:LedApp {
      <br><label for="lname">Secret:</label><input type="text" id="sec" name="sec"><br>
      <br><label for="lname">Device Password:</label><input type="text" id="wifidpass" name="wifidpass"><br>
      <br><input type="submit" value="Setup Wifi"></form>
+     <form id="onformid" action="/" method="get" onsubmit="ajaxSubmit('onformid');return false;"><input type="hidden" name="onform" id="onform" value="onform"/><label for="fname">ON State (ON or OFF):</label><input type="text" id="onstate" name="onstate"><br>
+     <br><label for="lname">Device Password:</label><input type="text" id="ondpass" name="ondpass"><br>
+     <br><input type="submit" value="Set On State"></form>
      </body>
      ''';
      String htmlEnd = "</html>";
@@ -109,6 +113,33 @@ class Embedded:LedApp {
      "webpage made".print();
    }
    
+   checkOnState() {
+     if (files.exists(onstatef)) {
+       String payload = files.read(onstatef);
+       if (TS.notEmpty(payload)) {
+         doOn(payload);
+       }
+     } else {
+       app.digitalWriteHigh(swpin);
+     }
+   }
+   
+   doOn(String state) {
+     if (TS.notEmpty(state)) {
+       if (state == "ON") {
+       "should turn ON".print();
+       app.digitalWriteLow(swpin);
+       files.write(onstatef, "ON");
+     } elseIf (state == "OFF") {
+       "should turn OFF".print();
+       app.digitalWriteHigh(swpin);
+       files.write(onstatef, "OFF");
+     }
+     } else {
+       files.delete(onstatef);
+     }
+   }
+   
    startLoop() {
      "in startLoop LedApp".print();
      app.pinModeOutput(swpin);
@@ -118,6 +149,7 @@ class Embedded:LedApp {
       "starting ws".print();
       webserver.start();
      }
+     checkOnState();
    }
    
   checkWifiAp() {
@@ -182,6 +214,7 @@ class Embedded:LedApp {
      "in ledapp handleweb".print();
      "getting params".print();
       String wifiform = request.getParameter("wifiform");
+      String onform = request.getParameter("onform");
       String dpform = request.getParameter("dpform");
       "checking forms".print();
       Bool needsRestart = false;
@@ -227,6 +260,29 @@ class Embedded:LedApp {
           request.outputContent = "Wifi Setup cleared";
         }
         needsRestart = true;
+      } elseIf (TS.notEmpty(onform) && onform == "onform") {
+        "got onform".print();
+        String onstate = request.getParameter("onstate");
+        String ondpass = request.getParameter("ondpass");
+        if (TS.isEmpty(ondpass)) {
+          request.outputContent = "Device Password Required";
+          return(self);
+        }
+        if (files.exists(passf)) {
+         pass = files.read(passf);
+         if (TS.isEmpty(pass)) {
+           request.outputContent = "Device Password Must Be Set";
+           return(self);
+           }
+           if (ondpass != pass) {
+             request.outputContent = "Device Password Incorrect";
+             return(self);
+           }
+         } else {
+           request.outputContent = "Device Password Must Be Set";
+           return(self);
+         }
+         doOn(onstate);
       } elseIf (TS.notEmpty(dpform) && dpform == "dpform") {
         "got dpform".print();
         String oldpass = request.getParameter("oldpass");
