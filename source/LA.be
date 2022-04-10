@@ -22,6 +22,8 @@ class Embedded:LedApp {
        String secf = "/lawifisec.txt";
        String passf = "/ladevpass.txt";
        String onstatef = "/laonstate.txt";
+       String ylidf = "/laylid.txt";
+       String ylsecf = "/laylsec.txt";
        Int swpin = 2;
        String udpRes;
        Int tick = 0;
@@ -93,26 +95,36 @@ class Embedded:LedApp {
             }
             </script>
           </head>
+          <body>
           ''';
-     String htmlBody = '''
-     <body>
-     <form id="dpformid" action="/" method="get" onsubmit="ajaxSubmit('dpformid');return false;"><input type="hidden" name="dpform" id="dpform" value="dpform"/><label for="fname">Oldpass:</label><input type="text" id="oldpass" name="oldpass"><br>
-     <br><label for="lname">Newpass:</label><input type="text" id="newpass" name="newpass"><br>
+     String htmlC1 = '''
+     <form id="dpformid" action="/" method="get" onsubmit="ajaxSubmit('dpformid');return false;"><input type="hidden" name="dpform" id="dpform" value="dpform"/>
+     <br><label for="oldpass">Oldpass:</label><input type="text" id="oldpass" name="oldpass"><br>
+     <br><label for="newpass">Newpass:</label><input type="text" id="newpass" name="newpass"><br>
      <br><input type="submit" value="Set Device Password"></form>
-     <form id="wififormid" action="/" method="get" onsubmit="ajaxSubmit('wififormid');return false;"><input type="hidden" name="wifiform" id="wifiform" value="wifiform"/><label for="fname">SSID:</label><input type="text" id="ssid" name="ssid"><br>
-     <br><label for="lname">Secret:</label><input type="text" id="sec" name="sec"><br>
-     <br><label for="lname">Device Password:</label><input type="text" id="wifidpass" name="wifidpass"><br>
+     <form id="wififormid" action="/" method="get" onsubmit="ajaxSubmit('wififormid');return false;"><input type="hidden" name="wifiform" id="wifiform" value="wifiform"/>
+     <br><label for="ssid">SSID:</label><input type="text" id="ssid" name="ssid"><br>
+     <br><label for="sec">Secret:</label><input type="text" id="sec" name="sec"><br>
+     <br><label for="wifidpass">Device Password:</label><input type="text" id="wifidpass" name="wifidpass"><br>
      <br><input type="submit" value="Setup Wifi"></form>
-     <form id="onformid" action="/" method="get" onsubmit="ajaxSubmit('onformid');return false;"><input type="hidden" name="onform" id="onform" value="onform"/><label for="fname">ON State (ON or OFF):</label><input type="text" id="onstate" name="onstate"><br>
-     <br><label for="lname">Device Password:</label><input type="text" id="ondpass" name="ondpass"><br>
+     <form id="onformid" action="/" method="get" onsubmit="ajaxSubmit('onformid');return false;"><input type="hidden" name="onform" id="onform" value="onform"/>
+     <br><label for="onstate">ON State (ON or OFF):</label><input type="text" id="onstate" name="onstate"><br>
+     <br><label for="ondpass">Device Password:</label><input type="text" id="ondpass" name="ondpass"><br>
      <br><input type="submit" value="Set On State"></form>
-     </body>
      ''';
-     String htmlEnd = "</html>";
+     String htmlC2 = '''
+     <form id="ylantformid" action="/" method="get" onsubmit="ajaxSubmit('ylantformid');return false;"><input type="hidden" name="ylantform" id="ylantform" value="ylantform"/>
+     <br><label for="ylid">YLant Id:</label><input type="text" id="ylid" name="ylid"><br>
+     <br><label for="ylsec">YLant Secret:</label><input type="text" id="ylsec" name="ylsec"><br>
+     <br><label for="ylantdpass">Device Password:</label><input type="text" id="ylantdpass" name="ylantdpass"><br>
+     <br><input type="submit" value="Set YLant Config"></form>
+     ''';
+     String htmlEnd = "</body></html>";
      webPageL = List.new();
      webPageL += htmlStart;
      webPageL += webPageHead;
-     webPageL += htmlBody;
+     webPageL += htmlC1;
+     webPageL += htmlC2;
      webPageL += htmlEnd;
      "webpage made".print();
    }
@@ -209,8 +221,8 @@ class Embedded:LedApp {
      if (tick > 10000) {
       tick = 0;
       "reset tick".print();
+      maybeCheckWifiUp();
       }
-     //maybeCheckWifiUp();
      webserver.checkHandleWeb();
      auto ures = udpserver.checkGetRequest();
      if (def(ures)) {
@@ -229,6 +241,7 @@ class Embedded:LedApp {
       String wifiform = request.getParameter("wifiform");
       String onform = request.getParameter("onform");
       String dpform = request.getParameter("dpform");
+      String ylantform = request.getParameter("ylantform");
       "checking forms".print();
       Bool needsRestart = false;
       if (TS.notEmpty(wifiform) && wifiform == "wifiform") {
@@ -320,6 +333,49 @@ class Embedded:LedApp {
          files.write(passf, newpass);
          request.outputContent = "Password set";
         }
+      } elseIf (TS.notEmpty(ylantform) && ylantform == "ylantform") {
+        "got ylantform".print();
+        String ylid = request.getParameter("ylid");
+        String ylsec = request.getParameter("ylsec");
+        String ylantdpass = request.getParameter("ylantdpass");
+        if (TS.isEmpty(ylantdpass)) {
+          request.outputContent = "Device Password Required";
+          return(self);
+        }
+        if (files.exists(passf)) {
+         pass = files.read(passf);
+         if (TS.isEmpty(pass)) {
+           request.outputContent = "Device Password Must Be Set";
+           return(self);
+           }
+           if (ylantdpass != pass) {
+             request.outputContent = "Device Password Incorrect";
+             return(self);
+           }
+         } else {
+           request.outputContent = "Device Password Must Be Set";
+           return(self);
+         }
+         String ylres = "YLant ";
+        if (TS.notEmpty(ylid)) {
+          ("got ylid " + ylid).print();
+          files.write(ylidf, ylid);
+          ylres += "Id Set ";
+        } else {
+          ("ylid missing").print();
+          files.delete(ylidf);
+          ylres += "Id cleared ";
+        }
+        if (TS.notEmpty(ylsec)) {
+          ("got ylsec " + ylsec).print();
+          files.write(ylsecf, ylsec);
+          ylres += "Secret Set ";
+        } else {
+          ("ylsec missing").print();
+          files.delete(ylsecf);
+          ylres += "Secret cleared ";
+        }
+        request.outputContent = ylres;
       } else {
         "sending".print();
         request.outputContents = webPageL;
