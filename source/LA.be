@@ -16,12 +16,14 @@ class Embedded:LedApp {
      fields {
        auto app = Embedded:App.new();
        auto webserver = Embedded:WebServer.new(app);
+       auto udpserver = Embedded:Udp.new();
        auto delay = 2; //ms
        String ssidf = "/lawifissid.txt";
        String secf = "/lawifisec.txt";
        String passf = "/ladevpass.txt";
        String onstatef = "/laonstate.txt";
        Int swpin = 2;
+       String udpRes;
        Int tick = 0;
        Files files = Files.new();
        auto upcheckFrequency = 1800; //15 mins at 500ms
@@ -32,6 +34,8 @@ class Embedded:LedApp {
      app.plugin = self;
      "opening files".print();
      files.open();
+     
+     udpRes = '''WELL HELLO THERE''';
      
      "making webPage".print();
      String htmlStart = "<html>";
@@ -148,6 +152,7 @@ class Embedded:LedApp {
       ("Local ip " + Wifi.localIP).print();
       "starting ws".print();
       webserver.start();
+      udpserver.start();
      }
      checkOnState();
    }
@@ -207,6 +212,14 @@ class Embedded:LedApp {
       }
      //maybeCheckWifiUp();
      webserver.checkHandleWeb();
+     auto ures = udpserver.checkGetRequest();
+     if (def(ures)) {
+       "got udp res req".print();
+       ures.remoteAddress.print();
+       ures.remotePort.toString().print();
+       ures.inputContent.print();
+       ures.write(udpRes);
+     }
      app.delay(delay);
    }
    
