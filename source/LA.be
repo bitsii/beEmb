@@ -25,7 +25,7 @@ class Embedded:LedApp {
        String ylidf = "/laylid.txt";
        String ylsecf = "/laylsec.txt";
        Int swpin = 2;
-       String udpRes;
+       //String udpRes;
        Int tick = 0;
        Files files = Files.new();
        auto upcheckFrequency = 1800; //15 mins at 500ms
@@ -37,7 +37,7 @@ class Embedded:LedApp {
      "opening files".print();
      files.open();
      
-     udpRes = '''WELL HELLO THERE''';
+     //udpRes = '''WELL HELLO THERE''';
      
      "making webPage".print();
      String htmlStart = "<html>";
@@ -227,12 +227,43 @@ class Embedded:LedApp {
      auto ures = udpserver.checkGetRequest();
      if (def(ures)) {
        "got udp res req".print();
-       ures.remoteAddress.print();
-       ures.remotePort.toString().print();
-       ures.inputContent.print();
-       ures.write(udpRes);
+       handleUdp(ures);
      }
      app.delay(delay);
+   }
+   
+   handleUdp(ures) {
+     String res;
+     ures.remoteAddress.print();
+     ures.remotePort.toString().print();
+     String ureq = ures.inputContent;
+     ureq.print();
+     any rl = ureq.split(":");
+     String yid = rl[0];
+     String state = rl[1];
+     String ylid = files.read(ylidf);
+     if (TS.isEmpty(ylid)) {
+       res = "ERROR YLID NOTSET";
+     } elseIf(TS.isEmpty(yid)) {
+       res = "ERROR YID MISSING";
+     } elseIf(yid != ylid) {
+       res = "ERROR NOT MY YLID";
+       "my ylid".print()
+       ylid.print();
+       "got yid".print();
+       yid.print();
+     } elseIf (TS.isEmpty(state)) {
+       res = "ERROR STATE EMPTY";
+     } else {
+       "will doOn".print();
+       state.print();
+       doOn(state);
+       res = "OK STATE NOW " + state;
+     }
+     if (TS.notEmpty(res)) {
+      ures.write(res);
+     }
+     //ures.write(udpRes);
    }
    
     handleWeb(request) {
