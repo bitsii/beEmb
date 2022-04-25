@@ -270,7 +270,7 @@ class Embedded:LedApp {
      } elseIf(TS.isEmpty(yid)) {
        res = "ERROR YID MISSING";
      } elseIf(yid != ylid) {
-       res = "ERROR NOT MY YLID";
+       res = "PASS NOT MY YLID";
        "my ylid".print()
        ylid.print();
        "got yid".print();
