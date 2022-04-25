@@ -28,9 +28,13 @@ class Embedded:LedApp {
        //String udpRes;
        Int tick = 0;
        Files files = Files.new();
-       auto upcheckFrequency = 1800; //15 mins at 500ms
-       //auto upcheckFrequency = 600;
+       auto upcheckFrequency = 1200; //20 mins
        auto upcheckCount = 0;
+       auto rpsClearFrequency = 20; //20 secs
+       auto rpsClearCount = 0;
+       Set rpsCheck = Set.new();
+       auto lastSse = 0;
+       auto lastSseSlush = 10;
        List webPageL;
      }
      app.plugin = self;
@@ -208,7 +212,7 @@ class Embedded:LedApp {
      //"may checking wifi up".print();
      upcheckCount++=;
      if (upcheckCount > upcheckFrequency) {
-       //"checking wifi up".print();
+       "checking wifi up".print();
        upcheckCount = 0;
        unless (Wifi.isConnected) {
          app.restart();
@@ -216,13 +220,28 @@ class Embedded:LedApp {
      }
    }
    
+   maybeClearRps() {
+     //"may checking clearrps".print();
+     rpsClearCount++=;
+     if (rpsClearCount > rpsClearFrequency) {
+       //"clear rps".print();
+       rpsClearCount = 0;
+       rpsCheck = Set.new();
+     }
+   }
+   
    handleLoop() {
      tick++=;
-     if (tick > 10000) {
+     if (tick > 30000) {
+      //it's been a minute
       tick = 0;
       "reset tick".print();
+     }
+     if (tick % 500 == 0) {
+      //it's been a second
       maybeCheckWifiUp();
-      }
+      maybeClearRps();
+     }
      webserver.checkHandleWeb();
      auto ures = udpserver.checkGetRequest();
      if (def(ures)) {
@@ -240,7 +259,11 @@ class Embedded:LedApp {
      ureq.print();
      any rl = ureq.split(":");
      String yid = rl[0];
-     String state = rl[1];
+     String pld = rl[1];
+     any rlp = pld.split(";");
+     String sses = rlp[0];
+     String rps = rlp[1];
+     String state = rlp[2];
      String ylid = files.read(ylidf);
      if (TS.isEmpty(ylid)) {
        res = "ERROR YLID NOTSET";
@@ -252,15 +275,34 @@ class Embedded:LedApp {
        ylid.print();
        "got yid".print();
        yid.print();
+     } elseIf (TS.isEmpty(sses)) {
+       res = "ERROR SSES EMPTY";
+     } elseIf (TS.isEmpty(rps)) {
+       res = "ERROR rps EMPTY";
      } elseIf (TS.isEmpty(state)) {
        res = "ERROR STATE EMPTY";
      } else {
-       "will doOn".print();
-       state.print();
-       doOn(state);
-       res = "OK STATE NOW " + state;
+       "sses is ".print();
+       sses.print();
+       "rps is ".print();
+       rps.print();
+       Int sse = Int.new(sses);
+       if (rpsCheck.has(rps)) {
+         res = "ERROR RERPS";
+       } elseIf (lastSse != 0 && lastSse > sse) {
+         res = "ERROR LASTSSE";
+       } else {
+         lastSse = sse - lastSseSlush;
+         rpsCheck.put(rps);
+         "will doOn".print();
+         state.print();
+         doOn(state);
+         res = "OK STATE NOW " + state;
+       }
      }
      if (TS.notEmpty(res)) {
+      "returning res".print();
+      res.print();
       ures.write(res);
      }
      //ures.write(udpRes);
