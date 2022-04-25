@@ -133,31 +133,44 @@ class Embedded:LedApp {
      "webpage made".print();
    }
    
-   checkOnState() {
+   checkState() {
      if (files.exists(onstatef)) {
        String payload = files.read(onstatef);
        if (TS.notEmpty(payload)) {
-         doOn(payload);
+         doState(payload);
        }
      } else {
        app.digitalWriteHigh(swpin);
      }
    }
    
-   doOn(String state) {
+   doState(String state) String {
      if (TS.notEmpty(state)) {
        if (state == "ON") {
        "should turn ON".print();
        app.digitalWriteLow(swpin);
        files.write(onstatef, "ON");
-     } elseIf (state == "OFF") {
-       "should turn OFF".print();
-       app.digitalWriteHigh(swpin);
-       files.write(onstatef, "OFF");
-     }
+       } elseIf (state == "OFF") {
+         "should turn OFF".print();
+         app.digitalWriteHigh(swpin);
+         files.write(onstatef, "OFF");
+       } elseIf (state == "CHECK") {
+         if (files.exists(onstatef)) {
+           state = files.read(onstatef);
+           if (TS.isEmpty(state)) {
+             state = "BAD";
+           }
+         } else {
+           state = "UNKNOWN";
+         }
+       } else {
+         state = "INVALID";
+       }
      } else {
        files.delete(onstatef);
+       state = "UNSET";
      }
+     return(state);
    }
    
    startLoop() {
@@ -170,7 +183,7 @@ class Embedded:LedApp {
       webserver.start();
       udpserver.start();
      }
-     checkOnState();
+     checkState();
    }
    
   checkWifiAp() {
@@ -294,9 +307,9 @@ class Embedded:LedApp {
        } else {
          lastSse = sse - lastSseSlush;
          rpsCheck.put(rps);
-         "will doOn".print();
+         "will doState".print();
          state.print();
-         doOn(state);
+         state = doState(state);
          res = "OK STATE NOW " + state;
        }
      }
@@ -381,7 +394,7 @@ class Embedded:LedApp {
            request.outputContent = "Device Password Must Be Set";
            return(self);
          }
-         doOn(onstate);
+         doState(onstate);
       } elseIf (TS.notEmpty(dpform) && dpform == "dpform") {
         "got dpform".print();
         String oldpass = request.getParameter("oldpass");
