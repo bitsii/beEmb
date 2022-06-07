@@ -193,7 +193,7 @@ class Embedded:LedApp {
       startWifi();
       unless (Wifi.up) {
         "starting ap".print();
-        Wifi.new("EspAp", "goodstuff").startAp();
+        Wifi.new("EspAp2", "goodstuf").startAp();
       }
      }
    }
