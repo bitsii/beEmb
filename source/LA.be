@@ -16,14 +16,11 @@ class Embedded:LedApp {
      fields {
        auto app = Embedded:App.new();
        auto webserver = Embedded:WebServer.new(app);
-       auto udpserver = Embedded:Udp.new();
        auto delay = 2; //ms
        String ssidf = "/lawifissid.txt";
        String secf = "/lawifisec.txt";
        String passf = "/ladevpass.txt";
        String onstatef = "/laonstate.txt";
-       String ylidf = "/laylid.txt";
-       String ylsecf = "/laylsec.txt";
        Int swpin = 2;
        //String udpRes;
        Int tick = 0;
@@ -40,8 +37,6 @@ class Embedded:LedApp {
      app.plugin = self;
      "opening files".print();
      files.open();
-     
-     //udpRes = '''WELL HELLO THERE''';
      
      "making webPage".print();
      String htmlStart = "<html>";
@@ -116,19 +111,11 @@ class Embedded:LedApp {
      <br><label for="ondpass">Device Password:</label><input type="text" id="ondpass" name="ondpass"><br>
      <br><input type="submit" value="Set On State"></form>
      ''';
-     String htmlC2 = '''
-     <form id="ylantformid" action="/" method="get" onsubmit="ajaxSubmit('ylantformid');return false;"><input type="hidden" name="ylantform" id="ylantform" value="ylantform"/>
-     <br><label for="ylid">YLant Id:</label><input type="text" id="ylid" name="ylid"><br>
-     <br><label for="ylsec">YLant Secret:</label><input type="text" id="ylsec" name="ylsec"><br>
-     <br><label for="ylantdpass">Device Password:</label><input type="text" id="ylantdpass" name="ylantdpass"><br>
-     <br><input type="submit" value="Set YLant Config"></form>
-     ''';
      String htmlEnd = "</body></html>";
      webPageL = List.new();
      webPageL += htmlStart;
      webPageL += webPageHead;
      webPageL += htmlC1;
-     webPageL += htmlC2;
      webPageL += htmlEnd;
      "webpage made".print();
    }
@@ -181,7 +168,6 @@ class Embedded:LedApp {
       ("Local ip " + Wifi.localIP).print();
       "starting ws".print();
       webserver.start();
-      udpserver.start();
      }
      checkState();
    }
@@ -256,69 +242,7 @@ class Embedded:LedApp {
       maybeClearRps();
      }
      webserver.checkHandleWeb();
-     auto ures = udpserver.checkGetRequest();
-     if (def(ures)) {
-       "got udp res req".print();
-       handleUdp(ures);
-     }
      app.delay(delay);
-   }
-   
-   handleUdp(ures) {
-     String res;
-     ures.remoteAddress.print();
-     ures.remotePort.toString().print();
-     String ureq = ures.inputContent;
-     ureq.print();
-     any rl = ureq.split(":");
-     String yid = rl[0];
-     String pld = rl[1];
-     any rlp = pld.split(";");
-     String sses = rlp[0];
-     String rps = rlp[1];
-     String state = rlp[2];
-     String ylid = files.read(ylidf);
-     if (TS.isEmpty(ylid)) {
-       res = "ERROR YLID NOTSET";
-     } elseIf(TS.isEmpty(yid)) {
-       res = "ERROR YID MISSING";
-     } elseIf(yid != ylid) {
-       res = "PASS NOT MY YLID";
-       "my ylid".print()
-       ylid.print();
-       "got yid".print();
-       yid.print();
-     } elseIf (TS.isEmpty(sses)) {
-       res = "ERROR SSES EMPTY";
-     } elseIf (TS.isEmpty(rps)) {
-       res = "ERROR rps EMPTY";
-     } elseIf (TS.isEmpty(state)) {
-       res = "ERROR STATE EMPTY";
-     } else {
-       "sses is ".print();
-       sses.print();
-       "rps is ".print();
-       rps.print();
-       Int sse = Int.new(sses);
-       if (rpsCheck.has(rps)) {
-         res = "ERROR RERPS";
-       } elseIf (lastSse != 0 && lastSse > sse) {
-         res = "ERROR LASTSSE";
-       } else {
-         lastSse = sse - lastSseSlush;
-         rpsCheck.put(rps);
-         "will doState".print();
-         state.print();
-         state = doState(state);
-         res = "OK STATE NOW " + state;
-       }
-     }
-     if (TS.notEmpty(res)) {
-      "returning res".print();
-      res.print();
-      ures.write(res);
-     }
-     //ures.write(udpRes);
    }
    
     handleWeb(request) {
@@ -442,26 +366,6 @@ class Embedded:LedApp {
            request.outputContent = "Device Password Must Be Set";
            return(self);
          }
-         String ylres = "YLant ";
-        if (TS.notEmpty(ylid)) {
-          ("got ylid " + ylid).print();
-          files.write(ylidf, ylid);
-          ylres += "Id Set ";
-        } else {
-          ("ylid missing").print();
-          files.delete(ylidf);
-          ylres += "Id cleared ";
-        }
-        if (TS.notEmpty(ylsec)) {
-          ("got ylsec " + ylsec).print();
-          files.write(ylsecf, ylsec);
-          ylres += "Secret Set ";
-        } else {
-          ("ylsec missing").print();
-          files.delete(ylsecf);
-          ylres += "Secret cleared ";
-        }
-        request.outputContent = ylres;
       } else {
         "sending".print();
         request.outputContents = webPageL;

@@ -6,96 +6,26 @@ use Text:Strings as TS;
 use System:Exception;
 use Encode:Url as EU;
 
-class Embedded:TCPServer {
-
-   emit(cc_classHead) {
-   """
-   WiFiServer* server;
-   """
-   }
+class Embedded:SerServer {
   
-  new(Int _port) self {
+  new() self {
     fields {
-      Int port = _port; //light 55443
+      Int baud = 115200;
     }
   }
   
   start() {
     emit(cc) {
     """
-    server = new WiFiServer(bevp_port->bevi_int);
-    server->begin();
+    Serial.begin(bevp_baud->bevi_int);
     """
     }
-  }
-  
-  checkGetClient() Embedded:TCPClient {
-    Embedded:TCPClient res;
-    emit(cc) {
-    """
-    WiFiClient client = server->available();
-    if (client) {
-    """
-    }
-    res = Embedded:TCPClient.new();
-    res.opened = true;
-    emit(cc) {
-    """
-    bevl_res->client = client;
-    }
-    """
-    }
-    return(res);
-  }
-  
-}
-
-class Embedded:TCPClient {
-
-emit(cc_classHead) {
-"""
-
-WiFiClient client;
-
-"""
-}
-
-  new() self {
-    fields {
-      String host;
-      Int port;
-      Bool opened;
-    }
-  }
-  
-  new(String _host, Int _port) {
-    host = _host;
-    port = _port;
-    opened = false;
-  }
-  
-  open() self {
-    emit(cc) {
-    """
-    client.connect(bevp_host->bems_toCcString().c_str(), bevp_port->bevi_int);
-    if (client.connected()) {
-    """
-    }
-    opened = true;
-    emit(cc) {
-    """
-    } else {
-      //Serial.println("connection failed");
-    }
-    """
-    }
-    return(self);
   }
   
   write(String line) self {
     emit(cc) {
     """
-    client.write(beva_line->bems_toCcString().c_str());
+    Serial.write(beva_line->bems_toCcString().c_str());
     """
     }
   }
@@ -110,7 +40,6 @@ WiFiClient client;
     unsigned long currentTime = millis();
     unsigned long previousTime = 0; 
     long timeoutTime = 2000;
-    if (client) {
     """
     }
     String payload = String.new();
@@ -123,11 +52,10 @@ WiFiClient client;
     """                          
       currentTime = millis();
       previousTime = currentTime;
-      while (client.connected() && currentTime - previousTime <= timeoutTime) {
+      while (currentTime - previousTime <= timeoutTime) {
         currentTime = millis();         
-        if (client.available()) {      
-          char c = client.read(); 
-          //Serial.write(c);  
+        if (Serial.available()) {      
+          char c = Serial.read(); 
           bevl_chari->bevi_int = c;
           """
           }
@@ -145,35 +73,19 @@ emit(cc) {
 """        
         }
       }
-    }
     """
     }
     if (TS.notEmpty(payload)) {
-    "got request, payload".print();
+    "got serial, payload".print();
     payload.print();
     }
     return(payload);
   }
   
-  connectedGet() Bool {
-    emit(cc) {
-    """
-    if (client && client.connected()) {
-     """
-     }
-     return(true);
-     emit(cc) {
-     """
-     }
-     """
-     }
-     return(false);
-  }  
-  
   availableGet() Bool {
     emit(cc) {
     """
-    if (client && client.connected() && client.available()) {
+    if (Serial.available()) {
      """
      }
      return(true);
@@ -185,15 +97,4 @@ emit(cc) {
      return(false);
   }  
   
-  close() {
-    emit(cc) {
-    """
-    if (client) {  
-      client.stop();
-    }
-    """
-    }
-    opened = false;
-  }
-
 }
