@@ -16,11 +16,12 @@ class Embedded:LedApp {
      fields {
        auto app = Embedded:App.new();
        auto webserver = Embedded:WebServer.new(app);
+       auto serserver = Embedded:SerServer.new();
        auto delay = 2; //ms
        String ssidf = "/lawifissid.txt";
        String secf = "/lawifisec.txt";
        String passf = "/ladevpass.txt";
-       String onstatef = "/laonstate.txt";
+       String statef = "/lastate.txt";
        Int swpin = 2;
        //String udpRes;
        Int tick = 0;
@@ -33,6 +34,7 @@ class Embedded:LedApp {
        auto lastSse = 0;
        auto lastSseSlush = 10;
        List webPageL;
+       Bool needsRestart = false;
      }
      app.plugin = self;
      "opening files".print();
@@ -97,19 +99,9 @@ class Embedded:LedApp {
           <body>
           ''';
      String htmlC1 = '''
-     <form id="dpformid" action="/" method="get" onsubmit="ajaxSubmit('dpformid');return false;"><input type="hidden" name="dpform" id="dpform" value="dpform"/>
-     <br><label for="oldpass">Oldpass:</label><input type="text" id="oldpass" name="oldpass"><br>
-     <br><label for="newpass">Newpass:</label><input type="text" id="newpass" name="newpass"><br>
-     <br><input type="submit" value="Set Device Password"></form>
-     <form id="wififormid" action="/" method="get" onsubmit="ajaxSubmit('wififormid');return false;"><input type="hidden" name="wifiform" id="wifiform" value="wifiform"/>
-     <br><label for="ssid">SSID:</label><input type="text" id="ssid" name="ssid"><br>
-     <br><label for="sec">Secret:</label><input type="text" id="sec" name="sec"><br>
-     <br><label for="wifidpass">Device Password:</label><input type="text" id="wifidpass" name="wifidpass"><br>
-     <br><input type="submit" value="Setup Wifi"></form>
-     <form id="onformid" action="/" method="get" onsubmit="ajaxSubmit('onformid');return false;"><input type="hidden" name="onform" id="onform" value="onform"/>
-     <br><label for="onstate">ON State (ON or OFF):</label><input type="text" id="onstate" name="onstate"><br>
-     <br><label for="ondpass">Device Password:</label><input type="text" id="ondpass" name="ondpass"><br>
-     <br><input type="submit" value="Set On State"></form>
+     <form id="cmdformid" action="/" method="get" onsubmit="ajaxSubmit('cmdformid');return false;"><input type="hidden" name="cmdform" id="cmdform" value="cmdform"/>
+     <br><label for="cmd">Your Command:</label><input type="text" id="cmd" name="cmd" size="64" maxLength="128"><br>
+     <br><input type="submit" value="Send Command"></form>
      ''';
      String htmlEnd = "</body></html>";
      webPageL = List.new();
@@ -121,8 +113,8 @@ class Embedded:LedApp {
    }
    
    checkState() {
-     if (files.exists(onstatef)) {
-       String payload = files.read(onstatef);
+     if (files.exists(statef)) {
+       String payload = files.read(statef);
        if (TS.notEmpty(payload)) {
          doState(payload);
        }
@@ -133,29 +125,29 @@ class Embedded:LedApp {
    
    doState(String state) String {
      if (TS.notEmpty(state)) {
-       if (state == "ON") {
-       "should turn ON".print();
+       if (state == "on") {
+       "should turn on".print();
        app.digitalWriteLow(swpin);
-       files.write(onstatef, "ON");
-       } elseIf (state == "OFF") {
+       files.write(statef, "on");
+       } elseIf (state == "off") {
          "should turn OFF".print();
          app.digitalWriteHigh(swpin);
-         files.write(onstatef, "OFF");
-       } elseIf (state == "CHECK") {
-         if (files.exists(onstatef)) {
-           state = files.read(onstatef);
+         files.write(statef, "off");
+       } elseIf (state == "check") {
+         if (files.exists(statef)) {
+           state = files.read(statef);
            if (TS.isEmpty(state)) {
-             state = "BAD";
+             state = "bad";
            }
          } else {
-           state = "UNKNOWN";
+           state = "unknown";
          }
        } else {
-         state = "INVALID";
+         state = "invalid";
        }
      } else {
-       files.delete(onstatef);
-       state = "UNSET";
+       files.delete(statef);
+       state = "unset";
      }
      return(state);
    }
@@ -163,6 +155,7 @@ class Embedded:LedApp {
    startLoop() {
      "in startLoop LedApp".print();
      app.pinModeOutput(swpin);
+     serserver.start();
      checkWifiAp();
      if (def(Wifi.localIP)) {
       ("Local ip " + Wifi.localIP).print();
@@ -214,7 +207,7 @@ class Embedded:LedApp {
        "checking wifi up".print();
        upcheckCount = 0;
        unless (Wifi.isConnected) {
-         app.restart();
+         needsRestart = true;
        }
      }
    }
@@ -241,43 +234,96 @@ class Embedded:LedApp {
       maybeCheckWifiUp();
       maybeClearRps();
      }
+     auto serpay = serserver.checkGetPayload("\n");
+     if (TS.notEmpty(serpay)) {
+       try {
+          String cmdres = doCmd("serial", serpay);
+          if (TS.isEmpty(cmdres)) {
+            "cmdres empty".print();
+          } else {
+            ("cmdres " + cmdres).print();
+          }
+        } catch (any dce) {
+          "error handling command".print();
+          dce.print();
+        }
+     }
      webserver.checkHandleWeb();
+     if (needsRestart) {
+       needsRestart = false;
+       "restarting because needsRestart".print();
+        Wifi.stop();
+        Wifi.clearAll();
+        app.restart();
+     }
      app.delay(delay);
    }
    
-    handleWeb(request) {
-     "in ledapp handleweb".print();
-     "getting params".print();
-      String wifiform = request.getParameter("wifiform");
-      String onform = request.getParameter("onform");
-      String dpform = request.getParameter("dpform");
-      String ylantform = request.getParameter("ylantform");
-      "checking forms".print();
-      Bool needsRestart = false;
-      if (TS.notEmpty(wifiform) && wifiform == "wifiform") {
-        "got wifiform".print();
-        String ssid = request.getParameter("ssid");
-        String sec = request.getParameter("sec");
-        String wifidpass = request.getParameter("wifidpass");
-        "checking ssid".print();
-        if (TS.isEmpty(wifidpass)) {
-          request.outputContent = "Device Password Required";
-          return(self);
-        }
-        if (files.exists(passf)) {
+   doCmd(String channel, String cmdline) String {
+     if (TS.isEmpty(cmdline)) {
+       "cmdline empty".print();
+       return("cmdline empty");
+     }
+     //check max length and num of spaces
+     cmdline = cmdline.swap("\n", "");
+     ("cmdline is " + cmdline).print();
+     auto cmdl = cmdline.split(" ");
+     Map cmds = Map.new();
+     for (String cmdp in cmdl) {
+       if (cmdp.has("=")) {
+         auto p = cmdp.split("=");
+         cmds.put(p[0], p[1]);
+       } else {
+         cmds.put(cmdp, null);
+       }
+     } 
+     return(doCmds(channel, cmds));
+   }
+   
+   doCmds(String channel, Map cmds) String {
+     if (TS.isEmpty(channel)) {
+       "channel empty".print();
+       return("channel empty");
+     }
+     if (cmds.has("hexed")) {
+       Map ncmds = Map.new();
+       for (auto kv in cmds) {
+         if (def(kv.value)) {
+           ncmds.put(kv.key, Hex.decode(kv.value));
+         } else {
+           ncmds.put(kv.key, null);
+         }
+       }
+       cmds = ncmds;
+     }
+     if (cmds.has("cmd")) {
+       String cmd = cmds["cmd"];
+     } else {
+       "no cmd".print();
+       return("no cmd specified");
+     }
+     ("cmd is " + cmd).print();
+     unless (cmd == "setpass") {
+       if (files.exists(passf)) {
+         String inpass = cmds["pass"];
+         if (TS.isEmpty(inpass)) {
+           return("Device password must be provided");
+         }
          pass = files.read(passf);
          if (TS.isEmpty(pass)) {
-           request.outputContent = "Device Password Must Be Set";
-           return(self);
-           }
-           if (wifidpass != pass) {
-             request.outputContent = "Device Password Incorrect";
-             return(self);
-           }
-         } else {
-           request.outputContent = "Device Password Must Be Set";
-           return(self);
+          return("Device Password Must Be Set");
          }
+         if (inpass != pass) {
+           return("Device Password Incorrect");
+         }
+       } else {
+         return("Device Password Must Be Set");
+       } 
+     }
+     if (cmd == "setwifi") {
+       "got setwifi".print();
+        String ssid = cmds["ssid"];
+        String sec = cmds["sec"];
         if (TS.notEmpty(ssid)) {
           ("got ssid " + ssid).print();
           files.write(ssidf, ssid);
@@ -288,95 +334,87 @@ class Embedded:LedApp {
             ("sec missing").print();
             files.delete(secf);
           }
-          request.outputContent = "Wifi Setup";
+          needsRestart = true;
+          return("Wifi Setup Complete");
         } else {
           ("ssid missing").print();
           files.delete(ssidf);
           files.delete(secf);
-          request.outputContent = "Wifi Setup cleared";
+          needsRestart = true;
+          return("Wifi Setup cleared");
         }
-        needsRestart = true;
-      } elseIf (TS.notEmpty(onform) && onform == "onform") {
-        "got onform".print();
-        String onstate = request.getParameter("onstate");
-        String ondpass = request.getParameter("ondpass");
-        if (TS.isEmpty(ondpass)) {
-          request.outputContent = "Device Password Required";
-          return(self);
-        }
-        if (files.exists(passf)) {
-         pass = files.read(passf);
-         if (TS.isEmpty(pass)) {
-           request.outputContent = "Device Password Must Be Set";
-           return(self);
+     } elseIf (cmd == "state") {
+       "got setstate".print();
+        String state = cmds["state"];
+        String stateres = doState(state);
+        return("State now " + stateres);
+     } elseIf (cmd == "restart") {
+       "got restart".print();
+       needsRestart = true;
+     } elseIf (cmd == "setpass") {
+       "got setpass".print();
+        String oldpass = cmds["oldpass"];
+        String newpass = cmds["newpass"];
+        unless (channel == "serial") {
+          if (files.exists(passf)) {
+           String pass = files.read(passf);
+           if (TS.notEmpty(pass)) {
+             ("currpass " + pass).print();
+             if (TS.isEmpty(oldpass)) {
+               return("Error, password is set but oldpass was not sent");
+             } elseIf (pass != oldpass) {
+               return("Error, oldpass is incorrect");
+             }
            }
-           if (ondpass != pass) {
-             request.outputContent = "Device Password Incorrect";
-             return(self);
-           }
-         } else {
-           request.outputContent = "Device Password Must Be Set";
-           return(self);
-         }
-         doState(onstate);
-      } elseIf (TS.notEmpty(dpform) && dpform == "dpform") {
-        "got dpform".print();
-        String oldpass = request.getParameter("oldpass");
-        String newpass = request.getParameter("newpass");
-        if (files.exists(passf)) {
-         String pass = files.read(passf);
-         if (TS.notEmpty(pass)) {
-           ("currpass " + pass).print();
-           if (TS.isEmpty(oldpass)) {
-             request.outputContent = "Error, password is set but oldpass was not sent";
-             return(self);
-           } elseIf (pass != oldpass) {
-             request.outputContent = "Error, oldpass is incorrect";
-             return(self);
-           }
-         }
+          }
         }
         if (TS.isEmpty(newpass)) {
-         files.delete(passf);
-         request.outputContent = "Password cleared";
+         return("Password cleared");
         } else {
          files.write(passf, newpass);
-         request.outputContent = "Password set";
+         return("Password set");
         }
-      } elseIf (TS.notEmpty(ylantform) && ylantform == "ylantform") {
-        "got ylantform".print();
-        String ylid = request.getParameter("ylid");
-        String ylsec = request.getParameter("ylsec");
-        String ylantdpass = request.getParameter("ylantdpass");
-        if (TS.isEmpty(ylantdpass)) {
-          request.outputContent = "Device Password Required";
+     } else {
+       return("unrecognized command");
+     }
+      return("Something's fishy");
+   }
+   
+    handleWeb(request) {
+     "in ledapp handleweb".print();
+     "getting params".print();
+      String cmdform = request.getParameter("cmdform");
+      "checking forms".print();
+      if (TS.notEmpty(cmdform) && cmdform == "cmdform") {
+        "got cmdform".print();
+        String cmd = request.getParameter("cmd");
+        if (TS.notEmpty(cmd)) {
+          ("cmd was: " + cmd).print();
+        } else {
+          "cmd missing".print();
+          request.outputContent = "cmd missing";
           return(self);
         }
-        if (files.exists(passf)) {
-         pass = files.read(passf);
-         if (TS.isEmpty(pass)) {
-           request.outputContent = "Device Password Must Be Set";
-           return(self);
-           }
-           if (ylantdpass != pass) {
-             request.outputContent = "Device Password Incorrect";
-             return(self);
-           }
-         } else {
-           request.outputContent = "Device Password Must Be Set";
-           return(self);
-         }
+        try {
+          String cmdres = doCmd("web", cmd);
+          if (TS.isEmpty(cmdres)) {
+            "cmdres empty".print();
+          } else {
+            ("cmdres " + cmdres).print();
+            request.outputContent = cmdres;
+            return(self);
+          }
+        } catch (any dce) {
+          "except in doCmd".print();
+          dce.print();
+          request.outputContent = "error handling command";
+          return(self);
+        }
       } else {
-        "sending".print();
+        "sending page".print();
         request.outputContents = webPageL;
         "done sending".print();
       }
-      if (needsRestart) {
-        "restarting for new settings".print();
-          Wifi.stop();
-          Wifi.clearAll();
-          app.restart();
-        }
    }
    
 }

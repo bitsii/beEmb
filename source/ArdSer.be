@@ -42,6 +42,10 @@ class Embedded:SerServer {
     long timeoutTime = 2000;
     """
     }
+    unless (self.available) {
+      //"nothing to read".print();
+      return(null);
+    }
     String payload = String.new();
     Int chari = Int.new();
     String chars = String.new(1);
