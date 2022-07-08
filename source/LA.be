@@ -71,6 +71,7 @@ class Embedded:LedApp {
                }
                }
                }
+               document.getElementById('cmdres').value = '';
                console.log("submitting this");
                console.log(fs);
                var req;
@@ -97,7 +98,8 @@ class Embedded:LedApp {
                    }
                    if (req.responseText != null && req.responseText != '') {
                      console.log(req.responseText);
-                     alert(req.responseText);
+                     //alert(req.responseText);
+                     document.getElementById('cmdres').value = req.responseText;
                    }
                }
                req.send();
@@ -112,6 +114,8 @@ class Embedded:LedApp {
      <form id="cmdformid" action="/" method="get" onsubmit="ajaxSubmit('cmdformid');return false;"><input type="hidden" name="cmdform" id="cmdform" value="cmdform"/>
      <br><label for="cmd">Your Command:</label><input type="text" id="cmd" name="cmd" size="64" maxLength="128"><br>
      <br><input type="submit" value="Send Command"></form>
+     <form id="cmdresformid" action="/" method="get" onsubmit="ajaxSubmit('cmdresformid');return false;"><input type="hidden" name="cmdresform" id="cmdresform" value="cmdresform"/>
+     <br><label for="cmdres">Command Results:</label><input type="text" id="cmdres" name="cmdres" size="64" maxLength="128"></form>
      ''';
      String htmlEnd = "</body></html>";
      webPageL = List.new();
@@ -175,6 +179,8 @@ class Embedded:LedApp {
    
    clearState() {
      files.delete(statef);
+     unsavedState = null;
+     savedState = null;
    }
    
    maybeSaveState() {

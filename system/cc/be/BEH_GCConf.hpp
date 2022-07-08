@@ -1,6 +1,6 @@
 //started 500 2 500 16
 //esp32 2000, esp8266 500
-#define BEDCC_GCAPERGC 250
+#define BEDCC_GCAPERGC 200
 //how many marks before a sweep
 #define BEDCC_GCMPERS 1
 #define BED_GCNOREUSE
