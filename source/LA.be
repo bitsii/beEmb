@@ -202,8 +202,10 @@ class Embedded:LedApp {
       ("Local ip " + Wifi.localIP).print();
       //"starting ws".print();
       //webserver.start();
-      "starting tweb".print();
-      tweb.start();
+      if (Wifi.up) {
+        "starting tweb".print();
+        tweb.start();
+      }
      }
      checkState();
    }
@@ -214,8 +216,18 @@ class Embedded:LedApp {
       "trying startwifi".print();
       startWifi();
       unless (Wifi.up) {
-        "starting ap".print();
-        Wifi.new("EspAp2", "goodstuf").startAp();
+        if (files.exists(pinf)) {
+          String pin = files.read(pinf);
+          if (TS.notEmpty(pin) && pin.size > 19) {
+            String ssid = pin.substring(0, 8);
+            String sec = pin.substring(8, 16);
+            ("ssid from pin " + ssid).print();
+            ("sec from pin " + sec).print();
+            "starting ap".print();
+            //Wifi.new("EspAp2", "goodstuf").startAp();
+            Wifi.new(ssid, sec).startAp();
+          }
+        }
       }
      }
    }

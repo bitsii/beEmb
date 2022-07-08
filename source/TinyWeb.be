@@ -31,14 +31,16 @@ class TinyWeb {
   
   checkGetRequest() TinyWebRequest {
     
-    auto client = server.checkGetClient();
-    
-    if (def(client)) {
-      //"got client".print();
+    if (def(server)) {
+      auto client = server.checkGetClient();
       
-      //if (true) { return(null); }
-      
-      return(TinyWebRequest.new(client));
+      if (def(client)) {
+        //"got client".print();
+        
+        //if (true) { return(null); }
+        
+        return(TinyWebRequest.new(client));
+      }
     }
     return(null);
   }
