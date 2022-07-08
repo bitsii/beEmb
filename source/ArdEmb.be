@@ -33,8 +33,10 @@ class Embedded:App {
       //ESP.wdtFeed();
       //ESP.wdtDisable();
       //ESP.wdtEnable(1000);
+      //yield();
       ESP.wdtFeed();
       delay(beva_millis->bevi_int);
+      //yield();
       """
      }
    }
@@ -64,7 +66,8 @@ class Embedded:App {
      emit(cc) {
      """
      //ESP.wdtDisable();
-     digitalWrite(beva_pin->bevi_int,HIGH);
+     uint8_t pin = (uint8_t) beva_pin->bevi_int;
+     digitalWrite(pin,HIGH);
      //ESP.wdtEnable(1000);
      //ESP.wdtFeed();
      """
@@ -75,7 +78,8 @@ class Embedded:App {
      emit(cc) {
      """
      //ESP.wdtDisable();
-     digitalWrite(beva_pin->bevi_int,LOW);
+     uint8_t pin = (uint8_t) beva_pin->bevi_int;
+     digitalWrite(pin,LOW);
      //ESP.wdtEnable(1000);
      //ESP.wdtFeed();
      """

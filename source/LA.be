@@ -13,10 +13,6 @@ use Encode:Url as EU;
 
 class Embedded:LedApp {
    
-   clearState() {
-     files.delete(statef);
-   }
-   
    main() {
      fields {
        auto app = Embedded:App.new();
@@ -42,6 +38,8 @@ class Embedded:LedApp {
        auto lastSseSlush = 10;
        List webPageL;
        Bool needsRestart = false;
+       String unsavedState;
+       String savedState;
      }
      app.plugin = self;
      "opening files".print();
@@ -130,23 +128,29 @@ class Embedded:LedApp {
        String payload = files.read(statef);
        if (TS.notEmpty(payload)) {
          doState(payload);
+       } else {
+         doDefaultState();
        }
      } else {
-       app.digitalWriteHigh(swpin);
+       doDefaultState();
      }
    }
    
    doState(String state) String {
      if (TS.notEmpty(state)) {
-       if (state == "on") {
-       "should turn on".print();
-       app.digitalWriteLow(swpin);
-       files.write(statef, "on");
-       } elseIf (state == "off") {
-         "should turn off".print();
-         app.digitalWriteHigh(swpin);
-         files.write(statef, "off");
-       } elseIf (state == "check") {
+       if (state == "on" || state == "off") {
+         if (state == "on") {
+         "should turn on".print();
+         app.digitalWriteLow(swpin);
+         //files.write(statef, "on");
+         } else {
+           "should turn off".print();
+           app.digitalWriteHigh(swpin);
+           //files.write(statef, "off");
+         }
+         unsavedState = state;
+       } else {
+        if (state == "check") {
          if (files.exists(statef)) {
            state = files.read(statef);
            if (TS.isEmpty(state)) {
@@ -158,10 +162,29 @@ class Embedded:LedApp {
        } else {
          state = "invalid";
        }
+      }
      } else {
        state = "unset";
      }
      return(state);
+   }
+   
+   doDefaultState() {
+     doState("off");
+   }
+   
+   clearState() {
+     files.delete(statef);
+   }
+   
+   maybeSaveState() {
+     if (TS.notEmpty(unsavedState)) {
+       if (TS.isEmpty(savedState) || savedState != unsavedState) {
+         savedState = unsavedState;
+         unsavedState = null;
+         files.write(statef, savedState);
+       }
+     }
    }
    
    startLoop() {
@@ -248,6 +271,7 @@ class Embedded:LedApp {
       //"checking wifi and rps".print();
       maybeCheckWifiUp();
       maybeClearRps();
+      maybeSaveState();
      }
      auto serpay = serserver.checkGetPayload("\n");
      if (TS.notEmpty(serpay)) {
