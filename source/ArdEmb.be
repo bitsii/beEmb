@@ -52,6 +52,9 @@ class Embedded:App {
    pinModeOutput(Int pin) {
      emit(cc) {
      """
+     //pinMode(255, OUTPUT);
+     //analogWrite(255, 0);
+     //analogWrite(255, 10);
      pinMode(beva_pin->bevi_int,OUTPUT);
      """
      }

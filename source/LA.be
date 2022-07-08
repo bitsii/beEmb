@@ -23,7 +23,7 @@ class Embedded:LedApp {
        //auto webserver = Embedded:WebServer.new(app);
        auto tweb = Embedded:TinyWeb.new();
        auto serserver = Embedded:SerServer.new();
-       auto delay = 4; //ms
+       auto delay = 2; //ms
        String pinf = "/laspin.txt";
        String passf = "/ladevpass.txt";
        String ssidf = "/lawifissid.txt";
