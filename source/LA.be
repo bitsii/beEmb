@@ -27,7 +27,9 @@ class Embedded:LedApp {
        String statef = "/lastate.txt";
        Int swpin = 2;
        //String udpRes;
-       Int tick = 0;
+       Int nextbeat = 0;
+       Int nextmaybe = 0;
+       String serpayend = "\n";
        Files files = Files.new();
        auto upcheckFrequency = 1200; //20 mins
        auto upcheckCount = 0;
@@ -278,20 +280,18 @@ class Embedded:LedApp {
    }
    
    handleLoop() {
-     tick++=;
-     if (tick > 30000) {
-      //it's been a minute
-      tick = 0;
-      "reset tick".print();
+     Int nowup = app.uptime();
+     if (nowup > nextbeat) {
+      nextbeat = nowup + 60000;
+      "another minute gone".print();
      }
-     if (tick % 500 == 0) {
-      //it's been a second
-      //"checking wifi and rps".print();
+     if (nowup > nextmaybe) {
+      nextmaybe = nowup + 10000;
       maybeCheckWifiUp();
       maybeClearRps();
       maybeSaveState();
      }
-     auto serpay = serserver.checkGetPayload("\n");
+     auto serpay = serserver.checkGetPayload(serpayend);
      if (TS.notEmpty(serpay)) {
        try {
           String cmdres = doCmd("serial", serpay);
@@ -356,7 +356,7 @@ class Embedded:LedApp {
         Wifi.clearAll();
         app.restart();
      }
-     app.delay(delay);
+     //app.delay(delay);
    }
    
    doCmd(String channel, String cmdline) String {
