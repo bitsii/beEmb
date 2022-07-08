@@ -132,13 +132,14 @@ WiFiClient client;
           """
           }
           //("got int " + chari).print();
+          //? check for -1 and 255 here too?
           chars.setCodeUnchecked(zero, chari);
           //("got char").print();
           //chars.print();
           payload += chars;
           if (def(endmark) && payload.ends(endmark)) {
-            "got endmark".print();
-            payload.print();
+            //"got endmark".print();
+            //payload.print();
             return(payload);
           }
 emit(cc) {
@@ -148,10 +149,10 @@ emit(cc) {
     }
     """
     }
-    if (TS.notEmpty(payload)) {
-    "got request, payload".print();
-    payload.print();
-    }
+    //if (TS.notEmpty(payload)) {
+    //"got request, payload".print();
+    //payload.print();
+    //}
     return(payload);
   }
   

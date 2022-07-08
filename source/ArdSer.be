@@ -69,8 +69,8 @@ class Embedded:SerServer {
           //chars.print();
           payload += chars;
           if (def(endmark) && payload.ends(endmark)) {
-            "got endmark".print();
-            payload.print();
+            //"got endmark".print();
+            //payload.print();
             return(payload);
           }
 emit(cc) {
@@ -79,10 +79,10 @@ emit(cc) {
       }
     """
     }
-    if (TS.notEmpty(payload)) {
-    "got serial, payload".print();
-    payload.print();
-    }
+    //if (TS.notEmpty(payload)) {
+    //"got serial, payload".print();
+    //payload.print();
+    //}
     return(payload);
   }
   

@@ -9,18 +9,25 @@ use Text:Strings as TS;
 use Embedded:Files;
 use Encode:Hex as Hex;
 use Embedded:Aes as Crypt;
+use Encode:Url as EU;
 
 class Embedded:LedApp {
+   
+   clearState() {
+     files.delete(statef);
+   }
    
    main() {
      fields {
        auto app = Embedded:App.new();
-       auto webserver = Embedded:WebServer.new(app);
+       //auto webserver = Embedded:WebServer.new(app);
+       auto tweb = Embedded:TinyWeb.new();
        auto serserver = Embedded:SerServer.new();
-       auto delay = 2; //ms
+       auto delay = 4; //ms
+       String pinf = "/laspin.txt";
+       String passf = "/ladevpass.txt";
        String ssidf = "/lawifissid.txt";
        String secf = "/lawifisec.txt";
-       String passf = "/ladevpass.txt";
        String statef = "/lastate.txt";
        Int swpin = 2;
        //String udpRes;
@@ -41,6 +48,11 @@ class Embedded:LedApp {
      files.open();
      
      "making webPage".print();
+     String htmlHead = String.new();
+     htmlHead += "HTTP/1.1 200 OK\r\n";
+     htmlHead += "Content-type:text/html\r\n";
+     htmlHead += "Connection: close\r\n";
+     htmlHead += "\r\n";
      String htmlStart = "<html>";
      String webPageHead = '''
           <head>
@@ -105,6 +117,7 @@ class Embedded:LedApp {
      ''';
      String htmlEnd = "</body></html>";
      webPageL = List.new();
+     webPageL += htmlHead;
      webPageL += htmlStart;
      webPageL += webPageHead;
      webPageL += htmlC1;
@@ -130,7 +143,7 @@ class Embedded:LedApp {
        app.digitalWriteLow(swpin);
        files.write(statef, "on");
        } elseIf (state == "off") {
-         "should turn OFF".print();
+         "should turn off".print();
          app.digitalWriteHigh(swpin);
          files.write(statef, "off");
        } elseIf (state == "check") {
@@ -146,7 +159,6 @@ class Embedded:LedApp {
          state = "invalid";
        }
      } else {
-       files.delete(statef);
        state = "unset";
      }
      return(state);
@@ -159,8 +171,10 @@ class Embedded:LedApp {
      checkWifiAp();
      if (def(Wifi.localIP)) {
       ("Local ip " + Wifi.localIP).print();
-      "starting ws".print();
-      webserver.start();
+      //"starting ws".print();
+      //webserver.start();
+      "starting tweb".print();
+      tweb.start();
      }
      checkState();
    }
@@ -231,6 +245,7 @@ class Embedded:LedApp {
      }
      if (tick % 500 == 0) {
       //it's been a second
+      //"checking wifi and rps".print();
       maybeCheckWifiUp();
       maybeClearRps();
      }
@@ -248,7 +263,50 @@ class Embedded:LedApp {
           dce.print();
         }
      }
-     webserver.checkHandleWeb();
+     //webserver.checkHandleWeb();
+     auto treq = tweb.checkGetRequest();
+     if (def(treq)) {
+       //"got treq".print();
+       String qs = treq.checkGetQueryString();
+       if (TS.notEmpty(qs)) {
+         if (qs == "/") {
+           "base qs sending webpage".print();
+           for (String part in webPageL) {
+             treq.client.write(part);
+           }
+         } elseIf (qs.begins("/?")) {
+           qs = qs.substring(2, qs.size);
+           auto qspso = qs.split("&");
+           for (String qspsi in qspso) {
+             if (TS.notEmpty(qspsi)) {
+               //("got qspsi " + qspsi).print();
+               auto qsps = qspsi.split("=");
+               if (qsps.size > 1 && def(qsps[0]) && qsps[0] == "cmd" && TS.notEmpty(qsps[1])) {
+                 //("got cmd " + qsps[1]).print();
+                 String cdec = EU.decode(qsps[1]);
+                 ("cdec " + cdec).print();
+                 try {
+                    cmdres = doCmd("web", cdec);
+                    treq.client.write(webPageL[0]); //ok headers
+                    if (TS.isEmpty(cmdres)) {
+                    //  "cmdres empty".print();
+                      treq.client.write("cmdres empty");
+                    } else {
+                    //  ("cmdres " + cmdres).print();
+                      treq.client.write(cmdres);
+                    }
+                  } catch (dce) {
+                    "error handling command".print();
+                    dce.print();
+                  }
+               }
+             }
+           }
+         }
+       }
+       //treq.printHeaders();
+       treq.close();
+     }
      if (needsRestart) {
        needsRestart = false;
        "restarting because needsRestart".print();
@@ -303,23 +361,128 @@ class Embedded:LedApp {
        return("no cmd specified");
      }
      ("cmd is " + cmd).print();
-     unless (cmd == "setpass") {
-       if (files.exists(passf)) {
-         String inpass = cmds["pass"];
-         if (TS.isEmpty(inpass)) {
-           return("Device password must be provided");
-         }
-         pass = files.read(passf);
-         if (TS.isEmpty(pass)) {
-          return("Device Password Must Be Set");
-         }
-         if (inpass != pass) {
-           return("Device Password Incorrect");
+     if (cmd == "fullreset") {
+     "got reset".print();
+      unless (channel == "serial") {
+        return("Error, only supported over Serial");
+      }
+      clearState();
+      files.delete(passf);
+      files.delete(ssidf);
+      files.delete(secf);
+      files.delete(pinf);
+      return("All config and pin cleared");
+    } elseIf (cmd == "setpin") {
+     "got setpin".print();
+      String newpin = cmds["newpin"];
+      unless (channel == "serial") {
+        return("Error, only supported over Serial");
+      }
+      if (TS.isEmpty(newpin)) {
+       return("Error, pin is required");
+      } elseIf (newpin.isAlphaNum!) {
+        return("Error, pin many only consist of letters and numbers");
+      } elseIf (newpin.size < 20 || newpin.size > 32) {
+        return("Error, pin must be between 20 and 32 chars in length");
+      } else {
+       clearState();
+       files.delete(passf);
+       files.delete(ssidf);
+       files.delete(secf);
+       files.write(pinf, newpin);
+       return("Pin set, configuration cleared");
+      }
+    } elseIf (cmd == "setpasswithpin") {
+     "got setpasspin".print();
+      String inpin = cmds["pin"];
+      String newpass = cmds["newpass"];
+      if (files.exists(pinf)) {
+       String pin = files.read(pinf);
+       if (TS.notEmpty(pin)) {
+         if (TS.isEmpty(inpin)) {
+           return("Error, pin was not sent");
+         } elseIf (pin != inpin) {
+           return("Error, pin is incorrect");
          }
        } else {
-         return("Device Password Must Be Set");
-       } 
-     }
+         return("Error, pin must be set");
+       }
+      } else {
+       return("Error, pin must be set");
+      }
+      if (TS.isEmpty(newpass)) {
+       return("Error, new password is required");
+      } else {
+       clearState();
+       files.delete(ssidf);
+       files.delete(secf);
+       files.write(passf, newpass);
+       return("Password set, other configuration cleared");
+      }
+     } elseIf (cmd == "resetwithpin") {
+      inpin = cmds["pin"];
+      if (files.exists(pinf)) {
+       pin = files.read(pinf);
+       if (TS.notEmpty(pin)) {
+         if (TS.isEmpty(inpin)) {
+           return("Error, pin was not sent");
+         } elseIf (pin != inpin) {
+           return("Error, pin is incorrect");
+         }
+       } else {
+         return("Error, pin must be set");
+       }
+      } else {
+       return("Error, pin must be set");
+      }
+      clearState();
+      files.delete(passf);
+      files.delete(ssidf);
+      files.delete(secf);
+      return("All config cleared");
+     } elseIf (cmd == "setpasswithpass") {
+       "got setpass".print();
+        String inpass = cmds["pass"];
+        newpass = cmds["newpass"];
+        if (files.exists(passf)) {
+         String pass = files.read(passf);
+         if (TS.notEmpty(pass)) {
+           if (TS.isEmpty(inpass)) {
+             return("Error, pass was not sent");
+           } elseIf (pass != inpass) {
+             return("Error, pass is incorrect");
+           }
+         } else {
+           return("Error, password may only be changed if initialized via setpasspin");
+         }
+        } else {
+         return("Error, password may only be changed if initialized via setpasspin");
+        }
+        if (TS.isEmpty(newpass)) {
+         return("Error, new password is required");
+        } else {
+         files.write(passf, newpass);
+         return("Password set");
+        }
+      }
+      
+      //if cmd is setstate, check userkey and token, if any good skip pass check
+     
+     if (files.exists(passf)) {
+       inpass = cmds["pass"];
+       if (TS.isEmpty(inpass)) {
+         return("Device password must be provided");
+       }
+       pass = files.read(passf);
+       if (TS.isEmpty(pass)) {
+        return("Device Password Must Be Set");
+       }
+       if (inpass != pass) {
+         return("Device Password Incorrect");
+       }
+     } else {
+       return("Device Password Must Be Set");
+     } 
      if (cmd == "setwifi") {
        "got setwifi".print();
         String ssid = cmds["ssid"];
@@ -334,46 +497,28 @@ class Embedded:LedApp {
             ("sec missing").print();
             files.delete(secf);
           }
-          needsRestart = true;
-          return("Wifi Setup Complete");
+          return("Wifi Setup Written, restart to activate");
         } else {
           ("ssid missing").print();
           files.delete(ssidf);
           files.delete(secf);
-          needsRestart = true;
-          return("Wifi Setup cleared");
+          return("Wifi Setup cleared, restart to activate");
         }
-     } elseIf (cmd == "state") {
+     } elseIf (cmd == "setstate") {
        "got setstate".print();
-        String state = cmds["state"];
-        String stateres = doState(state);
+        String newstate = cmds["newstate"];
+        String stateres = doState(newstate);
         return("State now " + stateres);
      } elseIf (cmd == "restart") {
        "got restart".print();
        needsRestart = true;
-     } elseIf (cmd == "setpass") {
-       "got setpass".print();
-        String oldpass = cmds["oldpass"];
-        String newpass = cmds["newpass"];
-        unless (channel == "serial") {
-          if (files.exists(passf)) {
-           String pass = files.read(passf);
-           if (TS.notEmpty(pass)) {
-             ("currpass " + pass).print();
-             if (TS.isEmpty(oldpass)) {
-               return("Error, password is set but oldpass was not sent");
-             } elseIf (pass != oldpass) {
-               return("Error, oldpass is incorrect");
-             }
-           }
-          }
-        }
-        if (TS.isEmpty(newpass)) {
-         return("Password cleared");
-        } else {
-         files.write(passf, newpass);
-         return("Password set");
-        }
+       return("Will restart soonish");
+     } elseIf (cmd == "resetwithpass") {
+       clearState();
+       files.delete(passf);
+       files.delete(ssidf);
+       files.delete(secf);
+       return("All config cleared");
      } else {
        return("unrecognized command");
      }
