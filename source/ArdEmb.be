@@ -86,6 +86,19 @@ class Embedded:App {
      }
    }
    
+   analogWrite(Int pin, Int value) {
+     emit(cc) {
+     """
+     //ESP.wdtDisable();
+     uint8_t pin = (uint8_t) beva_pin->bevi_int;
+     uint8_t value = (uint8_t) beva_value->bevi_int;
+     analogWrite(pin,value);
+     //ESP.wdtEnable(1000);
+     //ESP.wdtFeed();
+     """
+     }
+   }
+   
    restart() {
      emit(cc) {
      """

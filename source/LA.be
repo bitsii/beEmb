@@ -74,6 +74,7 @@ class Embedded:LedApp {
                }
                }
                document.getElementById('cmdres').value = '';
+               document.getElementById('cmdshow').value = fs;
                console.log("submitting this");
                console.log(fs);
                var req;
@@ -118,6 +119,8 @@ class Embedded:LedApp {
      <br><input type="submit" value="Send Command"></form>
      <form id="cmdresformid" action="/" method="get" onsubmit="ajaxSubmit('cmdresformid');return false;"><input type="hidden" name="cmdresform" id="cmdresform" value="cmdresform"/>
      <br><label for="cmdres">Command Results:</label><input type="text" id="cmdres" name="cmdres" size="64" maxLength="128"></form>
+     <form id="cmdshowformid" action="/" method="get" onsubmit="ajaxSubmit('cmdshowformid');return false;"><input type="hidden" name="cmdshowform" id="cmdshowform" value="cmdshowform"/>
+     <br><label for="cmdres">Command being Sent:</label><input type="text" id="cmdshow" name="cmdshow" size="64" maxLength="128"></form>
      ''';
      String htmlEnd = "</body></html>";
      webPageL = List.new();
@@ -156,7 +159,19 @@ class Embedded:LedApp {
          }
          unsavedState = state;
        } else {
-        if (state == "check") {
+        if (state.begins("setlevel")) {
+          "on setlevel".print();
+          auto lvls = state.split(":");
+          if (lvls.size < 3 || lvls[1].isInteger! || lvls[2].isInteger!) {
+            "syntax setlevel:pin:numericlevel (0-255)".print();
+            return("invalid");
+          }
+          Int pini = Int.new(lvls[1]);
+          Int lvli = Int.new(lvls[2]);
+          ("analog write " + pini + " " + lvli).print();
+          app.analogWrite(pini, lvli);
+          return("setlevel");
+        } elseIf (state == "check") {
          if (files.exists(statef)) {
            state = files.read(statef);
            if (TS.isEmpty(state)) {
