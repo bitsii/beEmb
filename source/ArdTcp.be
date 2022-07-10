@@ -119,6 +119,10 @@ WiFiClient client;
     chars.setCodeUnchecked(0, 32);
     chars.size.setValue(1);
     Int zero = 0;
+    if (def(endmark) && endmark.size > 1) {
+      "only one char endmarks supported".print();
+      return(payload);
+    }
     emit(cc) {
     """                          
       currentTime = millis();
@@ -137,7 +141,8 @@ WiFiClient client;
           //("got char").print();
           //chars.print();
           payload += chars;
-          if (def(endmark) && payload.ends(endmark)) {
+          //if (def(endmark) && payload.ends(endmark)) { }
+          if (def(endmark) && chars == endmark) {
             //"got endmark".print();
             //payload.print();
             return(payload);

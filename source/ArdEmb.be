@@ -51,6 +51,15 @@ class Embedded:App {
      return(millis);
    }
    
+   uptime(Int millis) Int {
+     emit(cc) {
+     """
+     beva_millis->bevi_int = millis();
+     """
+     }
+     return(millis);
+   }
+   
    pinModeOutput(Int pin) {
      emit(cc) {
      """
@@ -58,30 +67,6 @@ class Embedded:App {
      //analogWrite(255, 0);
      //analogWrite(255, 10);
      pinMode(beva_pin->bevi_int,OUTPUT);
-     """
-     }
-   }
-   
-   digitalWriteHigh(Int pin) {
-     emit(cc) {
-     """
-     //ESP.wdtDisable();
-     uint8_t pin = (uint8_t) beva_pin->bevi_int;
-     digitalWrite(pin,HIGH);
-     //ESP.wdtEnable(1000);
-     //ESP.wdtFeed();
-     """
-     }
-   }
-   
-   digitalWriteLow(Int pin) {
-     emit(cc) {
-     """
-     //ESP.wdtDisable();
-     uint8_t pin = (uint8_t) beva_pin->bevi_int;
-     digitalWrite(pin,LOW);
-     //ESP.wdtEnable(1000);
-     //ESP.wdtFeed();
      """
      }
    }

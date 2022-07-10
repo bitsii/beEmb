@@ -24,8 +24,6 @@ class Embedded:LedApp {
        String passf = "/ladevpass.txt";
        String ssidf = "/lawifissid.txt";
        String secf = "/lawifisec.txt";
-       String statef = "/lastate.txt";
-       Int swpin = 2;
        //String udpRes;
        Int nextbeat = 0;
        Int nextmaybe = 0;
@@ -42,6 +40,7 @@ class Embedded:LedApp {
        Bool needsRestart = false;
        String unsavedState;
        String savedState;
+       Int nowup = Int.new();
      }
      app.plugin = self;
      "opening files".print();
@@ -132,87 +131,75 @@ class Embedded:LedApp {
      "webpage made".print();
    }
    
-   checkState() {
-     if (files.exists(statef)) {
-       String payload = files.read(statef);
-       if (TS.notEmpty(payload)) {
-         doState(payload);
-       } else {
-         doDefaultState();
+   loadStates() {
+     fields {
+       Map states = Map.new();
+       String statesf = "/latstates.txt";
+     }
+     if (Files.exists(statesf)) {
+       String lastsas = Files.read(statesf);
+       auto cpls = lastsas.split(":");
+       for (String cpl in cpls) {
+         auto kv = cpl.split(",");
+         setState("setlevel:" += kv[0] += ":" += kv[1]);
        }
-     } else {
-       doDefaultState();
      }
    }
    
-   doState(String state) String {
+   setState(String state) String {
      if (TS.notEmpty(state)) {
-       if (state == "on" || state == "off") {
-         if (state == "on") {
-         "should turn on".print();
-         app.digitalWriteLow(swpin);
-         //files.write(statef, "on");
-         } else {
-           "should turn off".print();
-           app.digitalWriteHigh(swpin);
-           //files.write(statef, "off");
-         }
-         unsavedState = state;
-       } else {
-        if (state.begins("setlevel")) {
-          "on setlevel".print();
-          auto lvls = state.split(":");
-          if (lvls.size < 3 || lvls[1].isInteger! || lvls[2].isInteger!) {
-            "syntax setlevel:pin:numericlevel (0-255)".print();
-            return("invalid");
-          }
-          Int pini = Int.new(lvls[1]);
-          Int lvli = Int.new(lvls[2]);
-          ("analog write " + pini + " " + lvli).print();
-          app.analogWrite(pini, lvli);
-          return("setlevel");
-        } elseIf (state == "check") {
-         if (files.exists(statef)) {
-           state = files.read(statef);
-           if (TS.isEmpty(state)) {
-             state = "bad";
-           }
-         } else {
-           state = "unknown";
-         }
+      if (state.begins("setlevel")) {
+        "on setlevel".print();
+        auto lvls = state.split(":");
+        if (lvls.size < 3 || lvls[1].isInteger! || lvls[2].isInteger!) {
+          "syntax setlevel:pin:numericlevel (0-255)".print();
+          return("invalid");
+        }
+        Int pini = Int.new(lvls[1]);
+        Int lvli = Int.new(lvls[2]);
+        //("analog write " + pini + " " + lvli).print();
+        app.pinModeOutput(pini);
+        app.analogWrite(pini, lvli);
+        states[pini] = lvli;
+        return("setlevel");
        } else {
          state = "invalid";
        }
-      }
      } else {
        state = "unset";
      }
      return(state);
    }
    
-   doDefaultState() {
-     doState("off");
+   clearStates() {
+     if (Files.exists(statesf)) {
+       Files.delete(statesf);
+     }
+     states = Map.new();
    }
    
-   clearState() {
-     files.delete(statef);
-     unsavedState = null;
-     savedState = null;
-   }
-   
-   maybeSaveState() {
-     if (TS.notEmpty(unsavedState)) {
-       if (TS.isEmpty(savedState) || savedState != unsavedState) {
-         savedState = unsavedState;
-         unsavedState = null;
-         files.write(statef, savedState);
-       }
+   saveStates() {
+     String sas = String.new();
+     for (auto kv in states) {
+       if (TS.notEmpty(sas)) { sas += ":"; }
+       sas += kv.key += "," += kv.value;
+     }
+     if (TS.isEmpty(sas)) {
+       return(self);
+     }
+     if (Files.exists(statesf)) {
+       String lastsas = Files.read(statesf);
+     } else {
+       lastsas = "";
+     }
+     if (sas != lastsas) {
+       "writing statesf".print();
+       Files.write(statesf, sas);
      }
    }
    
    startLoop() {
      "in startLoop LedApp".print();
-     app.pinModeOutput(swpin);
      serserver.start();
      checkWifiAp();
      if (def(Wifi.localIP)) {
@@ -224,7 +211,7 @@ class Embedded:LedApp {
         tweb.start();
       }
      }
-     checkState();
+     loadStates();
    }
    
   checkWifiAp() {
@@ -295,7 +282,7 @@ class Embedded:LedApp {
    }
    
    handleLoop() {
-     Int nowup = app.uptime();
+     app.uptime(nowup);
      if (nowup > nextbeat) {
       nextbeat = nowup + 60000;
       "another minute gone".print();
@@ -304,7 +291,7 @@ class Embedded:LedApp {
       nextmaybe = nowup + 10000;
       maybeCheckWifiUp();
       maybeClearRps();
-      maybeSaveState();
+      saveStates();
      }
      auto serpay = serserver.checkGetPayload(serpayend);
      if (TS.notEmpty(serpay)) {
@@ -379,9 +366,13 @@ class Embedded:LedApp {
        "cmdline empty".print();
        return("cmdline empty");
      }
+     if (TS.isEmpty(channel)) {
+       "channel empty".print();
+       return("channel empty");
+     }
      //check max length and num of spaces
-     cmdline = cmdline.swap("\n", "");
      ("cmdline is " + cmdline).print();
+     ("cmd channel is " + channel).print();
      auto cmdl = cmdline.split(" ");
      Map cmds = Map.new();
      for (String cmdp in cmdl) {
@@ -396,10 +387,6 @@ class Embedded:LedApp {
    }
    
    doCmds(String channel, Map cmds) String {
-     if (TS.isEmpty(channel)) {
-       "channel empty".print();
-       return("channel empty");
-     }
      if (cmds.has("hexed")) {
        Map ncmds = Map.new();
        for (auto kv in cmds) {
@@ -423,7 +410,7 @@ class Embedded:LedApp {
       unless (channel == "serial") {
         return("Error, only supported over Serial");
       }
-      clearState();
+      clearStates();
       files.delete(passf);
       files.delete(ssidf);
       files.delete(secf);
@@ -442,7 +429,7 @@ class Embedded:LedApp {
       } elseIf (newpin.size < 20 || newpin.size > 32) {
         return("Error, pin must be between 20 and 32 chars in length");
       } else {
-       clearState();
+       clearStates();
        files.delete(passf);
        files.delete(ssidf);
        files.delete(secf);
@@ -470,7 +457,7 @@ class Embedded:LedApp {
       if (TS.isEmpty(newpass)) {
        return("Error, new password is required");
       } else {
-       clearState();
+       clearStates();
        files.delete(ssidf);
        files.delete(secf);
        files.write(passf, newpass);
@@ -492,7 +479,7 @@ class Embedded:LedApp {
       } else {
        return("Error, pin must be set");
       }
-      clearState();
+      clearStates();
       files.delete(passf);
       files.delete(ssidf);
       files.delete(secf);
@@ -564,14 +551,18 @@ class Embedded:LedApp {
      } elseIf (cmd == "setstate") {
        "got setstate".print();
         String newstate = cmds["newstate"];
-        String stateres = doState(newstate);
+        String stateres = setState(newstate);
         return("State now " + stateres);
+     } elseIf (cmd == "clearstates") {
+       "got clearStates".print();
+        clearStates();
+        return("State cleared");
      } elseIf (cmd == "restart") {
        "got restart".print();
        needsRestart = true;
        return("Will restart soonish");
      } elseIf (cmd == "resetwithpass") {
-       clearState();
+       clearStates();
        files.delete(passf);
        files.delete(ssidf);
        files.delete(secf);
