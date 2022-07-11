@@ -133,6 +133,7 @@ class Embedded:LedApp {
        String savesas = String.new();
        String lastsavesas = String.new();
        Map states = Map.new();
+       Map levels = Map.new();
        String statesf = "/latstates.txt";
      }
      if (files.exists(statesf)) {
@@ -141,6 +142,7 @@ class Embedded:LedApp {
        for (String cpl in cpls) {
          auto kv = cpl.split(",");
          setState("setlevel:" += kv[0] += ":" += kv[1]);
+         levels.put(kv[0], kv[2]);
        }
      }
    }
@@ -160,7 +162,42 @@ class Embedded:LedApp {
         app.pinModeOutput(pini);
         app.analogWrite(pini, lvli);
         states[pini] = lvli;
-        return("setlevel");
+      } elseIf (state.begins("setrlevel")) {
+        //"on setlevel".print();
+        lvls = state.split(":");
+        if (lvls.size < 3 || lvls[1].isInteger! || lvls[2].isInteger!) {
+          "syntax setlevel:pin:numericlevel (0-255)".print();
+          return("invalid");
+        }
+        pini = Int.new(lvls[1]);
+        lvli = Int.new(lvls[2]);
+        lvli = 255 - lvli;
+        //("analog write " + pini + " " + lvli).print();
+        app.pinModeOutput(pini);
+        app.analogWrite(pini, lvli);
+        states[pini] = lvli;
+       } elseIf (state.begins("delevel")) {
+         lvls = state.split(":");
+         pini = Int.new(lvls[1]);
+         lvli = states[pini];
+         if (undef(lvli)) {
+           lvli = 255;
+         }
+         levels.put(pini, lvli);
+         lvli = 255;
+         app.pinModeOutput(pini);
+         app.analogWrite(pini, lvli);
+         states[pini] = lvli;
+       } elseIf (state.begins("relevel")) {
+         lvls = state.split(":");
+         pini = Int.new(lvls[1]);
+         lvli = levels[pini];
+         if (undef(lvli) || lvli == 255) {
+           lvli = 0;
+         }
+         states.put(pini, lvli);
+         app.pinModeOutput(pini);
+         app.analogWrite(pini, lvli);
        } else {
          state = "invalid";
        }
@@ -175,6 +212,7 @@ class Embedded:LedApp {
        files.delete(statesf);
      }
      states = Map.new();
+     levels = Map.new();
      lastsavesas.clear();
    }
    
@@ -183,6 +221,11 @@ class Embedded:LedApp {
      for (auto kv in states) {
        if (TS.notEmpty(savesas)) { savesas += ":"; }
        savesas += kv.key += "," += kv.value;
+       if (levels.has(kv.key)) {
+         savesas += "," += levels.get(kv.key);
+       } else {
+         savesas += "," += kv.value;
+       }
      }
      if (TS.isEmpty(savesas)) {
        return(self);
