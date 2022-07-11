@@ -30,11 +30,7 @@ class Embedded:SerServer {
     }
   }
   
-  checkGetPayload() String {
-    return(checkGetPayload(null));
-  }
-  
-  checkGetPayload(String endmark) String {
+  checkGetPayload(String payload, String endmark) String {
     emit(cc) {
     """
     unsigned long currentTime = millis();
@@ -42,16 +38,20 @@ class Embedded:SerServer {
     long timeoutTime = 2000;
     """
     }
+    payload.clear();
     unless (self.available) {
       //"nothing to read".print();
-      return(null);
+      return(payload);
     }
-    String payload = String.new();
     Int chari = Int.new();
     String chars = String.new(1);
     chars.setCodeUnchecked(0, 32);
     chars.size.setValue(1);
     Int zero = 0;
+    if (def(endmark) && endmark.size > 1) {
+      "only one char endmarks supported".print();
+      return(payload);
+    }
     emit(cc) {
     """                          
       currentTime = millis();
@@ -64,11 +64,13 @@ class Embedded:SerServer {
           """
           }
           //("got int " + chari).print();
+          //? check for -1 and 255 here too?
           chars.setCodeUnchecked(zero, chari);
           //("got char").print();
           //chars.print();
           payload += chars;
-          if (def(endmark) && payload.ends(endmark)) {
+          //if (def(endmark) && payload.ends(endmark)) { }
+          if (def(endmark) && chars == endmark) {
             //"got endmark".print();
             //payload.print();
             return(payload);

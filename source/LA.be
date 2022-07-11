@@ -19,30 +19,27 @@ class Embedded:LedApp {
        //auto webserver = Embedded:WebServer.new(app);
        auto tweb = Embedded:TinyWeb.new();
        auto serserver = Embedded:SerServer.new();
-       auto delay = 2; //ms
        String pinf = "/laspin.txt";
        String passf = "/ladevpass.txt";
        String ssidf = "/lawifissid.txt";
        String secf = "/lawifisec.txt";
        //String udpRes;
-       Int nextbeat = 0;
-       Int nextmaybe = 0;
+       Int nextmin = 0;
+       Int next10sec = 0;
+       Int next15min = 0;
        String serpayend = "\n";
        Files files = Files.new();
-       auto upcheckFrequency = 1200; //20 mins
-       auto upcheckCount = 0;
-       auto rpsClearFrequency = 20; //20 secs
-       auto rpsClearCount = 0;
-       Set rpsCheck = Set.new();
-       auto lastSse = 0;
-       auto lastSseSlush = 10;
        List webPageL;
        Bool needsRestart = false;
-       String unsavedState;
-       String savedState;
        Int nowup = Int.new();
      }
      app.plugin = self;
+     
+     app.uptime(nowup);
+     next10sec = nowup + 10000;
+     nextmin = nowup + 60000;
+     next15min = nowup + 900000;
+     
      "opening files".print();
      files.open();
      
@@ -133,12 +130,14 @@ class Embedded:LedApp {
    
    loadStates() {
      fields {
+       String savesas = String.new();
+       String lastsavesas = String.new();
        Map states = Map.new();
        String statesf = "/latstates.txt";
      }
-     if (Files.exists(statesf)) {
-       String lastsas = Files.read(statesf);
-       auto cpls = lastsas.split(":");
+     if (files.exists(statesf)) {
+       lastsavesas = files.read(statesf, lastsavesas);
+       auto cpls = lastsavesas.split(":");
        for (String cpl in cpls) {
          auto kv = cpl.split(",");
          setState("setlevel:" += kv[0] += ":" += kv[1]);
@@ -149,7 +148,7 @@ class Embedded:LedApp {
    setState(String state) String {
      if (TS.notEmpty(state)) {
       if (state.begins("setlevel")) {
-        "on setlevel".print();
+        //"on setlevel".print();
         auto lvls = state.split(":");
         if (lvls.size < 3 || lvls[1].isInteger! || lvls[2].isInteger!) {
           "syntax setlevel:pin:numericlevel (0-255)".print();
@@ -172,29 +171,27 @@ class Embedded:LedApp {
    }
    
    clearStates() {
-     if (Files.exists(statesf)) {
-       Files.delete(statesf);
+     if (files.exists(statesf)) {
+       files.delete(statesf);
      }
      states = Map.new();
+     lastsavesas.clear();
    }
    
    saveStates() {
-     String sas = String.new();
+     savesas.clear();
      for (auto kv in states) {
-       if (TS.notEmpty(sas)) { sas += ":"; }
-       sas += kv.key += "," += kv.value;
+       if (TS.notEmpty(savesas)) { savesas += ":"; }
+       savesas += kv.key += "," += kv.value;
      }
-     if (TS.isEmpty(sas)) {
+     if (TS.isEmpty(savesas)) {
        return(self);
      }
-     if (Files.exists(statesf)) {
-       String lastsas = Files.read(statesf);
-     } else {
-       lastsas = "";
-     }
-     if (sas != lastsas) {
+     if (savesas != lastsavesas) {
        "writing statesf".print();
-       Files.write(statesf, sas);
+       files.write(statesf, savesas);
+       lastsavesas.clear();
+       lastsavesas.copyValue(savesas, 0, savesas.size, 0);
      }
    }
    
@@ -228,7 +225,6 @@ class Embedded:LedApp {
             ("ssid from pin " + ssid).print();
             ("sec from pin " + sec).print();
             "starting ap".print();
-            //Wifi.new("EspAp2", "goodstuf").startAp();
             Wifi.new(ssid, sec).startAp();
           }
         }
@@ -259,43 +255,34 @@ class Embedded:LedApp {
      }
    }
    
-   maybeCheckWifiUp() {
-     //"may checking wifi up".print();
-     upcheckCount++=;
-     if (upcheckCount > upcheckFrequency) {
-       "checking wifi up".print();
-       upcheckCount = 0;
-       unless (Wifi.isConnected) {
-         needsRestart = true;
-       }
-     }
-   }
-   
-   maybeClearRps() {
-     //"may checking clearrps".print();
-     rpsClearCount++=;
-     if (rpsClearCount > rpsClearFrequency) {
-       //"clear rps".print();
-       rpsClearCount = 0;
-       rpsCheck = Set.new();
+   checkWifiUp() {
+    "checking if wifi up".print();
+    unless (Wifi.isConnected) {
+       "not up restart".print();
+       needsRestart = true;
      }
    }
    
    handleLoop() {
      app.uptime(nowup);
-     if (nowup > nextbeat) {
-      nextbeat = nowup + 60000;
-      "another minute gone".print();
-     }
-     if (nowup > nextmaybe) {
-      nextmaybe = nowup + 10000;
-      maybeCheckWifiUp();
-      maybeClearRps();
+     if (nowup > next10sec) {
+      next10sec = nowup + 10000;
       saveStates();
      }
-     auto serpay = serserver.checkGetPayload(serpayend);
+     if (nowup > nextmin) {
+      nextmin = nowup + 60000;
+      "another minute gone".print();
+     }
+     if (nowup > next15min) {
+      next15min = nowup + 900000;
+      checkWifiUp();
+     }
+     if (serserver.available) {
+       auto serpay = serserver.checkGetPayload(String.new(), serpayend);
+     }
      if (TS.notEmpty(serpay)) {
        try {
+          serpay = serpay.swap("\n", "");
           String cmdres = doCmd("serial", serpay);
           if (TS.isEmpty(cmdres)) {
             "cmdres empty".print();
@@ -328,7 +315,7 @@ class Embedded:LedApp {
                if (qsps.size > 1 && def(qsps[0]) && qsps[0] == "cmd" && TS.notEmpty(qsps[1])) {
                  //("got cmd " + qsps[1]).print();
                  String cdec = EU.decode(qsps[1]);
-                 ("cdec " + cdec).print();
+                 //("cdec " + cdec).print();
                  try {
                     cmdres = doCmd("web", cdec);
                     treq.client.write(webPageL[0]); //ok headers
@@ -358,7 +345,6 @@ class Embedded:LedApp {
         Wifi.clearAll();
         app.restart();
      }
-     //app.delay(delay);
    }
    
    doCmd(String channel, String cmdline) String {
@@ -371,8 +357,10 @@ class Embedded:LedApp {
        return("channel empty");
      }
      //check max length and num of spaces
-     ("cmdline is " + cmdline).print();
-     ("cmd channel is " + channel).print();
+     ("cmdline follows").print();
+     cmdline.print();
+     ("cmd channel follows").print();
+     channel.print();
      auto cmdl = cmdline.split(" ");
      Map cmds = Map.new();
      for (String cmdp in cmdl) {
@@ -401,12 +389,12 @@ class Embedded:LedApp {
      if (cmds.has("cmd")) {
        String cmd = cmds["cmd"];
      } else {
-       "no cmd".print();
+       //"no cmd".print();
        return("no cmd specified");
      }
-     ("cmd is " + cmd).print();
+     //("cmd is " + cmd).print();
      if (cmd == "fullreset") {
-     "got reset".print();
+      //"got fullreset".print();
       unless (channel == "serial") {
         return("Error, only supported over Serial");
       }
@@ -417,7 +405,7 @@ class Embedded:LedApp {
       files.delete(pinf);
       return("All config and pin cleared");
     } elseIf (cmd == "setpin") {
-     "got setpin".print();
+      //"got setpin".print();
       String newpin = cmds["newpin"];
       unless (channel == "serial") {
         return("Error, only supported over Serial");
@@ -437,7 +425,7 @@ class Embedded:LedApp {
        return("Pin set, configuration cleared");
       }
     } elseIf (cmd == "setpasswithpin") {
-     "got setpasspin".print();
+      //"got setpasswithpin".print();
       String inpin = cmds["pin"];
       String newpass = cmds["newpass"];
       if (files.exists(pinf)) {
@@ -485,7 +473,7 @@ class Embedded:LedApp {
       files.delete(secf);
       return("All config cleared");
      } elseIf (cmd == "setpasswithpass") {
-       "got setpass".print();
+       //"got setpasswithpass".print();
         String inpass = cmds["pass"];
         newpass = cmds["newpass"];
         if (files.exists(passf)) {
@@ -528,14 +516,14 @@ class Embedded:LedApp {
        return("Device Password Must Be Set");
      } 
      if (cmd == "setwifi") {
-       "got setwifi".print();
+       //"got setwifi".print();
         String ssid = cmds["ssid"];
         String sec = cmds["sec"];
         if (TS.notEmpty(ssid)) {
-          ("got ssid " + ssid).print();
+          //("got ssid " + ssid).print();
           files.write(ssidf, ssid);
           if (TS.notEmpty(sec)) {
-            ("got sec " + sec).print();
+            //("got sec " + sec).print();
             files.write(secf, sec);
           } else {
             ("sec missing").print();
@@ -549,16 +537,16 @@ class Embedded:LedApp {
           return("Wifi Setup cleared, restart to activate");
         }
      } elseIf (cmd == "setstate") {
-       "got setstate".print();
+       //"got setstate".print();
         String newstate = cmds["newstate"];
         String stateres = setState(newstate);
         return("State now " + stateres);
      } elseIf (cmd == "clearstates") {
-       "got clearStates".print();
+       //"got clearStates".print();
         clearStates();
         return("State cleared");
      } elseIf (cmd == "restart") {
-       "got restart".print();
+       //"got restart".print();
        needsRestart = true;
        return("Will restart soonish");
      } elseIf (cmd == "resetwithpass") {
@@ -571,43 +559,6 @@ class Embedded:LedApp {
        return("unrecognized command");
      }
       return("Something's fishy");
-   }
-   
-    handleWeb(request) {
-     "in ledapp handleweb".print();
-     "getting params".print();
-      String cmdform = request.getParameter("cmdform");
-      "checking forms".print();
-      if (TS.notEmpty(cmdform) && cmdform == "cmdform") {
-        "got cmdform".print();
-        String cmd = request.getParameter("cmd");
-        if (TS.notEmpty(cmd)) {
-          ("cmd was: " + cmd).print();
-        } else {
-          "cmd missing".print();
-          request.outputContent = "cmd missing";
-          return(self);
-        }
-        try {
-          String cmdres = doCmd("web", cmd);
-          if (TS.isEmpty(cmdres)) {
-            "cmdres empty".print();
-          } else {
-            ("cmdres " + cmdres).print();
-            request.outputContent = cmdres;
-            return(self);
-          }
-        } catch (any dce) {
-          "except in doCmd".print();
-          dce.print();
-          request.outputContent = "error handling command";
-          return(self);
-        }
-      } else {
-        "sending page".print();
-        request.outputContents = webPageL;
-        "done sending".print();
-      }
    }
    
 }

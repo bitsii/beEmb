@@ -52,56 +52,36 @@ class TinyWebRequest {
   new(TCPClient _client) {
     fields {
       TCPClient client = _client;
-      List headers;
-    }
-  }
-  
-  printHeaders() {
-    checkGetHeaders();
-    if (def(headers)) {
-      for (String header in headers) {
-        header.print();
-      }
-    } else {
-      "no headers to print".print();
     }
   }
   
   checkGetQueryString() {
-    checkGetHeaders();
-    if (def(headers)) {
-      for (String header in headers) {
-        if (header.begins("GET ")) {
-          auto ll = header.split(" ");
-          String qs = ll[1];
-          //"found qs".print();
-          //qs.print();
-          return(qs);
-        }
-      }
-    }
-    return(null);
-  }
-  
-  checkGetHeaders() List {
-    if (def(headers)) {
-      return(headers); //once per request
-    }
-    headers = List.new();
+    String line = String.new();
     for (Int i = 0;i < 30;i++=) {
-    String line = client.checkGetPayload("\n");
-    if (TS.notEmpty(line)) {
-      //"got line".print();
-      //line.print();
-      headers += line;
-      if (line == "\r\n") {
-        //"got end of headers".print();
-        return(headers);
+    line = client.checkGetPayload(line, "\n");
+      if (TS.notEmpty(line)) {
+        //"got line".print();
+        //line.print();
+        if (line.begins("GET ")) {
+          String header = line.copy();
+        }
+        if (line == "\r\n") {
+          //"got end of headers".print();
+          break;
+        }
+      } else {
+        //"got no line".print();
       }
-    } else {
-      //"got no line".print();
     }
+    
+    if (TS.notEmpty(header)) {
+      auto ll = header.split(" ");
+      String qs = ll[1];
+      //"found qs".print();
+      //qs.print();
+      return(qs);
     }
+      
     return(null);
   }
   

@@ -100,11 +100,7 @@ WiFiClient client;
     }
   }
   
-  checkGetPayload() String {
-    return(checkGetPayload(null));
-  }
-  
-  checkGetPayload(String endmark) String {
+  checkGetPayload(String payload, String endmark) String {
     emit(cc) {
     """
     unsigned long currentTime = millis();
@@ -113,7 +109,7 @@ WiFiClient client;
     if (client) {
     """
     }
-    String payload = String.new();
+    payload.clear();
     Int chari = Int.new();
     String chars = String.new(1);
     chars.setCodeUnchecked(0, 32);

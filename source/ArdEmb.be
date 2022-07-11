@@ -246,14 +246,20 @@ class Embedded:Files {
     }
   }
   
-    read(String name) String {
+  read(String name) String {
+    return(read(name, String.new()));
+  }
+  
+    read(String name, String data) String {
     
-      String data = String.new();
+      data.clear();
       Int chari = Int.new();
       String chars = String.new(1);
       chars.setCodeUnchecked(0, 32);
       chars.size.setValue(1);
       Int zero = 0;
+      Int n1 = -1;
+      Int n255 = 255;
       
       emit(cc) {
       """
@@ -263,7 +269,7 @@ class Embedded:Files {
           """
           }
           //throw(Exception.new("File could not be opened"));
-          return("");
+          return(data);
           emit(cc) {
           """
       } else {
@@ -272,7 +278,7 @@ class Embedded:Files {
               bevl_chari->bevi_int = c;
               """
               }
-              if (chari == -1 || chari == 255) {
+              if (chari == n1 || chari == n255) {
                 //our file is broke/ended
                 emit(cc) {
                 """
