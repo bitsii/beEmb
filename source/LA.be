@@ -19,6 +19,7 @@ class Embedded:LedApp {
        //auto webserver = Embedded:WebServer.new(app);
        auto tweb = Embedded:TinyWeb.new();
        auto serserver = Embedded:SerServer.new();
+       auto mdserver = Embedded:Mdns.new();
        String pinf = "/laspin.txt";
        String passf = "/ladevpass.txt";
        String ssidf = "/lawifissid.txt";
@@ -252,6 +253,8 @@ class Embedded:LedApp {
       }
      }
      loadStates();
+     mdserver.name = "espyo";
+     mdserver.start();
    }
    
   checkWifiAp() {
@@ -381,6 +384,7 @@ class Embedded:LedApp {
        //treq.printHeaders();
        treq.close();
      }
+     mdserver.update();
      if (needsRestart) {
        needsRestart = false;
        "restarting because needsRestart".print();
