@@ -238,9 +238,28 @@ class Embedded:LedApp {
        lastsavesas.copyValue(savesas, 0, savesas.size, 0);
      }
    }
+
+   checkMakeIds() {
+      fields {
+        String setupType = "r"; //r - repeating pin, can setup from ssid. s - secret pin, need to know it.
+      }
+      String pin = files.read(pinf);
+      if (TS.isEmpty(pin) || pin.size != 16) {
+        if (setupType == "r") {
+          pin = System:Random.getString(8);
+          pin = pin + pin;
+        } else {
+          pin = System:Random.getString(16);
+        }
+        "rand created pin".print();
+        pin.print();
+        files.write(pinf, pin);
+      }
+   }
    
    startLoop() {
      "in startLoop LedApp".print();
+     checkMakeIds();
      serserver.start();
      checkWifiAp();
      if (def(Wifi.localIP)) {
@@ -265,9 +284,10 @@ class Embedded:LedApp {
       unless (Wifi.up) {
         if (files.exists(pinf)) {
           String pin = files.read(pinf);
-          if (TS.notEmpty(pin) && pin.size > 19) {
+          if (TS.notEmpty(pin) && pin.size == 16) {
             String ssid = pin.substring(0, 8);
             String sec = pin.substring(8, 16);
+            ssid = "y" + setupType + ssid;
             ("ssid from pin " + ssid).print();
             ("sec from pin " + sec).print();
             "starting ap".print();
@@ -461,8 +481,8 @@ class Embedded:LedApp {
        return("Error, pin is required");
       } elseIf (newpin.isAlphaNum!) {
         return("Error, pin many only consist of letters and numbers");
-      } elseIf (newpin.size < 20 || newpin.size > 32) {
-        return("Error, pin must be between 20 and 32 chars in length");
+      } elseIf (newpin.size != 16) {
+        return("Error, pin must be 16 chars in length");
       } else {
        clearStates();
        files.delete(passf);
@@ -544,9 +564,8 @@ class Embedded:LedApp {
          return("Password set");
         }
       }
-      
-      //if cmd is setstate, check userkey and token, if any good skip pass check
      
+     //password check
      if (files.exists(passf)) {
        inpass = cmds["pass"];
        if (TS.isEmpty(inpass)) {
@@ -557,11 +576,13 @@ class Embedded:LedApp {
         return("Device Password Must Be Set");
        }
        if (inpass != pass) {
+         //if command setstate check a statepass too, for limited perms
          return("Device Password Incorrect");
        }
      } else {
        return("Device Password Must Be Set");
-     } 
+     }
+
      if (cmd == "setwifi") {
        //"got setwifi".print();
         String ssid = cmds["ssid"];
