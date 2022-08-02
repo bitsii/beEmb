@@ -24,6 +24,7 @@ class Embedded:LedApp {
        String passf = "/ladevpass.txt";
        String ssidf = "/lawifissid.txt";
        String secf = "/lawifisec.txt";
+       String didf = "/ladidf.txt";
        //String udpRes;
        Int nextmin = 0;
        Int next10sec = 0;
@@ -33,6 +34,15 @@ class Embedded:LedApp {
        List webPageL;
        Bool needsRestart = false;
        Int nowup = Int.new();
+       String did;
+       String stateTypeLight = "type:light";
+       String stateTypeDimmer = "type:dimmer";
+       String stateTypeSwitch = "type:switch";
+       String stateType = stateTypeLight;
+       String stateLightOn = "setlevel:2:0";
+       String stateLightOff = "setlevel:2:255";
+       String lightOn = "on";
+       String lightOff = "off";
      }
      app.plugin = self;
      
@@ -147,6 +157,22 @@ class Embedded:LedApp {
        }
      }
    }
+
+   setTypeState(String state) String {
+     if (stateType == stateTypeLight) {
+      //Int pin = 2; //16
+      if (state == lightOff) {
+        setState(stateLightOff);
+        return(state);
+      } elseIf (state == lightOn) {
+        setState(stateLightOn);
+        return(state);
+      }
+     }
+     return("invaid");
+   }
+
+
    
    setState(String state) String {
      if (TS.notEmpty(state)) {
@@ -252,9 +278,19 @@ class Embedded:LedApp {
           pin = System:Random.getString(16);
         }
         "rand created pin".print();
-        pin.print();
         files.write(pinf, pin);
       }
+      "pin".print();
+      pin.print();
+
+      did = files.read(didf);
+      if (TS.isEmpty(did)) {
+        did = System:Random.getString(16);
+        "rand created did".print();
+        files.write(didf, did);
+      }
+      "did".print();
+      did.print();
    }
    
    startLoop() {
@@ -272,7 +308,9 @@ class Embedded:LedApp {
       }
      }
      loadStates();
-     mdserver.name = "espyo";
+     mdserver.name = "ym" + did;
+     "starting mdns".print();
+     mdserver.name.print();
      mdserver.start();
    }
    
@@ -608,7 +646,15 @@ class Embedded:LedApp {
        //"got setstate".print();
         String newstate = cmds["newstate"];
         String stateres = setState(newstate);
-        return("State now " + stateres);
+        return("state:" + stateres);
+    } elseIf (cmd == "getstatetype") {
+       "got getstatetype".print();
+       return(self.stateType);
+    } elseIf (cmd == "settypestate") {
+       //"got setstate".print();
+        newstate = cmds["newstate"];
+        stateres = setTypeState(newstate);
+        return("typestate:" + stateres);
      } elseIf (cmd == "clearstates") {
        //"got clearStates".print();
         clearStates();
@@ -623,6 +669,16 @@ class Embedded:LedApp {
        files.delete(ssidf);
        files.delete(secf);
        return("All config cleared");
+     } elseIf (cmd == "getdid") {
+       return(did);
+     } elseIf (cmd == "setdid") {
+        String newdid = cmds["newdid"];
+        if (TS.notEmpty(did) && did.size == 16) {
+          did = newdid;
+          files.write(didf, did);
+          return("did now " + did);
+        }
+        return("need 16 char did");
      } else {
        return("unrecognized command");
      }
