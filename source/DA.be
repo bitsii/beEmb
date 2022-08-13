@@ -14,12 +14,17 @@ use Embedded:AppShell;
 
 class Embedded:DimmerApp(AppShell) {
    
+   makeSwInfo() {
+     devType = "dimmer";
+     majVer = 1;
+     minVer = 1;
+   }
+
    loadStates() {
      fields {
        String swf = "/dasw.txt";
        String lvlf = "/dalvl.txt";
        String type = "type";
-       String dimmer = "dimmer";
        //on = 0, off = 255
        String on = "on";
        String off = "off";
@@ -90,7 +95,7 @@ class Embedded:DimmerApp(AppShell) {
           lastSw = on;
          }
        } elseIf (state == type) {
-         return(dimmer);
+         return(devType);
        } elseIf (state == getsw) {
          if (TS.notEmpty(lastSw)) {
           return(lastSw);

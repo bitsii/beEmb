@@ -13,12 +13,17 @@ use Encode:Url as EU;
 use Embedded:AppShell;
 
 class Embedded:LightApp(AppShell) {
-   
+
+   makeSwInfo() {
+     devType = "light";
+     majVer = 1;
+     minVer = 1;
+   }
+
    loadStates() {
      fields {
        String statesf = "/latstates.txt";
        String type = "type";
-       String light = "light";
        //on = 0, off = 255
        String on = "on";
        String off = "off";
@@ -50,7 +55,7 @@ class Embedded:LightApp(AppShell) {
          app.analogWrite(pini, 255);
          lastState = state;
        } elseIf (state == type) {
-         return(light);
+         return(devType);
        } elseIf (state == get) {
          if (TS.notEmpty(lastState)) {
           return(lastState);

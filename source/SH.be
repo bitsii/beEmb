@@ -29,12 +29,16 @@ class Embedded:AppShell {
        Int nextmin = 0;
        Int next10sec = 0;
        Int next15min = 0;
+       Int nextday = 0;
        String serpayend = "\n";
        Files files = Files.new();
        List webPageL;
        Bool needsRestart = false;
        Int nowup = Int.new();
        String did;
+       String devType;
+       Int majVer;
+       Int minVer;
      }
      app.plugin = self;
      
@@ -42,6 +46,7 @@ class Embedded:AppShell {
      next10sec = nowup + 10000;
      nextmin = nowup + 60000;
      next15min = nowup + 900000;
+     nextday = nowup + 86400000;
      
      "opening files".print();
      files.open();
@@ -130,7 +135,17 @@ class Embedded:AppShell {
      webPageL += htmlEnd;
      "webpage made".print();
    }
-   
+
+   swInfoGet() String {
+     fields {
+       String swInfo;
+     }
+     if (undef(swInfo)) {
+       swInfo = devType + " " + majVer + " " + minVer;
+     }
+     return(swInfo);
+   }
+
    loadStates() {
 
    }
@@ -173,9 +188,16 @@ class Embedded:AppShell {
       "did".print();
       did.print();
    }
+
+   makeSwInfo() {
+     devType = "shell";
+     majVer = 1;
+     minVer = 1;
+   }
    
    startLoop() {
      "in startLoop LedApp".print();
+     makeSwInfo();
      checkMakeIds();
      serserver.start();
      checkWifiAp();
@@ -193,6 +215,7 @@ class Embedded:AppShell {
      "starting mdns".print();
      mdserver.name.print();
      mdserver.start();
+     checkUpd(); //normally commented
    }
    
   checkWifiAp() {
@@ -247,6 +270,50 @@ class Embedded:AppShell {
        needsRestart = true;
      }
    }
+
+   checkUpd() {
+     "in checkUpd".print();
+     fields {
+       String updHost;
+       Int updPort;
+       String updOut;
+       String updLine;
+       String updEnd;
+     }
+     if (undef(updHost)) {
+       updHost = "hpprodev.bitsii.org";
+       updPort = 14587;
+       updOut = "GET /" + devType + majVer + "/ HTTP/1.1\r\n" + "Host: " + updHost + "\r\n" + "Connection: close\r\n\r\n";
+       updLine = String.new();
+       updEnd = "\r";
+     }
+     //"updOut".print();
+     //updOut.print();
+     updLine.clear();
+     for (Int j = 0;j < 50;j++=) {
+      Embedded:TCPClient client = Embedded:TCPClient.new(updHost, updPort);
+      client.open();
+      client.write(updOut);
+      for (Int i = 0;i < 1000;i++=) {
+        updLine = client.checkGetPayload(updLine, updEnd);
+        if (TS.notEmpty(updLine)) {
+          //"updLine".print();
+          //updLine.print();
+          if (TS.notEmpty(updLine) && updLine.has("CurrentVer")) {
+            break;
+          }
+        }
+      }
+      if (TS.notEmpty(updLine) && updLine.has("CurrentVer")) {
+        break;
+      }
+     }
+     if (client.opened) { client.close(); }
+     if (TS.notEmpty(updLine) && updLine.has("CurrentVer")) {
+      "gotit".print();
+      updLine.print();
+    }
+   }
    
    handleLoop() {
      app.uptime(nowup);
@@ -256,11 +323,15 @@ class Embedded:AppShell {
      }
      if (nowup > nextmin) {
       nextmin = nowup + 60000;
-      "another minute gone".print();
+      self.swInfo.print();
      }
      if (nowup > next15min) {
       next15min = nowup + 900000;
       checkWifiUp();
+     }
+     if (nowup > nextday) {
+      nextday = nowup + 86400000;
+      checkUpd();
      }
      if (serserver.available) {
        auto serpay = serserver.checkGetPayload(String.new(), serpayend);
