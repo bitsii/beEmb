@@ -24,7 +24,6 @@ class Embedded:DimmerApp(AppShell) {
      fields {
        String swf = "/dasw.txt";
        String lvlf = "/dalvl.txt";
-       String type = "type";
        //on = 0, off = 255
        String on = "on";
        String off = "off";
@@ -94,8 +93,6 @@ class Embedded:DimmerApp(AppShell) {
           lastLvl = state;
           lastSw = on;
          }
-       } elseIf (state == type) {
-         return(devType);
        } elseIf (state == getsw) {
          if (TS.notEmpty(lastSw)) {
           return(lastSw);

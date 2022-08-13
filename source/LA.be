@@ -23,7 +23,6 @@ class Embedded:LightApp(AppShell) {
    loadStates() {
      fields {
        String statesf = "/latstates.txt";
-       String type = "type";
        //on = 0, off = 255
        String on = "on";
        String off = "off";
@@ -54,8 +53,6 @@ class Embedded:LightApp(AppShell) {
          app.pinModeOutput(pini);
          app.analogWrite(pini, 255);
          lastState = state;
-       } elseIf (state == type) {
-         return(devType);
        } elseIf (state == get) {
          if (TS.notEmpty(lastState)) {
           return(lastState);

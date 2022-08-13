@@ -615,6 +615,12 @@ class Embedded:AppShell {
        return("All config cleared");
      } elseIf (cmd == "getdid") {
        return(did);
+     } elseIf (cmd == "getdevtype") {
+       return(devType);
+     } elseIf (cmd == "getmajver") {
+       return(majVer.toString());
+     } elseIf (cmd == "getminver") {
+       return(minVer.toString());
      } elseIf (cmd == "setdid") {
         String newdid = cmds["newdid"];
         if (TS.notEmpty(did) && did.size == 16) {
