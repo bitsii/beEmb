@@ -349,3 +349,18 @@ class Embedded:Files {
   }
 
 }
+
+class Embedded:Update {
+
+  updateFromUrl(String url) {
+
+    emit(cc) {
+     """
+     WiFiClient client;
+     t_httpUpdate_return ret = ESPhttpUpdate.update(client, beva_url->bems_toCcString().c_str());
+     """
+    }
+
+  }
+
+}

@@ -3,3 +3,4 @@
 #include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
 #include <ESP8266mDNS.h>
+#include <ESP8266httpUpdate.h>

@@ -311,7 +311,20 @@ class Embedded:AppShell {
      if (client.opened) { client.close(); }
      if (TS.notEmpty(updLine) && updLine.has("CurrentVer")) {
       "gotit".print();
-      updLine.print();
+       updLine.print();
+       auto upds = updLine.split("|");
+       String vjs = upds[1];
+       String vms = upds[2];
+       String upurl = upds[3];
+       upurl = upurl.swap("\r", "");
+       upurl = upurl.swap("\n", "");
+       Int vj = Int.new(vjs);
+       Int vm = Int.new(vms);
+       ("ver info vj " + vj.toString() + " vm " + vm.toString() + " upurl " + upurl).print();
+       if (vj > majVer || vm > minVer) {
+         "should update".print();
+         Embedded:Update.updateFromUrl(upurl);
+       }
     }
    }
    
