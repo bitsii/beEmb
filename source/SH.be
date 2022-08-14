@@ -216,7 +216,7 @@ class Embedded:AppShell {
      //"starting mdns".print();
      mdserver.name.print();
      mdserver.start();
-     checkUpd(); //normally commented
+     checkUpd();
    }
    
   checkWifiAp() {
