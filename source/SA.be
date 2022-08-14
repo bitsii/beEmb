@@ -12,12 +12,12 @@ use Embedded:Aes as Crypt;
 use Encode:Url as EU;
 use Embedded:AppShell;
 
-class Embedded:LightApp(AppShell) {
+class Embedded:SwitchApp(AppShell) {
 
    makeSwInfo() {
-     devType = "light";
+     devType = "switch";
      majVer = 1;
-     minVer = 1;
+     minVer = 2;
    }
 
    loadStates() {
