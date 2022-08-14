@@ -48,11 +48,11 @@ class Embedded:AppShell {
      next15min = nowup + 900000;
      nextday = nowup + 86400000;
      
-     "opening files".print();
+     //"opening files".print();
      files.open();
      
-     "making webPage".print();
-     String htmlHead = String.new();
+     //"making webPage".print();
+     /*String htmlHead = String.new();
      htmlHead += "HTTP/1.1 200 OK\r\n";
      htmlHead += "Content-type:text/html\r\n";
      htmlHead += "Connection: close\r\n";
@@ -132,8 +132,8 @@ class Embedded:AppShell {
      webPageL += htmlStart;
      webPageL += webPageHead;
      webPageL += htmlC1;
-     webPageL += htmlEnd;
-     "webpage made".print();
+     webPageL += htmlEnd;*/
+     //"webpage made".print();
    }
 
    swInfoGet() String {
@@ -173,20 +173,20 @@ class Embedded:AppShell {
         } else {
           pin = System:Random.getString(16);
         }
-        "rand created pin".print();
+        //"rand created pin".print();
         files.write(pinf, pin);
       }
-      "pin".print();
-      pin.print();
+      //"pin".print();
+      //pin.print();
 
       did = files.read(didf);
       if (TS.isEmpty(did)) {
         did = System:Random.getString(16);
-        "rand created did".print();
+        //"rand created did".print();
         files.write(didf, did);
       }
-      "did".print();
-      did.print();
+      //"did".print();
+      //did.print();
    }
 
    makeSwInfo() {
@@ -196,32 +196,33 @@ class Embedded:AppShell {
    }
    
    startLoop() {
-     "in startLoop LedApp".print();
+     //"in startLoop LedApp".print();
+     serserver.start();
      makeSwInfo();
      checkMakeIds();
-     serserver.start();
      checkWifiAp();
      if (def(Wifi.localIP)) {
       ("Local ip " + Wifi.localIP).print();
       //"starting ws".print();
       //webserver.start();
       if (Wifi.up) {
-        "starting tweb".print();
+        //"starting tweb".print();
         tweb.start();
       }
      }
+     self.swInfo.print();
      loadStates();
      mdserver.name = "ym" + did;
-     "starting mdns".print();
+     //"starting mdns".print();
      mdserver.name.print();
      mdserver.start();
      checkUpd(); //normally commented
    }
    
   checkWifiAp() {
-     "in checkWifiAp".print();
+     //"in checkWifiAp".print();
      unless (Wifi.up && Wifi.mode == "station") {
-      "trying startwifi".print();
+      //"trying startwifi".print();
       startWifi();
       unless (Wifi.up) {
         if (files.exists(pinf)) {
@@ -232,7 +233,7 @@ class Embedded:AppShell {
             ssid = "y" + setupType + ssid;
             ("ssid from pin " + ssid).print();
             ("sec from pin " + sec).print();
-            "starting ap".print();
+            //"starting ap".print();
             Wifi.new(ssid, sec).startAp();
           }
         }
@@ -241,7 +242,7 @@ class Embedded:AppShell {
    }
    
    startWifi() {
-     "in startWifi".print();
+     //"in startWifi".print();
      if (files.exists(ssidf)) {
       String ssid = files.read(ssidf);
       if (TS.notEmpty(ssid)) {
@@ -257,14 +258,14 @@ class Embedded:AppShell {
        sec = "";
      }
      if (TS.notEmpty(ssid)) {
-       "setting up wifi".print();
+       //"setting up wifi".print();
        Wifi.new(ssid, sec).start();
-       "done".print();
+       //"done".print();
      }
    }
    
    checkWifiUp() {
-    "checking if wifi up".print();
+    //"checking if wifi up".print();
     unless (Wifi.isConnected) {
        "not up restart".print();
        needsRestart = true;
@@ -272,13 +273,14 @@ class Embedded:AppShell {
    }
 
    checkUpd() {
-     "in checkUpd".print();
+     //"in checkUpd".print();
      fields {
        String updHost;
        Int updPort;
        String updOut;
        String updLine;
        String updEnd;
+       String updCert;
      }
      if (undef(updHost)) {
        updHost = "hpprodev.bitsii.org";
@@ -286,6 +288,17 @@ class Embedded:AppShell {
        updOut = "GET /" + devType + majVer + "/ HTTP/1.1\r\n" + "Host: " + updHost + "\r\n" + "Connection: close\r\n\r\n";
        updLine = String.new();
        updEnd = "\r";
+       updCert = """
+-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtqEIRx0r7kdVEvWruMyy
+YzW1SVsi0skPADyV6dvTPyVdqdzHZ3xIAY+8mLvj+yOFIjgPqfGqDZWEUoMFhoQ1
+HxNN3ex+ZBwHuVWiFYKGKm7j7O6eKdbExsTor1d7JuyVuWWBJPERJt0tdsmuyVoq
+JxTxmdeOLQV59+q20iWJlwjNR3FbFSGAmSLPjlBRLjMecpEavgI1k2qmS1GPHx51
+2BZZLwrIuECXEmjOl2eSEy8To4uG4/E6EMjbPJhTKcfFuuNiocXesiC88M2U9iIO
+F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
+1wIDAQAB
+-----END PUBLIC KEY-----
+""";
      }
      //"updOut".print();
      //updOut.print();
@@ -310,8 +323,8 @@ class Embedded:AppShell {
      }
      if (client.opened) { client.close(); }
      if (TS.notEmpty(updLine) && updLine.has("CurrentVer")) {
-      "gotit".print();
-       updLine.print();
+       //"gotit".print();
+       //updLine.print();
        auto upds = updLine.split("|");
        String vjs = upds[1];
        String vms = upds[2];
@@ -323,7 +336,9 @@ class Embedded:AppShell {
        ("ver info vj " + vj.toString() + " vm " + vm.toString() + " upurl " + upurl).print();
        if (vj > majVer || vm > minVer) {
          "should update".print();
-         Embedded:Update.updateFromUrl(upurl);
+         auto eupd = Embedded:Update.new();
+         eupd.signKey(updCert);
+         eupd.updateFromUrl(upurl);
        }
     }
    }
@@ -370,10 +385,10 @@ class Embedded:AppShell {
        String qs = treq.checkGetQueryString();
        if (TS.notEmpty(qs)) {
          if (qs == "/") {
-           "base qs sending webpage".print();
-           for (String part in webPageL) {
-             treq.client.write(part);
-           }
+           //"base qs sending webpage".print();
+           //for (String part in webPageL) {
+           //  treq.client.write(part);
+           //}
          } elseIf (qs.begins("/?")) {
            qs = qs.substring(2, qs.size);
            auto qspso = qs.split("&");
