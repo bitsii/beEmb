@@ -16,7 +16,6 @@ class Embedded:AppShell {
    main() {
      fields {
        auto app = Embedded:App.new();
-       //auto webserver = Embedded:WebServer.new(app);
        auto tweb = Embedded:TinyWeb.new();
        auto serserver = Embedded:SerServer.new();
        auto mdserver = Embedded:Mdns.new();
@@ -25,20 +24,22 @@ class Embedded:AppShell {
        String ssidf = "/lawifissid.txt";
        String secf = "/lawifisec.txt";
        String didf = "/ladidf.txt";
-       //String udpRes;
        Int nextmin = 0;
        Int next10sec = 0;
        Int next15min = 0;
        Int nextday = 0;
-       String serpayend = "\n";
+       String slashn = "\n";
+       String slashr = "\r";
        Files files = Files.new();
-       List webPageL;
+       String htmlHead;
+       //List webPageL;
        Bool needsRestart = false;
        Int nowup = Int.new();
        String did;
        String devType;
        Int majVer;
        Int minVer;
+       String readBuf = String.new();
      }
      app.plugin = self;
      
@@ -52,12 +53,12 @@ class Embedded:AppShell {
      files.open();
      
      //"making webPage".print();
-     /*String htmlHead = String.new();
+     htmlHead = String.new();
      htmlHead += "HTTP/1.1 200 OK\r\n";
      htmlHead += "Content-type:text/html\r\n";
      htmlHead += "Connection: close\r\n";
      htmlHead += "\r\n";
-     String htmlStart = "<html>";
+     /*String htmlStart = "<html>";
      String webPageHead = '''
           <head>
             <script>
@@ -173,20 +174,14 @@ class Embedded:AppShell {
         } else {
           pin = System:Random.getString(16);
         }
-        //"rand created pin".print();
         files.write(pinf, pin);
       }
-      //"pin".print();
-      //pin.print();
 
       did = files.read(didf);
       if (TS.isEmpty(did)) {
         did = System:Random.getString(16);
-        //"rand created did".print();
         files.write(didf, did);
       }
-      //"did".print();
-      //did.print();
    }
 
    makeSwInfo() {
@@ -203,17 +198,13 @@ class Embedded:AppShell {
      checkWifiAp();
      if (def(Wifi.localIP)) {
       ("Local ip " + Wifi.localIP).print();
-      //"starting ws".print();
-      //webserver.start();
       if (Wifi.up) {
-        //"starting tweb".print();
         tweb.start();
       }
      }
      self.swInfo.print();
      loadStates();
      mdserver.name = "ym" + did;
-     //"starting mdns".print();
      mdserver.name.print();
      mdserver.start();
      checkUpd();
@@ -222,7 +213,6 @@ class Embedded:AppShell {
   checkWifiAp() {
      //"in checkWifiAp".print();
      unless (Wifi.up && Wifi.mode == "station") {
-      //"trying startwifi".print();
       startWifi();
       unless (Wifi.up) {
         if (files.exists(pinf)) {
@@ -231,9 +221,8 @@ class Embedded:AppShell {
             String ssid = pin.substring(0, 8);
             String sec = pin.substring(8, 16);
             ssid = "y" + setupType + ssid;
-            ("ssid from pin " + ssid).print();
-            ("sec from pin " + sec).print();
-            //"starting ap".print();
+            //("ssid from pin " + ssid).print();
+            //("sec from pin " + sec).print();
             Wifi.new(ssid, sec).startAp();
           }
         }
@@ -245,22 +234,20 @@ class Embedded:AppShell {
      //"in startWifi".print();
      if (files.exists(ssidf)) {
       String ssid = files.read(ssidf);
-      if (TS.notEmpty(ssid)) {
-        ("ssid " + ssid).print();
-      }
+      //if (TS.notEmpty(ssid)) {
+      //  ("ssid " + ssid).print();
+      //}
      }
      if (files.exists(secf)) {
       String sec = files.read(secf);
-      if (TS.notEmpty(sec)) {
-        ("sec " + sec).print();
-      }
+      //if (TS.notEmpty(sec)) {
+      //  ("sec " + sec).print();
+      //}
      } else {
        sec = "";
      }
      if (TS.notEmpty(ssid)) {
-       //"setting up wifi".print();
        Wifi.new(ssid, sec).start();
-       //"done".print();
      }
    }
    
@@ -278,16 +265,12 @@ class Embedded:AppShell {
        String updHost;
        Int updPort;
        String updOut;
-       String updLine;
-       String updEnd;
        String updCert;
      }
      if (undef(updHost)) {
        updHost = "hpprodev.bitsii.org";
        updPort = 14587;
        updOut = "GET /" + devType + majVer + "/ HTTP/1.1\r\n" + "Host: " + updHost + "\r\n" + "Connection: close\r\n\r\n";
-       updLine = String.new();
-       updEnd = "\r";
        updCert = """
 -----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtqEIRx0r7kdVEvWruMyy
@@ -302,13 +285,14 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
      }
      //"updOut".print();
      //updOut.print();
+     String updLine = readBuf;
      updLine.clear();
      for (Int j = 0;j < 50;j++=) {
       Embedded:TCPClient client = Embedded:TCPClient.new(updHost, updPort);
       client.open();
       client.write(updOut);
       for (Int i = 0;i < 1000;i++=) {
-        updLine = client.checkGetPayload(updLine, updEnd);
+        updLine = client.checkGetPayload(updLine, slashr);
         if (TS.notEmpty(updLine)) {
           //"updLine".print();
           //updLine.print();
@@ -328,14 +312,14 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
        auto upds = updLine.split("|");
        String vjs = upds[1];
        String vms = upds[2];
-       String upurl = upds[3];
-       upurl = upurl.swap("\r", "");
-       upurl = upurl.swap("\n", "");
        Int vj = Int.new(vjs);
        Int vm = Int.new(vms);
-       ("ver info vj " + vj.toString() + " vm " + vm.toString() + " upurl " + upurl).print();
+       ("ver info vj " + vj.toString() + " vm " + vm.toString()).print();
        if (vj > majVer || vm > minVer) {
          "should update".print();
+         String upurl = upds[3];
+         "upurl".print();
+         upurl.print();
          auto eupd = Embedded:Update.new();
          eupd.signKey(updCert);
          eupd.updateFromUrl(upurl);
@@ -362,11 +346,10 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
       checkUpd();
      }
      if (serserver.available) {
-       auto serpay = serserver.checkGetPayload(String.new(), serpayend);
+       String serpay = serserver.checkGetPayload(readBuf, slashn);
      }
      if (TS.notEmpty(serpay)) {
        try {
-          serpay = serpay.swap("\n", "");
           String cmdres = doCmd("serial", serpay);
           if (TS.isEmpty(cmdres)) {
             "cmdres empty".print();
@@ -382,7 +365,7 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
      auto treq = tweb.checkGetRequest();
      if (def(treq)) {
        //"got treq".print();
-       String qs = treq.checkGetQueryString();
+       String qs = treq.checkGetQueryString(readBuf);
        if (TS.notEmpty(qs)) {
          if (qs == "/") {
            //"base qs sending webpage".print();
@@ -390,24 +373,22 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
            //  treq.client.write(part);
            //}
          } elseIf (qs.begins("/?")) {
-           qs = qs.substring(2, qs.size);
            auto qspso = qs.split("&");
            for (String qspsi in qspso) {
              if (TS.notEmpty(qspsi)) {
                //("got qspsi " + qspsi).print();
                auto qsps = qspsi.split("=");
+               //gocha = cmd cannnnot be the first param, is it will have a /?
                if (qsps.size > 1 && def(qsps[0]) && qsps[0] == "cmd" && TS.notEmpty(qsps[1])) {
                  //("got cmd " + qsps[1]).print();
                  String cdec = EU.decode(qsps[1]);
                  //("cdec " + cdec).print();
                  try {
                     cmdres = doCmd("web", cdec);
-                    treq.client.write(webPageL[0]); //ok headers
+                    treq.client.write(htmlHead); //ok headers
                     if (TS.isEmpty(cmdres)) {
-                    //  "cmdres empty".print();
                       treq.client.write("cmdres empty");
                     } else {
-                    //  ("cmdres " + cmdres).print();
                       treq.client.write(cmdres);
                     }
                   } catch (dce) {
@@ -434,19 +415,21 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
    
    doCmd(String channel, String cmdline) String {
      if (TS.isEmpty(cmdline)) {
-       "cmdline empty".print();
        return("cmdline empty");
      }
      if (TS.isEmpty(channel)) {
-       "channel empty".print();
        return("channel empty");
      }
      //check max length and num of spaces
-     ("cmdline follows").print();
-     cmdline.print();
      ("cmd channel follows").print();
      channel.print();
+     ("cmdline follows").print();
+     cmdline.print();
      auto cmdl = cmdline.split(" ");
+     //get rid of trailing newline
+     if (channel == "serial" && cmdl.size > 0) {
+       cmdl.put(cmdl.size - 1, cmdl.get(cmdl.size - 1).swap("\n", ""));
+     }
      Map cmds = Map.new();
      for (String cmdp in cmdl) {
        if (cmdp.has("=")) {
@@ -460,7 +443,7 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
    }
    
    doCmds(String channel, Map cmds) String {
-     if (cmds.has("hexed")) {
+     /*if (cmds.has("hexed")) {
        Map ncmds = Map.new();
        for (auto kv in cmds) {
          if (def(kv.value)) {
@@ -470,7 +453,7 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
          }
        }
        cmds = ncmds;
-     }
+     }*/
      if (cmds.has("cmd")) {
        String cmd = cmds["cmd"];
      } else {

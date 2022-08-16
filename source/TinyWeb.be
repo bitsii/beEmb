@@ -55,15 +55,15 @@ class TinyWebRequest {
     }
   }
   
-  checkGetQueryString() {
-    String line = String.new();
+  checkGetQueryString(String line) {
     for (Int i = 0;i < 30;i++=) {
     line = client.checkGetPayload(line, "\n");
       if (TS.notEmpty(line)) {
         //"got line".print();
         //line.print();
         if (line.begins("GET ")) {
-          String header = line.copy();
+          auto ll = line.split(" ");
+          String qs = ll[1];
         }
         if (line == "\r\n") {
           //"got end of headers".print();
@@ -73,16 +73,7 @@ class TinyWebRequest {
         //"got no line".print();
       }
     }
-    
-    if (TS.notEmpty(header)) {
-      auto ll = header.split(" ");
-      String qs = ll[1];
-      //"found qs".print();
-      //qs.print();
-      return(qs);
-    }
-      
-    return(null);
+    return(qs);
   }
   
   close() {
