@@ -164,22 +164,17 @@ class Embedded:AppShell {
 
    checkMakeIds() {
       fields {
-        String setupType = "r"; //r - repeating pin, can setup from ssid. s - secret pin, need to know it.
+        String pin;
       }
-      String pin = files.read(pinf);
+      pin = files.read(pinf);
       if (TS.isEmpty(pin) || pin.size != 16) {
-        if (setupType == "r") {
-          pin = System:Random.getString(8);
-          pin = pin + pin;
-        } else {
-          pin = System:Random.getString(16);
-        }
+        pin = "1111111111111111";
         files.write(pinf, pin);
       }
 
       did = files.read(didf);
       if (TS.isEmpty(did)) {
-        did = System:Random.getString(16);
+        did = "3333333333333333";
         files.write(didf, did);
       }
    }
@@ -205,7 +200,11 @@ class Embedded:AppShell {
      self.swInfo.print();
      loadStates();
      mdserver.name = "ym" + did;
-     mdserver.name.print();
+     "Device Id".print();
+     did.print();
+     "Pin".print();
+     pin.print();
+     //mdserver.name.print();
      mdserver.start();
      checkUpd();
    }
@@ -215,16 +214,13 @@ class Embedded:AppShell {
      unless (Wifi.up && Wifi.mode == "station") {
       startWifi();
       unless (Wifi.up) {
-        if (files.exists(pinf)) {
-          String pin = files.read(pinf);
-          if (TS.notEmpty(pin) && pin.size == 16) {
-            String ssid = pin.substring(0, 8);
-            String sec = pin.substring(8, 16);
-            ssid = "y" + setupType + ssid;
-            //("ssid from pin " + ssid).print();
-            //("sec from pin " + sec).print();
-            Wifi.new(ssid, sec).startAp();
-          }
+        if (TS.notEmpty(pin) && pin.size == 16) {
+          String ssid = pin.substring(0, 8);
+          String sec = pin.substring(8, 16);
+          ssid = "yo" + ssid;
+          //("ssid from pin " + ssid).print();
+          //("sec from pin " + sec).print();
+          Wifi.new(ssid, sec).startAp();
         }
       }
      }
@@ -490,25 +486,21 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
        files.delete(ssidf);
        files.delete(secf);
        files.write(pinf, newpin);
+       pin = newpin;
        return("Pin set, configuration cleared");
       }
     } elseIf (cmd == "setpasswithpin") {
       //"got setpasswithpin".print();
       String inpin = cmds["pin"];
       String newpass = cmds["newpass"];
-      if (files.exists(pinf)) {
-       String pin = files.read(pinf);
-       if (TS.notEmpty(pin)) {
-         if (TS.isEmpty(inpin)) {
-           return("Error, pin was not sent");
-         } elseIf (pin != inpin) {
-           return("Error, pin is incorrect");
-         }
-       } else {
-         return("Error, pin must be set");
-       }
+      if (TS.notEmpty(pin)) {
+        if (TS.isEmpty(inpin)) {
+          return("Error, pin was not sent");
+        } elseIf (pin != inpin) {
+          return("Error, pin is incorrect");
+        }
       } else {
-       return("Error, pin must be set");
+        return("Error, pin must be set");
       }
       if (TS.isEmpty(newpass)) {
        return("Error, new password is required");
@@ -521,19 +513,14 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
       }
      } elseIf (cmd == "resetwithpin") {
       inpin = cmds["pin"];
-      if (files.exists(pinf)) {
-       pin = files.read(pinf);
-       if (TS.notEmpty(pin)) {
-         if (TS.isEmpty(inpin)) {
-           return("Error, pin was not sent");
-         } elseIf (pin != inpin) {
-           return("Error, pin is incorrect");
-         }
-       } else {
-         return("Error, pin must be set");
-       }
+      if (TS.notEmpty(pin)) {
+        if (TS.isEmpty(inpin)) {
+          return("Error, pin was not sent");
+        } elseIf (pin != inpin) {
+          return("Error, pin is incorrect");
+        }
       } else {
-       return("Error, pin must be set");
+        return("Error, pin must be set");
       }
       clearStates();
       files.delete(passf);
