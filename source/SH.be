@@ -17,6 +17,7 @@ class Embedded:AppShell {
      fields {
        auto app = Embedded:App.new();
        auto tweb = Embedded:TinyWeb.new();
+       auto tcpserver = Embedded:TCPServer.new(5309);
        auto serserver = Embedded:SerServer.new();
        auto mdserver = Embedded:Mdns.new();
        String pinf = "/laspin.txt";
@@ -195,6 +196,7 @@ class Embedded:AppShell {
       ("Local ip " + Wifi.localIP).print();
       if (Wifi.up) {
         tweb.start();
+        tcpserver.start();
       }
      }
      self.swInfo.print();
@@ -399,6 +401,25 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
        //treq.printHeaders();
        treq.close();
      }
+     auto preq = tcpserver.checkGetClient();
+     if (def(preq)) {
+       //"got preq".print();
+       String ppay = preq.checkGetPayload(readBuf, slashn);
+       if (TS.notEmpty(ppay)) {
+          try {
+              String pcmdres = doCmd("tcp", ppay);
+              if (TS.isEmpty(pcmdres)) {
+                "pcmdres empty".print();
+              } else {
+                ("pcmdres " + pcmdres).print();
+              }
+            } catch (any pdce) {
+              "error handling command".print();
+              pdce.print();
+            }
+        }
+       preq.close();
+     }
      mdserver.update();
      if (needsRestart) {
        needsRestart = false;
@@ -425,6 +446,10 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
      //get rid of trailing newline
      if (channel == "serial" && cmdl.size > 0) {
        cmdl.put(cmdl.size - 1, cmdl.get(cmdl.size - 1).swap("\n", ""));
+     }
+     if (channel == "tcp" && cmdl.size > 0) {
+       cmdl.put(cmdl.size - 1, cmdl.get(cmdl.size - 1).swap("\n", ""));
+       cmdl.put(cmdl.size - 1, cmdl.get(cmdl.size - 1).swap("\r", ""));
      }
      Map cmds = Map.new();
      for (String cmdp in cmdl) {

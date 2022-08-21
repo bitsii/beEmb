@@ -43,6 +43,7 @@ class Embedded:SwitchApp(AppShell) {
      if (TS.notEmpty(state)) {
        //"state".print();
        //state.print();
+       //("state |" + state + "|").print();
        if (state == on) {
          on.print();
          app.pinModeOutput(pini);
