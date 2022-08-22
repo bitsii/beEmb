@@ -412,6 +412,9 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
                 "pcmdres empty".print();
               } else {
                 ("pcmdres " + pcmdres).print();
+                preq.write(pcmdres);
+                preq.write(slashr);
+                preq.write(slashn);
               }
             } catch (any pdce) {
               "error handling command".print();
@@ -448,8 +451,7 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
        cmdl.put(cmdl.size - 1, cmdl.get(cmdl.size - 1).swap("\n", ""));
      }
      if (channel == "tcp" && cmdl.size > 0) {
-       cmdl.put(cmdl.size - 1, cmdl.get(cmdl.size - 1).swap("\n", ""));
-       cmdl.put(cmdl.size - 1, cmdl.get(cmdl.size - 1).swap("\r", ""));
+       cmdl.put(cmdl.size - 1, cmdl.get(cmdl.size - 1).swap("\r\n", ""));
      }
      Map cmds = Map.new();
      for (String cmdp in cmdl) {
