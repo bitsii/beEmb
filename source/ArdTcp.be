@@ -105,7 +105,7 @@ WiFiClient client;
     """
     unsigned long currentTime = millis();
     unsigned long previousTime = 0; 
-    long timeoutTime = 2000;
+    long timeoutTime = 5000;
     if (client) {
     """
     }
