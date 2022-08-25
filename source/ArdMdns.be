@@ -7,9 +7,12 @@ use System:Exception;
 
 class Embedded:Mdns {
 
-  new(String _name) self {
+  new() self {
     fields {
-      String name = _name;
+      String name;
+      String service;
+      Int port;
+      String protocol;
     }
   }
   
@@ -27,6 +30,14 @@ class Embedded:Mdns {
     }
     Serial.println("mDNS responder started");
     """
+    }
+    if (def(port) && TS.notEmpty(service) && TS.notEmpty(protocol)) {
+      emit(cc) {
+        """
+        MDNS.addService(bevp_service->bems_toCcString().c_str(), bevp_protocol->bems_toCcString().c_str(), bevp_port->bevi_int);
+        Serial.println("mDNS service added");
+        """
+      }
     }
     return(self);
   }

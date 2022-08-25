@@ -202,6 +202,11 @@ class Embedded:AppShell {
      self.swInfo.print();
      loadStates();
      mdserver.name = "ym" + did;
+     //mdserver.service = "ys" + did;
+     //mdserver.port = 5309;
+     mdserver.service = "http";
+     mdserver.port = 80;
+     mdserver.protocol = "tcp";
      "Device Id".print();
      did.print();
      "Pin".print();
