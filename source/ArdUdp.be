@@ -5,6 +5,17 @@
 use Text:Strings as TS;
 use System:Exception;
 
+/*
+Will be needed in BEAR_Imports.cpp
+#include "lwip/udp.h"
+#include "lwip/igmp.h"
+#define SSDP_MULTICAST_ADDR 239, 255, 255, 250
+#define SSDP_PORT         1989
+
+and this in BEAR_Imports.hpp
+#include <WiFiUdp.h>
+*/
+
 class Embedded:Udp {
 
   emit(cc_classHead) {

@@ -4,7 +4,6 @@
 
 use Text:Strings as TS;
 use System:Exception;
-use Encode:Url as EU;
 
 class Embedded:App {
    
@@ -386,3 +385,4 @@ sign = new BearSSL::SigningVerifier(signPubKey);
   }
 
 }
+

@@ -7,7 +7,6 @@ use Embedded:Wifi;
 use Text:String;
 use Text:Strings as TS;
 use Embedded:Files;
-use Encode:Hex as Hex;
 use Embedded:Aes as Crypt;
 use Encode:Url as EU;
 
@@ -471,17 +470,6 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
    }
    
    doCmds(String channel, Map cmds) String {
-     /*if (cmds.has("hexed")) {
-       Map ncmds = Map.new();
-       for (auto kv in cmds) {
-         if (def(kv.value)) {
-           ncmds.put(kv.key, Hex.decode(kv.value));
-         } else {
-           ncmds.put(kv.key, null);
-         }
-       }
-       cmds = ncmds;
-     }*/
      if (cmds.has("cmd")) {
        String cmd = cmds["cmd"];
      } else {

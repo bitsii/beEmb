@@ -12,10 +12,9 @@
 ../brace/source/base/Int.be
 ../brace/source/base/String.be
 ../brace/source/base/Logic.be
-../brace/source/base/EncodeHex.be
 ../brace/source/base/EncodeUrl.be
 ../brace/source/base/List.be
 ../brace/source/base/Map.be
-../brace/source/base/System.be
+../brace/source/base/Initializer.be
 ../brace/source/base/Exceptions.be
 ../brace/source/base/OpiFc.be

@@ -4,7 +4,6 @@
 
 use Text:Strings as TS;
 use System:Exception;
-use Encode:Url as EU;
 
 class Embedded:TCPServer {
 

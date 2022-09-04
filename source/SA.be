@@ -7,7 +7,6 @@ use Embedded:Wifi;
 use Text:String;
 use Text:Strings as TS;
 use Embedded:Files;
-use Encode:Hex as Hex;
 use Embedded:Aes as Crypt;
 use Encode:Url as EU;
 use Embedded:AppShell;
@@ -17,7 +16,7 @@ class Embedded:SwitchApp(AppShell) {
    makeSwInfo() {
      devType = "switch";
      majVer = 1;
-     minVer = 10;
+     minVer = 12;
    }
 
    loadStates() {
