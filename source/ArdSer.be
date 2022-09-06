@@ -21,6 +21,15 @@ class Embedded:SerServer {
     """
     }
   }
+
+  enableDebug() {
+   emit(cc) {
+     """
+     Serial.setDebugOutput(true);
+     """
+   }
+
+  }
   
   write(String line) self {
     emit(cc) {

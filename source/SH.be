@@ -15,10 +15,6 @@ class Embedded:AppShell {
    main() {
      fields {
        auto app = Embedded:App.new();
-       auto tweb = Embedded:TinyWeb.new();
-       auto tcpserver = Embedded:TCPServer.new(5309);
-       auto serserver = Embedded:SerServer.new();
-       auto mdserver = Embedded:Mdns.new();
        String pinf = "/laspin.txt";
        String passf = "/ladevpass.txt";
        String ssidf = "/lawifissid.txt";
@@ -26,6 +22,7 @@ class Embedded:AppShell {
        String didf = "/ladidf.txt";
        Int nextmin = 0;
        Int next10sec = 0;
+       Int next15sec = 0;
        Int next15min = 0;
        Int nextday = 0;
        String slashn = "\n";
@@ -33,6 +30,7 @@ class Embedded:AppShell {
        Files files = Files.new();
        String htmlHead;
        //List webPageL;
+       Bool needsFsRestart = false;
        Bool needsRestart = false;
        Int nowup = Int.new();
        String did;
@@ -40,11 +38,14 @@ class Embedded:AppShell {
        Int majVer;
        Int minVer;
        String readBuf = String.new();
+       Map writeLater = Map.new();
+       Set deleteLater = Set.new();
      }
      app.plugin = self;
      
      app.uptime(nowup);
      next10sec = nowup + 10000;
+     next15sec = nowup + 15000;
      nextmin = nowup + 60000;
      next15min = nowup + 900000;
      nextday = nowup + 86400000;
@@ -166,17 +167,33 @@ class Embedded:AppShell {
       fields {
         String pin;
       }
-      pin = files.read(pinf);
+
+      if (files.exists(pinf)) {
+        pin = files.read(pinf);
+      }
       if (TS.isEmpty(pin) || pin.size != 16) {
         pin = "1111111111111111";
-        files.write(pinf, pin);
+        writeLater.put(pinf, pin);
       }
 
-      did = files.read(didf);
+      if (files.exists(didf)) {
+        did = files.read(didf);
+      }
       if (TS.isEmpty(did)) {
         did = "3333333333333333";
-        files.write(didf, did);
+        writeLater.put(didf, did);
       }
+   }
+
+   loadPass() {
+      slots {
+        String pass;
+      }
+
+      if (files.exists(passf)) {
+        pass = files.read(passf);
+      }
+
    }
 
    makeSwInfo() {
@@ -186,33 +203,58 @@ class Embedded:AppShell {
    }
    
    startLoop() {
-     //"in startLoop LedApp".print();
-     serserver.start();
+
+     fields {
+       Embedded:TinyWeb tweb;
+       Embedded:TCPServer tcpserver;
+       Embedded:SerServer serserver;
+       Embedded:Mdns mdserver;
+     }
+
      makeSwInfo();
      checkMakeIds();
-     checkWifiAp();
-     if (def(Wifi.localIP)) {
-      ("Local ip " + Wifi.localIP).print();
-      if (Wifi.up) {
-        tweb.start();
-        tcpserver.start();
-      }
-     }
+     loadPass();
+
      self.swInfo.print();
      loadStates();
-     mdserver.name = "ym" + did;
-     //mdserver.service = "ys" + did;
-     //mdserver.port = 5309;
-     mdserver.service = "http";
-     mdserver.port = 80;
-     mdserver.protocol = "tcp";
      "Device Id".print();
      did.print();
      "Pin".print();
      pin.print();
-     //mdserver.name.print();
-     mdserver.start();
-     checkUpd();
+
+     checkWifiAp();
+
+     serserver = Embedded:SerServer.new();
+     serserver.start();
+     serserver.enableDebug();
+
+     if (def(Wifi.localIP)) {
+      ("Local ip " + Wifi.localIP).print();
+      if (Wifi.up) {
+
+        tcpserver = Embedded:TCPServer.new(5309);
+        tcpserver.start();
+
+        tweb = Embedded:TinyWeb.new();
+        tweb.start();
+
+        if (Wifi.isConnected) {
+
+          mdserver = Embedded:Mdns.new();
+          mdserver.name = "ym" + did;
+          mdserver.service = "http";
+          mdserver.port = 80;
+          mdserver.protocol = "tcp";
+          mdserver.start();
+
+          checkUpd();
+
+        }
+
+      }
+
+     }
+
    }
    
   checkWifiAp() {
@@ -234,14 +276,18 @@ class Embedded:AppShell {
    
    startWifi() {
      //"in startWifi".print();
+     slots {
+       String ssid;
+       String sec;
+     }
      if (files.exists(ssidf)) {
-      String ssid = files.read(ssidf);
+      ssid = files.read(ssidf);
       //if (TS.notEmpty(ssid)) {
       //  ("ssid " + ssid).print();
       //}
      }
      if (files.exists(secf)) {
-      String sec = files.read(secf);
+      sec = files.read(secf);
       //if (TS.notEmpty(sec)) {
       //  ("sec " + sec).print();
       //}
@@ -254,10 +300,10 @@ class Embedded:AppShell {
    }
    
    checkWifiUp() {
-    //"checking if wifi up".print();
+    "checking if wifi up".print();
     unless (Wifi.isConnected) {
        "not up restart".print();
-       needsRestart = true;
+       needsFsRestart = true;
      }
    }
 
@@ -328,11 +374,29 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
        }
     }
    }
+
+   doFS() {
+     //"in dofs".print();
+     for (any vd in deleteLater) {
+       files.delete(vd);
+     }
+     deleteLater.clear();
+     for (auto kvw in writeLater) {
+       files.write(kvw.key, kvw.value);
+     }
+     writeLater.clear();
+     //"dofs done".print();
+   }
    
    handleLoop() {
+     //app.feed();
      app.uptime(nowup);
      if (nowup > next10sec) {
       next10sec = nowup + 10000;
+      doFS();
+     }
+     if (nowup > next15sec) {
+      next15sec = nowup + 10000;
       saveStates();
      }
      if (nowup > nextmin) {
@@ -345,9 +409,12 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
      }
      if (nowup > nextday) {
       nextday = nowup + 86400000;
-      checkUpd();
+      if (Wifi.isConnected) {
+        checkUpd();
+      }
      }
-     if (serserver.available) {
+     if (def(serserver) && serserver.available) {
+       //"preding serpay".print();
        String serpay = serserver.checkGetPayload(readBuf, slashn);
      }
      if (TS.notEmpty(serpay)) {
@@ -363,77 +430,87 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
           dce.print();
         }
      }
-     //webserver.checkHandleWeb();
-     auto treq = tweb.checkGetRequest();
-     if (def(treq)) {
-       //"got treq".print();
-       String qs = treq.checkGetQueryString(readBuf);
-       if (TS.notEmpty(qs)) {
-         if (qs == "/") {
-           //"base qs sending webpage".print();
-           //for (String part in webPageL) {
-           //  treq.client.write(part);
-           //}
-         } elseIf (qs.begins("/?")) {
-           auto qspso = qs.split("&");
-           for (String qspsi in qspso) {
-             if (TS.notEmpty(qspsi)) {
-               //("got qspsi " + qspsi).print();
-               auto qsps = qspsi.split("=");
-               //gocha = cmd cannnnot be the first param, is it will have a /?
-               if (qsps.size > 1 && def(qsps[0]) && qsps[0] == "cmd" && TS.notEmpty(qsps[1])) {
-                 //("got cmd " + qsps[1]).print();
-                 String cdec = EU.decode(qsps[1]);
-                 //("cdec " + cdec).print();
-                 try {
-                    cmdres = doCmd("web", cdec);
-                    treq.client.write(htmlHead); //ok headers
-                    if (TS.isEmpty(cmdres)) {
-                      treq.client.write("cmdres empty");
-                    } else {
-                      treq.client.write(cmdres);
+     if (def(tweb)) {
+      auto treq = tweb.checkGetRequest();
+      if (def(treq)) {
+        //"got treq".print();
+        String qs = treq.checkGetQueryString(readBuf);
+        if (TS.notEmpty(qs)) {
+          if (qs == "/") {
+            //"base qs sending webpage".print();
+            //for (String part in webPageL) {
+            //  treq.client.write(part);
+            //}
+          } elseIf (qs.begins("/?")) {
+            auto qspso = qs.split("&");
+            for (String qspsi in qspso) {
+              if (TS.notEmpty(qspsi)) {
+                //("got qspsi " + qspsi).print();
+                auto qsps = qspsi.split("=");
+                //gocha = cmd cannnnot be the first param, is it will have a /?
+                if (qsps.size > 1 && def(qsps[0]) && qsps[0] == "cmd" && TS.notEmpty(qsps[1])) {
+                  //("got cmd " + qsps[1]).print();
+                  String cdec = EU.decode(qsps[1]);
+                  //("cdec " + cdec).print();
+                  try {
+                      cmdres = doCmd("web", cdec);
+                      treq.client.write(htmlHead); //ok headers
+                      if (TS.isEmpty(cmdres)) {
+                        treq.client.write("cmdres empty");
+                      } else {
+                        treq.client.write(cmdres);
+                      }
+                    } catch (dce) {
+                      "error handling command".print();
+                      dce.print();
                     }
-                  } catch (dce) {
-                    "error handling command".print();
-                    dce.print();
-                  }
-               }
-             }
-           }
-         }
-       }
-       //treq.printHeaders();
-       treq.close();
-     }
-     auto preq = tcpserver.checkGetClient();
-     if (def(preq)) {
-       //"got preq".print();
-       String ppay = preq.checkGetPayload(readBuf, slashn);
-       if (TS.notEmpty(ppay)) {
-          try {
-              String pcmdres = doCmd("tcp", ppay);
-              if (TS.isEmpty(pcmdres)) {
-                "pcmdres empty".print();
-              } else {
-                ("pcmdres " + pcmdres).print();
-                preq.write(pcmdres);
-                preq.write(slashr);
-                preq.write(slashn);
+                }
               }
-            } catch (any pdce) {
-              "error handling command".print();
-              pdce.print();
             }
+          }
         }
-       preq.close();
+        //treq.printHeaders();
+        treq.close();
+      }
      }
-     mdserver.update();
+     if (def(tcpserver)) {
+      auto preq = tcpserver.checkGetClient();
+      if (def(preq)) {
+        //"got preq".print();
+        String ppay = preq.checkGetPayload(readBuf, slashn);
+        if (TS.notEmpty(ppay)) {
+            try {
+                String pcmdres = doCmd("tcp", ppay);
+                if (TS.isEmpty(pcmdres)) {
+                  "pcmdres empty".print();
+                } else {
+                  ("pcmdres " + pcmdres).print();
+                  preq.write(pcmdres);
+                  preq.write(slashr);
+                  preq.write(slashn);
+                }
+              } catch (any pdce) {
+                "error handling command".print();
+                pdce.print();
+              }
+          }
+        preq.close();
+      }
+     }
+     if (def(mdserver)) {
+       mdserver.update();
+     }
      if (needsRestart) {
        needsRestart = false;
        "restarting because needsRestart".print();
         Wifi.stop();
         Wifi.clearAll();
         app.restart();
+     }
+     if (needsFsRestart) {
+       needsFsRestart = false;
+       doFS();
+       needsRestart = true;
      }
    }
    
@@ -477,18 +554,7 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
        return("no cmd specified");
      }
      //("cmd is " + cmd).print();
-     if (cmd == "fullreset") {
-      //"got fullreset".print();
-      unless (channel == "serial") {
-        return("Error, only supported over Serial");
-      }
-      clearStates();
-      files.delete(passf);
-      files.delete(ssidf);
-      files.delete(secf);
-      files.delete(pinf);
-      return("All config and pin cleared");
-    } elseIf (cmd == "setpin") {
+     if (cmd == "setpin") {
       //"got setpin".print();
       String newpin = cmds["newpin"];
       unless (channel == "serial") {
@@ -501,13 +567,9 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
       } elseIf (newpin.size != 16) {
         return("Error, pin must be 16 chars in length");
       } else {
-       clearStates();
-       files.delete(passf);
-       files.delete(ssidf);
-       files.delete(secf);
-       files.write(pinf, newpin);
+       writeLater.put(pinf, newpin);
        pin = newpin;
-       return("Pin set, configuration cleared");
+       return("Pin set");
       }
     } elseIf (cmd == "setpasswithpin") {
       //"got setpasswithpin".print();
@@ -525,34 +587,17 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
       if (TS.isEmpty(newpass)) {
        return("Error, new password is required");
       } else {
-       clearStates();
-       files.delete(ssidf);
-       files.delete(secf);
-       files.write(passf, newpass);
-       return("Password set, other configuration cleared");
-      }
-     } elseIf (cmd == "resetwithpin") {
-      inpin = cmds["pin"];
-      if (TS.notEmpty(pin)) {
-        if (TS.isEmpty(inpin)) {
-          return("Error, pin was not sent");
-        } elseIf (pin != inpin) {
-          return("Error, pin is incorrect");
+        if (TS.notEmpty(pass)) {
+          return("Error, cannot set pass with pin once it has been set, use setpasswithpass instead");
         }
-      } else {
-        return("Error, pin must be set");
+       writeLater.put(passf, newpass);
+       pass = newpass;
+       return("Password set");
       }
-      clearStates();
-      files.delete(passf);
-      files.delete(ssidf);
-      files.delete(secf);
-      return("All config cleared");
      } elseIf (cmd == "setpasswithpass") {
        //"got setpasswithpass".print();
         String inpass = cmds["pass"];
         newpass = cmds["newpass"];
-        if (files.exists(passf)) {
-         String pass = files.read(passf);
          if (TS.notEmpty(pass)) {
            if (TS.isEmpty(inpass)) {
              return("Error, pass was not sent");
@@ -560,56 +605,48 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
              return("Error, pass is incorrect");
            }
          } else {
-           return("Error, password may only be changed if initialized via setpasspin");
+           return("Error, initial password must be set with setpasswithpin");
          }
-        } else {
-         return("Error, password may only be changed if initialized via setpasspin");
-        }
         if (TS.isEmpty(newpass)) {
          return("Error, new password is required");
         } else {
-         files.write(passf, newpass);
+         writeLater.put(passf, newpass);
+         pass = newpass;
          return("Password set");
         }
       }
      
      //password check
-     if (files.exists(passf)) {
-       inpass = cmds["pass"];
-       if (TS.isEmpty(inpass)) {
-         return("Device password must be provided");
-       }
-       pass = files.read(passf);
-       if (TS.isEmpty(pass)) {
-        return("Device Password Must Be Set");
-       }
-       if (inpass != pass) {
-         //if command setstate check a statepass too, for limited perms
-         return("Device Password Incorrect");
-       }
-     } else {
-       return("Device Password Must Be Set");
-     }
+    if (TS.isEmpty(pass)) {
+      return("Device Password Must Be Set");
+    }
+    inpass = cmds["pass"];
+    if (TS.isEmpty(inpass)) {
+      return("Device password must be provided");
+    }
+    if (inpass != pass) {
+      return("Device Password Incorrect");
+    }
 
      if (cmd == "setwifi") {
        //"got setwifi".print();
-        String ssid = cmds["ssid"];
-        String sec = cmds["sec"];
+        ssid = cmds["ssid"];
+        sec = cmds["sec"];
         if (TS.notEmpty(ssid)) {
           //("got ssid " + ssid).print();
-          files.write(ssidf, ssid);
+          writeLater.put(ssidf, ssid);
           if (TS.notEmpty(sec)) {
             //("got sec " + sec).print();
-            files.write(secf, sec);
+            writeLater.put(secf, sec);
           } else {
             ("sec missing").print();
-            files.delete(secf);
+            deleteLater.put(secf);
           }
           return("Wifi Setup Written, restart to activate");
         } else {
           ("ssid missing").print();
-          files.delete(ssidf);
-          files.delete(secf);
+          deleteLater.put(ssidf);
+          deleteLater.put(secf);
           return("Wifi Setup cleared, restart to activate");
         }
      } elseIf (cmd == "dostate") {
@@ -623,14 +660,8 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
         return("State cleared");
      } elseIf (cmd == "restart") {
        //"got restart".print();
-       needsRestart = true;
+       needsFsRestart = true;
        return("Will restart soonish");
-     } elseIf (cmd == "resetwithpass") {
-       clearStates();
-       files.delete(passf);
-       files.delete(ssidf);
-       files.delete(secf);
-       return("All config cleared");
      } elseIf (cmd == "getdid") {
        return(did);
      } elseIf (cmd == "getdevtype") {
@@ -643,7 +674,7 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
         String newdid = cmds["newdid"];
         if (TS.notEmpty(did) && did.size == 16) {
           did = newdid;
-          files.write(didf, did);
+          writeLater.put(didf, did);
           return("did now " + did);
         }
         return("need 16 char did");

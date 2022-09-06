@@ -39,6 +39,19 @@ class Embedded:App {
       """
      }
    }
+
+   feed() {
+     emit(cc) {
+      """
+      //ESP.wdtFeed();
+      //ESP.wdtDisable();
+      //ESP.wdtEnable(1000);
+      //yield();
+      ESP.wdtFeed();
+      //yield();
+      """
+     }
+   }
    
    uptime() Int {
      Int millis = Int.new();
@@ -125,7 +138,7 @@ class Embedded:Wifi {
   startAp() {
       clear();
       mode = "ap";
-      //("Starting AP " + ssid).print();
+      ("Starting AP " + ssid).print();
       emit(cc) {
       """
       boolean result = WiFi.softAP(bevp_ssid->bems_toCcString().c_str(), bevp_password->bems_toCcString().c_str());
@@ -149,7 +162,7 @@ class Embedded:Wifi {
   start() {
     clear();
     mode = "station";
-    //("Connecting to " + ssid).print();
+    ("Connecting to " + ssid).print();
     emit(cc) {
     """
     WiFi.begin(bevp_ssid->bems_toCcString().c_str(), bevp_password->bems_toCcString().c_str());

@@ -16,7 +16,7 @@ class Embedded:SwitchApp(AppShell) {
    makeSwInfo() {
      devType = "switch";
      majVer = 1;
-     minVer = 14;
+     minVer = 21;
    }
 
    loadStates() {
