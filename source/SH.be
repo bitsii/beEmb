@@ -16,7 +16,9 @@ class Embedded:AppShell {
      fields {
        auto app = Embedded:App.new();
        String pinf = "/laspin.txt";
+       String rcodef = "/larcode.txt";
        String passf = "/ladevpass.txt";
+       String spassf = "/laspass.txt";
        String ssidf = "/lawifissid.txt";
        String secf = "/lawifisec.txt";
        String didf = "/ladidf.txt";
@@ -185,13 +187,21 @@ class Embedded:AppShell {
       }
    }
 
-   loadPass() {
+   loadPasses() {
       slots {
         String pass;
+        String spass;
+        String rcode;
       }
 
       if (files.exists(passf)) {
         pass = files.read(passf);
+      }
+      if (files.exists(spassf)) {
+        spass = files.read(spassf);
+      }
+      if (files.exists(rcodef)) {
+        rcode = files.read(rcodef);
       }
 
    }
@@ -213,7 +223,7 @@ class Embedded:AppShell {
 
      makeSwInfo();
      checkMakeIds();
-     loadPass();
+     loadPasses();
 
      self.swInfo.print();
      loadStates();
@@ -571,6 +581,18 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
        pin = newpin;
        return("Pin set");
       }
+    } elseIf (cmd == "setrcode") {
+      String newrcode = cmds["newrcode"];
+      unless (channel == "serial") {
+        return("Error, only supported over Serial");
+      }
+      if (TS.isEmpty(newrcode)) {
+       return("Error, newrcode is required");
+      } else {
+       writeLater.put(rcodef, newrcode);
+       rcode = newrcode;
+       return("rcode set");
+      }
     } elseIf (cmd == "setpasswithpin") {
       //"got setpasswithpin".print();
       String inpin = cmds["pin"];
@@ -594,6 +616,22 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
        pass = newpass;
        return("Password set");
       }
+     } elseIf (cmd == "resetwithcode") {
+      //"got setpasswithpin".print();
+      String inrcode = cmds["rcode"];
+      if (TS.notEmpty(rcode)) {
+        if (TS.isEmpty(inrcode)) {
+          return("Error, rcode was not sent");
+        } elseIf (rcode != inrcode) {
+          return("Error, rcode is incorrect");
+        }
+      } else {
+        return("Error, rcode must be set");
+      }
+      deleteLater.put(passf);
+      deleteLater.put(ssidf);
+      deleteLater.put(secf);
+      return("Device reset");
      } elseIf (cmd == "setpasswithpass") {
        //"got setpasswithpass".print();
         String inpass = cmds["pass"];
@@ -615,6 +653,24 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
          return("Password set");
         }
       }
+
+     if (cmd == "dostate") {
+       //"got dostate".print();
+        //state password check
+        if (TS.isEmpty(spass)) {
+          return("State Password Must Be Set");
+        }
+        inpass = cmds["spass"];
+        if (TS.isEmpty(inpass)) {
+          return("State password must be provided");
+        }
+        if (inpass != spass) {
+          return("State Password Incorrect");
+        }
+        String state = cmds["state"];
+        String stateres = doState(state);
+        return(stateres);
+     }
      
      //password check
     if (TS.isEmpty(pass)) {
@@ -649,11 +705,6 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
           deleteLater.put(secf);
           return("Wifi Setup cleared, restart to activate");
         }
-     } elseIf (cmd == "dostate") {
-       //"got dostate".print();
-        String state = cmds["state"];
-        String stateres = doState(state);
-        return(stateres);
      } elseIf (cmd == "clearstates") {
        //"got clearStates".print();
         clearStates();
@@ -662,6 +713,11 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
        //"got restart".print();
        needsFsRestart = true;
        return("Will restart soonish");
+     } elseIf (cmd == "resetwithpass") {
+      deleteLater.put(passf);
+      deleteLater.put(ssidf);
+      deleteLater.put(secf);
+      return("Device reset");
      } elseIf (cmd == "getdid") {
        return(did);
      } elseIf (cmd == "getdevtype") {
@@ -678,6 +734,11 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
           return("did now " + did);
         }
         return("need 16 char did");
+     } elseIf (cmd == "setspass") {
+        String newspass = cmds["newspass"];
+        writeLater.put(spassf, newspass);
+        spass = newspass;
+        return("spass now " + spass);
      } else {
        return("unrecognized command");
      }
