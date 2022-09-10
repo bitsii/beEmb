@@ -174,7 +174,8 @@ class Embedded:AppShell {
         pin = files.read(pinf);
       }
       if (TS.isEmpty(pin) || pin.size != 16) {
-        pin = "1111111111111111";
+        auto pinpart = System:Random.getString(8);
+        pin = pinpart + pinpart;
         writeLater.put(pinf, pin);
       }
 
@@ -182,7 +183,7 @@ class Embedded:AppShell {
         did = files.read(didf);
       }
       if (TS.isEmpty(did)) {
-        did = "3333333333333333";
+        did = System:Random.getString(16);
         writeLater.put(didf, did);
       }
    }
@@ -211,6 +212,21 @@ class Embedded:AppShell {
      majVer = 1;
      minVer = 1;
    }
+
+   initRandom() {
+     auto wifi = Embedded:Wifi.new();
+     auto rhash = wifi.macAddress;
+
+     Int i = 0;
+     for (String net in wifi.scanNetworks()) {
+       rhash += net;
+       i++=;
+       if (i > 7) { break; }
+     }
+
+     System:Random.seed(rhash.hash);
+
+   }
    
    startLoop() {
 
@@ -222,6 +238,7 @@ class Embedded:AppShell {
      }
 
      makeSwInfo();
+     initRandom();
      checkMakeIds();
      loadPasses();
 
@@ -231,6 +248,8 @@ class Embedded:AppShell {
      did.print();
      "Pin".print();
      pin.print();
+
+     //System:Random.getIntMax(100).print();
 
      checkWifiAp();
 
@@ -257,7 +276,7 @@ class Embedded:AppShell {
           mdserver.protocol = "tcp";
           mdserver.start();
 
-          checkUpd();
+          checkUpd(1);
 
         }
 
@@ -317,8 +336,8 @@ class Embedded:AppShell {
      }
    }
 
-   checkUpd() {
-     //"in checkUpd".print();
+   checkUpd(Int tries) {
+     "in checkUpd".print();
      fields {
        String updHost;
        Int updPort;
@@ -345,17 +364,21 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
      //updOut.print();
      String updLine = readBuf;
      updLine.clear();
-     for (Int j = 0;j < 50;j++=) {
+     for (Int j = 0;j < tries;j++=) { //50
+       //"try 0".print();
       Embedded:TCPClient client = Embedded:TCPClient.new(updHost, updPort);
       client.open();
       client.write(updOut);
-      for (Int i = 0;i < 1000;i++=) {
-        updLine = client.checkGetPayload(updLine, slashr);
-        if (TS.notEmpty(updLine)) {
-          //"updLine".print();
-          //updLine.print();
-          if (TS.notEmpty(updLine) && updLine.has("CurrentVer")) {
-            break;
+      if (client.opened) {
+        for (Int i = 0;i < 200;i++=) { //1000
+          //"try 1".print();
+          updLine = client.checkGetPayload(updLine, slashr);
+          if (TS.notEmpty(updLine)) {
+            //"updLine".print();
+            //updLine.print();
+            if (TS.notEmpty(updLine) && updLine.has("CurrentVer")) {
+              break;
+            }
           }
         }
       }
@@ -383,6 +406,7 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
          eupd.updateFromUrl(upurl);
        }
     }
+    "checkUpd done".print();
    }
 
    doFS() {
@@ -420,7 +444,7 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
      if (nowup > nextday) {
       nextday = nowup + 86400000;
       if (Wifi.isConnected) {
-        checkUpd();
+        checkUpd(5);
       }
      }
      if (def(serserver) && serserver.available) {

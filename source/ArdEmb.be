@@ -134,6 +134,38 @@ class Embedded:Wifi {
     ssid = _ssid;
     password = _password;
   }
+
+  macAddressGet() String {
+    String macAddress;
+    emit(cc) {
+      """
+      String mac = WiFi.macAddress();
+      std::string macs = std::string(mac.c_str());
+      bevl_macAddress = new BEC_2_4_6_TextString(macs);
+      """
+    }
+    return(macAddress);
+  }
+
+  scanNetworks() List {
+    List networks = List.new();
+    String network;
+    emit(cc) {
+      """
+      int numberOfNetworks = WiFi.scanNetworks();
+
+      for(int i =0; i<numberOfNetworks; i++){
+        String ssid = WiFi.SSID(i);
+        std::string ssids = std::string(ssid.c_str());
+        bevl_network = new BEC_2_4_6_TextString(ssids);
+        bevl_networks->bem_addValue_1(bevl_network);
+      }
+
+      """
+    }
+
+    return(networks);
+  }
   
   startAp() {
       clear();
@@ -174,10 +206,12 @@ class Embedded:Wifi {
     }
     if (WiFi.status() == WL_CONNECTED) {
       //Serial.print("Connected, IP address:\t");
-      Serial.println(WiFi.localIP()); 
+      Serial.println(WiFi.localIP());
+
       String lip = WiFi.localIP().toString();
       std::string lips = std::string(lip.c_str());
       bevp_localIP = new BEC_2_4_6_TextString(lips);
+
       bevp_up = BECS_Runtime::boolTrue;
     } else {
       //Serial.println("no luck connecting to wifi");

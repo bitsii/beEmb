@@ -104,7 +104,7 @@ WiFiClient client;
     """
     unsigned long currentTime = millis();
     unsigned long previousTime = 0; 
-    long timeoutTime = 5000;
+    long timeoutTime = 2000;
     if (client) {
     """
     }
@@ -123,7 +123,8 @@ WiFiClient client;
       currentTime = millis();
       previousTime = currentTime;
       while (client.connected() && currentTime - previousTime <= timeoutTime) {
-        currentTime = millis();         
+        previousTime = currentTime;
+        currentTime = millis();
         if (client.available()) {
           char c = client.read(); 
           //Serial.write(c);

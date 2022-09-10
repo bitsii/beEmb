@@ -66,6 +66,7 @@ class Embedded:SerServer {
       currentTime = millis();
       previousTime = currentTime;
       while (currentTime - previousTime <= timeoutTime) {
+        previousTime = currentTime;
         currentTime = millis();         
         if (Serial.available()) {      
           char c = Serial.read(); 
