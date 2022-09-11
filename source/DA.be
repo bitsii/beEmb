@@ -16,8 +16,9 @@ class Embedded:DimmerApp(AppShell) {
    
    makeSwInfo() {
      devType = "dimmer";
+     devCode = "gdi";
      majVer = 1;
-     minVer = 23;
+     minVer = 24;
    }
 
    loadStates() {

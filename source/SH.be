@@ -37,6 +37,7 @@ class Embedded:AppShell {
        Int nowup = Int.new();
        String did;
        String devType;
+       String devCode;
        Int majVer;
        Int minVer;
        String readBuf = String.new();
@@ -209,6 +210,7 @@ class Embedded:AppShell {
 
    makeSwInfo() {
      devType = "shell";
+     devCode = "gsh";
      majVer = 1;
      minVer = 1;
    }
@@ -294,10 +296,17 @@ class Embedded:AppShell {
         if (TS.notEmpty(pin) && pin.size == 16) {
           String ssid = pin.substring(0, 8);
           String sec = pin.substring(8, 16);
-          ssid = "yo" + ssid;
+          ssid = "yo_" + self.devCode + "_" + ssid;
           //("ssid from pin " + ssid).print();
           //("sec from pin " + sec).print();
-          Wifi.new(ssid, sec).startAp();
+          auto wifi = Embedded:Wifi.new();
+          auto nets = wifi.scanNetworks();
+          auto rand = System:Random.new();
+          String finssid = ssid + "_" + rand.getString(4);
+          while (nets.has(finssid)) {
+            finssid = ssid + rand.getString(4);
+          }
+          Wifi.new(finssid, sec).startAp();
         }
       }
      }
