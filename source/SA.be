@@ -17,70 +17,73 @@ class Embedded:SwitchApp(AppShell) {
      devType = "switch";
      devCode = "gsw";
      majVer = 1;
-     minVer = 32;
+     minVer = 33;
    }
 
    loadStates() {
      fields {
-       String statesf = "/latstates.txt";
+       String swf = "/lasw.txt";
        //on = 0, off = 255
        String on = "on";
        String off = "off";
        String get = "get";
        Int pini = 16; //2
-       String lastSavedState;
-       String lastState;
+       String pinif = "/lapin.txt";
+       String sw;
      }
-     if (files.exists(statesf)) {
-       lastSavedState = files.read(statesf);
-       lastState = lastSavedState;
-       doState(lastSavedState);
+     if (files.exists(pinif)) {
+       String pins = files.read(pinif);
+       pini = Int.new(pins);
+     }
+     if (files.exists(swf)) {
+       String insw = files.read(swf);
+       sw = insw;
+       doState(Map.new().put("sw", insw));
      }
    }
 
-   doState(String state) String {
+   configState(Map cmds) String {
+     String pins = cmds["pin"];
+     unless (pins.isInteger) {
+       return("error: pin must be an integer");
+     }
+     pini = Int.new(pins);
+     writeLater.put(pinif, pins);
+     return("switch pin now " + pins);
+   }
+
+   doState(Map cmds) String {
      "in dostate".print();
-     if (TS.notEmpty(state)) {
-       //"state".print();
-       //state.print();
-       //("state |" + state + "|").print();
-       if (state == on) {
+     String insw = cmds["sw"];
+     String inget = cmds["get"];
+     if (TS.notEmpty(inget)) {
+      if (TS.notEmpty(sw)) {
+        return(sw);
+        } else {
+        return("undefined");
+        }
+     }
+     if (TS.notEmpty(insw)) {
+       if (insw == on) {
          on.print();
          app.pinModeOutput(pini);
          app.analogWrite(pini, 0);
-         lastState = state;
-       } elseIf (state == off) {
+         sw = insw;
+         writeLater.put(swf, sw);
+       } elseIf (insw == off) {
          off.print();
          app.pinModeOutput(pini);
          app.analogWrite(pini, 255);
-         lastState = state;
-       } elseIf (state == get) {
-         if (TS.notEmpty(lastState)) {
-          return(lastState);
-         } else {
-          return("undefined");
-         }
+         sw = insw;
+         writeLater.put(swf, sw);
        }
-
      }
-     return(state);
+     return("ok");
    }
    
    clearStates() {
-     if (files.exists(statesf)) {
-       files.delete(statesf);
-     }
-     lastState = null;
-     lastSavedState = null;
-   }
-   
-   saveStates() {
-     if (TS.notEmpty(lastState)) {
-      if (TS.isEmpty(lastSavedState) || lastState != lastSavedState) {
-        "saving state".print();
-        Files.write(statesf, lastState);
-        lastSavedState = lastState;
-      }
+     if (files.exists(swf)) {
+       files.delete(swf);
      }
    }
 

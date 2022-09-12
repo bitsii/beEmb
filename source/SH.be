@@ -25,7 +25,8 @@ class Embedded:AppShell {
        Int nextmin = 0;
        Int next10sec = 0;
        Int next15sec = 0;
-       Int next15min = 0;
+       Int next5min = 0;
+       Int next10min = 0;
        Int nextday = 0;
        String slashn = "\n";
        String slashr = "\r";
@@ -50,7 +51,8 @@ class Embedded:AppShell {
      next10sec = nowup + 10000;
      next15sec = nowup + 15000;
      nextmin = nowup + 60000;
-     next15min = nowup + 900000;
+     next5min = nowup + 300000;
+     next10min = nowup + 600000;
      nextday = nowup + 86400000;
      
      //"opening files".print();
@@ -155,15 +157,16 @@ class Embedded:AppShell {
 
    }
 
-   doState(String state) String {
-     return(state);
+   configState(Map cmds) String {
+     return("sh no impl");
+   }
+
+   doState(Map cmds) String {
+     return("sh no impl");
    }
    
    clearStates() {
 
-   }
-   
-   saveStates() {
    }
 
    checkMakeIds() {
@@ -339,9 +342,14 @@ class Embedded:AppShell {
    
    checkWifiUp() {
     "checking if wifi up".print();
-    unless (Wifi.isConnected) {
-       "not up restart".print();
-       needsFsRestart = true;
+    unless (Wifi.isConnected || TS.isEmpty(ssid)) {
+       "configured but not up".print();
+       auto wifi = Embedded:Wifi.new();
+       auto nets = wifi.scanNetworks();
+       if (nets.has(ssid)) {
+         "my ssid looks to be present, restarting".print();
+         needsFsRestart = true;
+       }
      }
    }
 
@@ -440,14 +448,16 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
      }
      if (nowup > next15sec) {
       next15sec = nowup + 10000;
-      saveStates();
      }
      if (nowup > nextmin) {
       nextmin = nowup + 60000;
       self.swInfo.print();
      }
-     if (nowup > next15min) {
-      next15min = nowup + 900000;
+     if (nowup > next5min) {
+      next5min = nowup + 300000;
+     }
+     if (nowup > next10min) {
+      next10min = nowup + 600000;
       checkWifiUp();
      }
      if (nowup > nextday) {
@@ -700,8 +710,7 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
         if (inpass != spass) {
           return("State Password Incorrect");
         }
-        String state = cmds["state"];
-        String stateres = doState(state);
+        String stateres = doState(cmds);
         return(stateres);
      }
      
@@ -772,6 +781,8 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
         writeLater.put(spassf, newspass);
         spass = newspass;
         return("spass now " + spass);
+     } elseIf (cmd == "configstate") {
+        return(configState(cmds));
      } else {
        return("unrecognized command");
      }

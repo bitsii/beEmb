@@ -28,88 +28,103 @@ class Embedded:DimmerApp(AppShell) {
        //on = 0, off = 255
        String on = "on";
        String off = "off";
-       String lvlbg = "lvl:";
-       String rlvlbg = "rlvl:";
-       String getsw = "getsw";
-       String getlvl = "getlvl";
+       String lvll = "lvl";
+       String rlvll = "rlvl";
+       String getl = "get";
+       String swl = "sw";
        Int pini = 16; //2
-       String lastSavedSw;
-       String lastSw;
-       String lastSavedLvl;
-       String lastLvl;
+       String pinif = "/dapini.txt";
+       String sw;
+       Int lvl;
+     }
+     if (files.exists(pinif)) {
+       String pins = files.read(pinif);
+       pini = Int.new(pins);
      }
      if (files.exists(swf)) {
-       lastSavedSw = files.read(swf);
-       lastSw = lastSavedSw;
+       String insw = files.read(swf);
      }
      if (files.exists(lvlf)) {
-       lastSavedLvl = files.read(lvlf);
-       lastLvl = lastSavedLvl;
+       String inslvl = files.read(lvlf);
      }
-     if (TS.isEmpty(lastSw)) {
-       lastSw = off;
+     if (TS.isEmpty(insw)) {
+       insw = off;
      }
-     if (TS.isEmpty(lastLvl)) {
-       lastLvl = "lvl:0";
+     if (TS.isEmpty(inslvl)) {
+       inslvl = "0";
      }
-     if (lastSw == off) {
-       doState(off);
-     } else {
-       doState(lastLvl);
-     }
+     sw = insw;
+     lvl = Int.new(inslvl);
+     doState(Map.new().put(swl, insw).put(lvll, inslvl));
    }
 
-   doState(String state) String {
+   configState(Map cmds) String {
+     String pins = cmds["pin"];
+     unless (pins.isInteger) {
+       return("error: pin must be an integer");
+     }
+     pini = Int.new(pins);
+     writeLater.put(pinif, pins);
+     return("switch pin now " + pins);
+   }
+
+   doState(Map cmds) String {
      "in dostate".print();
-     if (TS.notEmpty(state)) {
-       //"state".print();
-       //state.print();
-       if (state == on) {
-         on.print();
-         sl = lastLvl.split(":");
-         tmlvl = Int.new(sl[1]);
-         if (lastLvl.begins(rlvlbg)) {
-            tmlvl = 255 - tmlvl;
-          }
-         app.pinModeOutput(pini);
-         app.analogWrite(pini, tmlvl);
-         lastSw = state;
-       } elseIf (state == off) {
-         off.print();
-         app.pinModeOutput(pini);
-         app.analogWrite(pini, 255);
-         lastSw = state;
-       } elseIf (state.begins(lvlbg) || state.begins(rlvlbg)) {
-         auto sl = state.split(":");
-         if (sl.size == 2 && sl[1].isInteger) {
-          auto tmlvl = Int.new(sl[1]);
-          if (tmlvl > 255 || tmlvl < 0) {
-            return("invalid level");
-          }
-          if (state.begins(rlvlbg)) {
-            tmlvl = 255 - tmlvl;
-          }
+     String inslvl = cmds[lvll];
+     String insrlvl = cmds[rlvll];
+     String inssw = cmds[swl];
+     String insget = cmds[getl];
+     if (TS.notEmpty(inssw) && inssw == on) {
+        on.print();
+        app.pinModeOutput(pini);
+        app.analogWrite(pini, lvl);
+        sw = inssw;
+        writeLater.put(swf, sw);
+     } elseIf (TS.notEmpty(inssw) && inssw == off) {
+        off.print();
+        app.pinModeOutput(pini);
+        app.analogWrite(pini, 255);
+        sw = inssw;
+        writeLater.put(swf, sw);
+     }
+     if (TS.notEmpty(inslvl) && inslvl.isInteger) {
+        Int tmlvl = Int.new(inslvl);
+        if (tmlvl > 255 || tmlvl < 0) {
+          return("error: invalid level");
+        }
+        if (sw == on) {
           app.pinModeOutput(pini);
           app.analogWrite(pini, tmlvl);
-          lastLvl = state;
-          lastSw = on;
-         }
-       } elseIf (state == getsw) {
-         if (TS.notEmpty(lastSw)) {
-          return(lastSw);
+        }
+        lvl = tmlvl;
+        writeLater.put(lvlf, lvl.toString());
+     } elseIf (TS.notEmpty(insrlvl) && insrlvl.isInteger) {
+        tmlvl = Int.new(insrlvl);
+        if (tmlvl > 255 || tmlvl < 0) {
+          return("error: invalid level");
+        }
+        tmlvl = 255 - tmlvl;
+        if (sw == on) {
+          app.pinModeOutput(pini);
+          app.analogWrite(pini, tmlvl);
+        }
+        lvl = tmlvl;
+        writeLater.put(lvlf, lvl.toString());
+      }
+      if (TS.notEmpty(insget) && insget == swl) {
+         if (TS.notEmpty(sw)) {
+          return(sw);
          } else {
           return("undefined");
          }
-       } elseIf (state == getlvl) {
-         if (TS.notEmpty(lastLvl)) {
-          return(lastLvl);
+       } elseIf (TS.notEmpty(insget) && insget == lvll) {
+         if (def(lvl)) {
+          return(lvl.toString());
          } else {
           return("undefined");
          }
        }
-
-     }
-     return(state);
+     return("ok");
    }
    
    clearStates() {
@@ -119,27 +134,8 @@ class Embedded:DimmerApp(AppShell) {
      if (files.exists(lvlf)) {
        files.delete(lvlf);
      }
-     lastSw = null;
-     lastSavedSw = null;
-     lastLvl = null;
-     lastSavedLvl = null;
-   }
-   
-   saveStates() {
-     if (TS.notEmpty(lastSw)) {
-      if (TS.isEmpty(lastSavedSw) || lastSw != lastSavedSw) {
-        "saving sw".print();
-        Files.write(swf, lastSw);
-        lastSavedSw = lastSw;
-      }
-     }
-     if (TS.notEmpty(lastLvl)) {
-      if (TS.isEmpty(lastSavedLvl) || lastLvl != lastSavedLvl) {
-        "saving lvl".print();
-        Files.write(lvlf, lastLvl);
-        lastSavedLvl = lastLvl;
-      }
-     }
+     sw = null;
+     lvl = null;
    }
 
 }
