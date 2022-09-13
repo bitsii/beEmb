@@ -104,6 +104,32 @@ class Embedded:App {
      }
    }
 
+   strToInt(String str) Int {
+     //the existing one is "too much"
+     Int res = Int.new();
+     emit(cc) {
+       """
+       bevl_res->bevi_int = atoi(beva_str->bems_toCcString().c_str());
+       """
+     }
+     return(res);
+   }
+
+   intToStr(Int int) String {
+     //the existing one is "too much"
+     //THIS IS NOT RELIABLE FOR SOME REASON
+     String res;
+     emit(cc) {
+       """
+       char buffer[20];
+       itoa(beva_int->bevi_int,buffer,10);
+       std::string ints = std::string(buffer);
+       bevl_res = new BEC_2_4_6_TextString(ints);
+       """
+     }
+     return(res);
+   }
+
 }
 
 class Embedded:Wifi {

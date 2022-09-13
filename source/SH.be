@@ -13,7 +13,7 @@ use Encode:Url as EU;
 class Embedded:AppShell {
    
    main() {
-     fields {
+     slots {
        auto app = Embedded:App.new();
        String pinf = "/laspin.txt";
        String rcodef = "/larcode.txt";
@@ -23,9 +23,7 @@ class Embedded:AppShell {
        String secf = "/lawifisec.txt";
        String didf = "/ladidf.txt";
        Int nextmin = 0;
-       Int next10sec = 0;
        Int next15sec = 0;
-       Int next5min = 0;
        Int next10min = 0;
        Int nextday = 0;
        String slashn = "\n";
@@ -48,10 +46,8 @@ class Embedded:AppShell {
      app.plugin = self;
      
      app.uptime(nowup);
-     next10sec = nowup + 10000;
      next15sec = nowup + 15000;
      nextmin = nowup + 60000;
-     next5min = nowup + 300000;
      next10min = nowup + 600000;
      nextday = nowup + 86400000;
      
@@ -253,6 +249,7 @@ class Embedded:AppShell {
      did.print();
      "Pin".print();
      pin.print();
+     self.swInfo.print();
 
      //System:Random.getIntMax(100).print();
 
@@ -299,7 +296,7 @@ class Embedded:AppShell {
         if (TS.notEmpty(pin) && pin.size == 16) {
           String ssid = pin.substring(0, 8);
           String sec = pin.substring(8, 16);
-          ssid = "yo_" + self.devCode + "_" + ssid;
+          ssid = "yo_" + devCode + "_" + ssid;
           //("ssid from pin " + ssid).print();
           //("sec from pin " + sec).print();
           auto wifi = Embedded:Wifi.new();
@@ -442,29 +439,27 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
    handleLoop() {
      //app.feed();
      app.uptime(nowup);
-     if (nowup > next10sec) {
-      next10sec = nowup + 10000;
-      doFS();
-     }
-     if (nowup > next15sec) {
-      next15sec = nowup + 10000;
-     }
-     if (nowup > nextmin) {
-      nextmin = nowup + 60000;
-      self.swInfo.print();
-     }
-     if (nowup > next5min) {
-      next5min = nowup + 300000;
-     }
-     if (nowup > next10min) {
-      next10min = nowup + 600000;
-      checkWifiUp();
-     }
      if (nowup > nextday) {
       nextday = nowup + 86400000;
       if (Wifi.isConnected) {
         checkUpd(5);
+        return(self);
       }
+     }
+     if (nowup > next10min) {
+      next10min = nowup + 600000;
+      checkWifiUp();
+      return(self);
+     }
+     if (nowup > nextmin) {
+      nextmin = nowup + 60000;
+      self.swInfo.print();
+      return(self);
+     }
+     if (nowup > next15sec) {
+      next15sec = nowup + 15000;
+      doFS();
+      return(self);
      }
      if (def(serserver) && serserver.available) {
        //"preding serpay".print();
@@ -607,6 +602,24 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
        return("no cmd specified");
      }
      //("cmd is " + cmd).print();
+
+     if (cmd == "dostate") {
+       //"got dostate".print();
+        //state password check
+        if (TS.isEmpty(spass)) {
+          return("State Password Must Be Set");
+        }
+        inpass = cmds["spass"];
+        if (TS.isEmpty(inpass)) {
+          return("State password must be provided");
+        }
+        if (inpass != spass) {
+          return("State Password Incorrect");
+        }
+        String stateres = doState(cmds);
+        return(stateres);
+     }
+
      if (cmd == "setpin") {
       //"got setpin".print();
       String newpin = cmds["newpin"];
@@ -697,23 +710,6 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
         }
       }
 
-     if (cmd == "dostate") {
-       //"got dostate".print();
-        //state password check
-        if (TS.isEmpty(spass)) {
-          return("State Password Must Be Set");
-        }
-        inpass = cmds["spass"];
-        if (TS.isEmpty(inpass)) {
-          return("State password must be provided");
-        }
-        if (inpass != spass) {
-          return("State Password Incorrect");
-        }
-        String stateres = doState(cmds);
-        return(stateres);
-     }
-     
      //password check
     if (TS.isEmpty(pass)) {
       return("Device Password Must Be Set");

@@ -17,11 +17,11 @@ class Embedded:SwitchApp(AppShell) {
      devType = "switch";
      devCode = "gsw";
      majVer = 1;
-     minVer = 33;
+     minVer = 37;
    }
 
    loadStates() {
-     fields {
+     slots {
        String swf = "/lasw.txt";
        //on = 0, off = 255
        String on = "on";
@@ -62,21 +62,18 @@ class Embedded:SwitchApp(AppShell) {
         } else {
         return("undefined");
         }
-     }
-     if (TS.notEmpty(insw)) {
-       if (insw == on) {
-         on.print();
-         app.pinModeOutput(pini);
-         app.analogWrite(pini, 0);
-         sw = insw;
-         writeLater.put(swf, sw);
-       } elseIf (insw == off) {
-         off.print();
-         app.pinModeOutput(pini);
-         app.analogWrite(pini, 255);
-         sw = insw;
-         writeLater.put(swf, sw);
-       }
+     } elseIf (TS.notEmpty(insw) && insw == on) {
+        on.print();
+        app.pinModeOutput(pini);
+        app.analogWrite(pini, 0);
+        sw = insw;
+        writeLater.put(swf, on);
+     } elseIf (TS.notEmpty(insw) && insw == off) {
+        off.print();
+        app.pinModeOutput(pini);
+        app.analogWrite(pini, 255);
+        sw = insw;
+        writeLater.put(swf, off);
      }
      return("ok");
    }
