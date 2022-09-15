@@ -17,18 +17,22 @@ class Embedded:DimmerApp(AppShell) {
      devType = "dimmer";
      devCode = "gdi";
      majVer = 1;
-     minVer = 41;
+     minVer = 43;
    }
 
    loadStates() {
      slots {
        String lvlf = "/dalvl.txt";
-       String rlvlf = "/darlvl.txt";
+       String cmdf = "/dacmd.txt";
+       String lvll = "lvl";
+       String rlvll = "rlvl";
        //on = 0, off = 255
        String get = "get";
        Int pini = 16; //2
        String pinif = "/dapin.txt";
        Int lvli;
+       String lvl;
+       String cmd;
      }
      if (files.exists(pinif)) {
        String pins = files.read(pinif);
@@ -36,10 +40,12 @@ class Embedded:DimmerApp(AppShell) {
      }
      if (files.exists(lvlf)) {
        String inlvl = files.read(lvlf);
-       doState(Map.new().put("lvl", inlvl));
-     } elseIf (files.exists(rlvlf)) {
-       String inrlvl = files.read(rlvlf);
-       doState(Map.new().put("rlvl", inrlvl));
+     }
+     if (files.exists(cmdf)) {
+       String incmd = files.read(cmdf);
+     }
+     if (TS.notEmpty(inlvl) && TS.notEmpty(incmd)) {
+       doState(Map.new().put(incmd, inlvl));
      }
    }
 
@@ -55,18 +61,21 @@ class Embedded:DimmerApp(AppShell) {
 
    doState(Map cmds) String {
      "in dostate".print();
-     String inlvl = cmds["lvl"];
-     String inrlvl = cmds["rlvl"];
+     String inlvl = cmds[lvll];
+     String inrlvl = cmds[rlvll];
      //String inget = cmds["get"];
      if (TS.notEmpty(inlvl)) {
         lvli = app.strToInt(inlvl);
         if (lvli < 0 || lvli > 255) {
           lvli = 255;
         }
+        cmd = lvll;
+        lvl = inlvl;
+        app.delay(1);
         app.pinModeOutput(pini);
         app.analogWrite(pini, lvli);
         writeLater.put(lvlf, inlvl);
-        deleteLater.put(rlvlf);
+        writeLater.put(cmdf, lvll);
      } elseIf (TS.notEmpty(inrlvl)) {
         lvli = app.strToInt(inrlvl);
         if (lvli < 0 || lvli > 255) {
@@ -74,10 +83,12 @@ class Embedded:DimmerApp(AppShell) {
         } else {
           lvli = 255 - lvli;
         }
+        cmd = rlvll;
+        lvl = inrlvl;
         app.pinModeOutput(pini);
         app.analogWrite(pini, lvli);
-        writeLater.put(rlvlf, inrlvl);
-        deleteLater.put(lvlf);
+        writeLater.put(lvlf, inrlvl);
+        writeLater.put(cmdf, rlvll);
      }
      return("ok");
    }
@@ -86,8 +97,8 @@ class Embedded:DimmerApp(AppShell) {
      if (files.exists(lvlf)) {
        files.delete(lvlf);
      }
-     if (files.exists(rlvlf)) {
-       files.delete(rlvlf);
+     if (files.exists(cmdf)) {
+       files.delete(cmdf);
      }
    }
 

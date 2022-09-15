@@ -427,17 +427,25 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
      //"in dofs".print();
      for (any vd in deleteLater) {
        files.delete(vd);
+       break;
      }
-     deleteLater.clear();
+     if (def(vd)) {
+      deleteLater.delete(vd);
+     }
+     //deleteLater.clear();
      for (auto kvw in writeLater) {
        files.write(kvw.key, kvw.value);
+       break;
      }
-     writeLater.clear();
+     if (def(kvw)) {
+      writeLater.delete(kvw.key);
+     }
+     //writeLater.clear();
      //"dofs done".print();
    }
    
    handleLoop() {
-     //app.feed();
+     app.feed();
      app.uptime(nowup);
      if (nowup > nextday) {
       nextday = nowup + 86400000;
@@ -477,6 +485,7 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
           "error handling command".print();
           dce.print();
         }
+        return(self);
      }
      if (def(tweb)) {
       auto treq = tweb.checkGetRequest();
@@ -519,6 +528,7 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
         }
         //treq.printHeaders();
         treq.close();
+        return(self);
       }
      }
      if (def(tcpserver)) {
@@ -543,6 +553,7 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
               }
           }
         preq.close();
+        return(self);
       }
      }
      if (def(mdserver)) {
