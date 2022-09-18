@@ -23,7 +23,6 @@ class Embedded:AppShell {
        String secf = "/lawifisec.txt";
        String didf = "/ladidf.txt";
        Int nextmin = 0;
-       Int next15sec = 0;
        Int next10min = 0;
        Int nextday = 0;
        String slashn = "\n";
@@ -40,13 +39,10 @@ class Embedded:AppShell {
        Int majVer;
        Int minVer;
        String readBuf = String.new();
-       Map writeLater = Map.new();
-       Set deleteLater = Set.new();
      }
      app.plugin = self;
      
      app.uptime(nowup);
-     next15sec = nowup + 15000;
      nextmin = nowup + 60000;
      next10min = nowup + 600000;
      nextday = nowup + 86400000;
@@ -176,7 +172,7 @@ class Embedded:AppShell {
       if (TS.isEmpty(pin) || pin.size != 16) {
         auto pinpart = System:Random.getString(8);
         pin = pinpart + pinpart;
-        writeLater.put(pinf, pin);
+        files.write(pinf, pin);
       }
 
       if (files.exists(didf)) {
@@ -184,7 +180,7 @@ class Embedded:AppShell {
       }
       if (TS.isEmpty(did)) {
         did = System:Random.getString(16);
-        writeLater.put(didf, did);
+        files.write(didf, did);
       }
    }
 
@@ -415,6 +411,7 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
          String upurl = upds[3];
          "upurl".print();
          upurl.print();
+         files.close();
          auto eupd = Embedded:Update.new();
          eupd.signKey(updCert);
          eupd.updateFromUrl(upurl);
@@ -423,29 +420,7 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
     "checkUpd done".print();
    }
 
-   doFS() {
-     //"in dofs".print();
-     for (any vd in deleteLater) {
-       files.delete(vd);
-       break;
-     }
-     if (def(vd)) {
-      deleteLater.delete(vd);
-     }
-     //deleteLater.clear();
-     for (auto kvw in writeLater) {
-       files.write(kvw.key, kvw.value);
-       break;
-     }
-     if (def(kvw)) {
-      writeLater.delete(kvw.key);
-     }
-     //writeLater.clear();
-     //"dofs done".print();
-   }
-   
    handleLoop() {
-     app.feed();
      app.uptime(nowup);
      if (nowup > nextday) {
       nextday = nowup + 86400000;
@@ -464,17 +439,13 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
       self.swInfo.print();
       return(self);
      }
-     if (nowup > next15sec) {
-      next15sec = nowup + 15000;
-      doFS();
-      return(self);
-     }
      if (def(serserver) && serserver.available) {
-       //"preding serpay".print();
+       "preding serpay".print();
        String serpay = serserver.checkGetPayload(readBuf, slashn);
      }
      if (TS.notEmpty(serpay)) {
        try {
+          "doing serpay".print();
           String cmdres = doCmd("serial", serpay);
           if (TS.isEmpty(cmdres)) {
             "cmdres empty".print();
@@ -485,6 +456,9 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
           "error handling command".print();
           dce.print();
         }
+        "serpay returning".print();
+        //app.yield();
+        "now".print();
         return(self);
      }
      if (def(tweb)) {
@@ -564,11 +538,11 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
        "restarting because needsRestart".print();
         Wifi.stop();
         Wifi.clearAll();
+        files.close();
         app.restart();
      }
      if (needsFsRestart) {
        needsFsRestart = false;
-       doFS();
        needsRestart = true;
      }
    }
@@ -613,7 +587,6 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
        return("no cmd specified");
      }
      //("cmd is " + cmd).print();
-
      if (cmd == "dostate") {
        //"got dostate".print();
         //state password check
@@ -644,7 +617,7 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
       } elseIf (newpin.size != 16) {
         return("Error, pin must be 16 chars in length");
       } else {
-       writeLater.put(pinf, newpin);
+       files.write(pinf, newpin);
        pin = newpin;
        return("Pin set");
       }
@@ -656,7 +629,7 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
       if (TS.isEmpty(newrcode)) {
        return("Error, newrcode is required");
       } else {
-       writeLater.put(rcodef, newrcode);
+       files.write(rcodef, newrcode);
        rcode = newrcode;
        return("rcode set");
       }
@@ -679,7 +652,7 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
         if (TS.notEmpty(pass)) {
           return("Error, cannot set pass with pin once it has been set, use setpasswithpass instead");
         }
-       writeLater.put(passf, newpass);
+       files.write(passf, newpass);
        pass = newpass;
        return("Password set");
       }
@@ -695,9 +668,9 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
       } else {
         return("Error, rcode must be set");
       }
-      deleteLater.put(passf);
-      deleteLater.put(ssidf);
-      deleteLater.put(secf);
+      files.delete(passf);
+      files.delete(ssidf);
+      files.delete(secf);
       return("Device reset");
      } elseIf (cmd == "setpasswithpass") {
        //"got setpasswithpass".print();
@@ -715,7 +688,7 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
         if (TS.isEmpty(newpass)) {
          return("Error, new password is required");
         } else {
-         writeLater.put(passf, newpass);
+         files.write(passf, newpass);
          pass = newpass;
          return("Password set");
         }
@@ -739,19 +712,19 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
         sec = cmds["sec"];
         if (TS.notEmpty(ssid)) {
           //("got ssid " + ssid).print();
-          writeLater.put(ssidf, ssid);
+          files.write(ssidf, ssid);
           if (TS.notEmpty(sec)) {
             //("got sec " + sec).print();
-            writeLater.put(secf, sec);
+            files.write(secf, sec);
           } else {
             ("sec missing").print();
-            deleteLater.put(secf);
+            files.delete(secf);
           }
           return("Wifi Setup Written, restart to activate");
         } else {
           ("ssid missing").print();
-          deleteLater.put(ssidf);
-          deleteLater.put(secf);
+          files.delete(ssidf);
+          files.delete(secf);
           return("Wifi Setup cleared, restart to activate");
         }
      } elseIf (cmd == "clearstates") {
@@ -763,9 +736,9 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
        needsFsRestart = true;
        return("Will restart soonish");
      } elseIf (cmd == "resetwithpass") {
-      deleteLater.put(passf);
-      deleteLater.put(ssidf);
-      deleteLater.put(secf);
+      files.delete(passf);
+      files.delete(ssidf);
+      files.delete(secf);
       return("Device reset");
      } elseIf (cmd == "getdid") {
        return(did);
@@ -779,13 +752,13 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
         String newdid = cmds["newdid"];
         if (TS.notEmpty(did) && did.size == 16) {
           did = newdid;
-          writeLater.put(didf, did);
+          files.write(didf, did);
           return("did now " + did);
         }
         return("need 16 char did");
      } elseIf (cmd == "setspass") {
         String newspass = cmds["newspass"];
-        writeLater.put(spassf, newspass);
+        files.write(spassf, newspass);
         spass = newspass;
         return("spass now " + spass);
      } elseIf (cmd == "configstate") {

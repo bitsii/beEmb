@@ -29,26 +29,39 @@ class Embedded:App {
    delay(Int millis) {
      emit(cc) {
       """
-      //ESP.wdtFeed();
-      //ESP.wdtDisable();
-      //ESP.wdtEnable(1000);
-      //yield();
-      ESP.wdtFeed();
       delay(beva_millis->bevi_int);
-      //yield();
       """
      }
    }
 
-   feed() {
+   wdtFeed() {
      emit(cc) {
       """
-      //ESP.wdtFeed();
-      //ESP.wdtDisable();
-      //ESP.wdtEnable(1000);
-      //yield();
       ESP.wdtFeed();
-      //yield();
+      """
+     }
+   }
+
+   wdtDisable() {
+     emit(cc) {
+      """
+      ESP.wdtDisable();
+      """
+     }
+   }
+
+   wdtEnable(Int timeout) {
+     emit(cc) {
+      """
+      ESP.wdtEnable(beva_timeout->bevi_int);
+      """
+     }
+   }
+
+   yield() {
+     emit(cc) {
+      """
+      yield();
       """
      }
    }
@@ -128,6 +141,14 @@ class Embedded:App {
        """
      }
      return(res);
+   }
+
+   maybeGc() {
+   emit(cc) {
+   """
+   BECS_Runtime::doGc();
+   """
+   }
    }
 
 }
@@ -295,23 +316,27 @@ class Embedded:Files {
     """
     File f = SPIFFS.open(beva_name->bems_toCcString().c_str(), "w");
     if (!f) {
-        //Serial.println("file open failed");
+        Serial.println("file open failed");
         """
         }
         throw(Exception.new("File could not be opened"));
         emit(cc) {
         """
     } else {
+      //size_t wsize = (size_t) beva_data->bevp_size->bevi_int;
+      //unsigned char* wbuf = &(beva_data->bevi_bytes[0]);
+      //if (f.write(wbuf, wsize) == wsize) { }
       if(f.print(beva_data->bems_toCcString().c_str())) {
           //Serial.println("File was written");
       } else {
-          //Serial.println("File write failed");
+          Serial.println("File write failed");
           """
           }
           throw(Exception.new("Data could not be written"));
           emit(cc) {
           """
       }
+      f.flush();
       f.close();
     }
     """
@@ -340,7 +365,7 @@ class Embedded:Files {
           Serial.println("file open failed");
           """
           }
-          //throw(Exception.new("File could not be opened"));
+          throw(Exception.new("File could not be opened"));
           return(data);
           emit(cc) {
           """
