@@ -39,7 +39,7 @@ class Embedded:SwitchApp(AppShell) {
      if (files.exists(swf)) {
        String insw = files.read(swf);
        sw = insw;
-       doState(List.new().addValue(setsw).addValue(sw));
+       doState(List.new().addValue("dostate").addValue("notpw").addValue(setsw).addValue(sw));
      }
    }
 
@@ -69,13 +69,21 @@ class Embedded:SwitchApp(AppShell) {
           app.pinModeOutput(pini);
           app.analogWrite(pini, 0);
           sw = insw;
-          //files.write(swf, on);
+          app.wdtFeed();
+          app.yield();
+          files.write(swf, on);
+          app.wdtFeed();
+          app.yield();
         } elseIf (insw == off) {
           off.print();
           app.pinModeOutput(pini);
           app.analogWrite(pini, 255);
           sw = insw;
-          //files.write(swf, off);
+          app.wdtFeed();
+          app.yield();
+          files.write(swf, off);
+          app.wdtFeed();
+          app.yield();
         }
      }
      return("ok");

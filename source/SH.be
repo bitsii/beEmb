@@ -560,17 +560,17 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
      ("cmdline follows").print();
      cmdline.print();
      auto cmdl = cmdline.split(" ");
-     //get rid of trailing newline
-     if (channel == "serial" && cmdl.size > 0) {
-       cmdl.put(cmdl.size - 1, cmdl.get(cmdl.size - 1).swap("\n", ""));
-     }
-     if (channel == "tcp" && cmdl.size > 0) {
-       cmdl.put(cmdl.size - 1, cmdl.get(cmdl.size - 1).swap("\r\n", ""));
-     }
-     return(doCmds(channel, cmdl));
+     //get rid of trailing newline NOW WE DOWN'T, ADD SOMETHING ON THE BACK
+     //if (channel == "serial" && cmdl.size > 0) {
+     //  cmdl.put(cmdl.size - 1, cmdl.get(cmdl.size - 1).swap("\n", ""));
+     //}
+     //if (channel == "tcp" && cmdl.size > 0) {
+     //  cmdl.put(cmdl.size - 1, cmdl.get(cmdl.size - 1).swap("\r\n", ""));
+     //}
+     return(doCmdl(channel, cmdl));
    }
    
-   doCmds(String channel, List cmdl) String {
+   doCmdl(String channel, List cmdl) String {
      if (cmdl.size < 1) {
        return("no cmd specified");
      }

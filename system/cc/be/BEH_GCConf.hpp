@@ -11,4 +11,4 @@
 #define BEDCC_GCSSCHECK 16
 #define BEDCC_GCRWM 30000
 //#define BEDCC_GCRWM 10
-#define BED_GCSTATS
+//#define BED_GCSTATS
