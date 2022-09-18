@@ -275,7 +275,7 @@ class Embedded:AppShell {
           mdserver.protocol = "tcp";
           mdserver.start();
 
-          //checkUpd(1);
+          checkUpd(1);
 
         }
 
@@ -349,6 +349,7 @@ class Embedded:AppShell {
 
    checkUpd(Int tries) {
      "in checkUpd".print();
+     app.maybeGc();
      fields {
        String updHost;
        Int updPort;
@@ -377,12 +378,16 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
      updLine.clear();
      for (Int j = 0;j < tries;j++=) { //50
        //"try 0".print();
+       app.wdtFeed();
+       app.yield();
       Embedded:TCPClient client = Embedded:TCPClient.new(updHost, updPort);
       client.open();
       client.write(updOut);
       if (client.opened) {
         for (Int i = 0;i < 200;i++=) { //1000
           //"try 1".print();
+          app.wdtFeed();
+          app.yield();
           updLine = client.checkGetPayload(updLine, slashr);
           if (TS.notEmpty(updLine)) {
             //"updLine".print();
@@ -429,7 +434,7 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
      if (nowup > nextday) {
       nextday = nowup + 86400000;
       if (Wifi.isConnected) {
-        //checkUpd(5);
+        checkUpd(3);
         return(self);
       }
      }
