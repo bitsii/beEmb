@@ -17,7 +17,7 @@ class Embedded:SwitchApp(AppShell) {
      devType = "switch";
      devCode = "gsw";
      majVer = 1;
-     minVer = 42;
+     minVer = 43;
    }
 
    loadStates() {
@@ -49,7 +49,11 @@ class Embedded:SwitchApp(AppShell) {
        return("error: pin must be an integer");
      }
      pini = Int.new(pins);
+     app.wdtFeed();
+     app.yield();
      files.write(pinif, pins);
+     app.wdtFeed();
+     app.yield();
      return("switch pin now " + pins);
    }
 
