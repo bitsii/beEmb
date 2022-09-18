@@ -149,11 +149,11 @@ class Embedded:AppShell {
 
    }
 
-   configState(Map cmds) String {
+   configState(List cmdl) String {
      return("sh no impl");
    }
 
-   doState(Map cmds) String {
+   doState(List cmdl) String {
      return("sh no impl");
    }
    
@@ -567,46 +567,35 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
      if (channel == "tcp" && cmdl.size > 0) {
        cmdl.put(cmdl.size - 1, cmdl.get(cmdl.size - 1).swap("\r\n", ""));
      }
-     Map cmds = Map.new();
-     for (String cmdp in cmdl) {
-       if (cmdp.has("=")) {
-         auto p = cmdp.split("=");
-         cmds.put(p[0], p[1]);
-       } else {
-         cmds.put(cmdp, null);
-       }
-     } 
-     return(doCmds(channel, cmds));
+     return(doCmds(channel, cmdl));
    }
    
-   doCmds(String channel, Map cmds) String {
-     if (cmds.has("cmd")) {
-       String cmd = cmds["cmd"];
-     } else {
-       //"no cmd".print();
+   doCmds(String channel, List cmdl) String {
+     if (cmdl.size < 1) {
        return("no cmd specified");
      }
+     String cmd = cmdl[0];
      //("cmd is " + cmd).print();
      if (cmd == "dostate") {
-       //"got dostate".print();
+        //"got dostate".print();
         //state password check
         if (TS.isEmpty(spass)) {
           return("State Password Must Be Set");
         }
-        inpass = cmds["spass"];
+        inpass = cmdl[1];
         if (TS.isEmpty(inpass)) {
           return("State password must be provided");
         }
         if (inpass != spass) {
           return("State Password Incorrect");
         }
-        String stateres = doState(cmds);
+        String stateres = doState(cmdl);
         return(stateres);
      }
 
      if (cmd == "setpin") {
       //"got setpin".print();
-      String newpin = cmds["newpin"];
+      String newpin = cmdl[1];
       unless (channel == "serial") {
         return("Error, only supported over Serial");
       }
@@ -622,7 +611,7 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
        return("Pin set");
       }
     } elseIf (cmd == "setrcode") {
-      String newrcode = cmds["newrcode"];
+      String newrcode = cmdl[1];
       unless (channel == "serial") {
         return("Error, only supported over Serial");
       }
@@ -635,8 +624,8 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
       }
     } elseIf (cmd == "setpasswithpin") {
       //"got setpasswithpin".print();
-      String inpin = cmds["pin"];
-      String newpass = cmds["newpass"];
+      String inpin = cmdl[1];
+      String newpass = cmdl[2];
       if (TS.notEmpty(pin)) {
         if (TS.isEmpty(inpin)) {
           return("Error, pin was not sent");
@@ -658,7 +647,7 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
       }
      } elseIf (cmd == "resetwithcode") {
       //"got setpasswithpin".print();
-      String inrcode = cmds["rcode"];
+      String inrcode = cmdl[1];
       if (TS.notEmpty(rcode)) {
         if (TS.isEmpty(inrcode)) {
           return("Error, rcode was not sent");
@@ -674,8 +663,8 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
       return("Device reset");
      } elseIf (cmd == "setpasswithpass") {
        //"got setpasswithpass".print();
-        String inpass = cmds["pass"];
-        newpass = cmds["newpass"];
+        String inpass = cmdl[1];
+        newpass = cmdl[2];
          if (TS.notEmpty(pass)) {
            if (TS.isEmpty(inpass)) {
              return("Error, pass was not sent");
@@ -698,7 +687,7 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
     if (TS.isEmpty(pass)) {
       return("Device Password Must Be Set");
     }
-    inpass = cmds["pass"];
+    inpass = cmdl[1];
     if (TS.isEmpty(inpass)) {
       return("Device password must be provided");
     }
@@ -708,8 +697,8 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
 
      if (cmd == "setwifi") {
        //"got setwifi".print();
-        ssid = cmds["ssid"];
-        sec = cmds["sec"];
+        ssid = cmdl[2];
+        sec = cmdl[3];
         if (TS.notEmpty(ssid)) {
           //("got ssid " + ssid).print();
           files.write(ssidf, ssid);
@@ -749,7 +738,7 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
      } elseIf (cmd == "getminver") {
        return(minVer.toString());
      } elseIf (cmd == "setdid") {
-        String newdid = cmds["newdid"];
+        String newdid = cmdl[2];
         if (TS.notEmpty(did) && did.size == 16) {
           did = newdid;
           files.write(didf, did);
@@ -757,12 +746,12 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
         }
         return("need 16 char did");
      } elseIf (cmd == "setspass") {
-        String newspass = cmds["newspass"];
+        String newspass = cmdl[2];
         files.write(spassf, newspass);
         spass = newspass;
         return("spass now " + spass);
      } elseIf (cmd == "configstate") {
-        return(configState(cmds));
+        return(configState(cmdl));
      } else {
        return("unrecognized command");
      }

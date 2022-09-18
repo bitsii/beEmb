@@ -336,7 +336,7 @@ class Embedded:Files {
           emit(cc) {
           """
       }
-      f.flush();
+      //f.flush();
       f.close();
     }
     """

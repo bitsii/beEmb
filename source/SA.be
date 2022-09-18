@@ -17,7 +17,7 @@ class Embedded:SwitchApp(AppShell) {
      devType = "switch";
      devCode = "gsw";
      majVer = 1;
-     minVer = 41;
+     minVer = 42;
    }
 
    loadStates() {
@@ -26,7 +26,8 @@ class Embedded:SwitchApp(AppShell) {
        //on = 0, off = 255
        String on = "on";
        String off = "off";
-       String get = "get";
+       String getsw = "getsw";
+       String setsw = "setsw";
        Int pini = 16; //2
        String pinif = "/lapin.txt";
        String sw;
@@ -38,12 +39,12 @@ class Embedded:SwitchApp(AppShell) {
      if (files.exists(swf)) {
        String insw = files.read(swf);
        sw = insw;
-       doState(Map.new().put("sw", insw));
+       doState(List.new().addValue(setsw).addValue(sw));
      }
    }
 
-   configState(Map cmds) String {
-     String pins = cmds["pin"];
+   configState(List cmdl) String {
+     String pins = cmdl[3];
      unless (pins.isInteger) {
        return("error: pin must be an integer");
      }
@@ -52,28 +53,30 @@ class Embedded:SwitchApp(AppShell) {
      return("switch pin now " + pins);
    }
 
-   doState(Map cmds) String {
+   doState(List cmdl) String {
      "in dostate".print();
-     String insw = cmds["sw"];
-     String inget = cmds["get"];
-     if (TS.notEmpty(inget)) {
+     String scm = cmdl[2];
+     if (scm == getsw) {
       if (TS.notEmpty(sw)) {
         return(sw);
         } else {
         return("undefined");
         }
-     } elseIf (TS.notEmpty(insw) && insw == on) {
-        on.print();
-        app.pinModeOutput(pini);
-        app.analogWrite(pini, 0);
-        sw = insw;
-        files.write(swf, on);
-     } elseIf (TS.notEmpty(insw) && insw == off) {
-        off.print();
-        app.pinModeOutput(pini);
-        app.analogWrite(pini, 255);
-        sw = insw;
-        files.write(swf, off);
+     } elseIf (scm == setsw) {
+        String insw = cmdl[3];
+        if (insw == on) {
+          on.print();
+          app.pinModeOutput(pini);
+          app.analogWrite(pini, 0);
+          sw = insw;
+          //files.write(swf, on);
+        } elseIf (insw == off) {
+          off.print();
+          app.pinModeOutput(pini);
+          app.analogWrite(pini, 255);
+          sw = insw;
+          //files.write(swf, off);
+        }
      }
      return("ok");
    }
