@@ -46,6 +46,7 @@ class Embedded:App {
      emit(cc) {
       """
       ESP.wdtDisable();
+      //*((volatile uint32_t*) 0x60000900) &= ~(1); // Hardware WDT OFF
       """
      }
    }
@@ -53,6 +54,7 @@ class Embedded:App {
    wdtEnable(Int timeout) {
      emit(cc) {
       """
+      //*((volatile uint32_t*) 0x60000900) |= 1; // Hardware WDT ON
       ESP.wdtEnable(beva_timeout->bevi_int);
       """
      }
@@ -99,12 +101,9 @@ class Embedded:App {
    analogWrite(Int pin, Int value) {
      emit(cc) {
      """
-     //ESP.wdtDisable();
      uint8_t pin = (uint8_t) beva_pin->bevi_int;
      uint8_t value = (uint8_t) beva_value->bevi_int;
      analogWrite(pin,value);
-     //ESP.wdtEnable(1000);
-     //ESP.wdtFeed();
      """
      }
    }
@@ -301,7 +300,11 @@ class Embedded:Wifi {
 
 class Embedded:Files {
 
-  default() self { }
+  default() self {
+    slots {
+      //String nt = String.codeNew(0);
+    }
+  }
   
   open() {
    emit(cc) {
@@ -310,11 +313,23 @@ class Embedded:Files {
    """
    }
   }
+
+  safeWrite(String name, String data) {
+     auto app = Embedded:App.new();
+     app.wdtFeed();
+     app.yield();
+     app.maybeGc();
+     write(name, data);
+     app.wdtFeed();
+     app.yield();
+  }
   
   write(String name, String data) {
+    //String fname = name + nt;
     emit(cc) {
     """
     File f = SPIFFS.open(beva_name->bems_toCcString().c_str(), "w");
+    //File f = SPIFFS.open((const char*) bevl_fname->bevi_bytes[0], "w");
     if (!f) {
         Serial.println("file open failed");
         """
@@ -336,7 +351,7 @@ class Embedded:Files {
           emit(cc) {
           """
       }
-      //f.flush();
+      f.flush();
       f.close();
     }
     """

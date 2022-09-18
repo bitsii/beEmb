@@ -55,7 +55,7 @@ class Embedded:DimmerApp(AppShell) {
        return("error: pin must be an integer");
      }
      pini = Int.new(pins);
-     files.write(pinif, pins);
+     files.safeWrite(pinif, pins);
      return("switch pin now " + pins);
    }
 
@@ -74,8 +74,8 @@ class Embedded:DimmerApp(AppShell) {
         app.delay(1);
         app.pinModeOutput(pini);
         app.analogWrite(pini, lvli);
-        files.write(lvlf, inlvl);
-        files.write(cmdf, lvll);
+        files.safeWrite(lvlf, inlvl);
+        files.safeWrite(cmdf, lvll);
      } elseIf (TS.notEmpty(inrlvl)) {
         lvli = app.strToInt(inrlvl);
         if (lvli < 0 || lvli > 255) {
@@ -87,8 +87,8 @@ class Embedded:DimmerApp(AppShell) {
         lvl = inrlvl;
         app.pinModeOutput(pini);
         app.analogWrite(pini, lvli);
-        files.write(lvlf, inrlvl);
-        files.write(cmdf, rlvll);
+        files.safeWrite(lvlf, inrlvl);
+        files.safeWrite(cmdf, rlvll);
      }
      return("ok");
    }

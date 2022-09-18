@@ -172,7 +172,7 @@ class Embedded:AppShell {
       if (TS.isEmpty(pin) || pin.size != 16) {
         auto pinpart = System:Random.getString(8);
         pin = pinpart + pinpart;
-        files.write(pinf, pin);
+        files.safeWrite(pinf, pin);
       }
 
       if (files.exists(didf)) {
@@ -180,7 +180,7 @@ class Embedded:AppShell {
       }
       if (TS.isEmpty(did)) {
         did = System:Random.getString(16);
-        files.write(didf, did);
+        files.safeWrite(didf, did);
       }
    }
 
@@ -234,6 +234,7 @@ class Embedded:AppShell {
        Embedded:Mdns mdserver;
      }
 
+     app.wdtDisable();
      makeSwInfo();
      initRandom();
      checkMakeIds();
@@ -274,7 +275,7 @@ class Embedded:AppShell {
           mdserver.protocol = "tcp";
           mdserver.start();
 
-          checkUpd(1);
+          //checkUpd(1);
 
         }
 
@@ -421,11 +422,14 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
    }
 
    handleLoop() {
+     app.wdtFeed();
+     app.yield();
+     app.wdtDisable();
      app.uptime(nowup);
      if (nowup > nextday) {
       nextday = nowup + 86400000;
       if (Wifi.isConnected) {
-        checkUpd(5);
+        //checkUpd(5);
         return(self);
       }
      }
@@ -606,7 +610,7 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
       } elseIf (newpin.size != 16) {
         return("Error, pin must be 16 chars in length");
       } else {
-       files.write(pinf, newpin);
+       files.safeWrite(pinf, newpin);
        pin = newpin;
        return("Pin set");
       }
@@ -618,7 +622,7 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
       if (TS.isEmpty(newrcode)) {
        return("Error, newrcode is required");
       } else {
-       files.write(rcodef, newrcode);
+       files.safeWrite(rcodef, newrcode);
        rcode = newrcode;
        return("rcode set");
       }
@@ -641,7 +645,7 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
         if (TS.notEmpty(pass)) {
           return("Error, cannot set pass with pin once it has been set, use setpasswithpass instead");
         }
-       files.write(passf, newpass);
+       files.safeWrite(passf, newpass);
        pass = newpass;
        return("Password set");
       }
@@ -677,7 +681,7 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
         if (TS.isEmpty(newpass)) {
          return("Error, new password is required");
         } else {
-         files.write(passf, newpass);
+         files.safeWrite(passf, newpass);
          pass = newpass;
          return("Password set");
         }
@@ -701,10 +705,10 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
         sec = cmdl[3];
         if (TS.notEmpty(ssid)) {
           //("got ssid " + ssid).print();
-          files.write(ssidf, ssid);
+          files.safeWrite(ssidf, ssid);
           if (TS.notEmpty(sec)) {
             //("got sec " + sec).print();
-            files.write(secf, sec);
+            files.safeWrite(secf, sec);
           } else {
             ("sec missing").print();
             files.delete(secf);
@@ -741,13 +745,13 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
         String newdid = cmdl[2];
         if (TS.notEmpty(did) && did.size == 16) {
           did = newdid;
-          files.write(didf, did);
+          files.safeWrite(didf, did);
           return("did now " + did);
         }
         return("need 16 char did");
      } elseIf (cmd == "setspass") {
         String newspass = cmdl[2];
-        files.write(spassf, newspass);
+        files.safeWrite(spassf, newspass);
         spass = newspass;
         return("spass now " + spass);
      } elseIf (cmd == "configstate") {
