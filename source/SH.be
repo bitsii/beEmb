@@ -172,7 +172,7 @@ class Embedded:AppShell {
       if (TS.isEmpty(pin) || pin.size != 16) {
         auto pinpart = System:Random.getString(8);
         pin = pinpart + pinpart;
-        files.safeWrite(pinf, pin);
+        files.write(pinf, pin);
       }
 
       if (files.exists(didf)) {
@@ -180,7 +180,7 @@ class Embedded:AppShell {
       }
       if (TS.isEmpty(did)) {
         did = System:Random.getString(16);
-        files.safeWrite(didf, did);
+        files.write(didf, did);
       }
    }
 
@@ -615,8 +615,9 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
       } elseIf (newpin.size != 16) {
         return("Error, pin must be 16 chars in length");
       } else {
-       files.safeWrite(pinf, newpin);
        pin = newpin;
+       pin.print(); //or will sometimes crash at write
+       files.write(pinf, pin);
        return("Pin set");
       }
     } elseIf (cmd == "setrcode") {
@@ -627,7 +628,7 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
       if (TS.isEmpty(newrcode)) {
        return("Error, newrcode is required");
       } else {
-       files.safeWrite(rcodef, newrcode);
+       files.write(rcodef, newrcode);
        rcode = newrcode;
        return("rcode set");
       }
@@ -650,8 +651,10 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
         if (TS.notEmpty(pass)) {
           return("Error, cannot set pass with pin once it has been set, use setpasswithpass instead");
         }
-       files.safeWrite(passf, newpass);
-       pass = newpass;
+        pass = newpass;
+        pass.print();//or write crash
+        passf.print();
+        files.write(passf, pass);
        return("Password set");
       }
      } elseIf (cmd == "resetwithcode") {
@@ -686,7 +689,7 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
         if (TS.isEmpty(newpass)) {
          return("Error, new password is required");
         } else {
-         files.safeWrite(passf, newpass);
+         files.write(passf, newpass);
          pass = newpass;
          return("Password set");
         }
@@ -710,10 +713,10 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
         sec = cmdl[3];
         if (TS.notEmpty(ssid)) {
           //("got ssid " + ssid).print();
-          files.safeWrite(ssidf, ssid);
+          files.write(ssidf, ssid);
           if (TS.notEmpty(sec)) {
             //("got sec " + sec).print();
-            files.safeWrite(secf, sec);
+            files.write(secf, sec);
           } else {
             ("sec missing").print();
             files.delete(secf);
@@ -750,14 +753,15 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
         String newdid = cmdl[2];
         if (TS.notEmpty(did) && did.size == 16) {
           did = newdid;
-          files.safeWrite(didf, did);
+          files.write(didf, did);
           return("did now " + did);
         }
         return("need 16 char did");
      } elseIf (cmd == "setspass") {
         String newspass = cmdl[2];
-        files.safeWrite(spassf, newspass);
         spass = newspass;
+        spass.print();//to avoid write crash
+        files.write(spassf, spass);
         return("spass now " + spass);
      } elseIf (cmd == "configstate") {
         return(configState(cmdl));

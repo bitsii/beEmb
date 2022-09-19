@@ -17,40 +17,27 @@ class Embedded:DimmerApp(AppShell) {
      devType = "dimmer";
      devCode = "gdi";
      majVer = 1;
-     minVer = 43;
+     minVer = 59;
    }
 
    loadStates() {
      slots {
-       String lvlf = "/dalvl.txt";
-       String cmdf = "/dacmd.txt";
-       String lvll = "lvl";
-       String rlvll = "rlvl";
+       String setlvll = "setlvl";
+       String setrlvll = "setrlvl";
        //on = 0, off = 255
-       String get = "get";
        Int pini = 16; //2
+       String stf = "/dast.txt";
        String pinif = "/dapin.txt";
-       Int lvli;
        String lvl;
-       String cmd;
      }
      if (files.exists(pinif)) {
        String pins = files.read(pinif);
        pini = Int.new(pins);
      }
-     if (files.exists(lvlf)) {
-       String inlvl = files.read(lvlf);
-     }
-     if (files.exists(cmdf)) {
-       String incmd = files.read(cmdf);
-     }
-     if (TS.notEmpty(inlvl) && TS.notEmpty(incmd)) {
-       doState(Map.new().put(incmd, inlvl));
-     }
    }
 
-   configState(Map cmds) String {
-     String pins = cmds["pin"];
+  configState(List cmdl) String {
+     String pins = cmdl[3];
      unless (pins.isInteger) {
        return("error: pin must be an integer");
      }
@@ -59,47 +46,34 @@ class Embedded:DimmerApp(AppShell) {
      return("switch pin now " + pins);
    }
 
-   doState(Map cmds) String {
+   doState(List cmdl) String {
      "in dostate".print();
-     String inlvl = cmds[lvll];
-     String inrlvl = cmds[rlvll];
-     //String inget = cmds["get"];
-     if (TS.notEmpty(inlvl)) {
-        lvli = app.strToInt(inlvl);
-        if (lvli < 0 || lvli > 255) {
-          lvli = 255;
+     String scm = cmdl[2];
+     if (scm == setlvll) {
+        String inlvl = cmdl[3];
+        Int inlvli = app.strToInt(inlvl);
+        if (inlvli < 0 || inlvli > 255) {
+          inlvli = 255;
         }
-        cmd = lvll;
+        inlvl = inlvli.toString();
         lvl = inlvl;
-        app.delay(1);
+        inlvl.print();
+        files.safeWrite(stf, inlvl);
+        /*} else {
+          if (inlvli < 0 || inlvli > 255) {
+            inlvli = 255;
+          } else {
+            inlvli = 255 - inlvli;
+          }
+        }*/
         app.pinModeOutput(pini);
-        app.analogWrite(pini, lvli);
-        files.safeWrite(lvlf, inlvl);
-        files.safeWrite(cmdf, lvll);
-     } elseIf (TS.notEmpty(inrlvl)) {
-        lvli = app.strToInt(inrlvl);
-        if (lvli < 0 || lvli > 255) {
-          lvli = 255;
-        } else {
-          lvli = 255 - lvli;
-        }
-        cmd = rlvll;
-        lvl = inrlvl;
-        app.pinModeOutput(pini);
-        app.analogWrite(pini, lvli);
-        files.safeWrite(lvlf, inrlvl);
-        files.safeWrite(cmdf, rlvll);
+        app.analogWrite(pini, inlvli);
      }
      return("ok");
    }
    
    clearStates() {
-     if (files.exists(lvlf)) {
-       files.delete(lvlf);
-     }
-     if (files.exists(cmdf)) {
-       files.delete(cmdf);
-     }
+
    }
 
 }

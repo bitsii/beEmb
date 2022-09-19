@@ -65,13 +65,13 @@ class Embedded:SwitchApp(AppShell) {
      } elseIf (scm == setsw) {
         String insw = cmdl[3];
         if (insw == on) {
-          on.print();
+          on.print(); //write crashes without
           app.pinModeOutput(pini);
           app.analogWrite(pini, 0);
           sw = insw;
           files.safeWrite(swf, on);
         } elseIf (insw == off) {
-          off.print();
+          off.print(); //write crashes without
           app.pinModeOutput(pini);
           app.analogWrite(pini, 255);
           sw = insw;
