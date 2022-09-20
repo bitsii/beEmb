@@ -69,6 +69,8 @@ class Embedded:DimmerApp(AppShell) {
         app.pinModeOutput(pini);
         app.analogWrite(pini, inlvli);
      }
+     if (scm == setrlvll) {
+     }
      return("ok");
    }
    
