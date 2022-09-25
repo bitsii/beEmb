@@ -15,7 +15,7 @@ rm -rf targets/mod/Base/target/cc
 #--emitFlag relocMain
 
 export CLASSPATH=../brace/target5/*
-java -XX:-UsePerfData -XX:TieredStopAtLevel=1 -XX:+UseSerialGC be.BEL_Base -deployPath=targets/mod -buildPath=targets/mod --buildFile build/embBase.txt --emitFlag embPlat --emitFlag noSmap --emitFlag noRfl --emitLang js --mainClass Test:TestHelloWorld source/test/TestMod.be
+java -XX:-UsePerfData -XX:TieredStopAtLevel=1 -XX:+UseSerialGC be.BEL_Base -deployPath=targets/mod -buildPath=targets/mod --buildFile ../brace/build/tinyBase.txt --emitFlag embPlat --emitFlag noSmap --emitFlag noRfl --emitFlag moab --emitLang js --mainClass Test:TestHelloWorld source/test/TestMod.be
 
 lae=$?;if [[ $lae -ne 0 ]]; then exit $lae; fi
 
