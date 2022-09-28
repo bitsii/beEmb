@@ -313,16 +313,6 @@ class Embedded:Files {
    """
    }
   }
-
-  safeWrite(String name, String data) {
-     auto app = Embedded:App.new();
-     app.wdtFeed();
-     app.yield();
-     app.maybeGc();
-     write(name, data);
-     app.wdtFeed();
-     app.yield();
-  }
   
   write(String name, String data) {
     //String fname = name + nt;

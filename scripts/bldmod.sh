@@ -21,7 +21,11 @@ lae=$?;if [[ $lae -ne 0 ]]; then exit $lae; fi
 
 CYC1=`date +%s`
 
-cp targets/mod/Base/target/js/be/BEL_Base.js ~/Workspace/moddable/moddable/examples/helloworld/main.js
+cp targets/mod/Base/target/js/be/BEL_Base.js mod/fa/main.js
+
+#mcconfig -d -m -p lin
+#mcconfig -d -m -p simulator/nodemcu
+#mcconfig -d -m -p esp/nodemcu
 
 #time node ./targets/mod/Base/target/js/be/BEL_Base.js $*
 

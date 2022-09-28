@@ -580,6 +580,8 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
    }
    
    doCmdl(String channel, List cmdl) String {
+     app.maybeGc();
+     app.yield();
      if (cmdl.size < 1) {
        return("no cmd specified");
      }

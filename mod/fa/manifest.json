@@ -1,0 +1,14 @@
+{
+	"include": "$(MODDABLE)/examples/manifest_base.json",
+	"creation": {
+		"stack": 384,
+		"keys": {
+		"available": 96
+		}
+				},
+	"modules": {
+		"*": [
+			"./main"
+		]
+	}
+}
