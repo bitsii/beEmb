@@ -298,6 +298,190 @@ class Embedded:Wifi {
 
 }
 
+class Embedded:Config {
+
+  new() {
+    fields {
+      Int eesize = 16384;//8192
+      List names = List.new();
+      List values = List.new();
+      Bool changed = false;
+      String magic = "braceEmb";
+    }
+    slots {
+      Int zero = 0;
+      Int one = 1;
+      Int us = 31; //"unit separator" after names and at end
+      String uss = String.codeNew(us);
+      Int rs = 30; //"record separator" betw entries
+      String rss = String.codeNew(rs);
+    }
+  }
+
+  getPos(String name) {
+     Int pos = names.find(name);
+     if (undef(pos)) {
+       pos = names.size;
+       names += name;
+       values += null;
+       changed = true;
+     }
+     return(pos);
+  }
+
+  get(Int pos) String {
+    return(values.get(pos));
+  }
+
+  put(Int pos, String value) {
+    values.put(pos, value);
+    changed = true;
+  }
+
+  maybeSave() {
+    if (changed) {
+      save();
+      changed = false;
+    }
+  }
+
+  load() {
+    //begin
+    emit(cc) {
+      """
+    EEPROM.begin(bevp_eesize->bevi_int);
+      """
+    }
+    String lbuf = String.new();
+    Int pe = 0; //pos in eeprom
+    Int ps = 0; //pos in string
+    Int code = 0;
+    Int lpos = 0;
+    Bool inNames = true;
+    epread(lbuf, ps, pe, code, magic.size);
+    if (TS.notEmpty(lbuf) && lbuf == magic) {
+      loop {
+        ps.setValue(zero);
+        lbuf.size.setValue(zero);
+        Int res = epread(lbuf, ps, pe, code, zero);
+        if (res == rs) {
+          //end of a value
+          if (inNames) {
+            names.put(lpos, lbuf.copy());
+          } else {
+            values.put(lpos, lbuf.copy());
+          }
+          lpos++=;
+        } elseIf (res == us) {
+          if (inNames) {
+            inNames = false;
+            lpos.setValue(zero);
+          } else {
+            //all done
+            break;
+          }
+        }
+      }
+    }
+    emit(cc) {
+      """
+    EEPROM.commit();
+      """
+    }
+  }
+
+  //res
+  epread(String lbuf, Int ps, Int pe, Int code, Int rsize) Int {
+    loop {
+      emit(cc) {
+        """
+      beva_code->bevi_int = EEPROM.read(beva_pe->bevi_int);
+        """
+      }
+      if (pe < eesize) {
+          pe++=;
+      } else {
+        "Out of eeprom space".print();
+        return(us);
+      }
+      //check us rs
+      if (code == rs || code == us) {
+        return(code);
+      }
+      //add to string
+      if (ps >= lbuf.capacity) {
+        Int nsize = ((ps + 16) * 3) / 2;
+        lbuf.capacitySet(nsize);
+      }
+      lbuf.setCodeUnchecked(ps, code);
+      ps++=;
+      lbuf.size.setValue(ps);
+      //check size
+      if (rsize > zero && lbuf.size >= rsize) {
+         return(rsize);
+      }
+    }
+  }
+
+  save() {
+    //write while iterating, no copy
+    //cr for kv split nl for new pair term with empty pair
+    //just has to fit in the thing, never need to know size
+
+    //begin
+    emit(cc) {
+      """
+    EEPROM.begin(bevp_eesize->bevi_int);
+      """
+    }
+    //global int for position
+    Int pe = 0; //pos in eeprom
+    Int ps = 0; //pos in string
+    Int css = 0; //current string size
+    Int code = 0;
+    epwrite(magic, css, ps, pe, code, false);
+    for (String ws in names) {
+      epwrite(ws, css, ps, pe, code, false);
+      epwrite(rss, css, ps, pe, code, true);
+    }
+    epwrite(uss, css, ps, pe, code, true);
+    for (ws in values) {
+      epwrite(ws, css, ps, pe, code, false);
+      epwrite(rss, css, ps, pe, code, true);
+    }
+    epwrite(uss, css, ps, pe, code, true);
+    emit(cc) {
+      """
+    EEPROM.commit();
+      """
+    }
+  }
+
+  epwrite(String ws, Int css, Int ps, Int pe, Int code, Bool rok) {
+    if (TS.notEmpty(ws)) {
+      css.setValue(ws.size);
+      for (ps.setValue(zero);ps < css;ps++=) {
+          ws.getCode(ps, code);
+          if (rok || (code != us && code != rs)) {
+            if (pe < eesize) {
+              emit(cc) {
+                  """
+                EEPROM.write(beva_pe->bevi_int, beva_code->bevi_int);
+                  """
+                }
+                pe++=;
+            } else {
+              "Out of eeprom space".print();
+              return(self);
+            }
+          }
+        }
+      }
+      return(self);
+    }
+
+}
+
 class Embedded:Files {
 
   default() self {
