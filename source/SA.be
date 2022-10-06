@@ -17,7 +17,7 @@ class Embedded:SwitchApp(AppShell) {
      devType = "switch";
      devCode = "gsw";
      majVer = 1;
-     minVer = 46;
+     minVer = 47;
    }
 
    loadStates() {
@@ -36,17 +36,20 @@ class Embedded:SwitchApp(AppShell) {
      }
      saswi = config.getPos(sasw);
      ("saswi " + saswi).print();
-     //sapini = config.getPos(sapin);
-     //("sapini " + sapini).print();
-     //todo get from config pini
+     sapini = config.getPos(sapin);
+     ("sapini " + sapini).print();
 
-     //todo restore state
-     /*if (files.exists(swf)) {
-       String insw = files.read(swf);
+     String pins = config.get(sapini);
+     if (TS.notEmpty(pins) && pins.isInteger) {
+       pini = Int.new(pins);
+       ("loaded pin " + pins).print();
+     }
+
+     String insw = config.get(saswi);
+     if (TS.notEmpty(insw)) {
        sw = insw;
        doState(List.new().addValue("dostate").addValue("notpw").addValue(setsw).addValue(sw));
-     }*/
-
+     }
    }
 
    configState(List cmdl) String {
@@ -54,7 +57,9 @@ class Embedded:SwitchApp(AppShell) {
      unless (pins.isInteger) {
        return("error: pin must be an integer");
      }
-     //todo put in config pini
+     config.put(sapini, pins);
+     config.maybeSave();
+     pini = Int.new(pins);
      return("switch pin now " + pins);
    }
 
