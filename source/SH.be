@@ -7,6 +7,7 @@ use Embedded:Wifi;
 use Text:String;
 use Text:Strings as TS;
 use Embedded:Files;
+use Embedded:Config;
 use Embedded:Aes as Crypt;
 use Encode:Url as EU;
 
@@ -28,6 +29,7 @@ class Embedded:AppShell {
        String slashn = "\n";
        String slashr = "\r";
        Files files = Files.new();
+       Config config = Config.new();
        String htmlHead;
        //List webPageL;
        Bool needsFsRestart = false;
@@ -49,6 +51,9 @@ class Embedded:AppShell {
      
      //"opening files".print();
      files.open();
+
+     "loading config".print();
+     config.load();
      
      //"making webPage".print();
      htmlHead = String.new();

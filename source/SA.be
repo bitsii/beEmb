@@ -22,25 +22,31 @@ class Embedded:SwitchApp(AppShell) {
 
    loadStates() {
      slots {
-       String swf = "/lasw.txt";
+       String sasw = "sa.sw";
+       Int saswi;
        //on = 0, off = 255
        String on = "on";
        String off = "off";
        String getsw = "getsw";
        String setsw = "setsw";
        Int pini = 16; //2
-       String pinif = "/lapin.txt";
+       String sapin = "sa.pin";
+       Int sapini;
        String sw;
      }
-     if (files.exists(pinif)) {
-       String pins = files.read(pinif);
-       pini = Int.new(pins);
-     }
+     saswi = config.getPos(sasw);
+     ("saswi " + saswi).print();
+     //sapini = config.getPos(sapin);
+     //("sapini " + sapini).print();
+     //todo get from config pini
+
+     //todo restore state
      /*if (files.exists(swf)) {
        String insw = files.read(swf);
        sw = insw;
        doState(List.new().addValue("dostate").addValue("notpw").addValue(setsw).addValue(sw));
      }*/
+
    }
 
    configState(List cmdl) String {
@@ -48,8 +54,7 @@ class Embedded:SwitchApp(AppShell) {
      unless (pins.isInteger) {
        return("error: pin must be an integer");
      }
-     pini = Int.new(pins);
-     files.write(pinif, pins);
+     //todo put in config pini
      return("switch pin now " + pins);
    }
 
@@ -64,74 +69,27 @@ class Embedded:SwitchApp(AppShell) {
         }
      } elseIf (scm == setsw) {
         String insw = cmdl[3];
-        String sc = "70:012345678901234567890:ssidssid:secsec:yo:sw:12345678901234567890:on";
-        Int scs = sc.size;
         if (insw == on) {
           on.print(); //write crashes without
           app.pinModeOutput(pini);
           app.analogWrite(pini, 0);
           sw = insw;
-          //files.write(swf, on);
-
-          emit(cc) {
-            """
-          EEPROM.begin(bevl_scs->bevi_int);
-            """
-          }
-          Int scw = Int.new();
-          for (Int i = 0;i < scs;i++=) {
-            sc.getCode(i, scw);
-            //("set code " + scw).print();
-          emit(cc) {
-            """
-          EEPROM.write(bevl_i->bevi_int, bevl_scw->bevi_int);
-            """
-          }
-          }
-          emit(cc) {
-            """
-          EEPROM.commit();
-            """
-          }
+          config.put(saswi, on);
+          config.maybeSave();
         } elseIf (insw == off) {
           off.print(); //write crashes without
           app.pinModeOutput(pini);
           app.analogWrite(pini, 255);
           sw = insw;
-          //files.write(swf, off);
-          emit(cc) {
-            """
-          EEPROM.begin(bevl_scs->bevi_int);
-            """
-          }
-          String osc = String.new(scs.copy());
-          osc.size = scs.copy();
-          Int scr = Int.new();
-          for (i = 0;i < scs;i++=) {
-              emit(cc) {
-                """
-              bevl_scr->bevi_int = EEPROM.read(bevl_i->bevi_int);
-                """
-              }
-              //("get code " + scr).print();
-            osc.setCode(i, scr);
-          }
-          emit(cc) {
-            """
-          EEPROM.commit();
-            """
-          }
-          ("got back this").print();
-          osc.print();
+          config.put(saswi, off);
+          config.maybeSave();
         }
      }
      return("ok");
    }
    
    clearStates() {
-     if (files.exists(swf)) {
-       files.delete(swf);
-     }
+
    }
 
 }

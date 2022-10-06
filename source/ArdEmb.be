@@ -302,7 +302,8 @@ class Embedded:Config {
 
   new() {
     fields {
-      Int eesize = 16384;//8192
+      Int eesize = 8192;//8192 16384
+      Int maxsz = 128;//how big we let a name or value be
       List names = List.new();
       List values = List.new();
       Bool changed = false;
@@ -311,7 +312,11 @@ class Embedded:Config {
     slots {
       Int zero = 0;
       Int one = 1;
-      Int us = 31; //"unit separator" after names and at end
+      Int es = 27; //"escape" a control not as a control is next
+      String ess = String.codeNew(es);
+      Int gs = 29; //"group separator" at end
+      String gss = String.codeNew(gs);
+      Int us = 31; //"unit separator" between name value
       String uss = String.codeNew(us);
       Int rs = 30; //"record separator" betw entries
       String rss = String.codeNew(rs);
@@ -321,10 +326,9 @@ class Embedded:Config {
   getPos(String name) {
      Int pos = names.find(name);
      if (undef(pos)) {
-       pos = names.size;
+       pos = names.size.copy();
        names += name;
        values += null;
-       changed = true;
      }
      return(pos);
   }
@@ -357,31 +361,29 @@ class Embedded:Config {
     Int ps = 0; //pos in string
     Int code = 0;
     Int lpos = 0;
-    Bool inNames = true;
     epread(lbuf, ps, pe, code, magic.size);
     if (TS.notEmpty(lbuf) && lbuf == magic) {
       loop {
         ps.setValue(zero);
         lbuf.size.setValue(zero);
         Int res = epread(lbuf, ps, pe, code, zero);
-        if (res == rs) {
-          //end of a value
-          if (inNames) {
-            names.put(lpos, lbuf.copy());
-          } else {
-            values.put(lpos, lbuf.copy());
-          }
+        if (res == us) {
+          names.put(lpos, lbuf.copy());
+          ("eeprom read name " + lbuf).print();
+        } elseIf (res == rs) {
+          values.put(lpos, lbuf.copy());
           lpos++=;
-        } elseIf (res == us) {
-          if (inNames) {
-            inNames = false;
-            lpos.setValue(zero);
-          } else {
-            //all done
-            break;
-          }
+          ("eeprom read value " + lbuf).print();
+        } elseIf (res == gs) {
+          "read all done".print();
+          break;
+        } else {
+          ("read fail " + res).print();
+          break;
         }
       }
+    } else {
+      "bad magic".print();
     }
     emit(cc) {
       """
@@ -392,6 +394,7 @@ class Embedded:Config {
 
   //res
   epread(String lbuf, Int ps, Int pe, Int code, Int rsize) Int {
+    Bool ines = false;
     loop {
       emit(cc) {
         """
@@ -402,23 +405,34 @@ class Embedded:Config {
           pe++=;
       } else {
         "Out of eeprom space".print();
-        return(us);
+        return(gs);
       }
-      //check us rs
-      if (code == rs || code == us) {
-        return(code);
-      }
-      //add to string
-      if (ps >= lbuf.capacity) {
-        Int nsize = ((ps + 16) * 3) / 2;
-        lbuf.capacitySet(nsize);
-      }
-      lbuf.setCodeUnchecked(ps, code);
-      ps++=;
-      lbuf.size.setValue(ps);
-      //check size
-      if (rsize > zero && lbuf.size >= rsize) {
-         return(rsize);
+      if (code == es && ines!) {
+        ines = true;
+      } else {
+        if (code == rs || code == us || code == gs) {
+          unless (ines) {
+            return(code);
+          }
+        }
+        //add to string
+        if (ps >= lbuf.capacity) {
+          Int nsize = ((ps + 16) * 3) / 2;
+          lbuf.capacitySet(nsize);
+        }
+        lbuf.setCodeUnchecked(ps, code);
+        ps++=;
+        lbuf.size.setValue(ps);
+        if (ines) {
+          ines = false;
+        }
+        //check size
+        if (rsize > zero && lbuf.size >= rsize) {
+          return(rsize);
+        }
+        if (lbuf.size >= maxsz) {
+          return(gs);//should not happen, its broke
+        }
       }
     }
   }
@@ -439,17 +453,27 @@ class Embedded:Config {
     Int ps = 0; //pos in string
     Int css = 0; //current string size
     Int code = 0;
+
     epwrite(magic, css, ps, pe, code, false);
-    for (String ws in names) {
-      epwrite(ws, css, ps, pe, code, false);
-      epwrite(rss, css, ps, pe, code, true);
+    for (Int lpos = 0;lpos < names.size;lpos++=) {
+      String name = names.get(lpos);
+      String value = values.get(lpos);
+      if (TS.notEmpty(name) && TS.notEmpty(value)) {
+        if (name.size < maxsz && value.size < maxsz) {
+          epwrite(name, css, ps, pe, code, false);
+          ("wrote name " + name).print();
+          epwrite(uss, css, ps, pe, code, true);
+          epwrite(value, css, ps, pe, code, false);
+          ("wrote value " + value).print();
+          epwrite(rss, css, ps, pe, code, true);
+        } else {
+          "name or value too big to write".print();
+        }
+      } else {
+        "name or value too empty to write".print();
+      }
     }
-    epwrite(uss, css, ps, pe, code, true);
-    for (ws in values) {
-      epwrite(ws, css, ps, pe, code, false);
-      epwrite(rss, css, ps, pe, code, true);
-    }
-    epwrite(uss, css, ps, pe, code, true);
+    epwrite(gss, css, ps, pe, code, true);
     emit(cc) {
       """
     EEPROM.commit();
@@ -457,24 +481,34 @@ class Embedded:Config {
     }
   }
 
-  epwrite(String ws, Int css, Int ps, Int pe, Int code, Bool rok) {
-    if (TS.notEmpty(ws)) {
-      css.setValue(ws.size);
-      for (ps.setValue(zero);ps < css;ps++=) {
+  epwrite(String ws, Int css, Int ps, Int pe, Int code, Bool noes) {
+    css.setValue(ws.size);
+    for (ps.setValue(zero);ps < css;ps++=) {
+        if (pe < eesize) {
           ws.getCode(ps, code);
-          if (rok || (code != us && code != rs)) {
-            if (pe < eesize) {
+          if (code == es || code == gs || code == us || code == rs) {
+            unless (noes) {
               emit(cc) {
                   """
-                EEPROM.write(beva_pe->bevi_int, beva_code->bevi_int);
+                EEPROM.write(beva_pe->bevi_int, bevp_es->bevi_int);
                   """
-                }
-                pe++=;
-            } else {
-              "Out of eeprom space".print();
-              return(self);
+              }
+              pe++=;
+              if (pe >= eesize) {
+                "Out of eeprom space".print();
+                return(self);
+              }
             }
           }
+          emit(cc) {
+              """
+            EEPROM.write(beva_pe->bevi_int, beva_code->bevi_int);
+              """
+          }
+          pe++=;
+        } else {
+          "Out of eeprom space".print();
+          return(self);
         }
       }
       return(self);
