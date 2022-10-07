@@ -17,12 +17,11 @@ class Embedded:SwitchApp(AppShell) {
      devType = "switch";
      devCode = "gsw";
      majVer = 1;
-     minVer = 47;
+     minVer = 52;
    }
 
    loadStates() {
      slots {
-       String sasw = "sa.sw";
        Int saswi;
        //on = 0, off = 255
        String on = "on";
@@ -30,14 +29,13 @@ class Embedded:SwitchApp(AppShell) {
        String getsw = "getsw";
        String setsw = "setsw";
        Int pini = 16; //2
-       String sapin = "sa.pin";
        Int sapini;
        String sw;
      }
-     saswi = config.getPos(sasw);
-     ("saswi " + saswi).print();
-     sapini = config.getPos(sapin);
-     ("sapini " + sapini).print();
+     saswi = config.getPos("sa.sw");
+     //("saswi " + saswi).print();
+     sapini = config.getPos("sa.pin");
+     //("sapini " + sapini).print();
 
      String pins = config.get(sapini);
      if (TS.notEmpty(pins) && pins.isInteger) {

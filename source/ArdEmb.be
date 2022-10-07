@@ -369,11 +369,11 @@ class Embedded:Config {
         Int res = epread(lbuf, ps, pe, code, zero);
         if (res == us) {
           names.put(lpos, lbuf.copy());
-          ("eeprom read name " + lbuf).print();
+          //("eeprom read name " + lbuf).print();
         } elseIf (res == rs) {
           values.put(lpos, lbuf.copy());
           lpos++=;
-          ("eeprom read value " + lbuf).print();
+          //("eeprom read value " + lbuf).print();
         } elseIf (res == gs) {
           "read all done".print();
           break;
@@ -461,16 +461,16 @@ class Embedded:Config {
       if (TS.notEmpty(name) && TS.notEmpty(value)) {
         if (name.size < maxsz && value.size < maxsz) {
           epwrite(name, css, ps, pe, code, false);
-          ("wrote name " + name).print();
+          //("wrote name " + name).print();
           epwrite(uss, css, ps, pe, code, true);
           epwrite(value, css, ps, pe, code, false);
-          ("wrote value " + value).print();
+          //("wrote value " + value).print();
           epwrite(rss, css, ps, pe, code, true);
         } else {
           "name or value too big to write".print();
         }
       } else {
-        "name or value too empty to write".print();
+        //"name or value too empty to write".print();
       }
     }
     epwrite(gss, css, ps, pe, code, true);

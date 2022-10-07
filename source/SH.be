@@ -16,19 +16,19 @@ class Embedded:AppShell {
    main() {
      slots {
        auto app = Embedded:App.new();
-       String pinf = "/laspin.txt";
-       String rcodef = "/larcode.txt";
-       String passf = "/ladevpass.txt";
-       String spassf = "/laspass.txt";
-       String ssidf = "/lawifissid.txt";
-       String secf = "/lawifisec.txt";
-       String didf = "/ladidf.txt";
+       Int shpini;
+       Int shrcodei;
+       Int shpassi;
+       Int shspassi;
+       Int shssidi;
+       Int shseci;
+       Int shdidi;
+
        Int nextmin = 0;
        Int next10min = 0;
        Int nextday = 0;
        String slashn = "\n";
        String slashr = "\r";
-       Files files = Files.new();
        Config config = Config.new();
        String htmlHead;
        //List webPageL;
@@ -43,17 +43,22 @@ class Embedded:AppShell {
        String readBuf = String.new();
      }
      app.plugin = self;
-     
+
+     "loading config".print();
+     config.load();
+
+     shpini = config.getPos("sh.pin");
+     shrcodei = config.getPos("sh.rcode");
+     shpassi = config.getPos("sh.pass");
+     shspassi = config.getPos("sh.spass");
+     shssidi = config.getPos("sh.ssid");
+     shseci = config.getPos("sh.sec");
+     shdidi = config.getPos("sh.did");
+
      app.uptime(nowup);
      nextmin = nowup + 60000;
      next10min = nowup + 600000;
      nextday = nowup + 86400000;
-     
-     //"opening files".print();
-     files.open();
-
-     "loading config".print();
-     config.load();
      
      //"making webPage".print();
      htmlHead = String.new();
@@ -171,21 +176,17 @@ class Embedded:AppShell {
         String pin;
       }
 
-      if (files.exists(pinf)) {
-        pin = files.read(pinf);
-      }
+      pin = config.get(shpini);
       if (TS.isEmpty(pin) || pin.size != 16) {
         auto pinpart = System:Random.getString(8);
         pin = pinpart + pinpart;
-        files.write(pinf, pin);
+        config.put(shpini, pin);
       }
 
-      if (files.exists(didf)) {
-        did = files.read(didf);
-      }
+      did = config.get(shdidi);
       if (TS.isEmpty(did)) {
         did = System:Random.getString(16);
-        files.write(didf, did);
+        config.put(shdidi, did);
       }
    }
 
@@ -196,15 +197,9 @@ class Embedded:AppShell {
         String rcode;
       }
 
-      if (files.exists(passf)) {
-        pass = files.read(passf);
-      }
-      if (files.exists(spassf)) {
-        spass = files.read(spassf);
-      }
-      if (files.exists(rcodef)) {
-        rcode = files.read(rcodef);
-      }
+      pass = config.get(shpassi);
+      spass = config.get(shspassi);
+      rcode = config.get(shrcodei);
 
    }
 
@@ -239,6 +234,8 @@ class Embedded:AppShell {
        Embedded:Mdns mdserver;
      }
 
+     app.wdtFeed();
+     app.yield();
      app.wdtDisable();
      makeSwInfo();
      initRandom();
@@ -320,21 +317,16 @@ class Embedded:AppShell {
        String ssid;
        String sec;
      }
-     if (files.exists(ssidf)) {
-      ssid = files.read(ssidf);
-      //if (TS.notEmpty(ssid)) {
-      //  ("ssid " + ssid).print();
-      //}
-     }
-     if (files.exists(secf)) {
-      sec = files.read(secf);
-      //if (TS.notEmpty(sec)) {
-      //  ("sec " + sec).print();
-      //}
-     } else {
-       sec = "";
-     }
-     if (TS.notEmpty(ssid)) {
+     ssid = config.get(shssidi);
+     sec = config.get(shseci);
+     //("shssidi " + shssidi).print();
+     //("shseci " + shseci).print();
+
+     if (TS.notEmpty(ssid) && TS.notEmpty(sec)) {
+       ("ssid " + ssid + " sec " + sec).print();
+       app.wdtFeed();
+       app.yield();
+       app.wdtDisable();
        Wifi.new(ssid, sec).start();
      }
    }
@@ -422,7 +414,6 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
          String upurl = upds[3];
          "upurl".print();
          upurl.print();
-         files.close();
          auto eupd = Embedded:Update.new();
          eupd.signKey(updCert);
          eupd.updateFromUrl(upurl);
@@ -552,11 +543,11 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
        "restarting because needsRestart".print();
         Wifi.stop();
         Wifi.clearAll();
-        files.close();
         app.restart();
      }
      if (needsFsRestart) {
        needsFsRestart = false;
+       config.maybeSave();
        needsRestart = true;
      }
    }
@@ -623,8 +614,8 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
         return("Error, pin must be 16 chars in length");
       } else {
        pin = newpin;
-       pin.print(); //or will sometimes crash at write
-       files.write(pinf, pin);
+       pin.print();
+       config.put(shpini, pin);
        return("Pin set");
       }
     } elseIf (cmd == "setrcode") {
@@ -635,7 +626,7 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
       if (TS.isEmpty(newrcode)) {
        return("Error, newrcode is required");
       } else {
-       files.write(rcodef, newrcode);
+       config.put(shrcodei, newrcode);
        rcode = newrcode;
        return("rcode set");
       }
@@ -659,9 +650,8 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
           return("Error, cannot set pass with pin once it has been set, use setpasswithpass instead");
         }
         pass = newpass;
-        pass.print();//or write crash
-        passf.print();
-        files.write(passf, pass);
+        pass.print();
+        config.put(shpassi, pass);
        return("Password set");
       }
      } elseIf (cmd == "resetwithcode") {
@@ -676,9 +666,9 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
       } else {
         return("Error, rcode must be set");
       }
-      files.delete(passf);
-      files.delete(ssidf);
-      files.delete(secf);
+      config.put(shpassi, "");
+      config.put(shssidi, "");
+      config.put(shseci, "");
       return("Device reset");
      } elseIf (cmd == "setpasswithpass") {
        //"got setpasswithpass".print();
@@ -696,7 +686,7 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
         if (TS.isEmpty(newpass)) {
          return("Error, new password is required");
         } else {
-         files.write(passf, newpass);
+         config.put(shpassi, newpass);
          pass = newpass;
          return("Password set");
         }
@@ -720,19 +710,19 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
         sec = cmdl[3];
         if (TS.notEmpty(ssid)) {
           //("got ssid " + ssid).print();
-          files.write(ssidf, ssid);
+          config.put(shssidi, ssid);
           if (TS.notEmpty(sec)) {
             //("got sec " + sec).print();
-            files.write(secf, sec);
+            config.put(shseci, sec);
           } else {
             ("sec missing").print();
-            files.delete(secf);
+            config.put(shseci, "");
           }
           return("Wifi Setup Written, restart to activate");
         } else {
           ("ssid missing").print();
-          files.delete(ssidf);
-          files.delete(secf);
+          config.put(shssidi, "");
+          config.put(shseci, "");
           return("Wifi Setup cleared, restart to activate");
         }
      } elseIf (cmd == "clearstates") {
@@ -744,10 +734,10 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
        needsFsRestart = true;
        return("Will restart soonish");
      } elseIf (cmd == "resetwithpass") {
-      files.delete(passf);
-      files.delete(ssidf);
-      files.delete(secf);
-      return("Device reset");
+       config.put(shpassi, "");
+       config.put(shssidi, "");
+       config.put(shseci, "");
+       return("Device reset");
      } elseIf (cmd == "getdid") {
        return(did);
      } elseIf (cmd == "getdevtype") {
@@ -760,7 +750,7 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
         String newdid = cmdl[2];
         if (TS.notEmpty(did) && did.size == 16) {
           did = newdid;
-          files.write(didf, did);
+          config.put(shdidi, did);
           return("did now " + did);
         }
         return("need 16 char did");
@@ -768,7 +758,7 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
         String newspass = cmdl[2];
         spass = newspass;
         spass.print();//to avoid write crash
-        files.write(spassf, spass);
+        config.put(shspassi, spass);
         return("spass now " + spass);
      } elseIf (cmd == "configstate") {
         return(configState(cmdl));
