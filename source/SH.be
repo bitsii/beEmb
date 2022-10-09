@@ -738,6 +738,9 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
        //"got clearStates".print();
         clearStates();
         return("State cleared");
+     } elseIf (cmd == "maybesave") {
+        config.maybeSave();
+        return("maybe saved");
      } elseIf (cmd == "restart") {
        //"got restart".print();
        needsFsRestart = true;
