@@ -24,8 +24,9 @@ class Embedded:AppShell {
        Int shseci;
        Int shdidi;
 
-       Int nextmin = 0;
-       Int next10min = 0;
+       Int next3min = 0;
+       Int next7min = 0;
+       Int next13min = 0;
        Int nextday = 0;
        String slashn = "\n";
        String slashr = "\r";
@@ -56,8 +57,9 @@ class Embedded:AppShell {
      shdidi = config.getPos("sh.did");
 
      app.uptime(nowup);
-     nextmin = nowup + 60000;
-     next10min = nowup + 600000;
+     next3min = nowup + 180000;
+     next7min = nowup + 420000;
+     next13min = nowup + 780000;
      nextday = nowup + 86400000;
      
      //"making webPage".print();
@@ -434,13 +436,19 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
         return(self);
       }
      }
-     if (nowup > next10min) {
-      next10min = nowup + 600000;
+     if (nowup > next7min) {
+      next7min = nowup + 420000;
+      "maybe saving config".print();
+      config.maybeSave();
+      return(self);
+     }
+     if (nowup > next13min) {
+      next13min = nowup + 780000;
       checkWifiUp();
       return(self);
      }
-     if (nowup > nextmin) {
-      nextmin = nowup + 60000;
+     if (nowup > next3min) {
+      next3min = nowup + 180000;
       self.swInfo.print();
       return(self);
      }
@@ -547,6 +555,7 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
      }
      if (needsFsRestart) {
        needsFsRestart = false;
+       "maybe saving config".print();
        config.maybeSave();
        needsRestart = true;
      }

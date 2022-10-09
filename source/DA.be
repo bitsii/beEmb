@@ -17,7 +17,7 @@ class Embedded:DimmerApp(AppShell) {
      devType = "dimmer";
      devCode = "gdi";
      majVer = 1;
-     minVer = 59;
+     minVer = 60;
    }
 
    loadStates() {
@@ -26,13 +26,23 @@ class Embedded:DimmerApp(AppShell) {
        String setrlvll = "setrlvl";
        //on = 0, off = 255
        Int pini = 16; //2
-       String stf = "/dast.txt";
-       String pinif = "/dapin.txt";
+       Int dalvli;
+       Int dapini;
        String lvl;
      }
-     if (files.exists(pinif)) {
-       String pins = files.read(pinif);
+     dalvli = config.getPos("da.lvl");
+     dapini = config.getPos("da.pin");
+
+     String pins = config.get(dapini);
+     if (TS.notEmpty(pins) && pins.isInteger) {
        pini = Int.new(pins);
+       ("loaded pin " + pins).print();
+     }
+
+     String inlvl = config.get(dalvli);
+     if (TS.notEmpty(inlvl)) {
+       //lvl = inlvl;
+       //doState(List.new().addValue("dostate").addValue("notpw").addValue(setsw).addValue(sw));
      }
    }
 
@@ -41,9 +51,9 @@ class Embedded:DimmerApp(AppShell) {
      unless (pins.isInteger) {
        return("error: pin must be an integer");
      }
+     config.put(dapini, pins);
      pini = Int.new(pins);
-     files.safeWrite(pinif, pins);
-     return("switch pin now " + pins);
+     return("dimmer pin now " + pins);
    }
 
    doState(List cmdl) String {

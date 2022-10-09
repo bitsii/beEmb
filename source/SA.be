@@ -17,7 +17,7 @@ class Embedded:SwitchApp(AppShell) {
      devType = "switch";
      devCode = "gsw";
      majVer = 1;
-     minVer = 52;
+     minVer = 54;
    }
 
    loadStates() {
@@ -56,7 +56,6 @@ class Embedded:SwitchApp(AppShell) {
        return("error: pin must be an integer");
      }
      config.put(sapini, pins);
-     config.maybeSave();
      pini = Int.new(pins);
      return("switch pin now " + pins);
    }
@@ -78,14 +77,12 @@ class Embedded:SwitchApp(AppShell) {
           app.analogWrite(pini, 0);
           sw = insw;
           config.put(saswi, on);
-          config.maybeSave();
         } elseIf (insw == off) {
           off.print(); //write crashes without
           app.pinModeOutput(pini);
           app.analogWrite(pini, 255);
           sw = insw;
           config.put(saswi, off);
-          config.maybeSave();
         }
      }
      return("ok");
