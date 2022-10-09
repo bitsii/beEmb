@@ -17,7 +17,7 @@ class Embedded:DimmerApp(AppShell) {
      devType = "dimmer";
      devCode = "gdi";
      majVer = 1;
-     minVer = 60;
+     minVer = 63;
    }
 
    loadStates() {
@@ -41,8 +41,8 @@ class Embedded:DimmerApp(AppShell) {
 
      String inlvl = config.get(dalvli);
      if (TS.notEmpty(inlvl)) {
-       //lvl = inlvl;
-       //doState(List.new().addValue("dostate").addValue("notpw").addValue(setsw).addValue(sw));
+       lvl = inlvl;
+       doState(List.new().addValue("dostate").addValue("notpw").addValue(setlvll).addValue(lvl));
      }
    }
 
@@ -59,27 +59,26 @@ class Embedded:DimmerApp(AppShell) {
    doState(List cmdl) String {
      "in dostate".print();
      String scm = cmdl[2];
-     if (scm == setlvll) {
+     if (scm == setlvll || scm == setrlvll) {
         String inlvl = cmdl[3];
         Int inlvli = app.strToInt(inlvl);
-        if (inlvli < 0 || inlvli > 255) {
-          inlvli = 255;
-        }
-        inlvl = inlvli.toString();
-        lvl = inlvl;
-        inlvl.print();
-        files.safeWrite(stf, inlvl);
-        /*} else {
+        if (scm == setlvll) {
+          if (inlvli < 0 || inlvli > 255) {
+            inlvli = 255;
+          }
+        } else {
           if (inlvli < 0 || inlvli > 255) {
             inlvli = 255;
           } else {
             inlvli = 255 - inlvli;
           }
-        }*/
+        }
+        inlvl = inlvli.toString();
+        lvl = inlvl;
+        inlvl.print();
+        config.put(dalvli, inlvl);
         app.pinModeOutput(pini);
         app.analogWrite(pini, inlvli);
-     }
-     if (scm == setrlvll) {
      }
      return("ok");
    }
