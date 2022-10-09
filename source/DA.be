@@ -17,21 +17,27 @@ class Embedded:DimmerApp(AppShell) {
      devType = "dimmer";
      devCode = "gdi";
      majVer = 1;
-     minVer = 65;
+     minVer = 67;
    }
 
    loadStates() {
      slots {
        String setlvll = "setlvl";
        String setrlvll = "setrlvl";
+       String on = "on";
+       String off = "off";
+       String setsw = "setsw";
        //on = 0, off = 255
        Int pini = 16; //2
        Int dalvli;
        Int dapini;
+       Int daswi;
        String lvl;
+       String sw;
      }
      dalvli = config.getPos("da.lvl");
      dapini = config.getPos("da.pin");
+     daswi = config.getPos("da.sw");
 
      String pins = config.get(dapini);
      if (TS.notEmpty(pins) && pins.isInteger) {
@@ -42,7 +48,12 @@ class Embedded:DimmerApp(AppShell) {
      String inlvl = config.get(dalvli);
      if (TS.notEmpty(inlvl)) {
        lvl = inlvl;
-       doState(List.new().addValue("dostate").addValue("notpw").addValue(setlvll).addValue(lvl));
+     }
+
+     String insw = config.get(daswi);
+     if (TS.notEmpty(insw)) {
+       sw = insw;
+       doState(List.new().addValue("dostate").addValue("notpw").addValue(setsw).addValue(sw));
      }
    }
 
@@ -76,9 +87,31 @@ class Embedded:DimmerApp(AppShell) {
         inlvl = inlvli.toString();
         lvl = inlvl;
         inlvl.print();
+        sw = on;
+        config.put(daswi, on);
         config.put(dalvli, inlvl);
         app.pinModeOutput(pini);
         app.analogWrite(pini, inlvli);
+     } elseIf (scm == setsw) {
+        String insw = cmdl[3];
+        if (insw == on) {
+          if (TS.notEmpty(lvl)) {
+            inlvli = app.strToInt(lvl);
+          } else {
+            inlvli = 0;
+          }
+          on.print(); //write crashes without
+          app.pinModeOutput(pini);
+          app.analogWrite(pini, inlvli);
+          sw = insw;
+          config.put(daswi, on);
+        } elseIf (insw == off) {
+          off.print(); //write crashes without
+          app.pinModeOutput(pini);
+          app.analogWrite(pini, 255);
+          sw = insw;
+          config.put(daswi, off);
+        }
      }
      return("ok");
    }
