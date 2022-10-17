@@ -17,7 +17,7 @@ class Embedded:DimmerApp(AppShell) {
      devType = "dimmer";
      devCode = "gdi";
      majVer = 1;
-     minVer = 67;
+     minVer = 68;
    }
 
    loadStates() {
@@ -84,6 +84,7 @@ class Embedded:DimmerApp(AppShell) {
             inlvli = 255 - inlvli;
           }
         }
+        if (inlvli == 255) { inlvli = 254; }
         inlvl = inlvli.toString();
         lvl = inlvl;
         inlvl.print();
