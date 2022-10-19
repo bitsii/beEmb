@@ -209,7 +209,7 @@ class Embedded:AppShell {
      devType = "shell";
      devCode = "gsh";
      majVer = 1;
-     minVer = 1;
+     minVer = 2;
    }
 
    initRandom() {
@@ -639,7 +639,12 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
        rcode = newrcode;
        return("rcode set");
       }
-    } elseIf (cmd == "setpasswithpin") {
+    } elseIf (cmd == "configstate") {
+      unless (channel == "serial") {
+        return("Error, only supported over Serial");
+      }
+      return(configState(cmdl));
+    } elseIf (cmd == "setpass") {
       //"got setpasswithpin".print();
       String inpin = cmdl[1];
       String newpass = cmdl[2];
@@ -656,15 +661,14 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
        return("Error, new password is required");
       } else {
         if (TS.notEmpty(pass)) {
-          return("Error, cannot set pass with pin once it has been set, use setpasswithpass instead");
+          return("Error, cannot set pass with pin once it has been set, repass instead");
         }
         pass = newpass;
         pass.print();
         config.put(shpassi, pass);
        return("Password set");
       }
-     } elseIf (cmd == "resetwithcode") {
-      //"got setpasswithpin".print();
+     } elseIf (cmd == "reset") {
       String inrcode = cmdl[1];
       if (TS.notEmpty(rcode)) {
         if (TS.isEmpty(inrcode)) {
@@ -678,8 +682,10 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
       config.put(shpassi, "");
       config.put(shssidi, "");
       config.put(shseci, "");
+      config.put(shspassi, "");
+      clearStates();
       return("Device reset");
-     } elseIf (cmd == "setpasswithpass") {
+     } elseIf (cmd == "repass") {
        //"got setpasswithpass".print();
         String inpass = cmdl[1];
         newpass = cmdl[2];
@@ -690,8 +696,19 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
              return("Error, pass is incorrect");
            }
          } else {
-           return("Error, initial password must be set with setpasswithpin");
+           return("Error, initial password must be set with setpass");
          }
+        inrcode = cmdl[3];
+      if (TS.notEmpty(rcode)) {
+        if (TS.isEmpty(inrcode)) {
+          return("Error, rcode was not sent");
+        } elseIf (rcode != inrcode) {
+          return("Error, rcode is incorrect");
+        }
+      } else {
+        return("Error, rcode must be set");
+      }
+
         if (TS.isEmpty(newpass)) {
          return("Error, new password is required");
         } else {
@@ -745,11 +762,6 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
        //"got restart".print();
        needsFsRestart = true;
        return("Will restart soonish");
-     } elseIf (cmd == "resetwithpass") {
-       config.put(shpassi, "");
-       config.put(shssidi, "");
-       config.put(shseci, "");
-       return("Device reset");
      } elseIf (cmd == "getdid") {
        return(did);
      } elseIf (cmd == "getdevtype") {
@@ -772,8 +784,6 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
         spass.print();//to avoid write crash
         config.put(shspassi, spass);
         return("spass now " + spass);
-     } elseIf (cmd == "configstate") {
-        return(configState(cmdl));
      } else {
        return("unrecognized command");
      }
