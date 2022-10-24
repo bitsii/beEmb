@@ -17,7 +17,7 @@ class Embedded:SwitchApp(AppShell) {
      devType = "switch";
      devCode = "gsw";
      majVer = 1;
-     minVer = 57;
+     minVer = 58;
    }
 
    loadStates() {
