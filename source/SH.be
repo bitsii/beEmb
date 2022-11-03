@@ -297,7 +297,7 @@ class Embedded:AppShell {
         if (TS.notEmpty(pin) && pin.size == 16) {
           String ssid = pin.substring(0, 8);
           String sec = pin.substring(8, 16);
-          ssid = "yo_it_" + devCode + "_" + ssid;
+          ssid = "yo_it_" + devCode + "_" + devType + "_" + ssid;
           //("ssid from pin " + ssid).print();
           //("sec from pin " + sec).print();
           auto wifi = Embedded:Wifi.new();
