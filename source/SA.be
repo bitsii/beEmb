@@ -14,10 +14,10 @@ use Embedded:AppShell;
 class Embedded:SwitchApp(AppShell) {
 
    makeSwInfo() {
-     devType = "switch";
+     devType = "sw";
      devCode = "gsw";
      majVer = 1;
-     minVer = 59;
+     minVer = 61;
    }
 
    loadStates() {

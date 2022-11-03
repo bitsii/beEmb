@@ -14,10 +14,10 @@ use Embedded:AppShell;
 class Embedded:DimmerApp(AppShell) {
 
    makeSwInfo() {
-     devType = "dimmer";
+     devType = "dim";
      devCode = "gdi";
      majVer = 1;
-     minVer = 71;
+     minVer = 73;
    }
 
    loadStates() {
