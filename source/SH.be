@@ -731,7 +731,6 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
     }
 
      if (cmd == "setwifi") {
-       //"got setwifi".print();
         ssid = cmdl[2];
         sec = cmdl[3];
         if (TS.notEmpty(ssid)) {
@@ -751,6 +750,33 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
           config.put(shseci, "");
           return("Wifi Setup cleared, restart to activate");
         }
+     } elseIf (cmd == "allset") {
+
+        newspass = cmdl[2];
+        spass = newspass;
+        spass.print();//to avoid write crash
+        config.put(shspassi, spass);
+
+        newdid = cmdl[3];
+        if (TS.notEmpty(did) && did.size == 16) {
+          did = newdid;
+          config.put(shdidi, did);
+        }
+
+        ssid = cmdl[4];
+        sec = cmdl[5];
+        if (TS.notEmpty(ssid)) {
+          //("got ssid " + ssid).print();
+          config.put(shssidi, ssid);
+          if (TS.notEmpty(sec)) {
+            //("got sec " + sec).print();
+            config.put(shseci, sec);
+          } else {
+            ("sec missing").print();
+            config.put(shseci, "");
+          }
+        }
+        return("allset done, restart to activate");
      } elseIf (cmd == "clearstates") {
        //"got clearStates".print();
         clearStates();
