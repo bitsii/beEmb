@@ -17,7 +17,6 @@ class Embedded:AppShell {
      slots {
        auto app = Embedded:App.new();
        Int shpini;
-       Int shrcodei;
        Int shpassi;
        Int shspassi;
        Int shssidi;
@@ -49,7 +48,6 @@ class Embedded:AppShell {
      config.load();
 
      shpini = config.getPos("sh.pin");
-     shrcodei = config.getPos("sh.rcode");
      shpassi = config.getPos("sh.pass");
      shspassi = config.getPos("sh.spass");
      shssidi = config.getPos("sh.ssid");
@@ -196,12 +194,10 @@ class Embedded:AppShell {
       slots {
         String pass;
         String spass;
-        String rcode;
       }
 
       pass = config.get(shpassi);
       spass = config.get(shspassi);
-      rcode = config.get(shrcodei);
 
    }
 
@@ -627,27 +623,14 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
        config.put(shpini, pin);
        return("Pin set");
       }
-    } elseIf (cmd == "setrcode") {
-      String newrcode = cmdl[1];
-      unless (channel == "serial") {
-        return("Error, only supported over Serial");
-      }
-      if (TS.isEmpty(newrcode)) {
-       return("Error, newrcode is required");
-      } else {
-       config.put(shrcodei, newrcode);
-       rcode = newrcode;
-       return("rcode set");
-      }
     } elseIf (cmd == "configstate") {
       unless (channel == "serial") {
         return("Error, only supported over Serial");
       }
       return(configState(cmdl));
-    } elseIf (cmd == "setpass") {
-      //"got setpasswithpin".print();
+    } elseIf (cmd == "allset") {
+
       String inpin = cmdl[1];
-      String newpass = cmdl[2];
       if (TS.notEmpty(pin)) {
         if (TS.isEmpty(inpin)) {
           return("Error, pin was not sent");
@@ -657,34 +640,39 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
       } else {
         return("Error, pin must be set");
       }
+
+      String newpass = cmdl[2];
+      if (TS.notEmpty(pass)) {
+        if (TS.isEmpty(newpass)) {
+          return("Error, pass was not sent");
+        } elseIf (pass != newpass) {
+          return("Error, pass is incorrect");
+        }
+      }
+
       if (TS.isEmpty(newpass)) {
-       return("Error, new password is required");
+        return("Error, new password is required");
       } else {
-        if (TS.notEmpty(pass)) {
-          return("Error, cannot set pass with pin once it has been set, repass instead");
-        }
+        config.put(shpassi, newpass);
         pass = newpass;
-        pass.print();
-        config.put(shpassi, pass);
-       return("Password set");
       }
-     } elseIf (cmd == "reset") {
-      String inrcode = cmdl[1];
-      if (TS.notEmpty(rcode)) {
-        if (TS.isEmpty(inrcode)) {
-          return("Error, rcode was not sent");
-        } elseIf (rcode != inrcode) {
-          return("Error, rcode is incorrect");
-        }
+
+      String newspass = cmdl[3];
+      if (TS.isEmpty(newspass)) {
+        return("Error, new spass is required");
+      }
+      spass = newspass;
+      config.put(shspassi, spass);
+
+      String newdid = cmdl[4];
+      if (TS.notEmpty(did) && did.size == 16) {
+        did = newdid;
+        config.put(shdidi, did);
       } else {
-        return("Error, rcode must be set");
+        return("Error, newdid sized 16 required");
       }
-      config.put(shpassi, "");
-      config.put(shssidi, "");
-      config.put(shseci, "");
-      config.put(shspassi, "");
-      clearStates();
-      return("Device reset");
+      return("allset done");
+
      } elseIf (cmd == "repass") {
        //"got setpasswithpass".print();
         String inpass = cmdl[1];
@@ -696,18 +684,8 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
              return("Error, pass is incorrect");
            }
          } else {
-           return("Error, initial password must be set with setpass");
+           return("Error, initial password must be set");
          }
-        inrcode = cmdl[3];
-      if (TS.notEmpty(rcode)) {
-        if (TS.isEmpty(inrcode)) {
-          return("Error, rcode was not sent");
-        } elseIf (rcode != inrcode) {
-          return("Error, rcode is incorrect");
-        }
-      } else {
-        return("Error, rcode must be set");
-      }
 
         if (TS.isEmpty(newpass)) {
          return("Error, new password is required");
@@ -750,37 +728,13 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
           config.put(shseci, "");
           return("Wifi Setup cleared, restart to activate");
         }
-     } elseIf (cmd == "allset") {
-
-        newspass = cmdl[2];
-        spass = newspass;
-        spass.print();//to avoid write crash
-        config.put(shspassi, spass);
-
-        newdid = cmdl[3];
-        if (TS.notEmpty(did) && did.size == 16) {
-          did = newdid;
-          config.put(shdidi, did);
-        }
-
-        ssid = cmdl[4];
-        sec = cmdl[5];
-        if (TS.notEmpty(ssid)) {
-          //("got ssid " + ssid).print();
-          config.put(shssidi, ssid);
-          if (TS.notEmpty(sec)) {
-            //("got sec " + sec).print();
-            config.put(shseci, sec);
-          } else {
-            ("sec missing").print();
-            config.put(shseci, "");
-          }
-        }
-        return("allset done, restart to activate");
-     } elseIf (cmd == "clearstates") {
-       //"got clearStates".print();
-        clearStates();
-        return("State cleared");
+     } elseIf (cmd == "reset") {
+      config.put(shpassi, "");
+      config.put(shssidi, "");
+      config.put(shseci, "");
+      config.put(shspassi, "");
+      clearStates();
+      return("Device reset");
      } elseIf (cmd == "maybesave") {
         config.maybeSave();
         return("maybe saved");
@@ -788,28 +742,6 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
        //"got restart".print();
        needsFsRestart = true;
        return("Will restart soonish");
-     } elseIf (cmd == "getdid") {
-       return(did);
-     } elseIf (cmd == "getdevtype") {
-       return(devType);
-     } elseIf (cmd == "getmajver") {
-       return(majVer.toString());
-     } elseIf (cmd == "getminver") {
-       return(minVer.toString());
-     } elseIf (cmd == "setdid") {
-        String newdid = cmdl[2];
-        if (TS.notEmpty(did) && did.size == 16) {
-          did = newdid;
-          config.put(shdidi, did);
-          return("did now " + did);
-        }
-        return("need 16 char did");
-     } elseIf (cmd == "setspass") {
-        String newspass = cmdl[2];
-        spass = newspass;
-        spass.print();//to avoid write crash
-        config.put(shspassi, spass);
-        return("spass now " + spass);
      } else {
        return("unrecognized command");
      }

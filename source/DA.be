@@ -17,7 +17,7 @@ class Embedded:DimmerApp(AppShell) {
      devType = "dim";
      devCode = "gdi";
      majVer = 1;
-     minVer = 73;
+     minVer = 74;
    }
 
    loadStates() {
