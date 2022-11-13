@@ -709,8 +709,11 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
     }
 
      if (cmd == "setwifi") {
-        ssid = cmdl[2];
-        sec = cmdl[3];
+        ssid = cmdl[4];
+        sec = cmdl[5];
+        if (cmdl[2] == "yrs") {
+          needsFsRestart = true;
+        }
         if (TS.notEmpty(ssid)) {
           //("got ssid " + ssid).print();
           config.put(shssidi, ssid);
