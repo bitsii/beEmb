@@ -342,15 +342,7 @@ class Embedded:AppShell {
      }
    }
 
-   checkUpd(Int tries) {
-     "in checkUpd".print();
-     app.maybeGc();
-     fields {
-       String updHost;
-       Int updPort;
-       String updOut;
-       String updCert;
-     }
+   configUpd() {
      if (undef(updHost)) {
        updHost = "hpprodev.bitsii.org";
        updPort = 14587;
@@ -367,6 +359,18 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
 -----END PUBLIC KEY-----
 """;
      }
+   }
+
+   checkUpd(Int tries) {
+     "in checkUpd".print();
+     app.maybeGc();
+     fields {
+       String updHost;
+       Int updPort;
+       String updOut;
+       String updCert;
+     }
+     configUpd();
      //"updOut".print();
      //updOut.print();
      String updLine = readBuf;
