@@ -718,6 +718,14 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
         if (cmdl[2] == "yrs") {
           needsFsRestart = true;
         }
+        if (cmdl[3] == "hex") {
+          if (TS.notEmpty(ssid)) {
+            ssid = Encode:Hex.decode(ssid);
+          }
+          if (TS.notEmpty(sec)) {
+            sec = Encode:Hex.decode(sec);
+          }
+        }
         if (TS.notEmpty(ssid)) {
           //("got ssid " + ssid).print();
           config.put(shssidi, ssid);
