@@ -41,6 +41,7 @@ class Embedded:AppShell {
        Int majVer;
        Int minVer;
        String readBuf = String.new();
+       String supurl;
      }
      app.plugin = self;
 
@@ -275,8 +276,6 @@ class Embedded:AppShell {
           mdserver.protocol = "tcp";
           mdserver.start();
 
-          checkUpd(1);
-
         }
 
       }
@@ -342,86 +341,14 @@ class Embedded:AppShell {
      }
    }
 
-   configUpd() {
-     if (undef(updHost)) {
-       updHost = "hpprodev.bitsii.org";
-       updPort = 14587;
-       updOut = "GET /" + devType + majVer + "/ HTTP/1.1\r\n" + "Host: " + updHost + "\r\n" + "Connection: close\r\n\r\n";
-       updCert = """
------BEGIN PUBLIC KEY-----
-MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtqEIRx0r7kdVEvWruMyy
-YzW1SVsi0skPADyV6dvTPyVdqdzHZ3xIAY+8mLvj+yOFIjgPqfGqDZWEUoMFhoQ1
-HxNN3ex+ZBwHuVWiFYKGKm7j7O6eKdbExsTor1d7JuyVuWWBJPERJt0tdsmuyVoq
-JxTxmdeOLQV59+q20iWJlwjNR3FbFSGAmSLPjlBRLjMecpEavgI1k2qmS1GPHx51
-2BZZLwrIuECXEmjOl2eSEy8To4uG4/E6EMjbPJhTKcfFuuNiocXesiC88M2U9iIO
-F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
-1wIDAQAB
------END PUBLIC KEY-----
-""";
-     }
-   }
-
-   checkUpd(Int tries) {
-     "in checkUpd".print();
-     app.maybeGc();
-     fields {
-       String updHost;
-       Int updPort;
-       String updOut;
-       String updCert;
-     }
-     configUpd();
-     //"updOut".print();
-     //updOut.print();
-     String updLine = readBuf;
-     updLine.clear();
-     for (Int j = 0;j < tries;j++=) { //50
-       //"try 0".print();
-       app.wdtFeed();
-       app.yield();
-      Embedded:TCPClient client = Embedded:TCPClient.new(updHost, updPort);
-      client.open();
-      client.write(updOut);
-      if (client.opened) {
-        for (Int i = 0;i < 200;i++=) { //1000
-          //"try 1".print();
-          app.wdtFeed();
-          app.yield();
-          updLine = client.checkGetPayload(updLine, slashr);
-          if (TS.notEmpty(updLine)) {
-            //"updLine".print();
-            //updLine.print();
-            if (TS.notEmpty(updLine) && updLine.has("CurrentVer")) {
-              break;
-            }
-          }
-        }
-      }
-      if (TS.notEmpty(updLine) && updLine.has("CurrentVer")) {
-        break;
-      }
-     }
-     if (client.opened) { client.close(); }
-     if (TS.notEmpty(updLine) && updLine.has("CurrentVer")) {
-       //"gotit".print();
-       //updLine.print();
-       auto upds = updLine.split("|");
-       String vjs = upds[1];
-       String vms = upds[2];
-       Int vj = Int.new(vjs);
-       Int vm = Int.new(vms);
-       ("ver info vj " + vj.toString() + " vm " + vm.toString()).print();
-       if (vj > majVer || vm > minVer) {
-         "should update".print();
-         String upurl = upds[3];
-         "upurl".print();
-         upurl.print();
-         auto eupd = Embedded:Update.new();
-         eupd.signKey(updCert);
-         eupd.updateFromUrl(upurl);
-       }
-    }
-    "checkUpd done".print();
+   sysupdate(String upurl) {
+     "in update".print();
+     "upurl".print();
+     upurl.print();
+     auto eupd = Embedded:Update.new();
+     //eupd.signKey(updCert);
+     eupd.updateFromUrl(upurl);
+     "update done".print();
    }
 
    handleLoop() {
@@ -432,7 +359,6 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
      if (nowup > nextday) {
       nextday = nowup + 86400000;
       if (Wifi.isConnected) {
-        checkUpd(3);
         return(self);
       }
      }
@@ -451,6 +377,11 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
       next3min = nowup + 180000;
       self.swInfo.print();
       return(self);
+     }
+     if (TS.notEmpty(supurl)) {
+       String upurl = supurl;
+       supurl = null;
+       sysupdate(upurl);
      }
      if (def(serserver) && serserver.available) {
        "preding serpay".print();
@@ -753,6 +684,9 @@ F1fuYdq2gJRNNtxGOhmgUEXG8j+e3Q4ENiTL4eAR/dic5AyGaEr/u2OQVaoSwZK7
      } elseIf (cmd == "maybesave") {
         config.maybeSave();
         return("maybe saved");
+     } elseIf (cmd == "sysupdate") {
+        supurl = cmdl[2];
+        return("set supurl");
      } elseIf (cmd == "restart") {
        //"got restart".print();
        needsFsRestart = true;
