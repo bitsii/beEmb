@@ -23,6 +23,7 @@ class Embedded:AppShell {
        Int shseci;
        Int shdidi;
 
+       Int nextmin = 0;
        Int next3min = 0;
        Int next7min = 0;
        Int next13min = 0;
@@ -56,6 +57,7 @@ class Embedded:AppShell {
      shdidi = config.getPos("sh.did");
 
      app.uptime(nowup);
+     nextmin = nowup + 60000;
      next3min = nowup + 180000;
      next7min = nowup + 420000;
      next13min = nowup + 780000;
@@ -378,10 +380,14 @@ class Embedded:AppShell {
       self.swInfo.print();
       return(self);
      }
-     if (TS.notEmpty(supurl)) {
-       String upurl = supurl;
-       supurl = null;
-       sysupdate(upurl);
+     if (nowup > nextmin) {
+      nextmin = nowup + 60000;
+      if (def(supurl) && TS.notEmpty(supurl)) {
+        String upurl = supurl;
+        supurl = null;
+        sysupdate(upurl);
+      }
+      return(self);
      }
      if (def(serserver) && serserver.available) {
        "preding serpay".print();
