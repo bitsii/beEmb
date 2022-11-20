@@ -15,7 +15,7 @@ rm -rf targets/ard/Base/target/cc
 #--emitFlag relocMain
 
 export CLASSPATH=../brace/target5/*
-java -XX:-UsePerfData -XX:TieredStopAtLevel=1 -XX:+UseSerialGC be.BEL_Base -deployPath=targets/ard -buildPath=targets/ard --buildFile build/embBase.txt --emitLang cc --singleCC true --emitFlag ccSgc --emitFlag ccNoRtti --emitFlag relocMain --emitFlag holdMain --emitFlag embPlat --emitFlag noSmap --emitFlag noRfl -cchImport=../braceEmb/system/cc/be/BEAR_Imports.hpp -ccImport=../braceEmb/system/cc/be/BEAR_Imports.cpp --mainClass Embedded:SwitchApp ../brace/source/base/Uses.be source/ArdEmb.be source/ArdConf.be source/ArdSer.be source/ArdTcp.be source/ArdMdns.be source/TinyWeb.be source/ArdAes.be source/SH.be source/SA.be
+java -XX:-UsePerfData -XX:TieredStopAtLevel=1 -XX:+UseSerialGC be.BEL_Base -deployPath=targets/ard -buildPath=targets/ard --buildFile build/embBase.txt --emitLang cc --singleCC true --emitFlag ccSgc --emitFlag ccNoRtti --emitFlag relocMain --emitFlag holdMain --emitFlag embPlat --emitFlag noSmap --emitFlag noRfl -cchImport=../braceEmb/system/cc/be/BEAR_Imports.hpp -ccImport=../braceEmb/system/cc/be/BEAR_Imports.cpp --mainClass Embedded:SwitchApp ../brace/source/base/Uses.be source/ArdEmb.be source/ArdConf.be source/ArdWifi.be source/ArdSer.be source/ArdTcp.be source/ArdMdns.be source/TinyWeb.be source/ArdAes.be source/SH.be source/SA.be
 
 #../brace/source/base/Uses.be source/ArdEmb.be source/ArdAes.be source/ArdTcp.be source/LA.be
 
