@@ -3,3 +3,4 @@ lib/
 target*/
 ard/*
 mod/fa/*.js
+bsard/*.bin
