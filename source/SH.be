@@ -27,7 +27,7 @@ class Embedded:AppShell {
        Int next3min = 0;
        Int next7min = 0;
        Int next13min = 0;
-       Int nextday = 0;
+       Int next19min = 0;
        String slashn = "\n";
        String slashr = "\r";
        Config config = Config.new();
@@ -41,6 +41,8 @@ class Embedded:AppShell {
        String devCode;
        Int majVer;
        Int minVer;
+       Bool justStarted = true;
+       Bool inReset = false;
        String readBuf = String.new();
        String supurl;
      }
@@ -61,7 +63,7 @@ class Embedded:AppShell {
      next3min = nowup + 180000;
      next7min = nowup + 420000;
      next13min = nowup + 780000;
-     nextday = nowup + 86400000;
+     next19min = nowup + 1140000;
      
      //"making webPage".print();
      htmlHead = String.new();
@@ -358,12 +360,6 @@ class Embedded:AppShell {
      app.yield();
      app.wdtDisable();
      app.uptime(nowup);
-     if (nowup > nextday) {
-      nextday = nowup + 86400000;
-      if (Wifi.isConnected) {
-        return(self);
-      }
-     }
      if (nowup > next7min) {
       next7min = nowup + 420000;
       "maybe saving config".print();
@@ -373,6 +369,19 @@ class Embedded:AppShell {
      if (nowup > next13min) {
       next13min = nowup + 780000;
       checkWifiUp();
+      return(self);
+     }
+     if (nowup > next19min) {
+      next19min = nowup + 1140000;
+      if (inReset) {
+        inReset = false;
+        "leaving reset window".print();
+      }
+      if (justStarted) {
+        justStarted = false;
+        inReset = true;
+        "entering reset window".print();
+      }
       return(self);
      }
      if (nowup > next3min) {
@@ -635,7 +644,27 @@ class Embedded:AppShell {
          pass = newpass;
          return("Password set");
         }
-      }
+      } elseIf (cmd == "resetbypin") {
+        unless (inReset) {
+          return("Error, not in reset window");
+        }
+        inpin = cmdl[1];
+        if (TS.notEmpty(pin)) {
+          if (TS.isEmpty(inpin)) {
+            return("Error, pin was not sent");
+          } elseIf (pin != inpin) {
+            return("Error, pin is incorrect");
+          }
+        } else {
+          return("Error, pin must be set");
+        }
+        config.put(shpassi, "");
+        config.put(shssidi, "");
+        config.put(shseci, "");
+        config.put(shspassi, "");
+        clearStates();
+        return("Device reset");
+     }
 
      //password check
     if (TS.isEmpty(pass)) {
