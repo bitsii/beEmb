@@ -1,7 +1,7 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266httpUpdate.h>
 
-WiFiServer* server;
+//WiFiServer* server;
 
 void setup() {
   Serial.begin(115200);   
@@ -37,15 +37,17 @@ void setup() {
     Serial.println("no luck connecting to wifi");
   }
 
-  server = new WiFiServer(5308);
-  server->begin();
+  //server = new WiFiServer(5308);
+  //server->begin();
 
 }
 
 void loop() {
   //run app loop
-  //WiFiClient client;
-  //t_httpUpdate_return ret = ESPhttpUpdate.update(client, "http://hpprodev.bitsii.org:14587/dim1x79.bin");
+  WiFiClient client;
+  t_httpUpdate_return ret = ESPhttpUpdate.update(client, "http://hpprodev.bitsii.org:14587/sw1x65p13e85.bin");
+
+  /*
   unsigned long currentTime = millis();
   unsigned long previousTime = 0;
   long timeoutTime = 2000;
@@ -63,5 +65,6 @@ void loop() {
       }
     }
   }
+  */
 
 }

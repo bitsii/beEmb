@@ -6,9 +6,7 @@ use Math:Int;
 use Embedded:Wifi;
 use Text:String;
 use Text:Strings as TS;
-use Embedded:Files;
 use Embedded:Config;
-use Embedded:Aes as Crypt;
 use Encode:Url as EU;
 
 class Embedded:AppShell {

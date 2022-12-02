@@ -17,7 +17,7 @@ class Embedded:SwitchApp(AppShell) {
      devType = "sw";
      devCode = "gsw";
      majVer = 1;
-     minVer = 63;
+     minVer = 65;
    }
 
    loadStates() {
@@ -28,7 +28,7 @@ class Embedded:SwitchApp(AppShell) {
        String off = "off";
        String getsw = "getsw";
        String setsw = "setsw";
-       Int pini = 16; //2
+       Int pini = 16; //16, 2 nodemcu - Athom 16A US 13 LED 14 RELAY
        Int sapini;
        String sw;
      }
