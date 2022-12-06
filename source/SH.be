@@ -7,7 +7,6 @@ use Embedded:Wifi;
 use Text:String;
 use Text:Strings as TS;
 use Embedded:Config;
-use Encode:Url as EU;
 
 class Embedded:AppShell {
    
@@ -438,7 +437,7 @@ class Embedded:AppShell {
                 //gocha = cmd cannnnot be the first param, is it will have a /?
                 if (qsps.size > 1 && def(qsps[0]) && qsps[0] == "cmd" && TS.notEmpty(qsps[1])) {
                   //("got cmd " + qsps[1]).print();
-                  String cdec = EU.decode(qsps[1]);
+                  String cdec = Encode:Url.decode(qsps[1]);
                   //("cdec " + cdec).print();
                   try {
                       cmdres = doCmd("web", cdec);
@@ -571,11 +570,6 @@ class Embedded:AppShell {
        config.put(shpini, pin);
        return("Pin set");
       }
-    } elseIf (cmd == "configstate") {
-      unless (channel == "serial") {
-        return("Error, only supported over Serial");
-      }
-      return(configState(cmdl));
     } elseIf (cmd == "allset") {
 
       String inpin = cmdl[1];
@@ -724,6 +718,8 @@ class Embedded:AppShell {
        //"got restart".print();
        needsFsRestart = true;
        return("Will restart soonish");
+     } elseIf (cmd == "configstate") {
+       return(configState(cmdl));
      } else {
        return("unrecognized command");
      }

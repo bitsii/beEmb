@@ -45,7 +45,7 @@ void setup() {
 void loop() {
   //run app loop
   WiFiClient client;
-  t_httpUpdate_return ret = ESPhttpUpdate.update(client, "http://hpprodev.bitsii.org:14587/sw1x65p13e85.bin");
+  t_httpUpdate_return ret = ESPhttpUpdate.update(client, "http://hpprodev.bitsii.org:14587/sw1x68p13e85.bin");
 
   /*
   unsigned long currentTime = millis();
