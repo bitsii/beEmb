@@ -17,7 +17,7 @@ class Embedded:DimmerApp(AppShell) {
      devType = "dim";
      devCode = "gdi";
      majVer = 1;
-     minVer = 81;
+     minVer = 82;
    }
 
    loadStates() {
@@ -28,7 +28,7 @@ class Embedded:DimmerApp(AppShell) {
        String off = "off";
        String setsw = "setsw";
        //on = 0, off = 255
-       Int pini = 16; //2
+       Int pini = 16; //16, 2 nodemcu - Athom 16A US 13 LED 14 RELAY, SONOFF BASIC R2 13 LED 12 RELAY, 16 for dollatek 8285
        Int dalvli;
        Int dapini;
        Int daswi;
