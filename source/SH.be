@@ -262,7 +262,7 @@ class Embedded:AppShell {
       ("Local ip " + Wifi.localIP).print();
       if (Wifi.up) {
 
-        tcpserver = Embedded:TCPServer.new(5309);
+        tcpserver = Embedded:TCPServer.new(6420);
         tcpserver.start();
 
         tweb = Embedded:TinyWeb.new();
