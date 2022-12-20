@@ -614,35 +614,6 @@ class Embedded:AppShell {
         return("Error, newdid sized 16 required");
       }
 
-      app.maybeGc();
-      app.yield();
-
-      ssid = cmdl[6];
-      sec = cmdl[7];
-      if (cmdl[5] == "hex") {
-        if (TS.notEmpty(ssid)) {
-          ssid = Encode:Hex.decode(ssid);
-        }
-        if (TS.notEmpty(sec)) {
-          sec = Encode:Hex.decode(sec);
-        }
-      }
-      if (TS.notEmpty(ssid)) {
-          //("got ssid " + ssid).print();
-          config.put(shssidi, ssid);
-          if (TS.notEmpty(sec)) {
-            //("got sec " + sec).print();
-            config.put(shseci, sec);
-          } else {
-            ("sec missing").print();
-            config.put(shseci, "");
-          }
-        } else {
-          ("ssid missing").print();
-          config.put(shssidi, "");
-          config.put(shseci, "");
-        }
-
       return("allset done");
 
      } elseIf (cmd == "repass") {
