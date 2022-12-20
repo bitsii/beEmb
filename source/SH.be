@@ -613,6 +613,36 @@ class Embedded:AppShell {
       } else {
         return("Error, newdid sized 16 required");
       }
+
+      app.maybeGc();
+      app.yield();
+
+      ssid = cmdl[6];
+      sec = cmdl[7];
+      if (cmdl[5] == "hex") {
+        if (TS.notEmpty(ssid)) {
+          ssid = Encode:Hex.decode(ssid);
+        }
+        if (TS.notEmpty(sec)) {
+          sec = Encode:Hex.decode(sec);
+        }
+      }
+      if (TS.notEmpty(ssid)) {
+          //("got ssid " + ssid).print();
+          config.put(shssidi, ssid);
+          if (TS.notEmpty(sec)) {
+            //("got sec " + sec).print();
+            config.put(shseci, sec);
+          } else {
+            ("sec missing").print();
+            config.put(shseci, "");
+          }
+        } else {
+          ("ssid missing").print();
+          config.put(shssidi, "");
+          config.put(shseci, "");
+        }
+
       return("allset done");
 
      } elseIf (cmd == "repass") {
@@ -671,12 +701,9 @@ class Embedded:AppShell {
     }
 
      if (cmd == "setwifi") {
-        ssid = cmdl[4];
-        sec = cmdl[5];
-        if (cmdl[2] == "yrs") {
-          needsFsRestart = true;
-        }
-        if (cmdl[3] == "hex") {
+        ssid = cmdl[3];
+        sec = cmdl[4];
+        if (cmdl[2] == "hex") {
           if (TS.notEmpty(ssid)) {
             ssid = Encode:Hex.decode(ssid);
           }
