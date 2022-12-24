@@ -28,7 +28,7 @@ class Embedded:SwitchApp(AppShell) {
        String off = "off";
        String getsw = "getsw";
        String setsw = "setsw";
-       Int pini = 16; //16, 2 nodemcu - Athom 16A US 13 LED 14 RELAY, SONOFF BASIC R2 13 LED 12 RELAY, 16 for dollatek 8285
+       Int pini;
        Int sapini;
        String sw;
      }
@@ -36,6 +36,10 @@ class Embedded:SwitchApp(AppShell) {
      //("saswi " + saswi).print();
      sapini = config.getPos("sa.pin");
      //("sapini " + sapini).print();
+
+     if (undef(pini)) {
+       pini = 16; //16, 2 nodemcu - Athom 16A US 13 LED 14 RELAY, SONOFF BASIC R2 13 LED 12 RELAY, 16 for dollatek 8285
+     }
 
      String pins = config.get(sapini);
      if (TS.notEmpty(pins) && pins.isInteger) {

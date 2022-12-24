@@ -28,7 +28,7 @@ class Embedded:DimmerApp(AppShell) {
        String off = "off";
        String setsw = "setsw";
        //on = 0, off = 255
-       Int pini = 16; //16, 2 nodemcu - Athom 16A US 13 LED 14 RELAY, SONOFF BASIC R2 13 LED 12 RELAY, 16 for dollatek 8285
+       Int pini;
        Int dalvli;
        Int dapini;
        Int daswi;
@@ -38,6 +38,10 @@ class Embedded:DimmerApp(AppShell) {
      dalvli = config.getPos("da.lvl");
      dapini = config.getPos("da.pin");
      daswi = config.getPos("da.sw");
+
+     if (undef(pini)) {
+       pini = 16; //16, 2 nodemcu - Athom 16A US 13 LED 14 RELAY, SONOFF BASIC R2 13 LED 12 RELAY, 16 for dollatek 8285
+     }
 
      String pins = config.get(dapini);
      if (TS.notEmpty(pins) && pins.isInteger) {

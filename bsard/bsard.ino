@@ -24,7 +24,7 @@ void setup() {
     Serial.println("AP Start Failed!");
   }*/
 
-  WiFi.begin("", "");
+  WiFi.begin("Chiark", "skel0123");
   int count = 0;
   while (WiFi.status() != WL_CONNECTED && count < 40) {
     delay(500);
@@ -45,7 +45,9 @@ void setup() {
 void loop() {
   //run app loop
   WiFiClient client;
-  t_httpUpdate_return ret = ESPhttpUpdate.update(client, "http://hpprodev.bitsii.org:14587/sw1x68p13e85.bin");
+  //t_httpUpdate_return ret = ESPhttpUpdate.update(client, "http://hpprodev.bitsii.org:14587/sw1x73p16e85.bin");
+  t_httpUpdate_return ret = ESPhttpUpdate.update(client, "http://hpprodev.bitsii.org:14587/sw1x74p13e85.bin");
+
 
   /*
   unsigned long currentTime = millis();
