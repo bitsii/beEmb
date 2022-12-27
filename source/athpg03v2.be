@@ -21,7 +21,7 @@ class Embedded:Athswa(Embedded:SwitchApp) {
    }
 
    loadStates() {
-     pini = 16;
+     pini = 12;//Athom 16A US V2 relay 12
      super.loadStates();
    }
 

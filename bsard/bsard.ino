@@ -46,7 +46,7 @@ void loop() {
   //run app loop
   WiFiClient client;
   //t_httpUpdate_return ret = ESPhttpUpdate.update(client, "http://hpprodev.bitsii.org:14587/sw1x73p16e85.bin");
-  t_httpUpdate_return ret = ESPhttpUpdate.update(client, "http://hpprodev.bitsii.org:14587/sw1x74p13e85.bin");
+  t_httpUpdate_return ret = ESPhttpUpdate.update(client, "http://hpprodev.bitsii.org:14587/sw1x92athpg03v2.bin.gz");
 
 
   /*
