@@ -13,6 +13,8 @@ use Embedded:AppShell;
 
 class Embedded:Lights(Embedded:AppShell) {
 
+   //pinposes //16, 2 nodemcu - Athom 16A US 13 LED 14 RELAY, SONOFF BASIC R2 13 LED 12 RELAY, 16 for dollatek 8285
+
    buildControl(Int conPos, String conName, String conArgs) {
      if (conName == "sw") {
        auto swc = Embedded:SwitchControl.new(self, conPos, conName, conArgs);

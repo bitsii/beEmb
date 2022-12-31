@@ -14,8 +14,6 @@ use Embedded:Config;
 
 class Embedded:SwitchControl {
 
-   //pinposes //16, 2 nodemcu - Athom 16A US 13 LED 14 RELAY, SONOFF BASIC R2 13 LED 12 RELAY, 16 for dollatek 8285
-
    new(_ash, Int _conPos, String _conName, String _conArgs) {
      slots {
        Embedded:AppShell ash = _ash;

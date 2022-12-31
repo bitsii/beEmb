@@ -16,7 +16,8 @@ class Embedded:NodeMcuLeds(Embedded:Lights) {
    buildControls() {
      //config ctlconfver.devcode.version.control.ctlconf,args.control.ctlconf,args
      if (TS.isEmpty(controlSpec)) {
-       controlSpec = "0.NodeMcuLeds.4.sw.16";
+       //controlSpec = "0.NodeMcuLeds.4.sw.16";  //one sw on 16
+       controlSpec = "0.NodeMcuLeds.4.sw.16.sw.2";  //sw on 16 and 2
      }
      super.buildControls();
    }
