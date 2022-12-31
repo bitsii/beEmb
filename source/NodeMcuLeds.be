@@ -11,18 +11,14 @@ use Embedded:Aes as Crypt;
 use Encode:Url as EU;
 use Embedded:AppShell;
 
-class Embedded:Athswa(Embedded:SwitchApp) {
+class Embedded:NodeMcuLeds(Embedded:Lights) {
 
-   makeSwInfo() {
-     devType = "sw";
-     devCode = "athpg03v2";
-     majVer = 1;
-     minVer = 91;
-   }
-
-   loadStates() {
-     pini = 12;//Athom 16A US V2 relay 12
-     super.loadStates();
+   buildControls() {
+     //config ctlconfver.devcode.version.control.ctlconf,args.control.ctlconf,args
+     if (TS.isEmpty(controlSpec)) {
+       controlSpec = "0.NodeMcuLeds.4.sw.16";
+     }
+     super.buildControls();
    }
 
 }

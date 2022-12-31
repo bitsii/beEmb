@@ -11,8 +11,11 @@ use Embedded:Config;
 class Embedded:AppShell {
    
    main() {
-     slots {
+     fields {
        auto app = Embedded:App.new();
+       Config config = Config.new();
+     }
+     slots {
        Int shpini;
        Int shpassi;
        Int shspassi;
@@ -27,21 +30,20 @@ class Embedded:AppShell {
        Int next19min = 0;
        String slashn = "\n";
        String slashr = "\r";
-       Config config = Config.new();
        String htmlHead;
        //List webPageL;
        Bool needsFsRestart = false;
        Bool needsRestart = false;
        Int nowup = Int.new();
        String did;
-       String devType;
        String devCode;
-       Int majVer;
-       Int minVer;
+       Int version;
        Bool justStarted = true;
        Bool inReset = false;
        String readBuf = String.new();
        String supurl;
+       String controlSpec;
+       List controls = List.new();
      }
      app.plugin = self;
 
@@ -152,25 +154,26 @@ class Embedded:AppShell {
        String swInfo;
      }
      if (undef(swInfo)) {
-       swInfo = devType + " " + majVer + " " + minVer;
+       swInfo = devCode + " " + version;
      }
      return(swInfo);
    }
 
    loadStates() {
-
-   }
-
-   configState(List cmdl) String {
-     return("sh no impl");
+     for (any control in controls) {
+       control.loadStates();
+     }
    }
 
    doState(List cmdl) String {
-     return("sh no impl");
+     Int ctlPos = Int.new(cmdl[2]);
+     return(controls[ctlPos].doState(cmdl));
    }
    
    clearStates() {
-
+     for (any control in controls) {
+       control.clearStates();
+     }
    }
 
    checkMakeIds() {
@@ -203,11 +206,34 @@ class Embedded:AppShell {
 
    }
 
-   makeSwInfo() {
-     devType = "shell";
-     devCode = "gsh";
-     majVer = 1;
-     minVer = 2;
+   buildControl(Int conPos, String conName, String conArgs) {
+     //sh no impl
+     "buildControl called in SH".print();
+     return(null);
+   }
+
+   buildControls() {
+     //config ctlconfver.devcode.version.control.ctlconf,args.control.ctlconf,args
+     if (TS.isEmpty(controlSpec)) {
+       controlSpec = "0.gsh.2";
+     }
+     auto conl = controlSpec.split(".");
+     Int i = 1;
+     Int conPos = 0;
+     while (i < conl.size) {
+       if (i == 1) {
+         devCode = conl[i];
+       } elseIf (i == 2) {
+         version = Int.new(conl[i]);
+       } else {
+         String conName = conl[i];
+         i++=;
+         String conArgs = conl[i];
+         controls.put(conPos, buildControl(conPos, conName, conArgs));
+         conPos = conPos++;
+       }
+       i++=;
+     }
    }
 
    initRandom() {
@@ -237,7 +263,7 @@ class Embedded:AppShell {
      app.wdtFeed();
      app.yield();
      app.wdtDisable();
-     makeSwInfo();
+     buildControls();
      initRandom();
      checkMakeIds();
      loadPasses();
@@ -293,7 +319,7 @@ class Embedded:AppShell {
         if (TS.notEmpty(pin) && pin.size == 16) {
           String ssid = pin.substring(0, 8);
           String sec = pin.substring(8, 16);
-          ssid = "yo_it_" + devCode + "_" + devType + "_" + ssid;
+          ssid = "yo_it_" + devCode + "_" + ssid;
           //("ssid from pin " + ssid).print();
           //("sec from pin " + sec).print();
           auto wifi = Embedded:Wifi.new();
@@ -716,8 +742,6 @@ class Embedded:AppShell {
        //"got restart".print();
        needsFsRestart = true;
        return("Will restart soonish");
-     } elseIf (cmd == "configstate") {
-       return(configState(cmdl));
      } else {
        return("unrecognized command");
      }

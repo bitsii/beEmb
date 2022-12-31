@@ -10,63 +10,45 @@ use Embedded:Files;
 use Embedded:Aes as Crypt;
 use Encode:Url as EU;
 use Embedded:AppShell;
+use Embedded:Config;
 
-class Embedded:SwitchApp(AppShell) {
+class Embedded:SwitchControl {
 
-   makeSwInfo() {
-     devType = "sw";
-     devCode = "gsw";
-     majVer = 1;
-     minVer = 79;
+   //pinposes //16, 2 nodemcu - Athom 16A US 13 LED 14 RELAY, SONOFF BASIC R2 13 LED 12 RELAY, 16 for dollatek 8285
+
+   new(_ash, Int _conPos, String _conName, String _conArgs) {
+     slots {
+       Embedded:AppShell ash = _ash;
+       Int conPos = _conPos;
+       Int pini;
+       Config config = ash.config;
+       Embedded:App app = ash.app;
+     }
+     pini = Int.new(_conArgs);
    }
 
    loadStates() {
      slots {
-       Int saswi;
+       Int scswi;
        //on = 0, off = 255
        String on = "on";
        String off = "off";
        String getsw = "getsw";
        String setsw = "setsw";
-       Int pini;
-       Int sapini;
        String sw;
      }
-     saswi = config.getPos("sa.sw");
-     //("saswi " + saswi).print();
-     sapini = config.getPos("sa.pin");
-     //("sapini " + sapini).print();
+     scswi = config.getPos("sc.sw" + conPos);
 
-     if (undef(pini)) {
-       pini = 16; //16, 2 nodemcu - Athom 16A US 13 LED 14 RELAY, SONOFF BASIC R2 13 LED 12 RELAY, 16 for dollatek 8285
-     }
-
-     String pins = config.get(sapini);
-     if (TS.notEmpty(pins) && pins.isInteger) {
-       pini = Int.new(pins);
-       ("loaded pin " + pins).print();
-     }
-
-     String insw = config.get(saswi);
+     String insw = config.get(scswi);
      if (TS.notEmpty(insw)) {
        sw = insw;
-       doState(List.new().addValue("dostate").addValue("notpw").addValue(setsw).addValue(sw));
+       doState(List.new().addValue("dostate").addValue("notpw").addValue(conPos.toString()).addValue(setsw).addValue(sw));
      }
-   }
-
-   configState(List cmdl) String {
-     String pins = cmdl[3];
-     unless (pins.isInteger) {
-       return("error: pin must be an integer");
-     }
-     config.put(sapini, pins);
-     pini = Int.new(pins);
-     return("switch pin now " + pins);
    }
 
    doState(List cmdl) String {
      "in dostate".print();
-     String scm = cmdl[2];
+     String scm = cmdl[3];
      if (scm == getsw) {
       if (TS.notEmpty(sw)) {
         return(sw);
@@ -74,19 +56,19 @@ class Embedded:SwitchApp(AppShell) {
         return("undefined");
         }
      } elseIf (scm == setsw) {
-        String insw = cmdl[3];
+        String insw = cmdl[4];
         if (insw == on) {
           on.print(); //write crashes without
           app.pinModeOutput(pini);
           app.analogWrite(pini, 0);
           sw = insw;
-          config.put(saswi, on);
+          config.put(scswi, on);
         } elseIf (insw == off) {
           off.print(); //write crashes without
           app.pinModeOutput(pini);
           app.analogWrite(pini, 255);
           sw = insw;
-          config.put(saswi, off);
+          config.put(scswi, off);
         }
      }
      return("ok");

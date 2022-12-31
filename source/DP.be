@@ -13,13 +13,6 @@ use Embedded:AppShell;
 
 class Embedded:DimmerApp(AppShell) {
 
-   makeSwInfo() {
-     devType = "dim";
-     devCode = "gdi";
-     majVer = 1;
-     minVer = 84;
-   }
-
    loadStates() {
      slots {
        String setlvll = "setlvl";
@@ -59,16 +52,6 @@ class Embedded:DimmerApp(AppShell) {
        sw = insw;
        doState(List.new().addValue("dostate").addValue("notpw").addValue(setsw).addValue(sw));
      }
-   }
-
-  configState(List cmdl) String {
-     String pins = cmdl[3];
-     unless (pins.isInteger) {
-       return("error: pin must be an integer");
-     }
-     config.put(dapini, pins);
-     pini = Int.new(pins);
-     return("dimmer pin now " + pins);
    }
 
    doState(List cmdl) String {
