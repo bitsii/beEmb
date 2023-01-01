@@ -6,9 +6,6 @@ use Math:Int;
 use Embedded:Wifi;
 use Text:String;
 use Text:Strings as TS;
-use Embedded:Files;
-use Embedded:Aes as Crypt;
-use Encode:Url as EU;
 use Embedded:AppShell;
 use Embedded:Config;
 
@@ -35,7 +32,7 @@ class Embedded:SwitchControl {
        String setsw = "setsw";
        String sw;
      }
-     scswi = config.getPos("sc.sw" + conPos);
+     scswi = config.getPos("sc.sw." + conPos);
 
      String insw = config.get(scswi);
      if (TS.notEmpty(insw)) {

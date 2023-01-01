@@ -19,6 +19,9 @@ class Embedded:Lights(Embedded:AppShell) {
      if (conName == "sw") {
        auto swc = Embedded:SwitchControl.new(self, conPos, conName, conArgs);
        return(swc);
+     } elseIf (conName == "dim") {
+       auto dimc = Embedded:DimmerControl.new(self, conPos, conName, conArgs);
+       return(dimc);
      } else {
        "Unknown control conName in Lights".print();
      }

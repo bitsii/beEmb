@@ -44,6 +44,8 @@ class Embedded:AppShell {
        String supurl;
        String controlSpec;
        List controls = List.new();
+       Bool needsNetworkInit = true;
+       Bool needsLoadStates = true;
      }
      app.plugin = self;
 
@@ -269,21 +271,20 @@ class Embedded:AppShell {
      loadPasses();
 
      self.swInfo.print();
-     loadStates();
      "Device Id".print();
      did.print();
      "Pin".print();
      pin.print();
      self.swInfo.print();
 
-     //System:Random.getIntMax(100).print();
-
-     checkWifiAp();
-
      serserver = Embedded:SerServer.new();
      serserver.start();
      serserver.enableDebug();
 
+   }
+
+   networkInit() {
+     checkWifiAp();
      if (def(Wifi.localIP)) {
       ("Local ip " + Wifi.localIP).print();
       if (Wifi.up) {
@@ -308,7 +309,6 @@ class Embedded:AppShell {
       }
 
      }
-
    }
    
   checkWifiAp() {
@@ -383,6 +383,16 @@ class Embedded:AppShell {
      app.yield();
      app.wdtDisable();
      app.uptime(nowup);
+     if (needsNetworkInit) {
+       needsNetworkInit = false;
+       networkInit();
+       return(self);
+     }
+     if (needsLoadStates) {
+       needsLoadStates = false;
+       loadStates();
+       return(self);
+     }
      if (nowup > next7min) {
       next7min = nowup + 420000;
       "maybe saving config".print();
