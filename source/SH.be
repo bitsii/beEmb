@@ -45,6 +45,7 @@ class Embedded:AppShell {
        String readBuf = String.new();
        String supurl;
        String controlSpec;
+       String controlDef;
        List controls = List.new();
        Bool needsNetworkInit = true;
        Bool needsBuildControls = true;
@@ -222,17 +223,23 @@ class Embedded:AppShell {
      if (TS.isEmpty(controlSpec)) {
        controlSpec = "";
      }
+     controlDef = String.new();
      auto conl = controlSpec.split(".");
      Int i = 1;
      Int conPos = 0;
      while (i < conl.size) {
+       if (conPos > 0) {
+         controlDef += ",";
+       }
        String conName = conl[i];
+       controlDef += conName;
        i++=;
        String conArgs = conl[i];
        controls.put(conPos, buildControl(conPos, conName, conArgs));
        conPos = conPos++;
        i++=;
      }
+     ("controlDef " + controlDef).print();
    }
 
    initRandom() {
@@ -573,7 +580,7 @@ class Embedded:AppShell {
      }
      String cmd = cmdl[0];
      //("cmd is " + cmd).print();
-     if (cmd == "dostate") {
+     if (cmd == "dostate" || cmd == "getcontroldef") {
         //"got dostate".print();
         //state password check
         if (TS.isEmpty(spass)) {
@@ -586,8 +593,16 @@ class Embedded:AppShell {
         if (inpass != spass) {
           return("State Password Incorrect");
         }
-        String stateres = doState(cmdl);
-        return(stateres);
+        if (cmd == "dostate") {
+          String stateres = doState(cmdl);
+          return(stateres);
+        } else {
+          if (def(controlDef)) {
+            return(controlDef);
+          } else {
+            return("");
+          }
+        }
      }
 
      if (cmd == "setpin") {
