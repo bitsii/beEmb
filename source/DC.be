@@ -3,15 +3,23 @@
 // license that can be found in the LICENSE file.
 
 use Math:Int;
-use Embedded:Wifi;
 use Text:String;
 use Text:Strings as TS;
-use Embedded:Files;
-use Embedded:Aes as Crypt;
-use Encode:Url as EU;
 use Embedded:AppShell;
+use Embedded:Config;
 
-class Embedded:DimmerApp(AppShell) {
+class Embedded:DimmerControl {
+
+   new(_ash, Int _conPos, String _conName, String _conArgs) {
+     slots {
+       Embedded:AppShell ash = _ash;
+       Int conPos = _conPos;
+       Int pini;
+       Config config = ash.config;
+       Embedded:App app = ash.app;
+     }
+     pini = Int.new(_conArgs);
+   }
 
    loadStates() {
      slots {
@@ -21,44 +29,31 @@ class Embedded:DimmerApp(AppShell) {
        String off = "off";
        String setsw = "setsw";
        //on = 0, off = 255
-       Int pini;
-       Int dalvli;
-       Int dapini;
-       Int daswi;
+       Int dclvli;
+       Int dcswi;
        String lvl;
        String sw;
      }
-     dalvli = config.getPos("da.lvl");
-     dapini = config.getPos("da.pin");
-     daswi = config.getPos("da.sw");
+     dclvli = config.getPos("dc.lvl." + conPos);
+     dcswi = config.getPos("dc.sw." + conPos);
 
-     if (undef(pini)) {
-       pini = 16; //16, 2 nodemcu - Athom 16A US 13 LED 14 RELAY, SONOFF BASIC R2 13 LED 12 RELAY, 16 for dollatek 8285
-     }
-
-     String pins = config.get(dapini);
-     if (TS.notEmpty(pins) && pins.isInteger) {
-       pini = Int.new(pins);
-       ("loaded pin " + pins).print();
-     }
-
-     String inlvl = config.get(dalvli);
+     String inlvl = config.get(dclvli);
      if (TS.notEmpty(inlvl)) {
        lvl = inlvl;
      }
 
-     String insw = config.get(daswi);
+     String insw = config.get(dcswi);
      if (TS.notEmpty(insw)) {
        sw = insw;
-       doState(List.new().addValue("dostate").addValue("notpw").addValue(setsw).addValue(sw));
+       doState(List.new().addValue("dostate").addValue("notpw").addValue(conPos.toString()).addValue(setsw).addValue(sw));
      }
    }
 
    doState(List cmdl) String {
      "in dostate".print();
-     String scm = cmdl[2];
+     String scm = cmdl[3];
      if (scm == setlvll || scm == setrlvll) {
-        String inlvl = cmdl[3];
+        String inlvl = cmdl[4];
         Int inlvli = app.strToInt(inlvl);
         if (scm == setlvll) {
           if (inlvli < 0 || inlvli > 255) {
@@ -76,12 +71,12 @@ class Embedded:DimmerApp(AppShell) {
         lvl = inlvl;
         inlvl.print();
         sw = on;
-        config.put(daswi, on);
-        config.put(dalvli, inlvl);
+        config.put(dcswi, on);
+        config.put(dclvli, inlvl);
         app.pinModeOutput(pini);
         app.analogWrite(pini, inlvli);
      } elseIf (scm == setsw) {
-        String insw = cmdl[3];
+        String insw = cmdl[4];
         if (insw == on) {
           if (TS.notEmpty(lvl)) {
             inlvli = app.strToInt(lvl);
@@ -92,13 +87,13 @@ class Embedded:DimmerApp(AppShell) {
           app.pinModeOutput(pini);
           app.analogWrite(pini, inlvli);
           sw = insw;
-          config.put(daswi, on);
+          config.put(dcswi, on);
         } elseIf (insw == off) {
           off.print(); //write crashes without
           app.pinModeOutput(pini);
           app.analogWrite(pini, 255);
           sw = insw;
-          config.put(daswi, off);
+          config.put(dcswi, off);
         }
      }
      return("ok");
