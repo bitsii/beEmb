@@ -13,12 +13,20 @@ use Embedded:AppShell;
 
 class Embedded:NodeMcuLeds(Embedded:Lights) {
 
+   buildSwInfo() {
+     if (TS.isEmpty(swSpec)) {
+       swSpec = "0.NodeMcuLeds.9";
+     }
+     super.buildSwInfo();
+   }
+
    buildControls() {
-     //config ctlconfver.devcode.version.control.ctlconf,args.control.ctlconf,args
+     //config ctlconfver.control.ctlconf,args.control.ctlconf,args
      if (TS.isEmpty(controlSpec)) {
-       //controlSpec = "0.NodeMcuLeds.3.sw.16";  //one sw on 16
-       //controlSpec = "0.NodeMcuLeds.4.sw.16.sw.2";  //sw on 16 and 2
-       controlSpec = "0.NodeMcuLeds.5.sw.16.dim.2";  //sw on 16 dim on 2
+       //controlSpec = "";
+       //controlSpec = "0.sw.16";  //one sw on 16
+       //controlSpec = "0.sw.16.sw.2";  //sw on 16 and 2
+       controlSpec = "0.sw.16.dim.2";  //sw on 16 dim on 2
      }
      super.buildControls();
    }

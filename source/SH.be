@@ -36,8 +36,10 @@ class Embedded:AppShell {
        Bool needsRestart = false;
        Int nowup = Int.new();
        String did;
+       String swSpec;
        String devCode;
        Int version;
+       String swInfo;
        Bool justStarted = true;
        Bool inReset = false;
        String readBuf = String.new();
@@ -45,6 +47,7 @@ class Embedded:AppShell {
        String controlSpec;
        List controls = List.new();
        Bool needsNetworkInit = true;
+       Bool needsBuildControls = true;
        Bool needsLoadStates = true;
      }
      app.plugin = self;
@@ -151,16 +154,6 @@ class Embedded:AppShell {
      //"webpage made".print();
    }
 
-   swInfoGet() String {
-     fields {
-       String swInfo;
-     }
-     if (undef(swInfo)) {
-       swInfo = devCode + " " + version;
-     }
-     return(swInfo);
-   }
-
    loadStates() {
      for (any control in controls) {
        control.loadStates();
@@ -208,6 +201,16 @@ class Embedded:AppShell {
 
    }
 
+   buildSwInfo() {
+     if (TS.isEmpty(swSpec)) {
+       swSpec = "0.gsh.4";
+     }
+     auto swl = swSpec.split(".");
+     devCode = swl[1];
+     version = Int.new(swl[2]);
+     swInfo = devCode + " " + version;
+   }
+
    buildControl(Int conPos, String conName, String conArgs) {
      //sh no impl
      "buildControl called in SH".print();
@@ -215,25 +218,19 @@ class Embedded:AppShell {
    }
 
    buildControls() {
-     //config ctlconfver.devcode.version.control.ctlconf,args.control.ctlconf,args
+     //config ctlconfver.control.ctlconf,args.control.ctlconf,args
      if (TS.isEmpty(controlSpec)) {
-       controlSpec = "0.gsh.2";
+       controlSpec = "";
      }
      auto conl = controlSpec.split(".");
      Int i = 1;
      Int conPos = 0;
      while (i < conl.size) {
-       if (i == 1) {
-         devCode = conl[i];
-       } elseIf (i == 2) {
-         version = Int.new(conl[i]);
-       } else {
-         String conName = conl[i];
-         i++=;
-         String conArgs = conl[i];
-         controls.put(conPos, buildControl(conPos, conName, conArgs));
-         conPos = conPos++;
-       }
+       String conName = conl[i];
+       i++=;
+       String conArgs = conl[i];
+       controls.put(conPos, buildControl(conPos, conName, conArgs));
+       conPos = conPos++;
        i++=;
      }
    }
@@ -265,17 +262,17 @@ class Embedded:AppShell {
      app.wdtFeed();
      app.yield();
      app.wdtDisable();
-     buildControls();
+     buildSwInfo();
      initRandom();
      checkMakeIds();
      loadPasses();
 
-     self.swInfo.print();
+     swInfo.print();
      "Device Id".print();
      did.print();
      "Pin".print();
      pin.print();
-     self.swInfo.print();
+     swInfo.print();
 
      serserver = Embedded:SerServer.new();
      serserver.start();
@@ -388,6 +385,11 @@ class Embedded:AppShell {
        networkInit();
        return(self);
      }
+     if (needsBuildControls) {
+       needsBuildControls = false;
+       buildControls();
+       return(self);
+     }
      if (needsLoadStates) {
        needsLoadStates = false;
        loadStates();
@@ -419,7 +421,7 @@ class Embedded:AppShell {
      }
      if (nowup > next3min) {
       next3min = nowup + 180000;
-      self.swInfo.print();
+      swInfo.print();
       return(self);
      }
      if (nowup > nextmin) {
