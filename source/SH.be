@@ -50,6 +50,7 @@ class Embedded:AppShell {
        Bool needsNetworkInit = true;
        Bool needsBuildControls = true;
        Bool needsLoadStates = true;
+       Bool needsGc = false;
      }
      app.plugin = self;
 
@@ -402,10 +403,16 @@ class Embedded:AppShell {
        loadStates();
        return(self);
      }
+     if (needsGc) {
+       needsGc = false;
+       app.maybeGc();
+       return(self);
+     }
      if (nowup > next7min) {
       next7min = nowup + 420000;
       "maybe saving config".print();
       config.maybeSave();
+      needsGc = true;
       return(self);
      }
      if (nowup > next13min) {
@@ -575,6 +582,7 @@ class Embedded:AppShell {
    doCmdl(String channel, List cmdl) String {
      app.maybeGc();
      app.yield();
+     needsGc = true;
      if (cmdl.size < 1) {
        return("no cmd specified");
      }
@@ -761,6 +769,7 @@ class Embedded:AppShell {
       return("Device reset");
      } elseIf (cmd == "maybesave") {
         config.maybeSave();
+        needsGc = true;
         return("maybe saved");
      } elseIf (cmd == "sysupdate") {
         supurl = cmdl[2];
