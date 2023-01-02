@@ -223,7 +223,7 @@ class Embedded:AppShell {
      if (TS.isEmpty(controlSpec)) {
        controlSpec = "";
      }
-     controlDef = String.new();
+     controlDef = "controldef,"
      auto conl = controlSpec.split(".");
      Int i = 1;
      Int conPos = 0;
@@ -600,7 +600,7 @@ class Embedded:AppShell {
           if (def(controlDef)) {
             return(controlDef);
           } else {
-            return("");
+            return("controldef,");
           }
         }
      }
