@@ -180,14 +180,14 @@ class Embedded:AppShell {
 
       pin = config.get(shpini);
       if (TS.isEmpty(pin) || pin.size != 16) {
-        auto pinpart = System:Random.getString(8);
+        auto pinpart = System:Random.getString(8).lowerValue();
         pin = pinpart + pinpart;
         config.put(shpini, pin);
       }
 
       did = config.get(shdidi);
       if (TS.isEmpty(did)) {
-        did = System:Random.getString(16);
+        did = System:Random.getString(16).lowerValue();
         config.put(shdidi, did);
       }
    }
@@ -322,17 +322,15 @@ class Embedded:AppShell {
       startWifi();
       unless (Wifi.up) {
         if (TS.notEmpty(pin) && pin.size == 16) {
-          String ssid = pin.substring(0, 8);
+          String pinpt = pin.substring(0, 8);
           String sec = pin.substring(8, 16);
-          ssid = "yo_it_" + devCode + "_" + ssid;
-          //("ssid from pin " + ssid).print();
-          //("sec from pin " + sec).print();
+          String ssid = "cs_inc_" + devCode;
           auto wifi = Embedded:Wifi.new();
           auto nets = wifi.scanNetworks();
           auto rand = System:Random.new();
-          String finssid = ssid + "_" + rand.getString(4);
+          String finssid = ssid + "_" + rand.getIntMax(999) + "_" + pinpt;
           while (nets.has(finssid)) {
-            finssid = ssid + rand.getString(4);
+            finssid = ssid + "_" + rand.getIntMax(999) + "_" + pinpt;
           }
           Wifi.new(finssid, sec).startAp();
         }
