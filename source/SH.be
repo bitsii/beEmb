@@ -318,6 +318,9 @@ class Embedded:AppShell {
    
   checkWifiAp() {
      //"in checkWifiAp".print();
+    slots {
+      String apSsid;
+    }
      unless (Wifi.up && Wifi.mode == "station") {
       startWifi();
       unless (Wifi.up) {
@@ -332,6 +335,7 @@ class Embedded:AppShell {
           while (nets.has(finssid)) {
             finssid = ssid + "_" + rand.getIntMax(999) + "_" + pinpt;
           }
+          apSsid = finssid;
           Wifi.new(finssid, sec).startAp();
         }
       }
@@ -586,6 +590,13 @@ class Embedded:AppShell {
      }
      String cmd = cmdl[0];
      //("cmd is " + cmd).print();
+     if (cmd == "getapssid") {
+       if (def(apSsid)) {
+         return(apSsid);
+       } else {
+         return("");
+       }
+     }
      if (cmd == "dostate" || cmd == "getcontroldef") {
         //"got dostate".print();
         //state password check
