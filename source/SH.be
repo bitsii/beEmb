@@ -725,7 +725,9 @@ class Embedded:AppShell {
         config.put(shssidi, "");
         config.put(shseci, "");
         config.put(shspassi, "");
+        config.put(shdidi, "");
         clearStates();
+        needsFsRestart = true;
         return("Device reset");
      }
 
@@ -774,8 +776,30 @@ class Embedded:AppShell {
       config.put(shssidi, "");
       config.put(shseci, "");
       config.put(shspassi, "");
+      config.put(shdidi, "");
       clearStates();
+      needsFsRestart = true;
       return("Device reset");
+    } elseIf (cmd == "putconfig") {
+        String key = cmdl[3];
+        String value = cmdl[4];
+        if (cmdl[2] == "hex") {
+          if (TS.notEmpty(key)) {
+            key = Encode:Hex.decode(key);
+          }
+          if (TS.notEmpty(value)) {
+            value = Encode:Hex.decode(value);
+          }
+        }
+        if (TS.notEmpty(key)) {
+          Int keyi = config.getPos(key);
+          if (TS.isEmpty(value)) {
+            config.put(keyi, "");
+          } else {
+            config.put(keyi, value);
+          }
+        }
+        return("config set");
      } elseIf (cmd == "maybesave") {
         config.maybeSave();
         needsGc = true;
