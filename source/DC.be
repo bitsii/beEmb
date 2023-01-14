@@ -55,6 +55,7 @@ class Embedded:DimmerControl {
      if (scm == setlvll || scm == setrlvll) {
         String inlvl = cmdl[4];
         Int inlvli = app.strToInt(inlvl);
+        //Int inlvli = Int.new(inlvl);
         if (scm == setlvll) {
           if (inlvli < 0 || inlvli > 255) {
             inlvli = 255;
@@ -67,7 +68,8 @@ class Embedded:DimmerControl {
           }
         }
         if (inlvli == 255) { inlvli = 254; }
-        inlvl = inlvli.toString();
+        //inlvl = inlvli.toString();
+        inlvl = app.intToStr(inlvli);
         lvl = inlvl;
         inlvl.print();
         sw = on;
@@ -80,6 +82,7 @@ class Embedded:DimmerControl {
         if (insw == on) {
           if (TS.notEmpty(lvl)) {
             inlvli = app.strToInt(lvl);
+            //inlvli = Int.new(lvl);
           } else {
             inlvli = 0;
           }

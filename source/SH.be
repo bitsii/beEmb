@@ -269,7 +269,8 @@ class Embedded:AppShell {
 
      app.wdtFeed();
      app.yield();
-     app.wdtDisable();
+     //app.wdtDisable();
+     app.wdtEnable(0);
      buildSwInfo();
      initRandom();
      checkMakeIds();
@@ -357,7 +358,7 @@ class Embedded:AppShell {
        ("ssid " + ssid + " sec " + sec).print();
        app.wdtFeed();
        app.yield();
-       app.wdtDisable();
+       //app.wdtDisable();
        Wifi.new(ssid, sec).start();
      }
    }
@@ -388,7 +389,7 @@ class Embedded:AppShell {
    handleLoop() {
      app.wdtFeed();
      app.yield();
-     app.wdtDisable();
+     //app.wdtDisable();
      app.uptime(nowup);
      if (needsNetworkInit) {
        needsNetworkInit = false;
