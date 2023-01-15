@@ -23,11 +23,11 @@ class Embedded:AppShell {
        Int shseci;
        Int shdidi;
 
-       Int nextmin = 0;
-       Int next3min = 0;
-       Int next7min = 0;
-       Int next13min = 0;
-       Int next19min = 0;
+       Int nextUpdateCheck = 0;
+       Int nextSwInfo = 0;
+       Int nextMaybeSave = 0;
+       Int nextWifiCheck = 0;
+       Int nextResetWindow = 0;
        String slashn = "\n";
        String slashr = "\r";
        String htmlHead;
@@ -65,11 +65,11 @@ class Embedded:AppShell {
      shdidi = config.getPos("sh.did");
 
      app.uptime(nowup);
-     nextmin = nowup + 60000;
-     next3min = nowup + 180000;
-     next7min = nowup + 420000;
-     next13min = nowup + 780000;
-     next19min = nowup + 1140000;
+     nextUpdateCheck = nowup + 60000;
+     nextSwInfo = nowup + 540000;
+     nextMaybeSave = nowup + 105000;
+     nextWifiCheck = nowup + 780000;
+     nextResetWindow = nowup + 1140000;
      
      //"making webPage".print();
      htmlHead = String.new();
@@ -163,7 +163,8 @@ class Embedded:AppShell {
    }
 
    doState(List cmdl) String {
-     Int ctlPos = Int.new(cmdl[2]);
+     //Int ctlPos = Int.new(cmdl[2]);
+     Int ctlPos = app.strToInt(cmdl[2]);
      return(controls[ctlPos].doState(cmdl));
    }
    
@@ -209,7 +210,8 @@ class Embedded:AppShell {
      }
      auto swl = swSpec.split(".");
      devCode = swl[1];
-     version = Int.new(swl[2]);
+     //version = Int.new(swl[2]);
+     version = app.strToInt(swl[2]);
      swInfo = devCode + " " + version;
    }
 
@@ -411,20 +413,22 @@ class Embedded:AppShell {
        app.maybeGc();
        return(self);
      }
-     if (nowup > next7min) {
-      next7min = nowup + 420000;
-      "maybe saving config".print();
-      config.maybeSave();
+     if (nowup > nextMaybeSave) {
+      nextMaybeSave = nowup + 105000;
+      if (config.changed) {
+        "maybe saving config".print();
+        config.maybeSave();
+      }
       needsGc = true;
       return(self);
      }
-     if (nowup > next13min) {
-      next13min = nowup + 780000;
+     if (nowup > nextWifiCheck) {
+      nextWifiCheck = nowup + 780000;
       checkWifiUp();
       return(self);
      }
-     if (nowup > next19min) {
-      next19min = nowup + 1140000;
+     if (nowup > nextResetWindow) {
+      nextResetWindow = nowup + 1140000;
       if (inReset) {
         inReset = false;
         "leaving reset window".print();
@@ -436,13 +440,13 @@ class Embedded:AppShell {
       }
       return(self);
      }
-     if (nowup > next3min) {
-      next3min = nowup + 180000;
+     if (nowup > nextSwInfo) {
+      nextSwInfo = nowup + 180000;
       swInfo.print();
       return(self);
      }
-     if (nowup > nextmin) {
-      nextmin = nowup + 60000;
+     if (nowup > nextUpdateCheck) {
+      nextUpdateCheck = nowup + 60000;
       if (def(supurl) && TS.notEmpty(supurl)) {
         String upurl = supurl;
         supurl = null;

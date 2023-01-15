@@ -19,7 +19,8 @@ class Embedded:SwitchControl {
        Config config = ash.config;
        Embedded:App app = ash.app;
      }
-     pini = Int.new(_conArgs);
+     //pini = Int.new(_conArgs);
+     pini = app.strToInt(_conArgs);
    }
 
    loadStates() {
