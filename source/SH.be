@@ -441,7 +441,7 @@ class Embedded:AppShell {
       return(self);
      }
      if (nowup > nextSwInfo) {
-      nextSwInfo = nowup + 180000;
+      nextSwInfo = nowup + 540000;
       swInfo.print();
       return(self);
      }
