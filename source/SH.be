@@ -31,7 +31,7 @@ class Embedded:AppShell {
        String slashn = "\n";
        String slashr = "\r";
        String htmlHead;
-       //List webPageL;
+       List webPageL;
        Bool needsFsRestart = false;
        Bool needsRestart = false;
        Int nowup = Int.new();
@@ -77,83 +77,29 @@ class Embedded:AppShell {
      htmlHead += "Content-type:text/html\r\n";
      htmlHead += "Connection: close\r\n";
      htmlHead += "\r\n";
-     /*String htmlStart = "<html>";
-     String webPageHead = '''
-          <head>
-            <script>
-            var ajaxSubmit = function(formid) {
-              console.log("in ajaxSubmit");
-              //if (false) {
-              var form = document.getElementById(formid);
-              var fs = "/";
-              if (form.length > 0) {
-              for (i = 0; i < form.length; i++) {
-                 console.log("looping");
-                 var qp;
-                 if (i == 0) { qp = "?"; } else { qp = "&"; }
-                 if (form.elements[i].name) {
-                 fs = fs + qp;
-                 fs = fs + encodeURIComponent(form.elements[i].name) + "=" + encodeURIComponent(form.elements[i].value);
-               }
-               }
-               }
-               document.getElementById('cmdres').value = '';
-               document.getElementById('cmdshow').value = fs;
-               console.log("submitting this");
-               console.log(fs);
-               var req;
-               if (window.XMLHttpRequest) {
-                 req = new XMLHttpRequest();
-               } else if (window.ActiveXObject) {
-                 try {
-                   req = new ActiveXObject("Msxml2.XMLHTTP");
-                 } 
-                 catch (e) {
-                   try {
-                     req = new ActiveXObject("Microsoft.XMLHTTP");
-                   } 
-                   catch (e) {}
-                 }
-               }
-               req.open('GET', fs, true);
-               req.onreadystatechange = function(){
-                   if (req.readyState != 4) return;
-                   if (req.status != 200 && req.status != 304) {
-                       //logmsg('HTTP error ' + req.status);
-                       //location.reload();
-                       return;
-                   }
-                   if (req.responseText != null && req.responseText != '') {
-                     console.log(req.responseText);
-                     //alert(req.responseText);
-                     document.getElementById('cmdres').value = req.responseText;
-                   }
-               }
-               req.send();
-               console.log("submitted");
-               //}
-            }
-            </script>
-          </head>
-          <body>
-          ''';
-     String htmlC1 = '''
-     <form id="cmdformid" action="/" method="get" onsubmit="ajaxSubmit('cmdformid');return false;"><input type="hidden" name="cmdform" id="cmdform" value="cmdform"/>
-     <br><label for="cmd">Your Command:</label><input type="text" id="cmd" name="cmd" size="64" maxLength="128"><br>
+     String htmlStart = "<html><head></head><body>";
+     String cmdForm = '''
+     <form action="/" method="get">
+     <input type="hidden" name="cmdform" value="cmdform"/>
+     <br><label for="cmd">Your Command:</label><input type="text" name="cmd" size="64" maxLength="128"><br>
      <br><input type="submit" value="Send Command"></form>
-     <form id="cmdresformid" action="/" method="get" onsubmit="ajaxSubmit('cmdresformid');return false;"><input type="hidden" name="cmdresform" id="cmdresform" value="cmdresform"/>
-     <br><label for="cmdres">Command Results:</label><input type="text" id="cmdres" name="cmdres" size="64" maxLength="128"></form>
-     <form id="cmdshowformid" action="/" method="get" onsubmit="ajaxSubmit('cmdshowformid');return false;"><input type="hidden" name="cmdshowform" id="cmdshowform" value="cmdshowform"/>
-     <br><label for="cmdres">Command being Sent:</label><input type="text" id="cmdshow" name="cmdshow" size="64" maxLength="128"></form>
+     </form>
+     ''';
+     String hexForm = '''
+     <form action="/" method="get">
+     <input type="hidden" name="hexform" value="hexform"/>
+     <br><label for="hexit">What to Hex Encode:</label><input type="text" name="hexit" size="64" maxLength="128"><br>
+     <br><input type="submit" value="Get Hex Encoded Value"></form>
+     </form>
      ''';
      String htmlEnd = "</body></html>";
      webPageL = List.new();
      webPageL += htmlHead;
      webPageL += htmlStart;
-     webPageL += webPageHead;
-     webPageL += htmlC1;
-     webPageL += htmlEnd;*/
-     //"webpage made".print();
+     webPageL += cmdForm;
+     webPageL += hexForm;
+     webPageL += htmlEnd;
+     "webpage made".print();
    }
 
    loadStates() {
@@ -482,11 +428,13 @@ class Embedded:AppShell {
         //"got treq".print();
         String qs = treq.checkGetQueryString(readBuf);
         if (TS.notEmpty(qs)) {
+          "got qs, it follows".print();
+          qs.print();
           if (qs == "/") {
-            //"base qs sending webpage".print();
-            //for (String part in webPageL) {
-            //  treq.client.write(part);
-            //}
+            "base qs sending webpage".print();
+            for (String part in webPageL) {
+              treq.client.write(part);
+            }
           } elseIf (qs.begins("/?")) {
             auto qspso = qs.split("&");
             for (String qspsi in qspso) {
@@ -494,22 +442,29 @@ class Embedded:AppShell {
                 //("got qspsi " + qspsi).print();
                 auto qsps = qspsi.split("=");
                 //gocha = cmd cannnnot be the first param, is it will have a /?
-                if (qsps.size > 1 && def(qsps[0]) && qsps[0] == "cmd" && TS.notEmpty(qsps[1])) {
-                  //("got cmd " + qsps[1]).print();
-                  String cdec = Encode:Url.decode(qsps[1]);
-                  //("cdec " + cdec).print();
-                  try {
-                      cmdres = doCmd("web", cdec);
-                      treq.client.write(htmlHead); //ok headers
-                      if (TS.isEmpty(cmdres)) {
-                        treq.client.write("cmdres empty");
-                      } else {
-                        treq.client.write(cmdres);
+                if (qsps.size > 1 && def(qsps[0]) && TS.notEmpty(qsps[1])) {
+                  if (qsps[0] == "cmd") {
+                    //("got cmd " + qsps[1]).print();
+                    String cdec = Encode:Url.decode(qsps[1]);
+                    //("cdec " + cdec).print();
+                    try {
+                        cmdres = doCmd("web", cdec);
+                        treq.client.write(htmlHead); //ok headers
+                        if (TS.isEmpty(cmdres)) {
+                          treq.client.write("cmdres empty");
+                        } else {
+                          treq.client.write(cmdres);
+                        }
+                      } catch (dce) {
+                        "error handling command".print();
+                        dce.print();
                       }
-                    } catch (dce) {
-                      "error handling command".print();
-                      dce.print();
-                    }
+                  } elseIf (qsps[0] == "hexit") {
+                    String hi = Encode:Url.decode(qsps[1]);
+                    hi = Encode:Hex.encode(hi);
+                    treq.client.write(htmlHead); //ok headers
+                    treq.client.write(hi);
+                  }
                 }
               }
             }
