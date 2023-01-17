@@ -31,7 +31,6 @@ class Embedded:AppShell {
        String slashn = "\n";
        String slashr = "\r";
        String htmlHead;
-       List webPageL;
        Bool needsFsRestart = false;
        Bool needsRestart = false;
        Int nowup = Int.new();
@@ -68,8 +67,9 @@ class Embedded:AppShell {
      nextUpdateCheck = nowup + 60000;
      nextSwInfo = nowup + 540000;
      nextMaybeSave = nowup + 105000;
-     nextWifiCheck = nowup + 780000;
-     nextResetWindow = nowup + 1140000;
+     //nextNetInit = nowup + 240000;//4 mins
+     nextWifiCheck = nowup + 780000;//13 mins
+     nextResetWindow = nowup + 570000;//9.5 mins
      
      //"making webPage".print();
      htmlHead = String.new();
@@ -77,7 +77,17 @@ class Embedded:AppShell {
      htmlHead += "Content-type:text/html\r\n";
      htmlHead += "Connection: close\r\n";
      htmlHead += "\r\n";
-     String htmlStart = "<html><head></head><body>";
+     
+   }
+
+   sendWebPage(treq) {
+
+     treq.client.write(htmlHead);
+
+     /*String htmlStart = "<html><head></head><body>";
+
+     treq.client.write(htmlStart);
+
      String cmdForm = '''
      <form action="/" method="get">
      <input type="hidden" name="cmdform" value="cmdform"/>
@@ -85,6 +95,9 @@ class Embedded:AppShell {
      <br><input type="submit" value="Send Command"></form>
      </form>
      ''';
+
+     treq.client.write(cmdForm);
+
      String hexForm = '''
      <form action="/" method="get">
      <input type="hidden" name="hexform" value="hexform"/>
@@ -92,14 +105,13 @@ class Embedded:AppShell {
      <br><input type="submit" value="Get Hex Encoded Value"></form>
      </form>
      ''';
+
+     treq.client.write(hexForm);
+
      String htmlEnd = "</body></html>";
-     webPageL = List.new();
-     webPageL += htmlHead;
-     webPageL += htmlStart;
-     webPageL += cmdForm;
-     webPageL += hexForm;
-     webPageL += htmlEnd;
-     "webpage made".print();
+
+     treq.client.write(htmlEnd);*/
+
    }
 
    loadStates() {
@@ -238,8 +250,8 @@ class Embedded:AppShell {
    }
 
    networkInit() {
-     checkWifiAp();
-     if (def(Wifi.localIP)) {
+    checkWifiAp();
+    if (def(Wifi.localIP)) {
       ("Local ip " + Wifi.localIP).print();
       if (Wifi.up) {
 
@@ -260,9 +272,8 @@ class Embedded:AppShell {
 
         }
 
+       }
       }
-
-     }
    }
    
   checkWifiAp() {
@@ -369,12 +380,12 @@ class Embedded:AppShell {
       return(self);
      }
      if (nowup > nextWifiCheck) {
-      nextWifiCheck = nowup + 780000;
+      nextWifiCheck = nowup + 780000;//13 mins
       checkWifiUp();
       return(self);
      }
      if (nowup > nextResetWindow) {
-      nextResetWindow = nowup + 1140000;
+      nextResetWindow = nowup + 570000;//9.5 mins
       if (inReset) {
         inReset = false;
         "leaving reset window".print();
@@ -432,9 +443,8 @@ class Embedded:AppShell {
           qs.print();
           if (qs == "/") {
             "base qs sending webpage".print();
-            for (String part in webPageL) {
-              treq.client.write(part);
-            }
+            sendWebPage(treq);
+            needsGc = true;
           } elseIf (qs.begins("/?")) {
             auto qspso = qs.split("&");
             for (String qspsi in qspso) {
@@ -519,6 +529,8 @@ class Embedded:AppShell {
    }
    
    doCmd(String channel, String cmdline) String {
+     app.wdtFeed();
+     app.yield();
      if (TS.isEmpty(cmdline)) {
        return("cmdline empty");
      }
@@ -543,6 +555,7 @@ class Embedded:AppShell {
    
    doCmdl(String channel, List cmdl) String {
      app.maybeGc();
+     app.wdtFeed();
      app.yield();
      needsGc = true;
      if (cmdl.size < 1) {
