@@ -1,3 +1,3 @@
 #include <Arduino.h>
-#define BEAR_ESP8266
+#define BEAR_ESP32
 //#include <bearssl/bearssl.h>

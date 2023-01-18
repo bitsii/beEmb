@@ -9,7 +9,7 @@ class Embedded:Config {
 
   new() {
     fields {
-      Int eesize = 8192;//8192 16384
+      Int eesize = 4096;//4096 8192 16384 - error suggests 4096 is the limit
       Int maxsz = 128;//how big we let a name or value be
       List names = List.new();
       List values = List.new();

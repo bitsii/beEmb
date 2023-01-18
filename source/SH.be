@@ -339,9 +339,9 @@ class Embedded:AppShell {
      "in update".print();
      "upurl".print();
      upurl.print();
-     auto eupd = Embedded:Update.new();
+     //auto eupd = Embedded:Update.new();
      //eupd.signKey(updCert);
-     eupd.updateFromUrl(upurl);
+     //eupd.updateFromUrl(upurl);
      "update done".print();
    }
 
@@ -500,6 +500,7 @@ class Embedded:AppShell {
                   preq.write(pcmdres);
                   preq.write(slashr);
                   preq.write(slashn);
+                  "pcmdres send done".print();
                 }
               } catch (any pdce) {
                 "error handling command".print();

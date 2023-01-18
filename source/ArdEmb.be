@@ -37,7 +37,9 @@ class Embedded:App {
    wdtFeed() {
      emit(cc) {
       """
+#ifdef BEAR_ESP8266
       ESP.wdtFeed();
+#endif
       """
      }
    }
@@ -45,8 +47,10 @@ class Embedded:App {
    wdtDisable() {
      emit(cc) {
       """
+#ifdef BEAR_ESP8266
       ESP.wdtDisable();
       //*((volatile uint32_t*) 0x60000900) &= ~(1); // Hardware WDT OFF
+#endif
       """
      }
    }

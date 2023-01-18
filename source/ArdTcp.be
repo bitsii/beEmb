@@ -41,6 +41,7 @@ class Embedded:TCPServer {
     emit(cc) {
     """
     bevl_res->client = client;
+    client.setTimeout(2);
     }
     """
     }
@@ -78,6 +79,7 @@ WiFiClient client;
     """
     client.connect(bevp_host->bems_toCcString().c_str(), bevp_port->bevi_int);
     if (client.connected()) {
+      client.setTimeout(2);
     """
     }
     opened = true;
