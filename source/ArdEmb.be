@@ -10,6 +10,7 @@ class Embedded:App {
    default() self { 
      fields {
        any plugin;
+       Int hlCount = 0;
      }
    }
    
@@ -19,11 +20,18 @@ class Embedded:App {
    }
 
    startLoop() {
+     "IN STARTLOOP".print();
      plugin.startLoop();
+     "FINISHING STARTLOOP".print();
    }
    
    handleLoop() {
+     if (hlCount > 0) {
+       "HLCOUNT ELEVATED".print();
+     }
+     hlCount++=;
      plugin.handleLoop();
+     hlCount--=;
    }
    
    delay(Int millis) {
