@@ -40,7 +40,7 @@ class Embedded:TCPServer {
     res.opened = true;
     emit(cc) {
     """
-    bevl_res->client = client;
+    beq->bevl_res->client = client;
     client.setTimeout(2);
     }
     """
@@ -96,7 +96,7 @@ WiFiClient client;
   write(String line) self {
     emit(cc) {
     """
-    client.write(beva_line->bems_toCcString().c_str());
+    client.write(beq->beva_line->bems_toCcString().c_str());
     """
     }
   }
@@ -130,7 +130,7 @@ WiFiClient client;
         if (client.available()) {
           char c = client.read(); 
           //Serial.write(c);
-          bevl_chari->bevi_int = c;
+          beq->bevl_chari->bevi_int = c;
           """
           }
           //("got int " + chari).print();

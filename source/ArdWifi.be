@@ -40,7 +40,7 @@ class Embedded:Wifi {
       """
       String mac = WiFi.macAddress();
       std::string macs = std::string(mac.c_str());
-      bevl_macAddress = new BEC_2_4_6_TextString(macs);
+      beq->bevl_macAddress = new BEC_2_4_6_TextString(macs);
       """
     }
     return(macAddress);
@@ -56,8 +56,8 @@ class Embedded:Wifi {
       for(int i =0; i<numberOfNetworks; i++){
         String ssid = WiFi.SSID(i);
         std::string ssids = std::string(ssid.c_str());
-        bevl_network = new BEC_2_4_6_TextString(ssids);
-        bevl_networks->bem_addValue_1(bevl_network);
+        beq->bevl_network = new BEC_2_4_6_TextString(ssids);
+        beq->bevl_networks->bem_addValue_1(beq->bevl_network);
       }
 
       """
@@ -130,10 +130,10 @@ class Embedded:Wifi {
       """
       if (WiFi.status() == WL_CONNECTED) {
         //Serial.println("wifi still connected");
-        bevl_connected = BECS_Runtime::boolTrue;
+        beq->bevl_connected = BECS_Runtime::boolTrue;
       } else {
         //Serial.println("wifi no more connected");
-        bevl_connected = BECS_Runtime::boolFalse;
+        beq->bevl_connected = BECS_Runtime::boolFalse;
       }
       """
       }

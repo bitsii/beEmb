@@ -34,7 +34,7 @@ class Embedded:SerServer {
   write(String line) self {
     emit(cc) {
     """
-    Serial.write(beva_line->bems_toCcString().c_str());
+    Serial.write(beq->beva_line->bems_toCcString().c_str());
     """
     }
   }
@@ -70,7 +70,7 @@ class Embedded:SerServer {
         currentTime = millis();         
         if (Serial.available()) {      
           char c = Serial.read(); 
-          bevl_chari->bevi_int = c;
+          beq->bevl_chari->bevi_int = c;
           """
           }
           //("got int " + chari).print();

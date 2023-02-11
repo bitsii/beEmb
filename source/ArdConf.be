@@ -105,7 +105,7 @@ class Embedded:Config {
     loop {
       emit(cc) {
         """
-      beva_code->bevi_int = EEPROM.read(beva_pe->bevi_int);
+      beq->beva_code->bevi_int = EEPROM.read(beq->beva_pe->bevi_int);
         """
       }
       if (pe < eesize) {
@@ -197,7 +197,7 @@ class Embedded:Config {
             unless (noes) {
               emit(cc) {
                   """
-                EEPROM.write(beva_pe->bevi_int, bevp_es->bevi_int);
+                EEPROM.write(beq->beva_pe->bevi_int, bevp_es->bevi_int);
                   """
               }
               pe++=;
@@ -209,7 +209,7 @@ class Embedded:Config {
           }
           emit(cc) {
               """
-            EEPROM.write(beva_pe->bevi_int, beva_code->bevi_int);
+            EEPROM.write(beq->beva_pe->bevi_int, beq->beva_code->bevi_int);
               """
           }
           pe++=;

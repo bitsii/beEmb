@@ -37,7 +37,7 @@ class Embedded:App {
    delay(Int millis) {
      emit(cc) {
       """
-      delay(beva_millis->bevi_int);
+      delay(beq->beva_millis->bevi_int);
       """
      }
    }
@@ -67,7 +67,7 @@ class Embedded:App {
      emit(cc) {
       """
       //*((volatile uint32_t*) 0x60000900) |= 1; // Hardware WDT ON
-      ESP.wdtEnable(beva_timeout->bevi_int);
+      ESP.wdtEnable(beq->beva_timeout->bevi_int);
       """
      }
    }
@@ -84,7 +84,7 @@ class Embedded:App {
      Int millis = Int.new();
      emit(cc) {
      """
-     bevl_millis->bevi_int = millis();
+     beq->bevl_millis->bevi_int = millis();
      """
      }
      return(millis);
@@ -93,7 +93,7 @@ class Embedded:App {
    uptime(Int millis) Int {
      emit(cc) {
      """
-     beva_millis->bevi_int = millis();
+     beq->beva_millis->bevi_int = millis();
      """
      }
      return(millis);
@@ -105,7 +105,7 @@ class Embedded:App {
      //pinMode(255, OUTPUT);
      //analogWrite(255, 0);
      //analogWrite(255, 10);
-     pinMode(beva_pin->bevi_int,OUTPUT);
+     pinMode(beq->beva_pin->bevi_int,OUTPUT);
      """
      }
    }
@@ -113,8 +113,8 @@ class Embedded:App {
    analogWrite(Int pin, Int value) {
      emit(cc) {
      """
-     uint8_t pin = (uint8_t) beva_pin->bevi_int;
-     uint8_t value = (uint8_t) beva_value->bevi_int;
+     uint8_t pin = (uint8_t) beq->beva_pin->bevi_int;
+     uint8_t value = (uint8_t) beq->beva_value->bevi_int;
      analogWrite(pin,value);
      """
      }
@@ -133,7 +133,7 @@ class Embedded:App {
      Int res = Int.new();
      emit(cc) {
        """
-       bevl_res->bevi_int = atoi(beva_str->bems_toCcString().c_str());
+       beq->bevl_res->bevi_int = atoi(beq->beva_str->bems_toCcString().c_str());
        """
      }
      return(res);
@@ -146,9 +146,9 @@ class Embedded:App {
      emit(cc) {
        """
        char buffer[20];
-       itoa(beva_int->bevi_int,buffer,10);
+       itoa(beq->beva_int->bevi_int,buffer,10);
        std::string ints = std::string(buffer);
-       bevl_res = new BEC_2_4_6_TextString(ints);
+       beq->bevl_res = new BEC_2_4_6_TextString(ints);
        """
      }
      return(res);

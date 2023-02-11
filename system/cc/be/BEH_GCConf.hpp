@@ -11,4 +11,6 @@
 #define BEDCC_GCSSCHECK 16
 #define BEDCC_GCRWM 30000
 //#define BEDCC_GCRWM 10
+//size for heap stack
+#define BEDCC_GCHSS 500
 //#define BED_GCSTATS
