@@ -26,6 +26,7 @@ class Embedded:AppShell {
        Int nextUpdateCheck = 0;
        Int nextSwInfo = 0;
        Int nextMaybeSave = 0;
+       Int nextApCheck = 0;
        Int nextWifiCheck = 0;
        Int nextResetWindow = 0;
        String slashn = "\n";
@@ -47,6 +48,7 @@ class Embedded:AppShell {
        String controlDef;
        List controls = List.new();
        Bool needsNetworkInit = true;
+       Bool readyForAp = false;
        Bool needsBuildControls = true;
        Bool needsLoadStates = true;
        Bool needsGc = false;
@@ -67,7 +69,7 @@ class Embedded:AppShell {
      nextUpdateCheck = nowup + 60000;
      nextSwInfo = nowup + 540000;
      nextMaybeSave = nowup + 105000;
-     //nextNetInit = nowup + 240000;//4 mins
+     nextApCheck = nowup + 240000;//4 mins
      nextWifiCheck = nowup + 780000;//13 mins
      nextResetWindow = nowup + 570000;//9.5 mins
      
@@ -278,28 +280,35 @@ class Embedded:AppShell {
    
   checkWifiAp() {
      //"in checkWifiAp".print();
-    slots {
-      String apSsid;
-    }
      unless (Wifi.up && Wifi.mode == "station") {
       startWifi();
       unless (Wifi.up) {
-        if (TS.notEmpty(pin) && pin.size == 16) {
-          String pinpt = pin.substring(0, 8);
-          String sec = pin.substring(8, 16);
-          String ssid = "cs_inc_" + devCode;
-          auto wifi = Embedded:Wifi.new();
-          auto nets = wifi.scanNetworks();
-          auto rand = System:Random.new();
-          String finssid = ssid + "_" + rand.getIntMax(999) + "_" + pinpt;
-          while (nets.has(finssid)) {
-            finssid = ssid + "_" + rand.getIntMax(999) + "_" + pinpt;
-          }
-          apSsid = finssid;
-          Wifi.new(finssid, sec).startAp();
+        if (TS.isEmpty(ssid) || readyForAp) {
+          "start ap in checkWifiAp".print();
+          initAp();
         }
       }
      }
+   }
+
+   initAp() {
+      slots {
+        String apSsid;
+      }
+      if (TS.notEmpty(pin) && pin.size == 16) {
+        String pinpt = pin.substring(0, 8);
+        String sec = pin.substring(8, 16);
+        String ssid = "cs_inc_" + devCode;
+        auto wifi = Embedded:Wifi.new();
+        auto nets = wifi.scanNetworks();
+        auto rand = System:Random.new();
+        String finssid = ssid + "_" + rand.getIntMax(999) + "_" + pinpt;
+        while (nets.has(finssid)) {
+          finssid = ssid + "_" + rand.getIntMax(999) + "_" + pinpt;
+        }
+        apSsid = finssid;
+        Wifi.new(finssid, sec).startAp();
+      }
    }
    
    startWifi() {
@@ -331,6 +340,11 @@ class Embedded:AppShell {
        if (nets.has(ssid)) {
          "my ssid looks to be present, restarting".print();
          needsFsRestart = true;
+       }
+     }
+     unless(needsFsRestart) {
+       if (Wifi.up && undef(tcpserver)) {
+         needsNetworkInit = true;
        }
      }
    }
@@ -377,6 +391,16 @@ class Embedded:AppShell {
         config.maybeSave();
       }
       needsGc = true;
+      return(self);
+     }
+     if (nowup > nextApCheck) {
+      nextApCheck = nowup + 240000;//4 mins
+      unless (readyForAp) {
+        readyForAp = true;
+        unless (Wifi.up) {
+          needsNetworkInit = true;
+        }
+      }
       return(self);
      }
      if (nowup > nextWifiCheck) {
