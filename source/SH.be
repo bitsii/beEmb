@@ -266,7 +266,7 @@ class Embedded:AppShell {
         if (Wifi.isConnected) {
 
           mdserver = Embedded:Mdns.new();
-          mdserver.name = "ym" + did;
+          mdserver.name = "CasNic" + did;
           mdserver.service = "http";
           mdserver.port = 80;
           mdserver.protocol = "tcp";
