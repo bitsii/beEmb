@@ -298,13 +298,13 @@ class Embedded:AppShell {
       if (TS.notEmpty(pin) && pin.size == 16) {
         String pinpt = pin.substring(0, 8);
         String sec = pin.substring(8, 16);
-        String ssid = "cs_inc_" + devCode;
+        String ssid = "ICasnic_"; //I included, U unincluded, for wifi sec
         auto wifi = Embedded:Wifi.new();
         auto nets = wifi.scanNetworks();
         auto rand = System:Random.new();
-        String finssid = ssid + "_" + rand.getIntMax(999) + "_" + pinpt;
+        String finssid = ssid + pinpt + "_" + devCode + "_" + rand.getIntMax(999);
         while (nets.has(finssid)) {
-          finssid = ssid + "_" + rand.getIntMax(999) + "_" + pinpt;
+          finssid = ssid + pinpt + "_" + devCode + "_" + rand.getIntMax(999);
         }
         apSsid = finssid;
         Wifi.new(finssid, sec).startAp();
