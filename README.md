@@ -5,6 +5,12 @@ object oriented garbage collected programming lanugage and runtime built as a se
 source to source transpiler supporting several output languages.  At present the popular
 esp8266 is supported using the Arduino environment with Brickle generating C++.
 
+Stop here a second!  If you just want to USE the firmware go to
+(TODO wiki url) for download and firmware burning instructions.  Some of the downloads
+support full customization of controls and their pins (switch, dimmer, etc) without needing
+to write custom code.  Check them out, or if you know you want to write some custom code,
+continue on.
+
 First you have to have already setup the Brickle language environment, see
 https://gitlab.com/bitsii/beBase (Getting Started in Readme.md) for that  (the Brickle 
   java environment should be enough)
@@ -17,7 +23,9 @@ git clone https://gitlab.com/bitsii/beEmb
 cd beEmb
 
 Then, make sure you have the Arduino installed (https://www.arduino.cc/en/software)
+Any version should work, recently tested with the 1.8.19 edition.
 and the esp8266 Arduino support installed as well https://github.com/esp8266/Arduino
+Any version of the board support should work, recently tested with the 3.1.1 edition.
 
 You'll also need a compatible board.  Pretty much any esp8266/ex/8285 board will work, a good
 choice might be the NodeMCU line (esp12e).
