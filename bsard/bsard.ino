@@ -24,7 +24,7 @@ void setup() {
     Serial.println("AP Start Failed!");
   }*/
 
-  WiFi.begin("Chiark", "skel0123");
+  WiFi.begin("your-ssid", "your-password");
   int count = 0;
   while (WiFi.status() != WL_CONNECTED && count < 40) {
     delay(500);
