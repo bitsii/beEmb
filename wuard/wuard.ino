@@ -17,6 +17,8 @@ const char* password = STAPSK;
 ESP8266WebServer server(80);
 const char* serverIndex = "<form method='POST' action='/update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form>";
 
+//looks to only work with not gzip compressed bins
+
 void setup(void) {
   Serial.begin(115200);
   Serial.println();
