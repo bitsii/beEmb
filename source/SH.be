@@ -245,9 +245,11 @@ class Embedded:AppShell {
      pin.print();
      swInfo.print();
 
-     serserver = Embedded:SerServer.new();
-     serserver.start();
-     serserver.enableDebug();
+     ifNotEmit(noSer) {
+      serserver = Embedded:SerServer.new();
+      serserver.start();
+      serserver.enableDebug();
+     }
 
    }
 
@@ -260,8 +262,10 @@ class Embedded:AppShell {
         tcpserver = Embedded:TCPServer.new(6420);
         tcpserver.start();
 
-        tweb = Embedded:TinyWeb.new();
-        tweb.start();
+        ifNotEmit(noWeb) {
+         tweb = Embedded:TinyWeb.new();
+         tweb.start();
+        }
 
         if (Wifi.isConnected) {
 
@@ -350,13 +354,15 @@ class Embedded:AppShell {
    }
 
    sysupdate(String upurl) {
-     "in update".print();
-     "upurl".print();
-     upurl.print();
-     auto eupd = Embedded:Update.new();
-     //eupd.signKey(updCert);
-     eupd.updateFromUrl(upurl);
-     "update done".print();
+     ifNotEmit(noUpd) {
+      "in update".print();
+      "upurl".print();
+      upurl.print();
+      auto eupd = Embedded:Update.new();
+      //eupd.signKey(updCert);
+      eupd.updateFromUrl(upurl);
+      "update done".print();
+     }
    }
 
    handleLoop() {
