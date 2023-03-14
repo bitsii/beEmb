@@ -39,8 +39,8 @@ class Embedded:Switch(Embedded:AppShell) {
      //config ctlconfver.control.ctlconf,args.control.ctlconf,args
      if (TS.isEmpty(controlSpec)) {
        //controlSpec = "";
-       //controlSpec = "0.sw.12.sw.13";  //12 is switch, 13 is led - athom plug v2 us - esp8266ex 2mb
-       controlSpec = "0.sw.16";  //one sw on 16 - dollatek
+       controlSpec = "0.sw.12.sw.13";  //12 is switch, 13 is led - athom plug v2 us - esp8266ex 2mb
+       //controlSpec = "0.sw.16";  //one sw on 16 - dollatek
        //controlSpec = "0.sw.16.sw.2";  //sw on 16 and 2 - nodemcu
      }
      super.buildControls();
