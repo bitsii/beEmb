@@ -441,78 +441,82 @@ class Embedded:AppShell {
       }
       return(self);
      }
-     if (def(serserver) && serserver.available) {
-       "preding serpay".print();
-       String serpay = serserver.checkGetPayload(readBuf, slashn);
-     }
-     if (TS.notEmpty(serpay)) {
-       try {
-          "doing serpay".print();
-          String cmdres = doCmd("serial", serpay);
-          if (TS.isEmpty(cmdres)) {
-            "cmdres empty".print();
-          } else {
-            ("cmdres " + cmdres).print();
+     ifNotEmit(noSer) {
+      if (def(serserver) && serserver.available) {
+        "preding serpay".print();
+        String serpay = serserver.checkGetPayload(readBuf, slashn);
+      }
+      if (TS.notEmpty(serpay)) {
+        try {
+            "doing serpay".print();
+            String cmdres = doCmd("serial", serpay);
+            if (TS.isEmpty(cmdres)) {
+              "cmdres empty".print();
+            } else {
+              ("cmdres " + cmdres).print();
+            }
+          } catch (any dce) {
+            "error handling command".print();
+            dce.print();
           }
-        } catch (any dce) {
-          "error handling command".print();
-          dce.print();
-        }
-        "serpay returning".print();
-        //app.yield();
-        "now".print();
-        return(self);
+          "serpay returning".print();
+          //app.yield();
+          "now".print();
+          return(self);
+      }
      }
-     if (def(tweb)) {
-      auto treq = tweb.checkGetRequest();
-      if (def(treq)) {
-        //"got treq".print();
-        String qs = treq.checkGetQueryString(readBuf);
-        if (TS.notEmpty(qs)) {
-          "got qs, it follows".print();
-          qs.print();
-          if (qs == "/") {
-            "base qs sending webpage".print();
-            sendWebPage(treq);
-            needsGc = true;
-          } elseIf (qs.begins("/?")) {
-            auto qspso = qs.split("&");
-            for (String qspsi in qspso) {
-              if (TS.notEmpty(qspsi)) {
-                //("got qspsi " + qspsi).print();
-                auto qsps = qspsi.split("=");
-                //gocha = cmd cannnnot be the first param, is it will have a /?
-                if (qsps.size > 1 && def(qsps[0]) && TS.notEmpty(qsps[1])) {
-                  if (qsps[0] == "cmd") {
-                    //("got cmd " + qsps[1]).print();
-                    String cdec = Encode:Url.decode(qsps[1]);
-                    //("cdec " + cdec).print();
-                    try {
-                        cmdres = doCmd("web", cdec);
-                        treq.client.write(htmlHead); //ok headers
-                        if (TS.isEmpty(cmdres)) {
-                          treq.client.write("cmdres empty");
-                        } else {
-                          treq.client.write(cmdres);
+     ifNotEmit(noWeb) {
+      if (def(tweb)) {
+        auto treq = tweb.checkGetRequest();
+        if (def(treq)) {
+          //"got treq".print();
+          String qs = treq.checkGetQueryString(readBuf);
+          if (TS.notEmpty(qs)) {
+            "got qs, it follows".print();
+            qs.print();
+            if (qs == "/") {
+              "base qs sending webpage".print();
+              sendWebPage(treq);
+              needsGc = true;
+            } elseIf (qs.begins("/?")) {
+              auto qspso = qs.split("&");
+              for (String qspsi in qspso) {
+                if (TS.notEmpty(qspsi)) {
+                  //("got qspsi " + qspsi).print();
+                  auto qsps = qspsi.split("=");
+                  //gocha = cmd cannnnot be the first param, is it will have a /?
+                  if (qsps.size > 1 && def(qsps[0]) && TS.notEmpty(qsps[1])) {
+                    if (qsps[0] == "cmd") {
+                      //("got cmd " + qsps[1]).print();
+                      String cdec = Encode:Url.decode(qsps[1]);
+                      //("cdec " + cdec).print();
+                      try {
+                          cmdres = doCmd("web", cdec);
+                          treq.client.write(htmlHead); //ok headers
+                          if (TS.isEmpty(cmdres)) {
+                            treq.client.write("cmdres empty");
+                          } else {
+                            treq.client.write(cmdres);
+                          }
+                        } catch (dce) {
+                          "error handling command".print();
+                          dce.print();
                         }
-                      } catch (dce) {
-                        "error handling command".print();
-                        dce.print();
-                      }
-                  } elseIf (qsps[0] == "hexit") {
-                    String hi = Encode:Url.decode(qsps[1]);
-                    hi = Encode:Hex.encode(hi);
-                    treq.client.write(htmlHead); //ok headers
-                    treq.client.write(hi);
+                    } elseIf (qsps[0] == "hexit") {
+                      String hi = Encode:Url.decode(qsps[1]);
+                      hi = Encode:Hex.encode(hi);
+                      treq.client.write(htmlHead); //ok headers
+                      treq.client.write(hi);
+                    }
                   }
                 }
               }
             }
           }
+          //treq.printHeaders();
+          treq.close();
+          return(self);
         }
-        //treq.printHeaders();
-        treq.close();
-        return(self);
       }
      }
      if (def(tcpserver)) {

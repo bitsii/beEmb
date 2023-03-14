@@ -11,6 +11,9 @@ use Embedded:Aes as Crypt;
 use Encode:Url as EU;
 use Embedded:AppShell;
 
+class Embedded:TinyWeb { }
+class Embedded:SerServer { }
+
 class Embedded:Switch(Embedded:AppShell) {
 
    //pinposes //16, 2 nodemcu - Athom 16A US 13 LED 14 RELAY, SONOFF BASIC R2 13 LED 12 RELAY, 16 for dollatek 8285
@@ -36,10 +39,9 @@ class Embedded:Switch(Embedded:AppShell) {
      //config ctlconfver.control.ctlconf,args.control.ctlconf,args
      if (TS.isEmpty(controlSpec)) {
        //controlSpec = "";
-       //controlSpec = "0.sw.12.sw.13";  //12 is switch, 13 is led - athom plug v2 us - esp8285 2mb
+       //controlSpec = "0.sw.12.sw.13";  //12 is switch, 13 is led - athom plug v2 us - esp8266ex 2mb
        controlSpec = "0.sw.16";  //one sw on 16 - dollatek
-       //controlSpec = "0.sw.16.sw.2";  //sw on 16 and 2
-       //controlSpec = "0.sw.16.dim.2";  //sw on 16 dim on 2 - nodemcu
+       //controlSpec = "0.sw.16.sw.2";  //sw on 16 and 2 - nodemcu
      }
      super.buildControls();
    }

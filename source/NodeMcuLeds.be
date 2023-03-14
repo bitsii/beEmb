@@ -24,9 +24,9 @@ class Embedded:NodeMcuLeds(Embedded:Lights) {
      //config ctlconfver.control.ctlconf,args.control.ctlconf,args
      if (TS.isEmpty(controlSpec)) {
        //controlSpec = "";
-       controlSpec = "0.sw.12.sw.13";  //12 is switch, 13 is led - athom plug v2 us - esp8285 2mb
-       //controlSpec = "0.sw.16";  //one sw on 16 - dollatek
-       //controlSpec = "0.sw.16.sw.2";  //sw on 16 and 2
+       //controlSpec = "0.sw.12.sw.13";  //12 is switch, 13 is led - athom plug v2 us - esp8266ex 2mb
+       controlSpec = "0.sw.16";  //one sw on 16 - dollatek
+       //controlSpec = "0.sw.16.sw.2";  //sw on 16 and 2 - nodemcu
        //controlSpec = "0.sw.16.dim.2";  //sw on 16 dim on 2 - nodemcu
      }
      super.buildControls();
