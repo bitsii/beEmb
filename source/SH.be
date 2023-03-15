@@ -819,6 +819,8 @@ class Embedded:AppShell {
        //"got restart".print();
        needsFsRestart = true;
        return("Will restart soonish");
+     } elseIf (cmd == "getswinfo") {
+       return(swInfo);
      } else {
        return("unrecognized command");
      }
