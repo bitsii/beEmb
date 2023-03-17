@@ -16,11 +16,20 @@ class Embedded:SwitchControl {
        Embedded:AppShell ash = _ash;
        Int conPos = _conPos;
        Int pini;
+       Int diri = 0;
        Config config = ash.config;
        Embedded:App app = ash.app;
      }
      //pini = Int.new(_conArgs);
-     pini = app.strToInt(_conArgs);
+     if (_conArgs.has(",")) {
+        auto cal = _conArgs.split(",");
+        spin = cal[0];
+        String sdir = cal[1];
+        diri = app.strToInt(sdir);
+     } else {
+      String spin = _conArgs;
+     }
+     pini = app.strToInt(spin);
    }
 
    loadStates() {
@@ -56,13 +65,21 @@ class Embedded:SwitchControl {
         if (insw == on) {
           on.print(); //write crashes without
           app.pinModeOutput(pini);
-          app.analogWrite(pini, 0);
+          if (diri == 0) {
+            app.analogWrite(pini, 0);
+          } else {
+            app.analogWrite(pini, 255);
+          }
           sw = insw;
           config.put(scswi, on);
         } elseIf (insw == off) {
           off.print(); //write crashes without
           app.pinModeOutput(pini);
-          app.analogWrite(pini, 255);
+          if (diri == 0) {
+            app.analogWrite(pini, 255);
+          } else {
+            app.analogWrite(pini, 0);
+          }
           sw = insw;
           config.put(scswi, off);
         }

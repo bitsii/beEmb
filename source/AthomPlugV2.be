@@ -14,9 +14,7 @@ use Embedded:AppShell;
 class Embedded:TinyWeb { }
 class Embedded:SerServer { }
 
-class Embedded:Switch(Embedded:AppShell) {
-
-   //pinposes //16, 2 nodemcu - Athom 16A US 13 LED 14 RELAY, SONOFF BASIC R2 13 LED 12 RELAY, 16 for dollatek 8285
+class Embedded:AthomPlugV2(Embedded:AppShell) {
 
    buildControl(Int conPos, String conName, String conArgs) {
      if (conName == "sw") {
@@ -30,18 +28,18 @@ class Embedded:Switch(Embedded:AppShell) {
 
    buildSwInfo() {
      if (TS.isEmpty(swSpec)) {
-       swSpec = "0.Switch.18";
+       swSpec = "0.AthomPlugV2.21";
      }
      super.buildSwInfo();
    }
 
    buildControls() {
      //config ctlconfver.control.ctlconf,args.control.ctlconf,args
+     //todo physical button toggles, led solid if on wifi, blink if station
+     //physical button a control, args say what to toggle (pos), led is a control, controls get events - state, tick
      if (TS.isEmpty(controlSpec)) {
-       //controlSpec = "";
-       //controlSpec = "0.sw.12.sw.13";  //12 is switch, 13 is led - athom plug v2 us - esp8266ex 2mb
-       controlSpec = "0.sw.16";  //one sw on 16 - dollatek
-       //controlSpec = "0.sw.16.sw.2";  //sw on 16 and 2 - nodemcu
+       controlSpec = "0.sw.12,1";  //12 is switch (rev), 13 is led - athom plug v2 us - esp8266ex 2mb
+       //controlSpec = "0.sw.16,1";  //one sw on 16 - dollatek
      }
      super.buildControls();
    }
