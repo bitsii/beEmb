@@ -26,9 +26,11 @@ class Embedded:DimmerControl {
      slots {
        String setlvll = "setlvl";
        String setrlvll = "setrlvl";
+       String getlvl = "getlvl";
        String on = "on";
        String off = "off";
        String setsw = "setsw";
+       String getsw = "getsw";
        //on = 0, off = 255
        Int dclvli;
        Int dcswi;
@@ -53,7 +55,19 @@ class Embedded:DimmerControl {
    doState(List cmdl) String {
      "in dostate".print();
      String scm = cmdl[3];
-     if (scm == setlvll || scm == setrlvll) {
+     if (scm == getsw) {
+       if (TS.notEmpty(sw)) {
+         return(sw);
+       } else {
+        return("undefined");
+       }
+      } elseIf (scm == getlvl) {
+        if (TS.notEmpty(lvl)) {
+          return(lvl);
+        } else {
+          return("undefined");
+        }
+      } elseIf (scm == setlvll || scm == setrlvll) {
         String inlvl = cmdl[4];
         Int inlvli = app.strToInt(inlvl);
         //Int inlvli = Int.new(inlvl);
@@ -65,7 +79,7 @@ class Embedded:DimmerControl {
           if (inlvli < 0 || inlvli > 255) {
             inlvli = 255;
           } else {
-            inlvli = 255 - inlvli;
+            inlvli = 255 - inlvli;//255 - x = y; y + x = 255;255 - y = x
           }
         }
         if (inlvli == 255) { inlvli = 254; }

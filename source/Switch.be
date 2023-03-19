@@ -30,7 +30,7 @@ class Embedded:Switch(Embedded:AppShell) {
 
    buildSwInfo() {
      if (TS.isEmpty(swSpec)) {
-       swSpec = "0.Switch.18";
+       swSpec = "0.Switch.19";
      }
      super.buildSwInfo();
    }

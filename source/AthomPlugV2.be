@@ -28,7 +28,7 @@ class Embedded:AthomPlugV2(Embedded:AppShell) {
 
    buildSwInfo() {
      if (TS.isEmpty(swSpec)) {
-       swSpec = "0.AthomPlugV2.21";
+       swSpec = "0.AthomPlugV2.22";
      }
      super.buildSwInfo();
    }
