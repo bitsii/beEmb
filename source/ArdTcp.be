@@ -77,6 +77,7 @@ WiFiClient client;
   open() self {
     emit(cc) {
     """
+    //client.setTimeout, milliseconds, default 1000. works for con and stream
     client.connect(bevp_host->bems_toCcString().c_str(), bevp_port->bevi_int);
     if (client.connected()) {
       client.setTimeout(2);

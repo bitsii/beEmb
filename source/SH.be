@@ -787,7 +787,7 @@ class Embedded:AppShell {
       config.put(shdidi, "");
       clearStates();
       needsFsRestart = true;
-      return("Device reset");
+      return("Device reset");//we look for this result, don't change
     } elseIf (cmd == "putconfig") {
         String key = cmdl[3];
         String value = cmdl[4];
