@@ -41,7 +41,7 @@ class Embedded:TCPServer {
     emit(cc) {
     """
     beq->bevl_res->client = client;
-    client.setTimeout(2);
+    client.setTimeout(beq->bevl_res->bevp_streamTimeout->bevi_int);
     }
     """
     }
@@ -65,6 +65,8 @@ WiFiClient client;
       String host;
       Int port;
       Bool opened;
+      Int connectTimeout = 200;
+      Int streamTimeout = 20; //was 2
     }
   }
   
@@ -72,15 +74,18 @@ WiFiClient client;
     host = _host;
     port = _port;
     opened = false;
+    connectTimeout = 200;
+    streamTimeout = 20; //was 2
   }
   
   open() self {
     emit(cc) {
     """
     //client.setTimeout, milliseconds, default 1000. works for con and stream
+    client.setTimeout(bevp_connectTimeout->bevi_int);
     client.connect(bevp_host->bems_toCcString().c_str(), bevp_port->bevi_int);
     if (client.connected()) {
-      client.setTimeout(2);
+      client.setTimeout(bevp_streamTimeout->bevi_int);
     """
     }
     opened = true;
