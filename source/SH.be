@@ -14,6 +14,8 @@ class Embedded:AppShell {
      fields {
        auto app = Embedded:App.new();
        Config config = Config.new();
+       Int nowup = Int.new();
+       String lastEventsRes;
      }
      slots {
        Int shpini;
@@ -34,7 +36,6 @@ class Embedded:AppShell {
        String htmlHead;
        Bool needsFsRestart = false;
        Bool needsRestart = false;
-       Int nowup = Int.new();
        String did;
        String swSpec;
        String devCode;
@@ -126,6 +127,23 @@ class Embedded:AppShell {
      //Int ctlPos = Int.new(cmdl[2]);
      Int ctlPos = app.strToInt(cmdl[2]);
      return(controls[ctlPos].doState(cmdl));
+   }
+
+   getLastEvents(List cmdl) String {
+     if (def(lastEventsRes)) {
+       return(lastEventsRes);
+     }
+     String les = String.new();
+     String d = ",";
+     for (any control in controls) {
+       Int le = control.lastEvent;
+       Int conPos = control.conPos;
+       if (def(le) && def(conPos)) {
+         les += conPos += d += le += d;
+       }
+     }
+     lastEventsRes = les;
+     return(les);
    }
    
    clearStates() {
@@ -605,7 +623,7 @@ class Embedded:AppShell {
          return("");
        }
      }
-     if (cmd == "dostate" || cmd == "getcontroldef") {
+     if (cmd == "dostate" || cmd == "getcontroldef" || cmd == "getlastevents") {
         //"got dostate".print();
         //state password check
         if (TS.isEmpty(spass)) {
@@ -620,6 +638,9 @@ class Embedded:AppShell {
         }
         if (cmd == "dostate") {
           String stateres = doState(cmdl);
+          return(stateres);
+        } elseIf (cmd == "getlastevents") {
+          stateres = getLastEvents(cmdl);
           return(stateres);
         } else {
           if (def(controlDef)) {

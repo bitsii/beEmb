@@ -13,10 +13,13 @@ class Embedded:DimmerControl {
    new(_ash, Int _conPos, String _conName, String _conArgs) {
      slots {
        Embedded:AppShell ash = _ash;
-       Int conPos = _conPos;
        Int pini;
        Config config = ash.config;
        Embedded:App app = ash.app;
+     }
+     fields {
+       Int conPos = _conPos;
+       Int lastEvent = Int.new();
      }
      //pini = Int.new(_conArgs);
      pini = app.strToInt(_conArgs);
@@ -92,6 +95,8 @@ class Embedded:DimmerControl {
         config.put(dclvli, inlvl);
         app.pinModeOutput(pini);
         app.analogWrite(pini, inlvli);
+        lastEvent.setValue(ash.nowup);
+        ash.lastEventsRes = null;
      } elseIf (scm == setsw) {
         String insw = cmdl[4];
         if (insw == on) {
@@ -113,6 +118,8 @@ class Embedded:DimmerControl {
           sw = insw;
           config.put(dcswi, off);
         }
+        lastEvent.setValue(ash.nowup);
+        ash.lastEventsRes = null;
      }
      return("ok");
    }

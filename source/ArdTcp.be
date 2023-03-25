@@ -198,6 +198,18 @@ emit(cc) {
      }
      return(false);
   }  
+
+  remoteIpGet() String {
+    String ip;
+    emit(cc) {
+      """
+      String lip = client.remoteIP().toString();
+      std::string lips = std::string(lip.c_str());
+      beq->bevl_ip = new BEC_2_4_6_TextString(lips);
+      """
+    }
+    return(ip);
+  }
   
   close() {
     emit(cc) {
