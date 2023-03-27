@@ -622,8 +622,11 @@ class Embedded:AppShell {
        } else {
          return("");
        }
+     } elseIf (cmd == "getlastevents") {
+       stateres = getLastEvents(cmdl);
+       return(stateres);
      }
-     if (cmd == "dostate" || cmd == "getcontroldef" || cmd == "getlastevents") {
+     if (cmd == "dostate" || cmd == "getcontroldef") {
         //"got dostate".print();
         //state password check
         if (TS.isEmpty(spass)) {
@@ -638,9 +641,6 @@ class Embedded:AppShell {
         }
         if (cmd == "dostate") {
           String stateres = doState(cmdl);
-          return(stateres);
-        } elseIf (cmd == "getlastevents") {
-          stateres = getLastEvents(cmdl);
           return(stateres);
         } else {
           if (def(controlDef)) {
