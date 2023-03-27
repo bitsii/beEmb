@@ -134,13 +134,17 @@ class Embedded:AppShell {
        return(lastEventsRes);
      }
      String les = String.new();
-     String d = ",";
-     for (any control in controls) {
-       Int le = control.lastEvent;
-       Int conPos = control.conPos;
-       if (def(le) && def(conPos)) {
-         les += conPos += d += le += d;
-       }
+     if (TS.notEmpty(did)) {
+      String d = ",";
+      String cd = ";";
+      for (any control in controls) {
+        String conName = control.conName;
+        Int le = control.lastEvent;
+        Int conPos = control.conPos;
+        if (def(le) && def(conPos)) {
+          les += conName += d += conPos += d += le += cd;
+        }
+      }
      }
      lastEventsRes = les;
      return(les);

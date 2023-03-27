@@ -20,6 +20,7 @@ class Embedded:DimmerControl {
      fields {
        Int conPos = _conPos;
        Int lastEvent = Int.new();
+       String conName = _conName;
      }
      //pini = Int.new(_conArgs);
      pini = app.strToInt(_conArgs);

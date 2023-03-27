@@ -22,6 +22,7 @@ class Embedded:SwitchControl {
      fields {
        Int conPos = _conPos;
        Int lastEvent = Int.new();
+       String conName = _conName;
      }
      //pini = Int.new(_conArgs);
      if (_conArgs.has(",")) {
