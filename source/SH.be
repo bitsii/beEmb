@@ -320,11 +320,12 @@ class Embedded:AppShell {
    initAp() {
       slots {
         String apSsid;
+        String apType = "O"; //I included, U unincluded, O open, for wifi sec
       }
       if (TS.notEmpty(pin) && pin.size == 16) {
         String pinpt = pin.substring(0, 8);
         String sec = pin.substring(8, 16);
-        String ssid = "ICasnic-"; //I included, U unincluded, for wifi sec
+        String ssid = apType + "Casnic-";
         auto wifi = Embedded:Wifi.new();
         auto nets = wifi.scanNetworks();
         auto rand = System:Random.new();
@@ -333,7 +334,11 @@ class Embedded:AppShell {
           finssid = ssid + pinpt + "-" + devCode + "-" + rand.getIntMax(999);
         }
         apSsid = finssid;
-        Wifi.new(finssid, sec).startAp();
+        if (apType == "O") {
+          Wifi.new(finssid, null).startAp();
+        } else {
+          Wifi.new(finssid, sec).startAp();
+        }
       }
    }
    

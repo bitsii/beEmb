@@ -72,7 +72,12 @@ class Embedded:Wifi {
       ("Starting AP " + ssid).print();
       emit(cc) {
       """
-      boolean result = WiFi.softAP(bevp_ssid->bems_toCcString().c_str(), bevp_password->bems_toCcString().c_str());
+      boolean result = false;
+      if (bevp_password == nullptr) {
+        result = WiFi.softAP(bevp_ssid->bems_toCcString().c_str());
+      } else {
+        result = WiFi.softAP(bevp_ssid->bems_toCcString().c_str(), bevp_password->bems_toCcString().c_str());
+      }
       if(result == true)
       {
         //Serial.println("AP Started");
