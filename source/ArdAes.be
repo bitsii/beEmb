@@ -17,11 +17,11 @@ class Embedded:Aes {
     """  
   //uint8_t cipher_key[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5};
   //uint8_t cipher_iv[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5};
-  unsigned char* cipher_key = beva_key->bevi_bytes.data();
-  unsigned char* cipher_iv = beva_iv->bevi_bytes.data();
+  unsigned char* cipher_key = beq->beva_key->bevi_bytes.data();
+  unsigned char* cipher_iv = beq->beva_iv->bevi_bytes.data();
   
   //String plain_data = "quick brown fox jumps over the lazy dog";
-  String plain_data = beva_val->bems_toCcString().c_str();
+  String plain_data = beq->beva_val->bems_toCcString().c_str();
   int i;
   // PKCS#7 Padding (Encryption), Block Size : 16
   int len = plain_data.length();
@@ -48,7 +48,7 @@ class Embedded:Aes {
   unsigned char* x = data;
   
   std::vector<unsigned char>sdata(x, x + finlen);
-  bevl_res = new BEC_2_4_6_TextString(finlen, sdata);
+  beq->bevl_res = new BEC_2_4_6_TextString(finlen, sdata);
     """
     }
     return(res);
@@ -62,11 +62,11 @@ class Embedded:Aes {
     """
   //uint8_t cipher_key[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5};
   //uint8_t cipher_iv[16] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5};
-  unsigned char* cipher_key = beva_key->bevi_bytes.data();
-  unsigned char* cipher_iv = beva_iv->bevi_bytes.data();
+  unsigned char* cipher_key = beq->beva_key->bevi_bytes.data();
+  unsigned char* cipher_iv = beq->beva_iv->bevi_bytes.data();
 
-  int len = bevl_len->bevi_int;
-  std::vector<unsigned char> vdata = beva_val->bevi_bytes;
+  int len = beq->bevl_len->bevi_int;
+  std::vector<unsigned char> vdata = beq->beva_val->bevi_bytes;
   unsigned char* cdata = vdata.data();
 
   uint8_t key[16], iv[16];
@@ -86,7 +86,7 @@ class Embedded:Aes {
   memcpy(plain_data, cdata, len);
   
   std::vector<unsigned char>sdata(plain_data, plain_data + len);
-  bevl_res = new BEC_2_4_6_TextString(len, sdata);
+  beq->bevl_res = new BEC_2_4_6_TextString(len, sdata);
   
     """
     }
