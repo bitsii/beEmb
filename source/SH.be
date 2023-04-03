@@ -476,7 +476,7 @@ class Embedded:AppShell {
       if (TS.notEmpty(serpay)) {
         try {
             "doing serpay".print();
-            String cmdres = doCmd("serial", serpay);
+            String cmdres = doCmd("serial", "", serpay);
             if (TS.isEmpty(cmdres)) {
               "cmdres empty".print();
             } else {
@@ -518,7 +518,7 @@ class Embedded:AppShell {
                       String cdec = Encode:Url.decode(qsps[1]);
                       //("cdec " + cdec).print();
                       try {
-                          cmdres = doCmd("web", cdec);
+                          cmdres = doCmd("web", "", cdec);
                           treq.client.write(htmlHead); //ok headers
                           if (TS.isEmpty(cmdres)) {
                             treq.client.write("cmdres empty");
@@ -553,7 +553,7 @@ class Embedded:AppShell {
         String ppay = preq.checkGetPayload(readBuf, slashn);
         if (TS.notEmpty(ppay)) {
             try {
-                String pcmdres = doCmd("tcp", ppay);
+                String pcmdres = doCmd("tcp", preq.remoteIp, ppay);
                 if (TS.isEmpty(pcmdres)) {
                   "pcmdres empty".print();
                 } else {
@@ -590,7 +590,7 @@ class Embedded:AppShell {
      }
    }
    
-   doCmd(String channel, String cmdline) String {
+   doCmd(String channel, String origin, String cmdline) String {
      app.wdtFeed();
      app.yield();
      if (TS.isEmpty(cmdline)) {
@@ -612,10 +612,59 @@ class Embedded:AppShell {
      //if (channel == "tcp" && cmdl.size > 0) {
      //  cmdl.put(cmdl.size - 1, cmdl.get(cmdl.size - 1).swap("\r\n", ""));
      //}
-     return(doCmdl(channel, cmdl));
+     if (cmdl.size > 0 && cmdl[0] == "sp1" || cmdl[0] == "ap1") {
+       return(doCmdlSec(channel, origin, cmdl));
+     }
+     return(doCmdl(channel, origin, cmdl));
+   }
+
+   doCmdlSec(String channel, String origin, List cmdl) String {
+     if (cmdl.size > 4) {
+       List cmdn = List.new();
+       String hdone;
+       //sporap1 iv
+       "doing cmdlsec".print();
+       String spw = "";
+       if (cmdl[0] == "sp1") {
+         spw = spass;
+       } elseIf (cmdl[0] == "ap1") {
+         spw = pass;
+       } else {
+         ("unknown secsceme " + cmdl[0]).print();
+       }
+       if (TS.notEmpty(origin)) {
+         //("got origin " + origin).print();
+       } else {
+         origin = "";
+       }
+       String tohash = cmdl[1] + "," + origin + "," + spw;
+       //"tohash follows".print();
+       //tohash.print();
+       emit(cc) {
+         """
+      String lip = sha1(beq->bevl_tohash->bems_toCcString().c_str());
+      std::string lips = std::string(lip.c_str());
+      beq->bevl_hdone = new BEC_2_4_6_TextString(lips);
+         """
+       }
+       if (TS.notEmpty(hdone)) {
+         //("hdone " + hdone).print();
+         if (TS.notEmpty(cmdl[2]) && hdone == cmdl[2]) {
+           ("hsec passed").print();
+           cmdl[4] = spw;
+           for (Int i = 3;i < cmdl.size;i++=) {
+             cmdn += cmdl[i];
+           }
+         } else {
+           ("hsec failed").print();
+         }
+       }
+       return(doCmdl(channel, origin, cmdn));
+     }
+     return("nodice");
    }
    
-   doCmdl(String channel, List cmdl) String {
+   doCmdl(String channel, String origin, List cmdl) String {
      app.maybeGc();
      app.wdtFeed();
      app.yield();

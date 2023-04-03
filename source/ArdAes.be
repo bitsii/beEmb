@@ -85,8 +85,8 @@ class Embedded:Aes {
   char plain_data[len];
   memcpy(plain_data, cdata, len);
   
-  std::vector<unsigned char>sdata(plain_data, plain_data + len);
-  beq->bevl_res = new BEC_2_4_6_TextString(len, sdata);
+  //std::vector<unsigned char>sdata(plain_data, plain_data + len);
+  //beq->bevl_res = new BEC_2_4_6_TextString(len, sdata);
   
     """
     }
