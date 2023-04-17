@@ -25,8 +25,10 @@ class Embedded:AppShell {
        Int shseci;
        Int shdidi;
 
+       Int zero = 0;
        Int nextUpdateCheck = 0;
        Int nextSwInfo = 0;
+       Int nextRestart = 0;
        Int nextMaybeSave = 0;
        Int nextApCheck = 0;
        Int nextWifiCheck = 0;
@@ -459,6 +461,13 @@ class Embedded:AppShell {
       swInfo.print();
       return(self);
      }
+     if (nextRestart > zero && nowup > nextRestart) {
+      "restarting because of nextRestart".print();
+      Wifi.stop();
+      Wifi.clearAll();
+      app.restart();
+      return(self);
+     }
      if (nowup > nextUpdateCheck) {
       nextUpdateCheck = nowup + 60000;
       if (def(supurl) && TS.notEmpty(supurl)) {
@@ -577,10 +586,8 @@ class Embedded:AppShell {
      }
      if (needsRestart) {
        needsRestart = false;
-       "restarting because needsRestart".print();
-        Wifi.stop();
-        Wifi.clearAll();
-        app.restart();
+       "prepping restart because needsRestart".print();
+        nextRestart = nowup + 2000;
      }
      if (needsFsRestart) {
        needsFsRestart = false;
