@@ -11,8 +11,8 @@ use Embedded:Aes as Crypt;
 use Encode:Url as EU;
 use Embedded:AppShell;
 
-class Embedded:TinyWeb { }
-class Embedded:SerServer { }
+//class Embedded:TinyWeb { }
+//class Embedded:SerServer { }
 
 class Embedded:AthomPlugV2(Embedded:AppShell) {
 
@@ -28,7 +28,7 @@ class Embedded:AthomPlugV2(Embedded:AppShell) {
 
    buildSwInfo() {
      if (TS.isEmpty(swSpec)) {
-       swSpec = "0.AthomPlugV2.22";
+       swSpec = "0.AthomPlugV2.23";
      }
      super.buildSwInfo();
    }

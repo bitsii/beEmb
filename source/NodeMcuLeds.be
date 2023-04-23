@@ -11,6 +11,9 @@ use Embedded:Aes as Crypt;
 use Encode:Url as EU;
 use Embedded:AppShell;
 
+//class Embedded:TinyWeb { }
+//class Embedded:SerServer { }
+
 class Embedded:NodeMcuLeds(Embedded:Lights) {
 
    buildSwInfo() {
