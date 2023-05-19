@@ -70,7 +70,8 @@ class Embedded:AppShell {
 
      app.uptime(nowup);
      nextUpdateCheck = nowup + 60000;
-     nextSwInfo = nowup + 540000;
+     //nextSwInfo = nowup + 540000; //usually 540000, 9 min
+     nextSwInfo = nowup + 20000; //20s
      nextMaybeSave = nowup + 105000;
      nextApCheck = nowup + 240000;//4 mins
      nextWifiCheck = nowup + 780000;//13 mins
@@ -251,6 +252,7 @@ class Embedded:AppShell {
        Embedded:TCPServer tcpserver;
        Embedded:SerServer serserver;
        Embedded:Mdns mdserver;
+       Embedded:Mqtt mqtt;
      }
 
      app.wdtFeed();
@@ -299,6 +301,11 @@ class Embedded:AppShell {
           mdserver.port = 80;
           mdserver.protocol = "tcp";
           mdserver.start();
+
+          //"starting mqtt".print();
+          //mqtt = Embedded:Mqtt.new("192.168.1.124", "", "");
+          //mqtt.start();
+          //"mqtt started".print();
 
         }
 
@@ -459,6 +466,11 @@ class Embedded:AppShell {
      if (nowup > nextSwInfo) {
       nextSwInfo = nowup + 540000;
       swInfo.print();
+      if (def(mqtt)) {
+        "domqtt".print();
+        mqtt.publish("test", "hi from ard 5");
+        "mqttdone".print();
+      }
       return(self);
      }
      if (nextRestart > zero && nowup > nextRestart) {
@@ -583,6 +595,9 @@ class Embedded:AppShell {
      }
      if (def(mdserver)) {
        mdserver.update();
+     }
+     if(def(mqtt)) {
+       mqtt.process();
      }
      if (needsRestart) {
        needsRestart = false;
