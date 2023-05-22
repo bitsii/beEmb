@@ -5,6 +5,20 @@
 use Text:Strings as TS;
 use System:Exception;
 
+emit(cc) {
+ """
+ void mqcallback(char* topic, byte* payload, unsigned int length) {
+  Serial.print("Message arrived [");
+  Serial.print(topic);
+  Serial.print("] ");
+  for (int i = 0; i < length; i++) {
+    Serial.print((char)payload[i]);
+  }
+  Serial.println();
+}
+ """
+}
+
 class Embedded:Mqtt {
 
 emit(cc_classHead) {
@@ -63,12 +77,15 @@ emit(cc) {
        //"connected".print();
        emit(cc) {
          """
+         mqClient.setCallback(mqcallback);
        } else {
          """
        }
        "mqtt connect failed".print();
        emit(cc) {
          """
+         Serial.print("failed, rc=");
+         Serial.print(mqClient.state());
        }
          """
        }
@@ -105,6 +122,14 @@ emit(cc) {
     emit(cc) {
       """
       mqClient.loop();
+      """
+    }
+  }
+
+  subscribe(String topic) {
+    emit(cc) {
+      """
+      mqClient.subscribe(beq->beva_topic->bems_toCcString().c_str());
       """
     }
   }
