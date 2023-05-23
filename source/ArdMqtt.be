@@ -4,19 +4,18 @@
 
 use Text:Strings as TS;
 use System:Exception;
+use Embedded:MqMessage;
 
-emit(cc) {
- """
- void mqcallback(char* topic, byte* payload, unsigned int length) {
-  Serial.print("Message arrived [");
-  Serial.print(topic);
-  Serial.print("] ");
-  for (int i = 0; i < length; i++) {
-    Serial.print((char)payload[i]);
+
+class MqMessage {
+
+  new(String _topic, String _payload) {
+    fields {
+      String topic = _topic;
+      String payload = _payload;
+    }
   }
-  Serial.println();
-}
- """
+
 }
 
 class Embedded:Mqtt {
@@ -24,13 +23,41 @@ class Embedded:Mqtt {
 emit(cc_classHead) {
 """
 
-WiFiClient wifiClient;
-PubSubClient mqClient;
-char clientId[16];
-char user[16];
-char pass[16];
+WiFiClient bevs_wifiClient;
+PubSubClient bevs_mqClient;
+char bevs_clientId[16];
+char bevs_mqUser[16];
+char bevs_mqPass[16];
+static std::vector<std::string> bevs_mqTopics;
+static std::vector<std::string> bevs_mqPayloads;
 
 """
+}
+
+emit(cc) {
+ """
+
+ std::vector<std::string> BEC_2_8_4_EmbeddedMqtt::bevs_mqTopics;
+ std::vector<std::string> BEC_2_8_4_EmbeddedMqtt::bevs_mqPayloads;
+
+ void mqcallback(char* topic, byte* payload, unsigned int length) {
+   if (length > 0 && topic[0] != '\0' && BEC_2_8_4_EmbeddedMqtt::bevs_mqTopics.size() < 10) {
+  //Serial.print("Message arrived [");
+  //Serial.print(topic);
+  //Serial.print("] ");
+     std::string topicstr = topic;
+     std::string payloadstr;
+  for (int i = 0; i < length; i++) {
+    //Serial.print((char)payload[i]);
+    payloadstr.push_back((char)payload[i]);
+  }
+  //Serial.println();
+  //Serial.println("got msg");
+  BEC_2_8_4_EmbeddedMqtt::bevs_mqTopics.push_back(topicstr);
+  BEC_2_8_4_EmbeddedMqtt::bevs_mqPayloads.push_back(payloadstr);
+   }
+}
+ """
 }
 
   new() self {
@@ -43,7 +70,7 @@ char pass[16];
     }
     emit(cc) {
       """
-     mqClient.setClient(wifiClient);
+     bevs_mqClient.setClient(bevs_wifiClient);
       """
     }
   }
@@ -67,17 +94,17 @@ char pass[16];
         //("gonna connect |" + user + "| |" + pass + "|").print();
 emit(cc) {
   """
-  mqClient.setServer(bevp_mqttServer->bems_toCcString().c_str(), bevp_mqttPort->bevi_int);
-  bevp_clientId->bems_c_str(clientId, 14);
-  bevp_user->bems_c_str(user, 14);
-  bevp_pass->bems_c_str(pass, 14);
-  if(mqClient.connect(clientId, user, pass)) {
+  bevs_mqClient.setServer(bevp_mqttServer->bems_toCcString().c_str(), bevp_mqttPort->bevi_int);
+  bevp_clientId->bems_c_str(bevs_clientId, 14);
+  bevp_user->bems_c_str(bevs_mqUser, 14);
+  bevp_pass->bems_c_str(bevs_mqPass, 14);
+  if(bevs_mqClient.connect(bevs_clientId, bevs_mqUser, bevs_mqPass)) {
   """
 }
        //"connected".print();
        emit(cc) {
          """
-         mqClient.setCallback(mqcallback);
+         bevs_mqClient.setCallback(mqcallback);
        } else {
          """
        }
@@ -85,7 +112,7 @@ emit(cc) {
        emit(cc) {
          """
          Serial.print("failed, rc=");
-         Serial.print(mqClient.state());
+         Serial.print(bevs_mqClient.state());
        }
          """
        }
@@ -104,7 +131,7 @@ emit(cc) {
     //"gonna publish".print();
      emit(cc) {
        """
-       if(mqClient.publish(beq->beva_topic->bems_toCcString().c_str(), beq->beva_payload->bems_toCcString().c_str(), beq->beva_retained->bevi_bool)) {
+       if(bevs_mqClient.publish(beq->beva_topic->bems_toCcString().c_str(), beq->beva_payload->bems_toCcString().c_str(), beq->beva_retained->bevi_bool)) {
        """
      }
      //"published".print();
@@ -121,7 +148,7 @@ emit(cc) {
   process() {
     emit(cc) {
       """
-      mqClient.loop();
+      bevs_mqClient.loop();
       """
     }
   }
@@ -129,9 +156,44 @@ emit(cc) {
   subscribe(String topic) {
     emit(cc) {
       """
-      mqClient.subscribe(beq->beva_topic->bems_toCcString().c_str());
+      bevs_mqClient.subscribe(beq->beva_topic->bems_toCcString().c_str());
       """
     }
+  }
+
+  receive() List {
+    emit(cc) {
+      """
+      if (BEC_2_8_4_EmbeddedMqtt::bevs_mqTopics.empty()) {
+      """
+    }
+    return(null);
+    emit(cc) {
+      """
+    }
+      """
+    }
+    List msgs = List.new();
+    String topic;
+    String payload;
+    MqMessage msg;
+    emit(cc) {
+      """
+      for (int i = 0;i < BEC_2_8_4_EmbeddedMqtt::bevs_mqTopics.size();i++) {
+        beq->bevl_topic = new BEC_2_4_6_TextString(BEC_2_8_4_EmbeddedMqtt::bevs_mqTopics[i]);
+        beq->bevl_payload = new BEC_2_4_6_TextString(BEC_2_8_4_EmbeddedMqtt::bevs_mqPayloads[i]);
+      """
+    }
+    msg = MqMessage.new(topic, payload);
+    msgs += msg;
+    emit(cc) {
+      """
+    }
+    BEC_2_8_4_EmbeddedMqtt::bevs_mqTopics.clear();
+    BEC_2_8_4_EmbeddedMqtt::bevs_mqPayloads.clear();
+    """
+    }
+    return(msgs);
   }
   
 }
