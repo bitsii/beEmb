@@ -81,6 +81,21 @@ emit(cc) {
     pass = _pass;
     new();
   }
+
+  connectedGet() Bool {
+    emit(cc) {
+      """
+      if (bevs_mqClient.connected()) {
+      """
+    }
+    return(true);
+    emit(cc) {
+      """
+    }
+    """
+    }
+    return(false);
+  }
   
   start() self {
     if (TS.notEmpty(mqttServer)) {
