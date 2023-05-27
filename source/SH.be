@@ -490,17 +490,6 @@ class Embedded:AppShell {
       }
       return(self);
      }
-     List msgs = mqtt.receive();
-     if (def(msgs)) {
-       "got msgs".print();
-       for (Embedded:MqMessage msg in msgs) {
-         "topic".print();
-         msg.topic.print();
-         "payload".print();
-         msg.payload.print();
-       }
-       return(self);
-     }
      ifNotEmit(noSer) {
       if (def(serserver) && serserver.available) {
         "preding serpay".print();
