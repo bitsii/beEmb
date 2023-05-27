@@ -31,7 +31,6 @@ class Embedded:AppShell {
        Int nextRestart = 0;
        Int nextMaybeSave = 0;
        Int nextApCheck = 0;
-       Int nextMqCheck = 0;
        Int nextWifiCheck = 0;
        Int nextResetWindow = 0;
        String slashn = "\n";
@@ -75,7 +74,6 @@ class Embedded:AppShell {
      nextSwInfo = nowup + 20000; //20s
      nextMaybeSave = nowup + 105000;
      nextApCheck = nowup + 240000;//4 mins
-     nextMqCheck = nowup + 360000;//6 mins
      nextWifiCheck = nowup + 780000;//13 mins
      nextResetWindow = nowup + 570000;//9.5 mins
      
@@ -304,7 +302,11 @@ class Embedded:AppShell {
           mdserver.protocol = "tcp";
           mdserver.start();
 
-          setupMqtt();
+          //"starting mqtt".print();
+          mqtt = Embedded:Mqtt.new("192.168.1.124", "ha", "hapass");
+          mqtt.start();
+          mqtt.subscribe("test");
+          //"mqtt started".print();
 
         }
 
@@ -348,18 +350,6 @@ class Embedded:AppShell {
           Wifi.new(finssid, sec).startAp();
         }
       }
-   }
-
-   setupMqtt() {
-     //"starting mqtt".print();
-     mqtt = Embedded:Mqtt.new("192.168.1.124", "ha", "hapass");
-     startMqtt();
-     //"mqtt started".print();
-   }
-
-   startMqtt() {
-     mqtt.start();
-     mqtt.subscribe("test");
    }
    
    startWifi() {
@@ -456,16 +446,6 @@ class Embedded:AppShell {
       }
       return(self);
      }
-     if (nowup > nextMqCheck) {
-      nextMqCheck = nowup + 360000;//6 mins
-      if (def(mqtt)) {
-        unless (mqtt.connected) {
-          "mqtt not connected reconnecting".print()
-          startMqtt();
-        }
-      }
-      return(self);
-     }
      if (nowup > nextWifiCheck) {
       nextWifiCheck = nowup + 780000;//13 mins
       checkWifiUp();
@@ -485,8 +465,7 @@ class Embedded:AppShell {
       return(self);
      }
      if (nowup > nextSwInfo) {
-      //nextSwInfo = nowup + 540000; //usually 540000, 9 min
-      nextSwInfo = nowup + 20000; //20s
+      nextSwInfo = nowup + 540000;
       swInfo.print();
       if (def(mqtt)) {
         "domqtt".print();
