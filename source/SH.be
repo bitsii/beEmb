@@ -303,9 +303,8 @@ class Embedded:AppShell {
           mdserver.start();
 
           //"starting mqtt".print();
-          mqtt = Embedded:Mqtt.new("192.168.1.124", "ha", "hapass");
-          mqtt.start();
-          mqtt.subscribe("test");
+          //mqtt = Embedded:Mqtt.new("192.168.1.124", "", "");
+          //mqtt.start();
           //"mqtt started".print();
 
         }
