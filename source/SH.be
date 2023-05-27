@@ -877,7 +877,10 @@ class Embedded:AppShell {
     } elseIf (cmd == "putconfig") {
         String key = cmdl[3];
         String value = cmdl[4];
-        if (cmdl[2] == "vhex") {
+        if (cmdl[2] == "hex") {
+          if (TS.notEmpty(key)) {
+            key = Encode:Hex.decode(key);
+          }
           if (TS.notEmpty(value)) {
             value = Encode:Hex.decode(value);
           }
