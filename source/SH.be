@@ -51,12 +51,11 @@ class Embedded:AppShell {
        String controlSpec;
        String controlDef;
        List controls = List.new();
-       Bool needsBuildControls = true;
        Bool needsNetworkInit = true;
        Bool readyForAp = false;
+       Bool needsBuildControls = true;
        Bool needsLoadStates = true;
        Bool needsGc = false;
-       Bool needsMqInit = true;
      }
      app.plugin = self;
 
@@ -305,32 +304,12 @@ class Embedded:AppShell {
           mdserver.protocol = "tcp";
           mdserver.start();
 
+          setupMqtt();
+
         }
 
        }
       }
-   }
-
-   mqInit() {
-     if (Wifi.isConnected) {
-      //"starting mqtt".print();
-      String mqhost = config.get(config.getPos("mq.host"));
-      String mquser = config.get(config.getPos("mq.user"));
-      String mqpass = config.get(config.getPos("mq.pass"));
-
-      //test vals
-      mqhost = "192.168.1.124";
-      mquser = "ha";
-      mqpass = "hapass";
-
-      if (TS.notEmpty(mqhost) && TS.notEmpty(mquser) && TS.notEmpty(mqpass)) {
-        mqtt = Embedded:Mqtt.new(mqhost, mquser, mqpass);
-        mqtt.start();
-        //startMqtt();
-      }
-
-      //"mqtt started".print();
-     }
    }
    
   checkWifiAp() {
@@ -369,6 +348,18 @@ class Embedded:AppShell {
           Wifi.new(finssid, sec).startAp();
         }
       }
+   }
+
+   setupMqtt() {
+     //"starting mqtt".print();
+     mqtt = Embedded:Mqtt.new("192.168.1.124", "ha", "hapass");
+     startMqtt();
+     //"mqtt started".print();
+   }
+
+   startMqtt() {
+     mqtt.start();
+     mqtt.subscribe("test");
    }
    
    startWifi() {
@@ -446,11 +437,6 @@ class Embedded:AppShell {
        app.maybeGc();
        return(self);
      }
-     if (needsMqInit) {
-       needsMqInit = false;
-       mqInit();
-       return(self);
-     }
      if (nowup > nextMaybeSave) {
       nextMaybeSave = nowup + 105000;
       if (config.changed) {
@@ -472,6 +458,12 @@ class Embedded:AppShell {
      }
      if (nowup > nextMqCheck) {
       nextMqCheck = nowup + 360000;//6 mins
+      if (def(mqtt)) {
+        unless (mqtt.connected) {
+          "mqtt not connected reconnecting".print()
+          startMqtt();
+        }
+      }
       return(self);
      }
      if (nowup > nextWifiCheck) {
@@ -496,6 +488,11 @@ class Embedded:AppShell {
       //nextSwInfo = nowup + 540000; //usually 540000, 9 min
       nextSwInfo = nowup + 20000; //20s
       swInfo.print();
+      if (def(mqtt)) {
+        "domqtt".print();
+        mqtt.publish("test", "hi from ard 5");
+        "mqttdone".print();
+      }
       return(self);
      }
      if (nextRestart > zero && nowup > nextRestart) {
@@ -513,6 +510,17 @@ class Embedded:AppShell {
         sysupdate(upurl);
       }
       return(self);
+     }
+     List msgs = mqtt.receive();
+     if (def(msgs)) {
+       "got msgs".print();
+       for (Embedded:MqMessage msg in msgs) {
+         "topic".print();
+         msg.topic.print();
+         "payload".print();
+         msg.payload.print();
+       }
+       return(self);
      }
      ifNotEmit(noSer) {
       if (def(serserver) && serserver.available) {
@@ -620,6 +628,9 @@ class Embedded:AppShell {
      }
      if (def(mdserver)) {
        mdserver.update();
+     }
+     if(def(mqtt)) {
+       mqtt.process();
      }
      if (needsRestart) {
        needsRestart = false;
