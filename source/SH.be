@@ -27,6 +27,7 @@ class Embedded:AppShell {
 
        Int zero = 0;
        Int nextUpdateCheck = 0;
+       Int nextCds = 0;
        Int nextSwInfo = 0;
        Int nextRestart = 0;
        Int nextMaybeSave = 0;
@@ -70,6 +71,7 @@ class Embedded:AppShell {
 
      app.uptime(nowup);
      nextUpdateCheck = nowup + 60000;
+     nextCds = nowup + 11000;
      nextSwInfo = nowup + 540000;
      nextMaybeSave = nowup + 105000;
      nextApCheck = nowup + 240000;//4 mins
@@ -251,6 +253,7 @@ class Embedded:AppShell {
        Embedded:TCPServer tcpserver;
        Embedded:SerServer serserver;
        Embedded:Mdns mdserver;
+       Embedded:Cds cds;
      }
 
      app.wdtFeed();
@@ -299,6 +302,10 @@ class Embedded:AppShell {
           mdserver.port = 80;
           mdserver.protocol = "tcp";
           mdserver.start();
+
+          cds = Embedded:Cds.new();
+          cds.id = did;
+          cds.start();
 
         }
 
@@ -474,6 +481,13 @@ class Embedded:AppShell {
         String upurl = supurl;
         supurl = null;
         sysupdate(upurl);
+      }
+      return(self);
+     }
+     if (nowup > nextCds) {
+      nextCds = nowup + 11000;
+      if (def(cds)) {
+        cds.announce();
       }
       return(self);
      }

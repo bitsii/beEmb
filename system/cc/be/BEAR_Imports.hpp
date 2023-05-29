@@ -6,3 +6,4 @@
 #include <ESP8266httpUpdate.h>
 #include <EEPROM.h>
 #include <Hash.h>
+#include <WiFiUdp.h>
