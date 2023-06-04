@@ -79,14 +79,17 @@ class Embedded:AppShell {
      nextResetWindow = nowup + 570000;//9.5 mins
      
      //"making webPage".print();
+     ifNotEmit(noWeb) {
      htmlHead = String.new();
      htmlHead += "HTTP/1.1 200 OK\r\n";
      htmlHead += "Content-type:text/html\r\n";
      htmlHead += "Connection: close\r\n";
      htmlHead += "\r\n";
+     }
      
    }
 
+   ifNotEmit(noWeb) {
    sendWebPage(treq) {
 
      treq.client.write(htmlHead);
@@ -119,6 +122,7 @@ class Embedded:AppShell {
 
      treq.client.write(htmlEnd);*/
 
+   }
    }
 
    loadStates() {
@@ -248,10 +252,16 @@ class Embedded:AppShell {
    
    startLoop() {
 
-     fields {
-       Embedded:TinyWeb tweb;
-       Embedded:TCPServer tcpserver;
+     ifNotEmit(noWeb) {
+       fields {
+         Embedded:TinyWeb tweb;
+       }
+     }
+     ifNotEmit(noSer) {
        Embedded:SerServer serserver;
+     }
+     fields {
+       Embedded:TCPServer tcpserver;
        Embedded:Mdns mdserver;
        Embedded:Cds cds;
      }
@@ -499,15 +509,15 @@ class Embedded:AppShell {
       if (TS.notEmpty(serpay)) {
         try {
             "doing serpay".print();
-            String cmdres = doCmd("serial", "", serpay);
-            if (TS.isEmpty(cmdres)) {
-              "cmdres empty".print();
+            String scmdres = doCmd("serial", "", serpay);
+            if (TS.isEmpty(scmdres)) {
+              "scmdres empty".print();
             } else {
-              ("cmdres " + cmdres).print();
+              ("scmdres " + scmdres).print();
             }
-          } catch (any dce) {
+          } catch (any sdce) {
             "error handling command".print();
-            dce.print();
+            sdce.print();
           }
           "serpay returning".print();
           //app.yield();
@@ -541,16 +551,16 @@ class Embedded:AppShell {
                       String cdec = Encode:Url.decode(qsps[1]);
                       //("cdec " + cdec).print();
                       try {
-                          cmdres = doCmd("web", "", cdec);
+                          String wcmdres = doCmd("web", "", cdec);
                           treq.client.write(htmlHead); //ok headers
-                          if (TS.isEmpty(cmdres)) {
-                            treq.client.write("cmdres empty");
+                          if (TS.isEmpty(wcmdres)) {
+                            treq.client.write("wcmdres empty");
                           } else {
-                            treq.client.write(cmdres);
+                            treq.client.write(wcmdres);
                           }
-                        } catch (dce) {
+                        } catch (any wdce) {
                           "error handling command".print();
-                          dce.print();
+                          wdce.print();
                         }
                     } elseIf (qsps[0] == "hexit") {
                       String hi = Encode:Url.decode(qsps[1]);

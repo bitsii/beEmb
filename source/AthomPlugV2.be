@@ -28,7 +28,7 @@ class Embedded:AthomPlugV2(Embedded:AppShell) {
 
    buildSwInfo() {
      if (TS.isEmpty(swSpec)) {
-       swSpec = "0.AthomPlugV2.23";
+       swSpec = "0.AthomPlugV2.25";
      }
      super.buildSwInfo();
    }
@@ -38,7 +38,7 @@ class Embedded:AthomPlugV2(Embedded:AppShell) {
      //todo physical button toggles, led solid if on wifi, blink if station
      //physical button a control, args say what to toggle (pos), led is a control, controls get events - state, tick
      if (TS.isEmpty(controlSpec)) {
-       controlSpec = "0.sw.12,1";  //12 is switch (rev), 13 is led - athom plug v2 us - esp8266ex 2mb
+       controlSpec = "0.sw.12,1";  //12 is switch (rev), 13 is led - athom plug v2 us - esp8266ex 2mb. same for martin jerry
        //controlSpec = "0.sw.16,1";  //one sw on 16 - dollatek
      }
      super.buildControls();

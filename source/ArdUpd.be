@@ -27,14 +27,19 @@ sign = new BearSSL::SigningVerifier(signPubKey);
 
   updateFromUrl(String url) {
 
+    Int res = Int.new();
     emit(cc) {
      """
+     Serial.println("gonna update");
      if (signPubKey != nullptr) {
        Serial.println("setting update signature");
        Update.installSignature(hash, sign);
      }
      WiFiClient client;
      t_httpUpdate_return ret = ESPhttpUpdate.update(client, beq->beva_url->bems_toCcString().c_str());
+     Serial.println("return ret");
+     Serial.println(ESPhttpUpdate.getLastError());
+     Serial.println(ESPhttpUpdate.getLastErrorString());
      """
     }
 
