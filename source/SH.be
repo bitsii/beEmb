@@ -89,9 +89,9 @@ class Embedded:AppShell {
      
    }
 
-   ifNotEmit(noWeb) {
-   sendWebPage(treq) {
 
+   sendWebPage(treq) {
+    ifNotEmit(noWeb) {
      treq.client.write(htmlHead);
 
      /*String htmlStart = "<html><head></head><body>";
@@ -258,12 +258,22 @@ class Embedded:AppShell {
        }
      }
      ifNotEmit(noSer) {
-       Embedded:SerServer serserver;
+       fields {
+        Embedded:SerServer serserver;
+       }
+     }
+     ifNotEmit(noMdns) {
+       fields {
+        Embedded:Mdns mdserver;
+       }
+     }
+     ifNotEmit(noCds) {
+       fields {
+        Embedded:Cds cds;
+       }
      }
      fields {
        Embedded:TCPServer tcpserver;
-       Embedded:Mdns mdserver;
-       Embedded:Cds cds;
      }
 
      app.wdtFeed();
@@ -305,17 +315,20 @@ class Embedded:AppShell {
         }
 
         if (Wifi.isConnected) {
+          ifNotEmit(noMdns) {
+            mdserver = Embedded:Mdns.new();
+            mdserver.name = "CasNic" + did;
+            mdserver.service = "http";
+            mdserver.port = 80;
+            mdserver.protocol = "tcp";
+            mdserver.start();
+          }
 
-          mdserver = Embedded:Mdns.new();
-          mdserver.name = "CasNic" + did;
-          mdserver.service = "http";
-          mdserver.port = 80;
-          mdserver.protocol = "tcp";
-          mdserver.start();
-
-          cds = Embedded:Cds.new();
-          cds.id = did;
-          cds.start();
+          ifNotEmit(noCds) {
+            cds = Embedded:Cds.new();
+            cds.id = did;
+            cds.start();
+          }
 
         }
 
@@ -496,8 +509,10 @@ class Embedded:AppShell {
      }
      if (nowup > nextCds) {
       nextCds = nowup + 11000;
-      if (def(cds)) {
-        cds.announce();
+      ifNotEmit(noCds) {
+        if (def(cds)) {
+          cds.announce();
+        }
       }
       return(self);
      }
@@ -605,8 +620,10 @@ class Embedded:AppShell {
         return(self);
       }
      }
-     if (def(mdserver)) {
-       mdserver.update();
+     ifNotEmit(noMdns) {
+      if (def(mdserver)) {
+        mdserver.update();
+      }
      }
      if (needsRestart) {
        needsRestart = false;
