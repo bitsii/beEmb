@@ -6,7 +6,7 @@ use Text:Strings as TS;
 use System:Exception;
 
 /*
-Will be needed in BEAR_Imports.cpp
+Will be needed in BEAR_Imports.hpp
 
 #include "Adafruit_MQTT.h"
 #include "Adafruit_MQTT_Client.h"
