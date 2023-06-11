@@ -272,6 +272,11 @@ class Embedded:AppShell {
         Embedded:Cds cds;
        }
      }
+     ifNotEmit(noMqtt) {
+       fields {
+        Embedded:Mqtt mqtt;
+       }
+     }
      fields {
        Embedded:TCPServer tcpserver;
      }
@@ -328,6 +333,11 @@ class Embedded:AppShell {
             cds = Embedded:Cds.new();
             cds.id = did;
             cds.start();
+          }
+
+          ifNotEmit(noMqtt) {
+            mqtt = Embedded:Mqtt.new();
+            mqtt.connect();
           }
 
         }
@@ -514,6 +524,13 @@ class Embedded:AppShell {
           cds.announce();
         }
       }
+      ifNotEmit(noMqtt) {
+        if (def(mqtt)) {
+          mqtt.checkGetMessage();
+          mqtt.publish();
+          mqtt.checkGetMessage();
+        }
+      }
       return(self);
      }
      ifNotEmit(noSer) {
@@ -618,6 +635,11 @@ class Embedded:AppShell {
           }
         preq.close();
         return(self);
+      }
+     }
+     ifNotEmit(noMqtt) {
+      if (def(mqtt)) {
+        //mqtt.checkGetMessage();
       }
      }
      ifNotEmit(noMdns) {

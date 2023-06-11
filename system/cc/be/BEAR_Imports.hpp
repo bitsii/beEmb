@@ -7,3 +7,6 @@
 #include <EEPROM.h>
 #include <Hash.h>
 #include <WiFiUdp.h>
+#define MQTT_DEBUG
+#include "Adafruit_MQTT.h"
+#include "Adafruit_MQTT_Client.h"

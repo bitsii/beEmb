@@ -15,8 +15,9 @@ rm -rf targets/ard/Base/target/cc
 #--emitFlag relocMain
 
 export CLASSPATH=../beBase/target5/*
-java -XX:-UsePerfData -XX:TieredStopAtLevel=1 -XX:+UseSerialGC be.BEL_Base -deployPath=targets/ard -buildPath=targets/ard --buildFile build/embBase.txt --emitLang cc --singleCC true --emitFlag ccSgc --emitFlag ccNoRtti --emitFlag relocMain --emitFlag holdMain --emitFlag embPlat --emitFlag noSmap --emitFlag noRfl --emitFlag embEsp8266 -cchImport=../beEmb/system/cc/be/BEAR_Imports.hpp -ccImport=../beEmb/system/cc/be/BEAR_Imports.cpp ../beBase/source/base/Uses.be source/ArdEmb.be source/ArdConf.be source/ArdWifi.be source/ArdSer.be source/ArdTcp.be source/ArdMdns.be source/TinyWeb.be source/ArdUpd.be source/CDS.be source/SH.be $*
+java -XX:-UsePerfData -XX:TieredStopAtLevel=1 -XX:+UseSerialGC be.BEL_Base -deployPath=targets/ard -buildPath=targets/ard --buildFile build/embBase.txt --emitLang cc --singleCC true --emitFlag ccSgc --emitFlag ccNoRtti --emitFlag relocMain --emitFlag holdMain --emitFlag embPlat --emitFlag noSmap --emitFlag noRfl --emitFlag embEsp8266 -cchImport=../beEmb/system/cc/be/BEAR_Imports.hpp -ccImport=../beEmb/system/cc/be/BEAR_Imports.cpp ../beBase/source/base/Uses.be source/ArdEmb.be source/ArdConf.be source/ArdWifi.be source/ArdSer.be source/ArdTcp.be source/ArdMdns.be source/TinyWeb.be source/ArdUpd.be source/CDS.be source/Mqtt.be source/SH.be $*
 
+#--emitFlag noSer --emitFlag noWeb source/TinyWeb.be source/ArdSer.be
 #../beBase/source/base/Uses.be source/ArdEmb.be source/ArdAes.be source/ArdTcp.be source/LA.be
 
 lae=$?;if [[ $lae -ne 0 ]]; then exit $lae; fi
