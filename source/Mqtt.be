@@ -81,8 +81,8 @@ emit(cc) {
       String mqttServer = "192.168.1.124";
       Int mqttPort = 1883;
       String clientId;
-      String user = "";
-      String pass = "";
+      String user = "ha";
+      String pass = "hapass";
       List messages = List.new();
       Int zero = 0;
     }

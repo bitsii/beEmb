@@ -644,6 +644,8 @@ class Embedded:AppShell {
           for (any msg in msgs) {
             ("msg " + msg).print();
           }
+          needsGc = true;
+          return(self);
         }
       }
      }
