@@ -7,12 +7,16 @@ use System:Exception;
 
 /*
 Will be needed in BEAR_Imports.cpp
+
+//for CDS.be
 #include "lwip/udp.h"
 #include "lwip/igmp.h"
 #define SSDP_MULTICAST_ADDR 239, 255, 255, 250
 #define SSDP_PORT         3200
 
 and this in BEAR_Imports.hpp
+
+//for CDS.be
 #include <WiFiUdp.h>
 */
 

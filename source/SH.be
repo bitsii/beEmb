@@ -526,9 +526,7 @@ class Embedded:AppShell {
       }
       ifNotEmit(noMqtt) {
         if (def(mqtt)) {
-          mqtt.checkGetMessage();
           mqtt.publish();
-          mqtt.checkGetMessage();
         }
       }
       return(self);
@@ -639,7 +637,14 @@ class Embedded:AppShell {
      }
      ifNotEmit(noMqtt) {
       if (def(mqtt)) {
-        //mqtt.checkGetMessage();
+        mqtt.process();
+        List msgs = mqtt.receive();
+        if (def(msgs)) {
+          "got msgs".print();
+          for (any msg in msgs) {
+            ("msg " + msg).print();
+          }
+        }
       }
      }
      ifNotEmit(noMdns) {

@@ -6,8 +6,5 @@
 #include <ESP8266httpUpdate.h>
 #include <EEPROM.h>
 #include <Hash.h>
-//for CDS.be multicast udp
-#include <WiFiUdp.h>
-#define MQTT_DEBUG
-#include "Adafruit_MQTT.h"
-#include "Adafruit_MQTT_Client.h"
+//for MQTT.be
+#include <PubSubClient.h>
