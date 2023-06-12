@@ -78,11 +78,11 @@ emit(cc) {
 
   new() self {
     fields {
-      String mqttServer = "192.168.1.124";
+      String mqttServer;
+      String user;
+      String pass;
       Int mqttPort = 1883;
       String clientId;
-      String user = "ha";
-      String pass = "hapass";
       List messages = List.new();
       Int zero = 0;
     }
@@ -100,7 +100,7 @@ emit(cc) {
     new();
   }
 
-  connectedGet() Bool {
+  isOpenGet() Bool {
     emit(cc) {
       """
       if (bevs_mqClient.connected()) {
@@ -114,8 +114,18 @@ emit(cc) {
     }
     return(false);
   }
+
+  close() self {
+    emit(cc) {
+      """
+      bevs_mqClient.setCallback(nullptr);
+      bevs_mqClient.disconnect();
+      """
+    }
+  }
   
-  connect() self {
+  open() Bool {
+    Bool didOpen = false;
     if (TS.notEmpty(mqttServer)) {
       if (undef(mqttPort)) {
         mqttPort = 1883;
@@ -135,7 +145,7 @@ emit(cc) {
   """
 }
        "connected".print();
-       subscribe("/test");
+       didOpen = true;
        emit(cc) {
          """
          bevs_mqClient.setCallback(mqcallback);
@@ -152,7 +162,7 @@ emit(cc) {
        }
       }
     }
-    return(self);
+    return(didOpen);
   }
 
   //receive
@@ -184,12 +194,18 @@ emit(cc) {
      return(false);
   }
 
-  process() {
+  process() Bool {
     String lastTopic;
     String lastMessage;
     emit(cc) {
       """
-      bevs_mqClient.loop();
+      if (!bevs_mqClient.loop()) {
+        """
+      }
+      return(false);
+      emit(cc) {
+        """
+      }
       if (!lastTopic.empty()) {
         beq->bevl_lastTopic = new BEC_2_4_6_TextString(lastTopic);
         beq->bevl_lastMessage = new BEC_2_4_6_TextString(lastMessage);
@@ -204,6 +220,7 @@ emit(cc) {
       //lastMessage.print();
       messages += Embedded:MqttMessage.new(lastTopic, lastMessage);
     }
+    return(true);
   }
 
   subscribe(String topic) {

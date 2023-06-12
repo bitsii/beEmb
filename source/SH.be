@@ -336,14 +336,22 @@ class Embedded:AppShell {
           }
 
           ifNotEmit(noMqtt) {
-            mqtt = Embedded:Mqtt.new();
-            mqtt.connect();
+            initMq();
           }
 
         }
 
        }
       }
+   }
+
+   initMq() {
+     ifNotEmit(noMqtt) {
+       mqtt = Embedded:Mqtt.new("192.168.1.124", "ha", "hapass");
+       if (mqtt.open()) {
+        mqtt.subscribe("/test");
+       }
+     }
    }
    
   checkWifiAp() {
@@ -526,7 +534,10 @@ class Embedded:AppShell {
       }
       ifNotEmit(noMqtt) {
         if (def(mqtt)) {
-          mqtt.publish();
+          mqtt.publish("/test", "yo pubsub", false);
+          //mqtt.publish("/test", "yar pubsub", false);
+        } else {
+          initMq();
         }
       }
       return(self);
@@ -637,7 +648,11 @@ class Embedded:AppShell {
      }
      ifNotEmit(noMqtt) {
       if (def(mqtt)) {
-        mqtt.process();
+        unless(mqtt.process()) {
+          mqtt.close();
+          mqtt = null;
+          return(self);
+        }
         List msgs = mqtt.receive();
         if (def(msgs)) {
           "got msgs".print();
