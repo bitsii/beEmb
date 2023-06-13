@@ -534,8 +534,7 @@ class Embedded:AppShell {
       }
       ifNotEmit(noMqtt) {
         if (def(mqtt)) {
-          mqtt.publish("/test", "yo pubsub", false);
-          //mqtt.publish("/test", "yar pubsub", false);
+          mqtt.publish("/test", "yo pubsub");
         } else {
           initMq();
         }
@@ -648,20 +647,7 @@ class Embedded:AppShell {
      }
      ifNotEmit(noMqtt) {
       if (def(mqtt)) {
-        unless(mqtt.process()) {
-          mqtt.close();
-          mqtt = null;
-          return(self);
-        }
-        List msgs = mqtt.receive();
-        if (def(msgs)) {
-          "got msgs".print();
-          for (any msg in msgs) {
-            ("msg " + msg).print();
-          }
-          needsGc = true;
-          return(self);
-        }
+        mqtt.receive();
       }
      }
      ifNotEmit(noMdns) {
