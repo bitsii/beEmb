@@ -47,7 +47,7 @@ emit(cc) {
   }
   
   open() Bool {
-    Bool didOpen = false;
+    Bool didOpen = true;
     emit(cc) {
       """
       mqttClient = new MqttClient(&wifiClient);
@@ -55,9 +55,13 @@ emit(cc) {
       if (!mqttClient->connect(bevp_mqttServer->bems_toCcString().c_str(), bevp_mqttPort->bevi_int)) {
         Serial.print("MQTT connection failed! Error code = ");
         Serial.println(mqttClient->connectError());
+        """
+      }
+      didOpen = false;
+    emit(cc) {
+      """
       } else {
         Serial.println("MQTT connected");
-        mqttClient->subscribe("/test");
       }
       """
     }
@@ -67,8 +71,8 @@ emit(cc) {
   publish(String topic, String payload) Bool {
     emit(cc) {
       """
-      mqttClient->beginMessage("/test");
-      mqttClient->print("hello from mqpub");
+      mqttClient->beginMessage(beq->beva_topic->bems_toCcString().c_str());
+      mqttClient->print(beq->beva_payload->bems_toCcString().c_str());
       mqttClient->endMessage();
       """
     }
@@ -80,6 +84,11 @@ emit(cc) {
   }
 
   subscribe(String topic) {
+    emit(cc) {
+      """
+      mqttClient->subscribe(beq->beva_topic->bems_toCcString().c_str());
+      """
+    }
   }
 
   receive() {

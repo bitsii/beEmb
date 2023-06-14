@@ -534,7 +534,7 @@ class Embedded:AppShell {
       }
       ifNotEmit(noMqtt) {
         if (def(mqtt)) {
-          mqtt.publish("/test", "yo pubsub");
+          mqtt.publish("/test", "yo pubsub sh");
         } else {
           initMq();
         }
