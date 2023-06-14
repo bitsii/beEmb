@@ -91,27 +91,90 @@ emit(cc) {
     }
   }
 
-  receive() {
+  receive() Embedded:MqttMessage {
     emit(cc) {
       """
      int messageSize = mqttClient->parseMessage();
     if (messageSize) {
+      """
+    }
+    Int paysize = Int.new();
+    emit(cc) {
+      """
+      beq->bevl_paysize->bevi_int = messageSize;
+      """
+    }
+    String topic;
+    String payload = String.new(paysize);
+    Int chari = Int.new();
+    String chars = String.new(1);
+    chars.setCodeUnchecked(0, 32);
+    chars.size.setValue(1);
+    Int zero = 0;
+    emit(cc) {
+      """
     // we received a message, print out the topic and contents
-    Serial.print("Received a message with topic '");
-    Serial.print(mqttClient->messageTopic());
-    Serial.print("', length ");
-    Serial.print(messageSize);
-    Serial.println(" bytes:");
+    //Serial.print("Received a message with topic '");
+    //Serial.print(mqttClient->messageTopic());
+
+    String tpc = mqttClient->messageTopic();
+    std::string tpcs = std::string(tpc.c_str());
+    beq->bevl_topic = new BEC_2_4_6_TextString(tpcs);
+
+    //Serial.print("', length ");
+    //Serial.print(messageSize);
+    //Serial.println(" bytes:");
 
     // use the Stream interface to print the contents
+    //TODO timeout for read
     while (mqttClient->available()) {
-      Serial.print((char)mqttClient->read());
+      //Serial.print((char)mqttClient->read());
+      char c = (char)mqttClient->read();
+      //Serial.write(c);
+      beq->bevl_chari->bevi_int = c;
+      """
     }
-    Serial.println();
+    chars.setCodeUnchecked(zero, chari);
+    payload += chars;
+    emit(cc) {
+      """
+    }
+    } else {
+      """
+    }
+    return(null);
+    emit(cc) {
+      """
     }
       """
     }
 
+    return(Embedded:MqttMessage.new(topic, payload));
+
   }
   
+}
+
+class Embedded:MqttMessage {
+  new(String _topic, String _payload) {
+    fields {
+      String topic = _topic;
+      String payload = _payload;
+    }
+  }
+
+  toString() String {
+    String ret = String.new();
+    if (TS.notEmpty(topic)) {
+      ret += "Topic:" += topic += ";";
+    } else {
+      ret += "TopicEmpty:;";
+    }
+    if (TS.notEmpty(payload)) {
+      ret += "Payload:" += payload += ";";
+    } else {
+      ret += "PayloadEmpty:;";
+    }
+    return(ret);
+  }
 }

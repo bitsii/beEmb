@@ -647,7 +647,11 @@ class Embedded:AppShell {
      }
      ifNotEmit(noMqtt) {
       if (def(mqtt)) {
-        mqtt.receive();
+        auto msg = mqtt.receive();
+        if (def(msg)) {
+          "got msg".print();
+          msg.print();
+        }
       }
      }
      ifNotEmit(noMdns) {
