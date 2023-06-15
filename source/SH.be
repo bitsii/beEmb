@@ -347,6 +347,11 @@ class Embedded:AppShell {
 
    initMq() {
      ifNotEmit(noMqtt) {
+       if (def(mqtt)) {
+         auto oldmqtt = mqtt;
+         mqtt = null;
+         oldmqtt.close();
+       }
        mqtt = Embedded:Mqtt.new("192.168.1.124", "ha", "hapass");
        if (mqtt.open()) {
         mqtt.subscribe("/test");
@@ -533,7 +538,7 @@ class Embedded:AppShell {
         }
       }
       ifNotEmit(noMqtt) {
-        if (def(mqtt)) {
+        if (def(mqtt) && mqtt.isOpen) {
           mqtt.publish("/test", "yo pubsub sh");
         } else {
           initMq();

@@ -9,7 +9,7 @@ class Embedded:TCPServer {
 
    emit(cc_classHead) {
    """
-   WiFiServer* server;
+   std::unique_ptr<WiFiServer> server;
    """
    }
   
@@ -22,7 +22,7 @@ class Embedded:TCPServer {
   start() {
     emit(cc) {
     """
-    server = new WiFiServer(bevp_port->bevi_int);
+    server = std::make_unique<WiFiServer>(bevp_port->bevi_int);
     server->begin();
     """
     }

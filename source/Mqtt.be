@@ -15,8 +15,8 @@ class Embedded:Mqtt {
 
 emit(cc_classHead) {
 """
+std::unique_ptr<MqttClient> mqttClient;
 WiFiClient wifiClient;
-MqttClient* mqttClient;
 """
 }
 
@@ -32,6 +32,7 @@ emit(cc) {
       String user;
       String pass;
       Int mqttPort = 1883;
+      String id = System:Random.getString(16);
     }
   }
 
@@ -42,15 +43,47 @@ emit(cc) {
     new();
   }
 
-  close() self {
+  poll() {
+    emit(cc) {
+      """
+      mqttClient->poll();
+      """
+    }
+  }
 
+  isOpenGet() Bool {
+    emit(cc) {
+      """
+      if (mqttClient) {
+        if (mqttClient->connected()) {
+      """
+    }
+    return(true);
+    emit(cc) {
+      """
+    }
+      }
+      """
+    }
+    return(false);
+  }
+
+  close() {
+    emit(cc) {
+      """
+      if (mqttClient) {
+        mqttClient->stop();
+      }
+      """
+    }
   }
   
   open() Bool {
     Bool didOpen = true;
     emit(cc) {
       """
-      mqttClient = new MqttClient(&wifiClient);
+      mqttClient = std::make_unique<MqttClient>(&wifiClient);
+      mqttClient->setId(bevp_id->bems_toCcString().c_str());
       mqttClient->setUsernamePassword(bevp_user->bems_toCcString().c_str(), bevp_pass->bems_toCcString().c_str());
       if (!mqttClient->connect(bevp_mqttServer->bems_toCcString().c_str(), bevp_mqttPort->bevi_int)) {
         Serial.print("MQTT connection failed! Error code = ");
