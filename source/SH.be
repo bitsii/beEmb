@@ -335,10 +335,6 @@ class Embedded:AppShell {
             cds.start();
           }
 
-          ifNotEmit(noMqtt) {
-            initMq();
-          }
-
         }
 
        }
@@ -352,11 +348,21 @@ class Embedded:AppShell {
          mqtt = null;
          oldmqtt.close();
        }
-       mqtt = Embedded:Mqtt.new("192.168.1.124", "ha", "hapass");
-       if (mqtt.open()) {
-        mqtt.subscribe("/test");
+       if (Wifi.isConnected) {
+        mqtt = Embedded:Mqtt.new("192.168.1.124", "ha", "hapass");
+        if (mqtt.open()) {
+          mqtt.subscribe("homeassistant/status");
+        } else {
+          oldmqtt = mqtt;
+          mqtt = null;
+          oldmqtt.close();
+        }
        }
      }
+   }
+
+   mqttAnnounce() {
+
    }
    
   checkWifiAp() {
@@ -538,9 +544,7 @@ class Embedded:AppShell {
         }
       }
       ifNotEmit(noMqtt) {
-        if (def(mqtt) && mqtt.isOpen) {
-          mqtt.publish("/test", "yo pubsub sh");
-        } else {
+        unless (def(mqtt) && mqtt.isOpen) {
           initMq();
         }
       }
