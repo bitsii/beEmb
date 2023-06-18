@@ -352,6 +352,8 @@ class Embedded:AppShell {
         mqtt = Embedded:Mqtt.new("192.168.1.124", "ha", "hapass");
         if (mqtt.open()) {
           mqtt.subscribe("homeassistant/status");
+          mqtt.subscribe("/test");
+          mqttAnnounce();
         } else {
           oldmqtt = mqtt;
           mqtt = null;
@@ -362,7 +364,9 @@ class Embedded:AppShell {
    }
 
    mqttAnnounce() {
-
+     "mqttAnnounce".print();
+     //String tpp = "homeassistant/switch/" + did + "-" + i;
+     //Map cf = Maps.from("name", conf["name"], "command_topic", tpp + "/set", "state_topic", tpp + "/state", "unique_id", did + "-" + i);
    }
    
   checkWifiAp() {
@@ -546,6 +550,8 @@ class Embedded:AppShell {
       ifNotEmit(noMqtt) {
         unless (def(mqtt) && mqtt.isOpen) {
           initMq();
+        } else {
+          mqtt.publish("/test", "test from sh pub");
         }
       }
       return(self);
@@ -658,8 +664,8 @@ class Embedded:AppShell {
       if (def(mqtt)) {
         auto msg = mqtt.receive();
         if (def(msg)) {
-          "got msg".print();
-          msg.print();
+          handleMessage(msg);
+          needsGc = true;
         }
       }
      }
@@ -679,6 +685,17 @@ class Embedded:AppShell {
        config.maybeSave();
        needsRestart = true;
      }
+   }
+
+   handleMessage(Embedded:MqttMessage msg) {
+     "got msg".print();
+      if (def(msg)) {
+        msg.print();
+        //Topic:homeassistant/status;Payload:online;
+        if (msg.topic == "homeassistant/status" && msg.payload == "online") {
+          mqttAnnounce();
+        }
+      }
    }
    
    doCmd(String channel, String origin, String cmdline) String {
