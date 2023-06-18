@@ -112,6 +112,10 @@ emit(cc) {
     return(true);
   }
 
+  publish(Embedded:MqttMessage msg) Bool {
+    return(publish(msg.topic, msg.payload));
+  }
+
   handleLoop() Bool {
     return(true);
   }

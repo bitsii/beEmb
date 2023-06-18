@@ -56,6 +56,8 @@ class Embedded:AppShell {
        Bool needsBuildControls = true;
        Bool needsLoadStates = true;
        Bool needsGc = false;
+       Container:List mqpubl = Container:List.new();
+       Container:List:Iterator mqpubi;
      }
      app.plugin = self;
 
@@ -397,7 +399,7 @@ class Embedded:AppShell {
        }
        if (TS.notEmpty(pt) && TS.notEmpty(cf)) {
          cf.print();
-         mqtt.publish(pt, cf);
+         mqpubl += Embedded:MqttMessage.new(pt, cf);
        }
      }
      for (ctl in controls) {
@@ -428,7 +430,7 @@ class Embedded:AppShell {
        }
        if (TS.notEmpty(pt) && TS.notEmpty(cf)) {
          cf.print();
-         mqtt.publish(pt, cf);
+         mqpubl += Embedded:MqttMessage.new(pt, cf);
        }
      }
    }
@@ -729,6 +731,20 @@ class Embedded:AppShell {
         auto msg = mqtt.receive();
         if (def(msg)) {
           handleMessage(msg);
+          return(self);
+        } elseIf (def(mqpubi)) {
+          if (mqpubi.hasNext) {
+            Embedded:MqttMessage pmsg = mqpubi.next;
+            mqtt.publish(pmsg);
+            return(self);
+          } else {
+            mqpubi = null;
+            mqpubl.clear();
+            needsGc = true;
+            return(self);
+          }
+        } elseIf (mqpubl.size > zero) {
+          mqpubi = mqpubl.iterator;
         }
       }
      }
