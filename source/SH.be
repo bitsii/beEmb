@@ -377,13 +377,59 @@ class Embedded:AppShell {
        dname = "CasNic Device";
      }
 
-     for (any ctl in controls) {
-       String conName = ctl.conName;
-       Int conPoss = ctl.conPos.toString();
-       String tpp = "homeassistant/switch/" + did + "-" + conPoss;
-       String cf = "{ \"name\": \"" += dname += " " += conPoss += "\", \"command_topic\": \"" += tpp += "/set\", \"state_topic\": \"" += tpp += "/state\", \"unique_id\": \"" += did += "-" += conPoss += "\" }";
-       cf.print();
-       mqtt.publish(tpp + "/config", cf);
+     any ctl;
+     String conName;
+     Int conPoss;
+     String tpp;
+     String cf;
+     String pt;
+     for (ctl in controls) {
+       conName = ctl.conName;
+       conPoss = ctl.conPos.toString();
+       if (conName == "sw") {
+         tpp = "homeassistant/switch/" + did + "-" + conPoss;
+         pt = tpp + "/config";
+         cf = "{ \"name\": \"" += dname += " " += conPoss += "\", \"command_topic\": \"" += tpp += "/set\", \"state_topic\": \"" += tpp += "/state\", \"unique_id\": \"" += did += "-" += conPoss += "\" }";
+       } elseIf (conName == "dim") {
+         tpp = "homeassistant/light/" + did + "-" + conPoss;
+         pt = tpp + "/config";
+         cf = "{ \"name\": \"" += dname += " " += conPoss += "\", \"command_topic\": \"" += tpp += "/set\", \"state_topic\": \"" += tpp += "/state\", \"unique_id\": \"" += did += "-" += conPoss += "\", \"schema\": \"json\", \"brightness\": true, \"brightness_scale\": 255 }";
+       }
+       if (TS.notEmpty(pt) && TS.notEmpty(cf)) {
+         cf.print();
+         mqtt.publish(pt, cf);
+       }
+     }
+     for (ctl in controls) {
+       conName = ctl.conName;
+       conPoss = ctl.conPos.toString();
+       if (conName == "sw") {
+         tpp = "homeassistant/switch/" + did + "-" + conPoss;
+         pt = tpp + "/state";
+         if (TS.notEmpty(ctl.sw)) {
+           cf = ctl.sw.upper();
+         } else {
+           cf = "OFF";
+         }
+       } elseIf (conName == "dim") {
+         tpp = "homeassistant/light/" + did + "-" + conPoss;
+         pt = tpp + "/state";
+         cf = "{ \"state\": \"";
+         if (TS.notEmpty(ctl.sw)) {
+           cf += ctl.sw.upper();
+         } else {
+           cf += "OFF";
+         }
+         cf += "\"";
+         if (TS.notEmpty(ctl.lvl)) {
+           cf += ", \"brightness\": " += ctl.lvl;
+         }
+         cf += " }";
+       }
+       if (TS.notEmpty(pt) && TS.notEmpty(cf)) {
+         cf.print();
+         mqtt.publish(pt, cf);
+       }
      }
    }
    

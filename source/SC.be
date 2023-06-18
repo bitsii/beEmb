@@ -44,6 +44,8 @@ class Embedded:SwitchControl {
        String off = "off";
        String getsw = "getsw";
        String setsw = "setsw";
+     }
+     fields {
        String sw;
      }
      scswi = config.getPos("sc.sw." + conPos);

@@ -38,6 +38,8 @@ class Embedded:DimmerControl {
        //on = 0, off = 255
        Int dclvli;
        Int dcswi;
+     }
+     fields {
        String lvl;
        String sw;
      }
