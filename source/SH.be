@@ -354,6 +354,7 @@ class Embedded:AppShell {
           mqtt.subscribe("homeassistant/status");
           mqtt.subscribe("/test");
           mqttAnnounce();
+          needsGc = true;
         } else {
           oldmqtt = mqtt;
           mqtt = null;
@@ -367,6 +368,8 @@ class Embedded:AppShell {
      "mqttAnnounce".print();
      //String tpp = "homeassistant/switch/" + did + "-" + i;
      //Map cf = Maps.from("name", conf["name"], "command_topic", tpp + "/set", "state_topic", tpp + "/state", "unique_id", did + "-" + i);
+     //tpp = "homeassistant/light/" + did + "-" + i;
+     //cf = Maps.from("name", conf["name"], "command_topic", tpp + "/set", "state_topic", tpp + "/state", "unique_id", did + "-" + i, "schema", "json", "brightness", true, "brightness_scale", 255);
 
      Int keyi = config.getPos("dname");
      String dname = config.get(keyi);
@@ -680,7 +683,6 @@ class Embedded:AppShell {
         auto msg = mqtt.receive();
         if (def(msg)) {
           handleMessage(msg);
-          needsGc = true;
         }
       }
      }
@@ -710,6 +712,7 @@ class Embedded:AppShell {
         if (msg.topic == "homeassistant/status" && msg.payload == "online") {
           mqttAnnounce();
         }
+        needsGc = true;
       }
    }
    
