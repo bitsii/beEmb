@@ -367,6 +367,21 @@ class Embedded:AppShell {
      "mqttAnnounce".print();
      //String tpp = "homeassistant/switch/" + did + "-" + i;
      //Map cf = Maps.from("name", conf["name"], "command_topic", tpp + "/set", "state_topic", tpp + "/state", "unique_id", did + "-" + i);
+
+     Int keyi = config.getPos("dname");
+     String dname = config.get(keyi);
+     if (TS.isEmpty(dname)) {
+       dname = "CasNic Device";
+     }
+
+     for (any ctl in controls) {
+       String conName = ctl.conName;
+       Int conPoss = ctl.conPos.toString();
+       String tpp = "homeassistant/switch/" + did + "-" + conPoss;
+       String cf = "{ \"name\": \"" += dname += " " += conPoss += "\", \"command_topic\": \"" += tpp += "/set\", \"state_topic\": \"" += tpp += "/state\", \"unique_id\": \"" += did += "-" += conPoss += "\" }";
+       cf.print();
+       mqtt.publish(tpp + "/config", cf);
+     }
    }
    
   checkWifiAp() {
