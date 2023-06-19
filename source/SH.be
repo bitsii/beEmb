@@ -16,6 +16,7 @@ class Embedded:AppShell {
        Config config = Config.new();
        Int nowup = Int.new();
        String lastEventsRes;
+       Bool needsStateUp = false;
      }
      slots {
        Int shpini;
@@ -27,7 +28,7 @@ class Embedded:AppShell {
 
        Int zero = 0;
        Int nextUpdateCheck = 0;
-       Int nextCds = 0;
+       Int nextMq = 0;
        Int nextSwInfo = 0;
        Int nextRestart = 0;
        Int nextMaybeSave = 0;
@@ -56,7 +57,7 @@ class Embedded:AppShell {
        Bool needsBuildControls = true;
        Bool needsLoadStates = true;
        Bool needsGc = false;
-       Bool needsStateUp = false;
+       Bool needsStateUpSoon = false;
        Container:List mqpubl = Container:List.new();
        Container:List:Iterator mqpubi;
        Int mqpublmax = 8;
@@ -75,7 +76,7 @@ class Embedded:AppShell {
 
      app.uptime(nowup);
      nextUpdateCheck = nowup + 60000;
-     nextCds = nowup + 11000;
+     nextMq = nowup + 11000;
      nextSwInfo = nowup + 540000;
      nextMaybeSave = nowup + 105000;
      nextApCheck = nowup + 240000;//4 mins
@@ -408,7 +409,7 @@ class Embedded:AppShell {
        }
      }
      //mqStateUp();
-     needsStateUp = true;
+     needsStateUpSoon = true;
    }
 
    mqStateUp() {
@@ -563,6 +564,7 @@ class Embedded:AppShell {
      if (needsLoadStates) {
        needsLoadStates = false;
        loadStates();
+       needsStateUp = false;
        return(self);
      }
      if (needsGc) {
@@ -628,22 +630,16 @@ class Embedded:AppShell {
       }
       return(self);
      }
-     if (nowup > nextCds) {
-      nextCds = nowup + 11000;
-      ifNotEmit(noCds) {
-        if (def(cds)) {
-          cds.announce();
-        }
-      }
+     if (nowup > nextMq) {
+      nextMq = nowup + 11000;
       ifNotEmit(noMqtt) {
         unless (def(mqtt) && mqtt.isOpen) {
           initMq();
         } else {
           //mqtt.publish("/test", "test from sh pub");
-          if (needsStateUp) {
-            needsStateUp = false;
-            mqStateUp();
-            needsGc = true;
+          if (needsStateUpSoon) {
+            needsStateUpSoon = false;
+            needsStateUp = true;
           }
         }
       }
@@ -774,6 +770,12 @@ class Embedded:AppShell {
           mqpubi = mqpubl.iterator;
         }
       }
+     }
+     if (needsStateUp) {
+      needsStateUp = false;
+      mqStateUp();
+      needsGc = true;
+      return(self);
      }
      ifNotEmit(noMdns) {
       if (def(mdserver)) {

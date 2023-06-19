@@ -100,6 +100,7 @@ class Embedded:DimmerControl {
         app.analogWrite(pini, inlvli);
         lastEvent.setValue(ash.nowup);
         ash.lastEventsRes = null;
+        ash.needsStateUp = true;
      } elseIf (scm == setsw) {
         String insw = cmdl[4];
         if (insw == on) {
@@ -123,6 +124,7 @@ class Embedded:DimmerControl {
         }
         lastEvent.setValue(ash.nowup);
         ash.lastEventsRes = null;
+        ash.needsStateUp = true;
      }
      return("ok");
    }
