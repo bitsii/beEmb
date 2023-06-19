@@ -6,4 +6,3 @@
 #include <ESP8266httpUpdate.h>
 #include <EEPROM.h>
 #include <Hash.h>
-#include <ArduinoMqttClient.h>

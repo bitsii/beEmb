@@ -275,11 +275,6 @@ class Embedded:AppShell {
         Embedded:Cds cds;
        }
      }
-     ifNotEmit(noMqtt) {
-       fields {
-        Embedded:Mqtt mqtt;
-       }
-     }
      fields {
        Embedded:TCPServer tcpserver;
      }
@@ -337,126 +332,11 @@ class Embedded:AppShell {
             cds.id = did;
             cds.start();
           }
-
         }
-
        }
       }
    }
 
-   initMq() {
-     ifNotEmit(noMqtt) {
-       if (def(mqtt)) {
-         auto oldmqtt = mqtt;
-         mqtt = null;
-         oldmqtt.close();
-       }
-       if (Wifi.isConnected) {
-        mqtt = Embedded:Mqtt.new("192.168.1.124", "ha", "hapass");
-        if (mqtt.open()) {
-          mqtt.subscribe("homeassistant/status");
-          //mqtt.subscribe("/test");
-          mqConfUp();
-          needsGc = true;
-        } else {
-          oldmqtt = mqtt;
-          mqtt = null;
-          oldmqtt.close();
-        }
-       }
-     }
-   }
-
-   mqConfUp() {
-     "mqConfUp".print();
-     if (mqpubl.size > mqpublmax) {
-       "mqpubl full no announce".print();
-       return(self);
-     }
-     //String tpp = "homeassistant/switch/" + did + "-" + i;
-     //Map cf = Maps.from("name", conf["name"], "command_topic", tpp + "/set", "state_topic", tpp + "/state", "unique_id", did + "-" + i);
-     //tpp = "homeassistant/light/" + did + "-" + i;
-     //cf = Maps.from("name", conf["name"], "command_topic", tpp + "/set", "state_topic", tpp + "/state", "unique_id", did + "-" + i, "schema", "json", "brightness", true, "brightness_scale", 255);
-
-     Int keyi = config.getPos("dname");
-     String dname = config.get(keyi);
-     if (TS.isEmpty(dname)) {
-       dname = "CasNic Device";
-     }
-
-     any ctl;
-     String conName;
-     Int conPoss;
-     String tpp;
-     String cf;
-     String pt;
-     for (ctl in controls) {
-       conName = ctl.conName;
-       conPoss = ctl.conPos.toString();
-       if (conName == "sw") {
-         tpp = "homeassistant/switch/" + did + "-" + conPoss;
-         pt = tpp + "/config";
-         cf = "{ \"name\": \"" += dname += " " += conPoss += "\", \"command_topic\": \"" += tpp += "/set\", \"state_topic\": \"" += tpp += "/state\", \"unique_id\": \"" += did += "-" += conPoss += "\" }";
-       } elseIf (conName == "dim") {
-         tpp = "homeassistant/light/" + did + "-" + conPoss;
-         pt = tpp + "/config";
-         cf = "{ \"name\": \"" += dname += " " += conPoss += "\", \"command_topic\": \"" += tpp += "/set\", \"state_topic\": \"" += tpp += "/state\", \"unique_id\": \"" += did += "-" += conPoss += "\", \"schema\": \"json\", \"brightness\": true, \"brightness_scale\": 255 }";
-       }
-       if (TS.notEmpty(pt) && TS.notEmpty(cf)) {
-         cf.print();
-         mqpubl += Embedded:MqttMessage.new(pt, cf);
-       }
-     }
-     //mqStateUp();
-     needsStateUp = true;
-   }
-
-   mqStateUp() {
-     "mqStateUp".print();
-     if (mqpubl.size > mqpublmax) {
-       "mqpubl full no announce".print();
-       return(self);
-     }
-
-     any ctl;
-     String conName;
-     Int conPoss;
-     String tpp;
-     String cf;
-     String pt;
-     for (ctl in controls) {
-       conName = ctl.conName;
-       conPoss = ctl.conPos.toString();
-       if (conName == "sw") {
-         tpp = "homeassistant/switch/" + did + "-" + conPoss;
-         pt = tpp + "/state";
-         if (TS.notEmpty(ctl.sw)) {
-           cf = ctl.sw.upper();
-         } else {
-           cf = "OFF";
-         }
-       } elseIf (conName == "dim") {
-         tpp = "homeassistant/light/" + did + "-" + conPoss;
-         pt = tpp + "/state";
-         cf = "{ \"state\": \"";
-         if (TS.notEmpty(ctl.sw)) {
-           cf += ctl.sw.upper();
-         } else {
-           cf += "OFF";
-         }
-         cf += "\"";
-         if (TS.notEmpty(ctl.lvl)) {
-           cf += ", \"brightness\": " += ctl.lvl;
-         }
-         cf += " }";
-       }
-       if (TS.notEmpty(pt) && TS.notEmpty(cf)) {
-         cf.print();
-         mqpubl += Embedded:MqttMessage.new(pt, cf);
-       }
-     }
-   }
-   
   checkWifiAp() {
      //"in checkWifiAp".print();
      unless (Wifi.up && Wifi.mode == "station") {
@@ -635,18 +515,6 @@ class Embedded:AppShell {
           cds.announce();
         }
       }
-      ifNotEmit(noMqtt) {
-        unless (def(mqtt) && mqtt.isOpen) {
-          initMq();
-        } else {
-          //mqtt.publish("/test", "test from sh pub");
-          if (needsStateUp) {
-            needsStateUp = false;
-            mqStateUp();
-            needsGc = true;
-          }
-        }
-      }
       return(self);
      }
      ifNotEmit(noSer) {
@@ -753,28 +621,6 @@ class Embedded:AppShell {
         return(self);
       }
      }
-     ifNotEmit(noMqtt) {
-      if (def(mqtt)) {
-        auto msg = mqtt.receive();
-        if (def(msg)) {
-          handleMessage(msg);
-          return(self);
-        } elseIf (def(mqpubi)) {
-          if (mqpubi.hasNext) {
-            Embedded:MqttMessage pmsg = mqpubi.next;
-            mqtt.publish(pmsg);
-            return(self);
-          } else {
-            mqpubi = null;
-            mqpubl.clear();
-            needsGc = true;
-            return(self);
-          }
-        } elseIf (mqpubl.size > zero) {
-          mqpubi = mqpubl.iterator;
-        }
-      }
-     }
      ifNotEmit(noMdns) {
       if (def(mdserver)) {
         mdserver.update();
@@ -791,18 +637,6 @@ class Embedded:AppShell {
        config.maybeSave();
        needsRestart = true;
      }
-   }
-
-   handleMessage(Embedded:MqttMessage msg) {
-     "got msg".print();
-      if (def(msg)) {
-        msg.print();
-        //Topic:homeassistant/status;Payload:online;
-        if (msg.topic == "homeassistant/status" && msg.payload == "online") {
-          mqConfUp();
-        }
-        needsGc = true;
-      }
    }
    
    doCmd(String channel, String origin, String cmdline) String {
