@@ -34,7 +34,6 @@ class Embedded:AppShell {
        Int nextApCheck = 0;
        Int nextWifiCheck = 0;
        Int nextResetWindow = 0;
-       Int mqStateUpAt = 0;
        String slashn = "\n";
        String slashr = "\r";
        String htmlHead;
@@ -57,6 +56,7 @@ class Embedded:AppShell {
        Bool needsBuildControls = true;
        Bool needsLoadStates = true;
        Bool needsGc = false;
+       Bool needsStateUp = false;
        Container:List mqpubl = Container:List.new();
        Container:List:Iterator mqpubi;
        Int mqpublmax = 8;
@@ -407,7 +407,8 @@ class Embedded:AppShell {
          mqpubl += Embedded:MqttMessage.new(pt, cf);
        }
      }
-     mqStateUpAt = nowup + 500;
+     //mqStateUp();
+     needsStateUp = true;
    }
 
    mqStateUp() {
@@ -639,16 +640,11 @@ class Embedded:AppShell {
           initMq();
         } else {
           //mqtt.publish("/test", "test from sh pub");
-        }
-      }
-      return(self);
-     }
-     if (mqStateUpAt > zero && nowup > mqStateUpAt) {
-      mqStateUpAt.setValue(zero);
-      ifNotEmit(noMqtt) {
-        if (def(mqtt)) {
-          mqStateUp();
-          needsGc = true;
+          if (needsStateUp) {
+            needsStateUp = false;
+            mqStateUp();
+            needsGc = true;
+          }
         }
       }
       return(self);
