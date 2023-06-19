@@ -6,3 +6,5 @@
 #include <ESP8266httpUpdate.h>
 #include <EEPROM.h>
 #include <Hash.h>
+//for CDS.be
+#include <WiFiUdp.h>
