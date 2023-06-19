@@ -447,9 +447,7 @@ class Embedded:AppShell {
          }
          cf += "\"";
          if (TS.notEmpty(ctl.lvl)) {
-           Int inlvli = Int.new(ctl.lvl);
-           inlvli = 255 - inlvli;//255 - x = y; y + x = 255;255 - y = x
-           cf += ", \"brightness\": " += inlvli.toString();
+           cf += ", \"brightness\": " += ctl.lvl;
          }
          cf += " }";
        }
