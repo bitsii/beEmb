@@ -34,6 +34,7 @@ class Embedded:AppShell {
        Int nextApCheck = 0;
        Int nextWifiCheck = 0;
        Int nextResetWindow = 0;
+       Int mqStateUpAt = 0;
        String slashn = "\n";
        String slashr = "\r";
        String htmlHead;
@@ -58,6 +59,7 @@ class Embedded:AppShell {
        Bool needsGc = false;
        Container:List mqpubl = Container:List.new();
        Container:List:Iterator mqpubi;
+       Int mqpublmax = 8;
      }
      app.plugin = self;
 
@@ -90,7 +92,6 @@ class Embedded:AppShell {
      }
      
    }
-
 
    sendWebPage(treq) {
     ifNotEmit(noWeb) {
@@ -354,8 +355,8 @@ class Embedded:AppShell {
         mqtt = Embedded:Mqtt.new("192.168.1.124", "ha", "hapass");
         if (mqtt.open()) {
           mqtt.subscribe("homeassistant/status");
-          mqtt.subscribe("/test");
-          mqttAnnounce();
+          //mqtt.subscribe("/test");
+          mqConfUp();
           needsGc = true;
         } else {
           oldmqtt = mqtt;
@@ -366,8 +367,12 @@ class Embedded:AppShell {
      }
    }
 
-   mqttAnnounce() {
-     "mqttAnnounce".print();
+   mqConfUp() {
+     "mqConfUp".print();
+     if (mqpubl.size > mqpublmax) {
+       "mqpubl full no announce".print();
+       return(self);
+     }
      //String tpp = "homeassistant/switch/" + did + "-" + i;
      //Map cf = Maps.from("name", conf["name"], "command_topic", tpp + "/set", "state_topic", tpp + "/state", "unique_id", did + "-" + i);
      //tpp = "homeassistant/light/" + did + "-" + i;
@@ -402,6 +407,22 @@ class Embedded:AppShell {
          mqpubl += Embedded:MqttMessage.new(pt, cf);
        }
      }
+     mqStateUpAt = nowup + 500;
+   }
+
+   mqStateUp() {
+     "mqStateUp".print();
+     if (mqpubl.size > mqpublmax) {
+       "mqpubl full no announce".print();
+       return(self);
+     }
+
+     any ctl;
+     String conName;
+     Int conPoss;
+     String tpp;
+     String cf;
+     String pt;
      for (ctl in controls) {
        conName = ctl.conName;
        conPoss = ctl.conPos.toString();
@@ -617,7 +638,17 @@ class Embedded:AppShell {
         unless (def(mqtt) && mqtt.isOpen) {
           initMq();
         } else {
-          mqtt.publish("/test", "test from sh pub");
+          //mqtt.publish("/test", "test from sh pub");
+        }
+      }
+      return(self);
+     }
+     if (mqStateUpAt > zero && nowup > mqStateUpAt) {
+      mqStateUpAt.setValue(zero);
+      ifNotEmit(noMqtt) {
+        if (def(mqtt)) {
+          mqStateUp();
+          needsGc = true;
         }
       }
       return(self);
@@ -772,7 +803,7 @@ class Embedded:AppShell {
         msg.print();
         //Topic:homeassistant/status;Payload:online;
         if (msg.topic == "homeassistant/status" && msg.payload == "online") {
-          mqttAnnounce();
+          mqConfUp();
         }
         needsGc = true;
       }
