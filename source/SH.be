@@ -79,7 +79,7 @@ class Embedded:AppShell {
      nextSwInfo = nowup + 540000;
      nextMaybeSave = nowup + 105000;
      nextApCheck = nowup + 240000;//4 mins
-     nextWifiCheck = nowup + 780000;//13 mins
+     nextWifiCheck = nowup + 300000;//5 mins
      nextResetWindow = nowup + 570000;//9.5 mins
      
      //"making webPage".print();
@@ -470,7 +470,7 @@ class Embedded:AppShell {
       return(self);
      }
      if (nowup > nextWifiCheck) {
-      nextWifiCheck = nowup + 780000;//13 mins
+      nextWifiCheck = nowup + 300000;//5 mins
       checkWifiUp();
       return(self);
      }

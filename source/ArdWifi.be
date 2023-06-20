@@ -101,6 +101,8 @@ class Embedded:Wifi {
     ("Connecting to " + ssid).print();
     emit(cc) {
     """
+    WiFi.setAutoReconnect(false);
+    WiFi.persistent(false);
     WiFi.begin(bevp_ssid->bems_toCcString().c_str(), bevp_password->bems_toCcString().c_str());
     int count = 0;
     while (WiFi.status() != WL_CONNECTED && count < 40) {
@@ -110,6 +112,8 @@ class Embedded:Wifi {
     }
     if (WiFi.status() == WL_CONNECTED) {
       //Serial.print("Connected, IP address:\t");
+      WiFi.setAutoReconnect(false);
+      WiFi.persistent(false);
       Serial.println(WiFi.localIP());
 
       String lip = WiFi.localIP().toString();
