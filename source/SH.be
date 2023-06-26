@@ -210,7 +210,7 @@ class Embedded:AppShell {
 
    buildControl(Int conPos, String conName, String conArgs) {
      //sh no impl
-     "buildControl called in SH".print();
+     //"buildControl called in SH".print();
      return(null);
    }
 
@@ -343,7 +343,7 @@ class Embedded:AppShell {
       startWifi();
       unless (Wifi.up) {
         if (TS.isEmpty(ssid) || readyForAp) {
-          "start ap in checkWifiAp".print();
+          //"start ap in checkWifiAp".print();
           initAp();
         }
       }
@@ -396,13 +396,13 @@ class Embedded:AppShell {
    }
    
    checkWifiUp() {
-    "checking if wifi up".print();
+    //"checking if wifi up".print();
     unless (Wifi.isConnected || TS.isEmpty(ssid)) {
-       "configured but not up".print();
+       "wifi configured but not up".print();
        auto wifi = Embedded:Wifi.new();
        auto nets = wifi.scanNetworks();
        if (nets.has(ssid)) {
-         "my ssid looks to be present, restarting".print();
+         "my ssid present, restarting".print();
          needsFsRestart = true;
        }
      }
@@ -453,7 +453,7 @@ class Embedded:AppShell {
      if (nowup > nextMaybeSave) {
       nextMaybeSave = nowup + 105000;
       if (config.changed) {
-        "maybe saving config".print();
+        "maybeSave config".print();
         config.maybeSave();
       }
       needsGc = true;
@@ -478,12 +478,12 @@ class Embedded:AppShell {
       nextResetWindow = nowup + 570000;//9.5 mins
       if (inReset) {
         inReset = false;
-        "leaving reset window".print();
+        "leaving reset".print();
       }
       if (justStarted) {
         justStarted = false;
         inReset = true;
-        "entering reset window".print();
+        "entering reset".print();
       }
       return(self);
      }
@@ -493,7 +493,7 @@ class Embedded:AppShell {
       return(self);
      }
      if (nextRestart > zero && nowup > nextRestart) {
-      "restarting because of nextRestart".print();
+      "restarting from nextRestart".print();
       Wifi.stop();
       Wifi.clearAll();
       app.restart();
@@ -519,12 +519,12 @@ class Embedded:AppShell {
      }
      ifNotEmit(noSer) {
       if (def(serserver) && serserver.available) {
-        "preding serpay".print();
+        "got serpay".print();
         String serpay = serserver.checkGetPayload(readBuf, slashn);
       }
       if (TS.notEmpty(serpay)) {
         try {
-            "doing serpay".print();
+            //"doing serpay".print();
             String scmdres = doCmd("serial", "", serpay);
             if (TS.isEmpty(scmdres)) {
               "scmdres empty".print();
@@ -535,9 +535,9 @@ class Embedded:AppShell {
             "error handling command".print();
             sdce.print();
           }
-          "serpay returning".print();
+          "serpay returning now".print();
           //app.yield();
-          "now".print();
+          //"now".print();
           return(self);
       }
      }
@@ -628,12 +628,12 @@ class Embedded:AppShell {
      }
      if (needsRestart) {
        needsRestart = false;
-       "prepping restart because needsRestart".print();
+       "prep restart needsRestart".print();
         nextRestart = nowup + 2000;
      }
      if (needsFsRestart) {
        needsFsRestart = false;
-       "maybe saving config".print();
+       "do maybeSave".print();
        config.maybeSave();
        needsRestart = true;
      }
@@ -649,9 +649,9 @@ class Embedded:AppShell {
        return("channel empty");
      }
      //check max length and num of spaces
-     ("cmd channel follows").print();
+     ("cmd channel").print();
      channel.print();
-     ("cmdline follows").print();
+     ("cmdline").print();
      cmdline.print();
      auto cmdl = cmdline.split(" ");
      //get rid of trailing newline NOW WE DOWN'T, ADD SOMETHING ON THE BACK
