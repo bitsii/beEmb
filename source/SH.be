@@ -785,8 +785,7 @@ class Embedded:AppShell {
      }
    }
 
-   ifNotEmit(noMqtt) {
-   handleMessage(Embedded:MqttMessage msg) {
+   handleMessage(any msg) {
     "got msg".print();
       if (def(msg)) {
         msg.print();
@@ -796,7 +795,6 @@ class Embedded:AppShell {
         }
         needsGc = true;
       }
-   }
    }
    
    doCmd(String channel, String origin, String cmdline) String {

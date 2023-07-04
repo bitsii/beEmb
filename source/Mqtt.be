@@ -34,6 +34,7 @@ emit(cc) {
       String pass;
       Int mqttPort = 1883;
       String id = System:Random.getString(16);
+      Embedded:MqttMessage mqpubm;
       Container:List mqpubl = Container:List.new();
       Container:List:Iterator mqpubi;
       Int mqpublmax = 8;
@@ -41,7 +42,7 @@ emit(cc) {
     }
     emit(cc) {
       """
-      client = std::make_unique<MQTTClient>(256);
+      client = std::make_unique<MQTTClient>(512);
       """
     }
   }
@@ -175,10 +176,14 @@ emit(cc) {
       //Serial.println(client->lastError());
       """
     }
-    if (def(mqpubi)) {
+    if (def(mqpubm)) {
+      if (publish(mqpubm)) {
+        mqpubm = null;
+      }
+      return(true);
+    } elseIf (def(mqpubi)) {
       if (mqpubi.hasNext) {
-        Embedded:MqttMessage pmsg = mqpubi.next;
-        publish(pmsg);
+        mqpubm = mqpubi.next;
         return(true);
       } else {
         mqpubi = null;
