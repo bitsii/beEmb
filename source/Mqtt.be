@@ -29,7 +29,7 @@ std::string BEC_2_8_4_EmbeddedMqtt::gotTopic;
 std::string BEC_2_8_4_EmbeddedMqtt::gotPayload;
 
 void messageReceived(String &topic, String &payload) {
-  Serial.println("incoming: " + topic + " - " + payload);
+  //Serial.println("incoming: " + topic + " - " + payload);
 
   // Note: Do not use the client in the callback to publish, subscribe or
   // unsubscribe as it may cause deadlocks when other things arrive while
@@ -258,6 +258,13 @@ void messageReceived(String &topic, String &payload) {
   }
 
   subscribe(String topic) {
+    if (TS.notEmpty(topic)) {
+      emit(cc) {
+        """
+        client->subscribe(beq->beva_topic->bems_toCcString().c_str());
+        """
+      }
+    }
   }
   
 }
