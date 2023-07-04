@@ -38,6 +38,10 @@ emit(cc) {
       Container:List mqpubl = Container:List.new();
       Container:List:Iterator mqpubi;
       Int mqpublmax = 8;
+      Embedded:MqttMessage mqrcm;
+      Container:List mqrcl = Container:List.new();
+      Container:List:Iterator mqrci;
+      Int mqrcmax = 8;
       Int zero = 0;
     }
     emit(cc) {
@@ -146,7 +150,7 @@ emit(cc) {
     Bool t = true;
     Bool f = false
     Bool ret;
-    ("publishing " + topic + " " + payload).print();
+    //("publishing " + topic + " " + payload).print();
     emit(cc) {
       """
       if (client->publish(beq->beva_topic->bems_toCcString().c_str(), beq->beva_payload->bems_toCcString().c_str())) {
@@ -156,11 +160,11 @@ emit(cc) {
         }
       """
     }
-    if (ret) {
+    /*if (ret) {
      "mqtt published".print();
     } else {
       "mqtt publish failed".print();
-    }
+    }*/
     return(ret);
   }
 
@@ -168,23 +172,51 @@ emit(cc) {
     return(publish(msg.topic, msg.payload));
   }
 
-  handleAsync() Bool {
+  handleAsync(any mqttHandler) Bool {
     //return is "did I do work"
     emit(cc) {
       """
-      client->loop();
-      //Serial.println(client->lastError());
+      if (!client->loop()) {
+        //Serial.println(client->lastError());
+        //if got something during recieve, return
       """
     }
+    return(false);
+    emit(cc) {
+      """
+    }
+      """
+    }
+
+    if (def(mqrcm)) {
+      auto m = mqrcm;
+      mqrcm = null;
+      mqttHandler.handleMqtt(m.topic, m.payload);
+      return(true);
+    } elseIf (def(mqrci)) {
+      if (mqrci.hasNext) {
+        mqrcm = mqrci.next;
+        return(false);
+      } else {
+        mqrci = null;
+        return(false);
+      }
+    } elseIf (mqrcl.size > zero) {
+      mqrci = mqrcl.iterator;
+      mqrcl = Container:List.new();
+      return(false);
+    }
+
     if (def(mqpubm)) {
       if (publish(mqpubm)) {
         mqpubm = null;
       }
+      //have a fail count then give up
       return(true);
     } elseIf (def(mqpubi)) {
       if (mqpubi.hasNext) {
         mqpubm = mqpubi.next;
-        return(true);
+        return(false);
       } else {
         mqpubi = null;
         mqpubl.clear();
@@ -192,12 +224,10 @@ emit(cc) {
       }
     } elseIf (mqpubl.size > zero) {
       mqpubi = mqpubl.iterator;
+      return(false);
     }
-    return(false);
-  }
 
-  receive() Embedded:MqttMessage {
-    return(null);
+    return(false);
   }
 
   subscribe(String topic) {

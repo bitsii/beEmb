@@ -746,13 +746,8 @@ class Embedded:AppShell {
      }
      ifNotEmit(noMqtt) {
       if (def(mqtt)) {
-        if (mqtt.handleAsync()) {
+        if (mqtt.handleAsync(self)) {
           needsGc = true;
-          return(self);
-        }
-        auto msg = mqtt.receive();
-        if (def(msg)) {
-          handleMessage(msg);
           return(self);
         }
       }
@@ -785,15 +780,17 @@ class Embedded:AppShell {
      }
    }
 
-   handleMessage(any msg) {
-    "got msg".print();
-      if (def(msg)) {
-        msg.print();
+   handleMqtt(String topic, String payload) {
+    "got mqtt".print();
+      if (TS.notEmpty(topic) && TS.notEmpty(payload)) {
+        ("Topic: " + topic + " Payload: " + payload).print();
         //Topic:homeassistant/status;Payload:online;
-        if (msg.topic == "homeassistant/status" && msg.payload == "online") {
+        if (topic == "homeassistant/status" && payload == "online") {
           mqConfUp();
         }
         needsGc = true;
+      } else {
+        "Topic or Payload Empty".print();
       }
    }
    
