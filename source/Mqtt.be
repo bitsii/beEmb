@@ -7,16 +7,17 @@ use System:Exception;
 use Embedded:MqMessage;
 
 /*
-In BEAR_Imports.hpp
-
+//for Mqtt.be
+//in BEAR_Imports.hpp
+#include <MQTT.h>
 */
 
 class Embedded:Mqtt {
 
 emit(cc_classHead) {
 """
-std::unique_ptr<MqttClient> mqttClient;
-WiFiClient wifiClient;
+std::unique_ptr<MQTTClient> client;
+WiFiClient net;
 """
 }
 
@@ -33,6 +34,15 @@ emit(cc) {
       String pass;
       Int mqttPort = 1883;
       String id = System:Random.getString(16);
+      Container:List mqpubl = Container:List.new();
+      Container:List:Iterator mqpubi;
+      Int mqpublmax = 8;
+      Int zero = 0;
+    }
+    emit(cc) {
+      """
+      client = std::make_unique<MQTTClient>();
+      """
     }
   }
 
@@ -43,151 +53,148 @@ emit(cc) {
     new();
   }
 
-  poll() {
-    emit(cc) {
-      """
-      mqttClient->poll();
-      """
+  minAsyncCapacitySet(Int size) {
+    if (mqpublmax < size) {
+      mqpublmax.setValue(size);
     }
   }
 
-  isOpenGet() Bool {
-    emit(cc) {
-      """
-      if (mqttClient) {
-        if (mqttClient->connected()) {
-      """
-    }
-    return(true);
-    emit(cc) {
-      """
-    }
-      }
-      """
+  hasAsyncCapacity(Int amount) Bool {
+    if (mqpublmax > mqpubl.size && mqpublmax - mqpubl.size >= amount) {
+      return(true);
     }
     return(false);
   }
 
-  close() {
+  publishAsync(String pt, String cf) Bool {
+    return(publishAsync(Embedded:MqttMessage.new(pt, cf)));
+  }
+
+  publishAsync(Embedded:MqttMessage msg) Bool {
+    if (hasAsyncCapacity(1)) {
+      mqpubl += msg;
+      return(true);
+    }
+    return(false);
+  }
+
+  isOpenGet() Bool {
+    Bool t = true;
+    Bool f = false
+    Bool ret;
     emit(cc) {
       """
-      if (mqttClient) {
-        mqttClient->stop();
+      if (client->connected()) {
+        beq->bevl_ret = beq->bevl_t;
+      } else {
+        beq->bevl_ret = beq->bevl_f;
+      }
+        """
+      }
+    return(ret);
+  }
+
+  close() Bool {
+    Bool t = true;
+    Bool f = false
+    Bool ret;
+    emit(cc) {
+      """
+      if (client->connected()) {
+        if (client->disconnect()) {
+          beq->bevl_ret = beq->bevl_t;
+        } else {
+          beq->bevl_ret = beq->bevl_f;
+        }
+      } else {
+        beq->bevl_ret = beq->bevl_f;
       }
       """
     }
+    if (ret) {
+     "mqtt close succeeded".print();
+    } else {
+      "mqtt close failed".print();
+    }
+    return(ret);
   }
   
   open() Bool {
-    Bool didOpen = true;
+    Bool t = true;
+    Bool f = false
+    Bool ret;
     emit(cc) {
       """
-      mqttClient = std::make_unique<MqttClient>(&wifiClient);
-      mqttClient->setId(bevp_id->bems_toCcString().c_str());
-      mqttClient->setUsernamePassword(bevp_user->bems_toCcString().c_str(), bevp_pass->bems_toCcString().c_str());
-      if (!mqttClient->connect(bevp_mqttServer->bems_toCcString().c_str(), bevp_mqttPort->bevi_int)) {
-        Serial.print("MQTT connection failed! Error code = ");
-        Serial.println(mqttClient->connectError());
-        """
-      }
-      didOpen = false;
-    emit(cc) {
-      """
-      } else {
-        Serial.println("MQTT connected");
-      }
+      client->begin(bevp_mqttServer->bems_toCcString().c_str(), bevp_mqttPort->bevi_int, net);
+      if (client->connect(bevp_id->bems_toCcString().c_str(), bevp_user->bems_toCcString().c_str(), bevp_pass->bems_toCcString().c_str())) {
+          beq->bevl_ret = beq->bevl_t;
+        } else {
+          beq->bevl_ret = beq->bevl_f;
+        }
       """
     }
-    return(didOpen);
+    if (ret) {
+     "mqtt opened".print();
+    } else {
+      "mqtt open failed".print();
+    }
+    return(ret);
   }
 
   publish(String topic, String payload) Bool {
+    Bool t = true;
+    Bool f = false
+    Bool ret;
+    ("publishing " + topic + " " + payload).print();
     emit(cc) {
       """
-      mqttClient->beginMessage(beq->beva_topic->bems_toCcString().c_str());
-      mqttClient->print(beq->beva_payload->bems_toCcString().c_str());
-      mqttClient->endMessage();
+      if (client->publish(beq->beva_topic->bems_toCcString().c_str(), beq->beva_payload->bems_toCcString().c_str())) {
+          beq->bevl_ret = beq->bevl_t;
+        } else {
+          beq->bevl_ret = beq->bevl_f;
+        }
       """
     }
-    return(true);
+    if (ret) {
+     "mqtt published".print();
+    } else {
+      "mqtt publish failed".print();
+    }
+    return(ret);
   }
 
   publish(Embedded:MqttMessage msg) Bool {
     return(publish(msg.topic, msg.payload));
   }
 
-  handleLoop() Bool {
-    return(true);
-  }
-
-  subscribe(String topic) {
+  handleAsync() Bool {
+    //return is "did I do work"
     emit(cc) {
       """
-      mqttClient->subscribe(beq->beva_topic->bems_toCcString().c_str());
+      client->loop();
       """
     }
+    if (def(mqpubi)) {
+      if (mqpubi.hasNext) {
+        Embedded:MqttMessage pmsg = mqpubi.next;
+        publish(pmsg);
+        return(true);
+      } else {
+        mqpubi = null;
+        mqpubl.clear();
+        return(false);
+      }
+    } elseIf (mqpubl.size > zero) {
+      mqpubi = mqpubl.iterator;
+    }
+    return(false);
   }
 
   receive() Embedded:MqttMessage {
-    emit(cc) {
-      """
-     int messageSize = mqttClient->parseMessage();
-    if (messageSize) {
-      """
-    }
-    Int paysize = Int.new();
-    emit(cc) {
-      """
-      beq->bevl_paysize->bevi_int = messageSize;
-      """
-    }
-    String topic;
-    String payload = String.new(paysize);
-    Int chari = Int.new();
-    String chars = String.new(1);
-    chars.setCodeUnchecked(0, 32);
-    chars.size.setValue(1);
-    Int zero = 0;
-    emit(cc) {
-      """
-    // we received a message, print out the topic and contents
-    //Serial.print("Received a message with topic '");
-    //Serial.print(mqttClient->messageTopic());
-
-    String tpc = mqttClient->messageTopic();
-    std::string tpcs = std::string(tpc.c_str());
-    beq->bevl_topic = new BEC_2_4_6_TextString(tpcs);
-
-    //Serial.print("', length ");
-    //Serial.print(messageSize);
-    //Serial.println(" bytes:");
-
-    // use the Stream interface to print the contents
-    //TODO timeout for read
-    while (mqttClient->available()) {
-      //Serial.print((char)mqttClient->read());
-      char c = (char)mqttClient->read();
-      //Serial.write(c);
-      beq->bevl_chari->bevi_int = c;
-      """
-    }
-    chars.setCodeUnchecked(zero, chari);
-    payload += chars;
-    emit(cc) {
-      """
-    }
-    } else {
-      """
-    }
     return(null);
-    emit(cc) {
-      """
-    }
-      """
-    }
+  }
 
-    return(Embedded:MqttMessage.new(topic, payload));
-
+  subscribe(String topic) {
   }
   
 }

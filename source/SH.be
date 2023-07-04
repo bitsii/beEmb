@@ -16,6 +16,8 @@ class Embedded:AppShell {
        Config config = Config.new();
        Int nowup = Int.new();
        String lastEventsRes;
+       Bool needsStateUp = false;
+       Bool needsStateUpSoon = false;
      }
      slots {
        Int shpini;
@@ -27,7 +29,7 @@ class Embedded:AppShell {
 
        Int zero = 0;
        Int nextUpdateCheck = 0;
-       Int nextCds = 0;
+       Int nextMq = 0;
        Int nextSwInfo = 0;
        Int nextRestart = 0;
        Int nextMaybeSave = 0;
@@ -56,10 +58,6 @@ class Embedded:AppShell {
        Bool needsBuildControls = true;
        Bool needsLoadStates = true;
        Bool needsGc = false;
-       Bool needsStateUp = false;
-       Container:List mqpubl = Container:List.new();
-       Container:List:Iterator mqpubi;
-       Int mqpublmax = 8;
      }
      app.plugin = self;
 
@@ -75,11 +73,11 @@ class Embedded:AppShell {
 
      app.uptime(nowup);
      nextUpdateCheck = nowup + 60000;
-     nextCds = nowup + 11000;
+     nextMq = nowup + 11000;
      nextSwInfo = nowup + 540000;
      nextMaybeSave = nowup + 105000;
      nextApCheck = nowup + 240000;//4 mins
-     nextWifiCheck = nowup + 300000;//5 mins
+     nextWifiCheck = nowup + 300000;//13 mins
      nextResetWindow = nowup + 570000;//9.5 mins
      
      //"making webPage".print();
@@ -210,7 +208,7 @@ class Embedded:AppShell {
 
    buildControl(Int conPos, String conName, String conArgs) {
      //sh no impl
-     //"buildControl called in SH".print();
+     "buildControl called in SH".print();
      return(null);
    }
 
@@ -270,9 +268,9 @@ class Embedded:AppShell {
         Embedded:Mdns mdserver;
        }
      }
-     ifNotEmit(noCds) {
+     ifNotEmit(noMqtt) {
        fields {
-        Embedded:Cds cds;
+        Embedded:Mqtt mqtt;
        }
      }
      fields {
@@ -327,16 +325,130 @@ class Embedded:AppShell {
             mdserver.start();
           }
 
-          ifNotEmit(noCds) {
-            cds = Embedded:Cds.new();
-            cds.id = did;
-            cds.start();
-          }
         }
+
        }
       }
    }
 
+   initMq() {
+     ifNotEmit(noMqtt) {
+       if (def(mqtt)) {
+         auto oldmqtt = mqtt;
+         mqtt = null;
+         oldmqtt.close();
+       }
+       if (Wifi.isConnected) {
+        mqtt = Embedded:Mqtt.new("192.168.1.124", "ha", "hapass");
+        if (mqtt.open()) {
+          mqtt.subscribe("homeassistant/status");
+          //mqtt.subscribe("/test");
+          mqConfUp();
+          needsGc = true;
+        } else {
+          oldmqtt = mqtt;
+          mqtt = null;
+          oldmqtt.close();
+        }
+       }
+     }
+   }
+
+   mqConfUp() {
+     "mqConfUp".print();
+     mqtt.minAsyncCapacity = controls.size;
+     unless (mqtt.hasAsyncCapacity(controls.size)) {
+       "mqtt conf not enough space".print();
+       return(self);
+     }
+     //String tpp = "homeassistant/switch/" + did + "-" + i;
+     //Map cf = Maps.from("name", conf["name"], "command_topic", tpp + "/set", "state_topic", tpp + "/state", "unique_id", did + "-" + i);
+     //tpp = "homeassistant/light/" + did + "-" + i;
+     //cf = Maps.from("name", conf["name"], "command_topic", tpp + "/set", "state_topic", tpp + "/state", "unique_id", did + "-" + i, "schema", "json", "brightness", true, "brightness_scale", 255);
+
+     Int keyi = config.getPos("dname");
+     String dname = config.get(keyi);
+     if (TS.isEmpty(dname)) {
+       dname = "CasNic Device";
+     }
+
+     any ctl;
+     String conName;
+     Int conPoss;
+     String tpp;
+     String cf;
+     String pt;
+     for (ctl in controls) {
+       conName = ctl.conName;
+       conPoss = ctl.conPos.toString();
+       if (conName == "sw") {
+         tpp = "homeassistant/switch/" + did + "-" + conPoss;
+         pt = tpp + "/config";
+         cf = "{ \"name\": \"" += dname += " " += conPoss += "\", \"command_topic\": \"" += tpp += "/set\", \"state_topic\": \"" += tpp += "/state\", \"unique_id\": \"" += did += "-" += conPoss += "\" }";
+         //mqtt.subscribe(tpp += "/set");
+       } elseIf (conName == "dim") {
+         tpp = "homeassistant/light/" + did + "-" + conPoss;
+         pt = tpp + "/config";
+         cf = "{ \"name\": \"" += dname += " " += conPoss += "\", \"command_topic\": \"" += tpp += "/set\", \"state_topic\": \"" += tpp += "/state\", \"unique_id\": \"" += did += "-" += conPoss += "\", \"schema\": \"json\", \"brightness\": true, \"brightness_scale\": 255 }";
+         //mqtt.subscribe(tpp += "/set");
+       }
+       if (TS.notEmpty(pt) && TS.notEmpty(cf)) {
+         cf.print();
+         mqtt.publishAsync(pt, cf);
+       }
+     }
+     //mqStateUp();
+     needsStateUpSoon = true;
+   }
+
+   mqStateUp() {
+     "mqStateUp".print();
+     unless (mqtt.hasAsyncCapacity(controls.size)) {
+       "mqtt state not enough space".print();
+       return(self);
+     }
+
+     any ctl;
+     String conName;
+     Int conPoss;
+     String tpp;
+     String cf;
+     String pt;
+     for (ctl in controls) {
+       conName = ctl.conName;
+       conPoss = ctl.conPos.toString();
+       if (conName == "sw") {
+         tpp = "homeassistant/switch/" + did + "-" + conPoss;
+         pt = tpp + "/state";
+         if (TS.notEmpty(ctl.sw)) {
+           cf = ctl.sw.upper();
+         } else {
+           cf = "OFF";
+         }
+       } elseIf (conName == "dim") {
+         tpp = "homeassistant/light/" + did + "-" + conPoss;
+         pt = tpp + "/state";
+         cf = "{ \"state\": \"";
+         if (TS.notEmpty(ctl.sw)) {
+           cf += ctl.sw.upper();
+         } else {
+           cf += "OFF";
+         }
+         cf += "\"";
+         if (TS.notEmpty(ctl.lvl)) {
+           Int inlvli = Int.new(ctl.lvl);
+           inlvli = 255 - inlvli;//255 - x = y; y + x = 255;255 - y = x
+           cf += ", \"brightness\": " += inlvli.toString();
+         }
+         cf += " }";
+       }
+       if (TS.notEmpty(pt) && TS.notEmpty(cf)) {
+         cf.print();
+         mqtt.publishAsync(pt, cf);
+       }
+     }
+   }
+   
   checkWifiAp() {
      //"in checkWifiAp".print();
      unless (Wifi.up && Wifi.mode == "station") {
@@ -443,6 +555,7 @@ class Embedded:AppShell {
      if (needsLoadStates) {
        needsLoadStates = false;
        loadStates();
+       needsStateUp = false;
        return(self);
      }
      if (needsGc) {
@@ -508,11 +621,17 @@ class Embedded:AppShell {
       }
       return(self);
      }
-     if (nowup > nextCds) {
-      nextCds = nowup + 11000;
-      ifNotEmit(noCds) {
-        if (def(cds)) {
-          cds.announce();
+     if (nowup > nextMq) {
+      nextMq = nowup + 11000;
+      ifNotEmit(noMqtt) {
+        unless (def(mqtt) && mqtt.isOpen) {
+          initMq();
+        } else {
+          //mqtt.publish("/test", "test from sh pub");
+          if (needsStateUpSoon) {
+            needsStateUpSoon = false;
+            needsStateUp = true;
+          }
         }
       }
       return(self);
@@ -621,6 +740,27 @@ class Embedded:AppShell {
         return(self);
       }
      }
+     ifNotEmit(noMqtt) {
+      if (def(mqtt)) {
+        if (mqtt.handleAsync()) {
+          needsGc = true;
+          return(self);
+        }
+        auto msg = mqtt.receive();
+        if (def(msg)) {
+          handleMessage(msg);
+          return(self);
+        }
+      }
+     }
+     if (needsStateUp) {
+      needsStateUp = false;
+      if (def(mqtt)) {
+        mqStateUp();
+      }
+      needsGc = true;
+      return(self);
+     }
      ifNotEmit(noMdns) {
       if (def(mdserver)) {
         mdserver.update();
@@ -633,10 +773,22 @@ class Embedded:AppShell {
      }
      if (needsFsRestart) {
        needsFsRestart = false;
-       "do maybeSave".print();
+       "maybeSave config".print();
        config.maybeSave();
        needsRestart = true;
      }
+   }
+
+   handleMessage(Embedded:MqttMessage msg) {
+     "got msg".print();
+      if (def(msg)) {
+        msg.print();
+        //Topic:homeassistant/status;Payload:online;
+        if (msg.topic == "homeassistant/status" && msg.payload == "online") {
+          mqConfUp();
+        }
+        needsGc = true;
+      }
    }
    
    doCmd(String channel, String origin, String cmdline) String {

@@ -11,6 +11,7 @@ class Embedded:App {
      fields {
        any plugin;
        Int hlCount = 0;
+       Int zero = 0;
      }
    }
    
@@ -26,7 +27,7 @@ class Embedded:App {
    }
    
    handleLoop() {
-     if (hlCount > 0) {
+     if (hlCount > zero) {
        "HLCOUNT ELEVATED".print();
      }
      hlCount++=;
