@@ -18,12 +18,28 @@ emit(cc_classHead) {
 """
 std::unique_ptr<MQTTClient> client;
 WiFiClient net;
+static std::string gotTopic;
+static std::string gotPayload;
 """
 }
 
 emit(cc) {
  """
+std::string BEC_2_8_4_EmbeddedMqtt::gotTopic;
+std::string BEC_2_8_4_EmbeddedMqtt::gotPayload;
 
+void messageReceived(String &topic, String &payload) {
+  Serial.println("incoming: " + topic + " - " + payload);
+
+  // Note: Do not use the client in the callback to publish, subscribe or
+  // unsubscribe as it may cause deadlocks when other things arrive while
+  // sending and receiving acknowledgments. Instead, change a global variable,
+  // or push to a queue and handle it in the loop after calling `client.loop()`.
+
+  //std::string lips = std::string(lip.c_str());
+  BEC_2_8_4_EmbeddedMqtt::gotTopic = std::string(topic.c_str());
+  BEC_2_8_4_EmbeddedMqtt::gotPayload = std::string(payload.c_str());
+}
  """
 }
 
@@ -65,7 +81,7 @@ emit(cc) {
   }
 
   hasAsyncCapacity(Int amount) Bool {
-    if (mqpublmax > mqpubl.size && mqpublmax - mqpubl.size >= amount) {
+    if (mqpublmax >= mqpubl.size && mqpublmax - mqpubl.size >= amount) {
       return(true);
     }
     return(false);
@@ -84,15 +100,13 @@ emit(cc) {
   }
 
   isOpenGet() Bool {
-    Bool t = true;
-    Bool f = false
     Bool ret;
     emit(cc) {
       """
       if (client->connected()) {
-        beq->bevl_ret = beq->bevl_t;
+        beq->bevl_ret = BECS_Runtime::boolTrue;
       } else {
-        beq->bevl_ret = beq->bevl_f;
+        beq->bevl_ret = BECS_Runtime::boolFalse;
       }
         """
       }
@@ -100,19 +114,17 @@ emit(cc) {
   }
 
   close() Bool {
-    Bool t = true;
-    Bool f = false
     Bool ret;
     emit(cc) {
       """
       if (client->connected()) {
         if (client->disconnect()) {
-          beq->bevl_ret = beq->bevl_t;
+          beq->bevl_ret = BECS_Runtime::boolTrue;
         } else {
-          beq->bevl_ret = beq->bevl_f;
+          beq->bevl_ret = BECS_Runtime::boolFalse;
         }
       } else {
-        beq->bevl_ret = beq->bevl_f;
+        beq->bevl_ret = BECS_Runtime::boolFalse;
       }
       """
     }
@@ -125,16 +137,15 @@ emit(cc) {
   }
   
   open() Bool {
-    Bool t = true;
-    Bool f = false
     Bool ret;
     emit(cc) {
       """
       client->begin(bevp_mqttServer->bems_toCcString().c_str(), bevp_mqttPort->bevi_int, net);
+      client->onMessage(messageReceived);
       if (client->connect(bevp_id->bems_toCcString().c_str(), bevp_user->bems_toCcString().c_str(), bevp_pass->bems_toCcString().c_str())) {
-          beq->bevl_ret = beq->bevl_t;
+          beq->bevl_ret = BECS_Runtime::boolTrue;
         } else {
-          beq->bevl_ret = beq->bevl_f;
+          beq->bevl_ret = BECS_Runtime::boolFalse;
         }
       """
     }
@@ -147,16 +158,14 @@ emit(cc) {
   }
 
   publish(String topic, String payload) Bool {
-    Bool t = true;
-    Bool f = false
     Bool ret;
     //("publishing " + topic + " " + payload).print();
     emit(cc) {
       """
       if (client->publish(beq->beva_topic->bems_toCcString().c_str(), beq->beva_payload->bems_toCcString().c_str())) {
-          beq->bevl_ret = beq->bevl_t;
+          beq->bevl_ret = BECS_Runtime::boolTrue;
         } else {
-          beq->bevl_ret = beq->bevl_f;
+          beq->bevl_ret = BECS_Runtime::boolFalse;
         }
       """
     }
@@ -174,6 +183,8 @@ emit(cc) {
 
   handleAsync(any mqttHandler) Bool {
     //return is "did I do work"
+    String gott;
+    String gotp;
     emit(cc) {
       """
       if (!client->loop()) {
@@ -184,8 +195,24 @@ emit(cc) {
     return(false);
     emit(cc) {
       """
+    } else {
+      if (BEC_2_8_4_EmbeddedMqtt::gotTopic.size() > 0 &&  BEC_2_8_4_EmbeddedMqtt::gotPayload.size() > 0) {
+        beq->bevl_gott = new BEC_2_4_6_TextString(BEC_2_8_4_EmbeddedMqtt::gotTopic);
+        beq->bevl_gotp = new BEC_2_4_6_TextString(BEC_2_8_4_EmbeddedMqtt::gotPayload);
+        BEC_2_8_4_EmbeddedMqtt::gotTopic.clear();
+        BEC_2_8_4_EmbeddedMqtt::gotPayload.clear();
+      }
     }
       """
+    }
+
+    if (TS.notEmpty(gott) && TS.notEmpty(gotp)) {
+      if (mqrcmax > mqrcl.size) {
+        mqrcl += Embedded:MqttMessage.new(gott, gotp);
+      } else {
+        "mqrcl full".print();
+      }
+      return(false);
     }
 
     if (def(mqrcm)) {
