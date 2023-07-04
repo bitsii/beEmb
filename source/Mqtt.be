@@ -41,7 +41,7 @@ emit(cc) {
     }
     emit(cc) {
       """
-      client = std::make_unique<MQTTClient>();
+      client = std::make_unique<MQTTClient>(256);
       """
     }
   }
@@ -172,6 +172,7 @@ emit(cc) {
     emit(cc) {
       """
       client->loop();
+      //Serial.println(client->lastError());
       """
     }
     if (def(mqpubi)) {
