@@ -341,9 +341,9 @@ class Embedded:AppShell {
        if (Wifi.isConnected) {
         mqtt = Embedded:Mqtt.new("192.168.1.124", "ha", "hapass");
         if (mqtt.open()) {
-          mqtt.subscribe("homeassistant/status");
-          //mqtt.subscribe("/test");
-          mqConfUp();
+          mqtt.subscribeAsync("homeassistant/status");
+          //mqtt.subscribeAsync("/test");
+          mqConfUp(true);
           needsGc = true;
         } else {
           oldmqtt = mqtt;
@@ -354,7 +354,7 @@ class Embedded:AppShell {
      }
    }
 
-   mqConfUp() {
+   mqConfUp(Bool doSubs) {
      ifNotEmit(noMqtt) {
       "mqConfUp".print();
       mqtt.minAsyncCapacity = controls.size;
@@ -386,12 +386,16 @@ class Embedded:AppShell {
           tpp = "homeassistant/switch/" + did + "-" + conPoss;
           pt = tpp + "/config";
           cf = "{ \"name\": \"" += dname += " " += conPoss += "\", \"command_topic\": \"" += tpp += "/set\", \"state_topic\": \"" += tpp += "/state\", \"unique_id\": \"" += did += "-" += conPoss += "\" }";
-          //mqtt.subscribe(tpp += "/set");
+          if (doSubs) {
+            mqtt.subscribeAsync(tpp += "/set");
+          }
         } elseIf (conName == "dim") {
           tpp = "homeassistant/light/" + did + "-" + conPoss;
           pt = tpp + "/config";
           cf = "{ \"name\": \"" += dname += " " += conPoss += "\", \"command_topic\": \"" += tpp += "/set\", \"state_topic\": \"" += tpp += "/state\", \"unique_id\": \"" += did += "-" += conPoss += "\", \"schema\": \"json\", \"brightness\": true, \"brightness_scale\": 255 }";
-          //mqtt.subscribe(tpp += "/set");
+          if (doSubs) {
+            mqtt.subscribeAsync(tpp += "/set");
+          }
         }
         if (TS.notEmpty(pt) && TS.notEmpty(cf)) {
           cf.print();
@@ -786,7 +790,7 @@ class Embedded:AppShell {
         ("Topic: " + topic + " Payload: " + payload).print();
         //Topic:homeassistant/status;Payload:online;
         if (topic == "homeassistant/status" && payload == "online") {
-          mqConfUp();
+          mqConfUp(false);
         }
         needsGc = true;
       } else {

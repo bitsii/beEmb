@@ -50,6 +50,8 @@ void messageReceived(String &topic, String &payload) {
       String pass;
       Int mqttPort = 1883;
       String id = System:Random.getString(16);
+      Container:List mqsubl = Container:List.new();
+      Container:List:Iterator mqsubi;
       Embedded:MqttMessage mqpubm;
       Container:List mqpubl = Container:List.new();
       Container:List:Iterator mqpubi;
@@ -97,6 +99,11 @@ void messageReceived(String &topic, String &payload) {
       return(true);
     }
     return(false);
+  }
+
+  subscribeAsync(String topic) Bool {
+    mqsubl += topic;
+    return(true);
   }
 
   isOpenGet() Bool {
@@ -212,6 +219,21 @@ void messageReceived(String &topic, String &payload) {
       } else {
         "mqrcl full".print();
       }
+      return(false);
+    }
+
+    if (def(mqsubi)) {
+      if (mqsubi.hasNext) {
+        String tosub = mqsubi.next;
+        subscribe(tosub);
+        return(true);
+      } else {
+        mqsubi = null;
+        mqsubl.clear();
+        return(false);
+      }
+    } elseIf (mqsubl.size > zero) {
+      mqsubi = mqsubl.iterator;
       return(false);
     }
 
