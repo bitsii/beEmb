@@ -60,6 +60,31 @@ class Embedded:DimmerControl {
 
    doStateMq(String topic, String payload) String {
      ("in doStateMq dc " + topic + " " + payload).print();
+     Int stok = payload.find("brightness");
+     if (def(stok) ) {
+       payload = payload.substring(stok, payload.size);
+       stok = payload.find(":");
+       if (def(stok)) {
+         payload = payload.substring(stok + 1, payload.size);
+         stok = payload.find("}");
+         if (def(stok)) {
+           payload = payload.substring(0, stok);
+         }
+         stok = payload.find(",");
+         if (def(stok)) {
+           payload = payload.substring(0, stok);
+         }
+         //("brightness |" + payload + "|").print();
+         List ds = List.new() += "na" += "na" += "na" += setrlvll += payload;
+         return(doState(ds));
+       }
+     } elseIf (payload.has("ON")) {
+       ds = List.new() += "na" += "na" += "na" += setsw += on;
+       return(doState(ds));
+     } elseIf (payload.has("OFF")) {
+       ds = List.new() += "na" += "na" += "na" += setsw += off;
+       return(doState(ds));
+     }
      return(null);
    }
 
