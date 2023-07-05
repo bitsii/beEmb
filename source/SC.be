@@ -57,6 +57,11 @@ class Embedded:SwitchControl {
      }
    }
 
+   doStateMq(String topic, String payload) String {
+     ("in doStateMq sc " + topic + " " + payload).print();
+     return(null);
+   }
+
    doState(List cmdl) String {
      "in dostate".print();
      String scm = cmdl[3];

@@ -791,6 +791,23 @@ class Embedded:AppShell {
         //Topic:homeassistant/status;Payload:online;
         if (topic == "homeassistant/status" && payload == "online") {
           mqConfUp(false);
+        } elseIf (topic.ends("/set")) {
+          //Topic: homeassistant/switch/PDBTLRHPDZCRLSGC-0/set Payload: ON
+          auto twl = topic.split("/");
+          if (twl.size == 4) {
+            String cid = twl[2];
+            auto cl = cid.split("-");
+            if (cl.size == 2) {
+              String cps = cl[1];
+              if (TS.notEmpty(cps) && cps.isInteger) {
+                Int cp = Int.new(cps);
+                ("got cp " + cps).print();
+                if (def(controls) && cp < controls.size) {
+                  controls[cp].doStateMq(topic, payload);
+                }
+              }
+            }
+          }
         }
         needsGc = true;
       } else {

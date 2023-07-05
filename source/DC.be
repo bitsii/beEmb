@@ -58,6 +58,11 @@ class Embedded:DimmerControl {
      }
    }
 
+   doStateMq(String topic, String payload) String {
+     ("in doStateMq dc " + topic + " " + payload).print();
+     return(null);
+   }
+
    doState(List cmdl) String {
      "in dostate".print();
      String scm = cmdl[3];
