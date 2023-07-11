@@ -257,10 +257,9 @@ void messageReceived(String &topic, String &payload) {
     }
 
     if (def(mqpubm)) {
-      if (publish(mqpubm)) {
-        mqpubm = null;
-      }
-      //have a fail count then give up
+      //if (publish(mqpubm)) { }
+      publish(mqpubm);
+      mqpubm = null;
       return(true);
     } elseIf (def(mqpubi)) {
       if (mqpubi.hasNext) {
