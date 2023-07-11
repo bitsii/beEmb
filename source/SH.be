@@ -837,7 +837,7 @@ class Embedded:AppShell {
      //if (channel == "tcp" && cmdl.size > 0) {
      //  cmdl.put(cmdl.size - 1, cmdl.get(cmdl.size - 1).swap("\r\n", ""));
      //}
-     if (cmdl.size > 0 && cmdl[0] == "sp1" || cmdl[0] == "ap1") {
+     if (cmdl.size > 0 && cmdl[0] == "sp2" || cmdl[0] == "ap2") {
        return(doCmdlSec(channel, origin, cmdl));
      }
      return(doCmdl(channel, origin, cmdl));
@@ -850,9 +850,9 @@ class Embedded:AppShell {
        //sporap1 iv
        "doing cmdlsec".print();
        String spw = "";
-       if (cmdl[0] == "sp1") {
+       if (cmdl[0] == "sp2") {
          spw = spass;
-       } elseIf (cmdl[0] == "ap1") {
+       } elseIf (cmdl[0] == "ap2") {
          spw = pass;
        } else {
          ("unknown secsceme " + cmdl[0]).print();
@@ -862,9 +862,13 @@ class Embedded:AppShell {
        } else {
          origin = "";
        }
-       String tohash = cmdl[1] + "," + origin + "," + spw;
-       //"tohash follows".print();
-       //tohash.print();
+       String tohash = cmdl[1] + "," + origin + "," + spw + ",";
+       Int toc = cmdl.size - 1;
+        String sp = " ";
+        for (Int j = 3;j < toc;j++=) {
+          tohash += cmdl[j] += sp;
+        }
+       //("tohash |" + tohash + "|").print();
        emit(cc) {
          """
       String lip = sha1(beq->bevl_tohash->bems_toCcString().c_str());
