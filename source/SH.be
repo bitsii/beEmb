@@ -339,16 +339,21 @@ class Embedded:AppShell {
          oldmqtt.close();
        }
        if (Wifi.isConnected) {
-        mqtt = Embedded:Mqtt.new("192.168.1.124", "ha", "hapass");
-        if (mqtt.open()) {
-          mqtt.subscribeAsync("homeassistant/status");
-          //mqtt.subscribeAsync("/test");
-          mqConfUp(true);
-          needsGc = true;
-        } else {
-          oldmqtt = mqtt;
-          mqtt = null;
-          oldmqtt.close();
+        String mqhost = config.get(config.getPos("mqhost"));
+        String mquser = config.get(config.getPos("mquser"));
+        String mqpass = config.get(config.getPos("mqpass"));
+        if (TS.notEmpty(mqhost) && TS.notEmpty(mquser) && TS.notEmpty(mqpass)) {
+          mqtt = Embedded:Mqtt.new(mqhost, mquser, mqpass);
+          if (mqtt.open()) {
+            mqtt.subscribeAsync("homeassistant/status");
+            //mqtt.subscribeAsync("/test");
+            mqConfUp(true);
+            needsGc = true;
+          } else {
+            oldmqtt = mqtt;
+            mqtt = null;
+            oldmqtt.close();
+          }
         }
        }
      }
@@ -356,7 +361,11 @@ class Embedded:AppShell {
 
    mqConfUp(Bool doSubs) {
      ifNotEmit(noMqtt) {
-      "mqConfUp".print();
+       "mqConfUp".print();
+       if (undef(mqtt)) {
+         "mqtt undef".print();
+         return(self);
+       }
       mqtt.minAsyncCapacity = controls.size;
       unless (mqtt.hasAsyncCapacity(controls.size)) {
         "mqtt conf not enough space".print();
@@ -410,6 +419,10 @@ class Embedded:AppShell {
    mqStateUp() {
      ifNotEmit(noMqtt) {
       "mqStateUp".print();
+      if (undef(mqtt)) {
+         "mqtt undef".print();
+         return(self);
+       }
       unless (mqtt.hasAsyncCapacity(controls.size)) {
         "mqtt state not enough space".print();
         return(self);
@@ -1096,23 +1109,39 @@ class Embedded:AppShell {
       clearStates();
       needsFsRestart = true;
       return("Device reset");//we look for this result, don't change
-    } elseIf (cmd == "putconfig") {
-        String key = cmdl[3];
-        String value = cmdl[4];
+    } elseIf (cmd == "putconfigs") {
+        //String key = cmdl[3];
+        //String value = cmdl[4];
+        //if (TS.notEmpty(value)) {
+        //
+        //}
         if (cmdl[2] == "vhex") {
-          if (TS.notEmpty(value)) {
-            value = Encode:Hex.decode(value);
-          }
+          Bool deHex = true;
+        } else {
+          deHex = false;
         }
-        if (TS.notEmpty(key)) {
-          Int keyi = config.getPos(key);
-          if (TS.isEmpty(value)) {
-            config.put(keyi, "");
+        Int cmdle = cmdl.size - 1;
+        for (Int k = 3;k < cmdle;k++=) {
+          String key = cmdl[k];
+          k++=;
+          if (k < cmdle) {
+            String value = cmdl[k];
           } else {
-            config.put(keyi, value);
+            value = null;
+          }
+          if (TS.notEmpty(key)) {
+            Int keyi = config.getPos(key);
+            if (TS.isEmpty(value)) {
+              config.put(keyi, "");
+            } else {
+              if (deHex) {
+                value = Encode:Hex.decode(value);
+              }
+              config.put(keyi, value);
+            }
           }
         }
-        return("config set");
+        return("configs set");
      } elseIf (cmd == "maybesave") {
         config.maybeSave();
         needsGc = true;
