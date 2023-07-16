@@ -75,7 +75,7 @@ class Embedded:AppShell {
      nextUpdateCheck = nowup + 60000;
      nextMq = nowup + 11000;
      nextSwInfo = nowup + 540000;
-     nextMaybeSave = nowup + 105000;
+     nextMaybeSave = nowup + 45000;//45 secs
      nextApCheck = nowup + 240000;//4 mins
      nextWifiCheck = nowup + 300000;//13 mins
      nextResetWindow = nowup + 570000;//9.5 mins
@@ -585,7 +585,7 @@ class Embedded:AppShell {
        return(self);
      }
      if (nowup > nextMaybeSave) {
-      nextMaybeSave = nowup + 105000;
+      nextMaybeSave = nowup + 45000;//45 secs
       if (config.changed) {
         "maybeSave config".print();
         config.maybeSave();

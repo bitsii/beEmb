@@ -160,7 +160,8 @@ class Embedded:DimmerControl {
    }
    
    clearStates() {
-
+     config.put(dcswi, off);
+     config.put(dclvli, "0");
    }
 
 }

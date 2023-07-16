@@ -103,7 +103,7 @@ class Embedded:SwitchControl {
    }
    
    clearStates() {
-
+     config.put(scswi, off);
    }
 
 }
