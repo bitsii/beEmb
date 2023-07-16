@@ -1055,6 +1055,9 @@ class Embedded:AppShell {
         config.put(shseci, "");
         config.put(shspassi, "");
         config.put(shdidi, "");
+        config.put(config.getPos("mqhost"), "");
+        config.put(config.getPos("mquser"), "");
+        config.put(config.getPos("mqpass"), "");
         clearStates();
         needsFsRestart = true;
         return("Device reset");
@@ -1106,6 +1109,9 @@ class Embedded:AppShell {
       config.put(shseci, "");
       config.put(shspassi, "");
       config.put(shdidi, "");
+      config.put(config.getPos("mqhost"), "");
+      config.put(config.getPos("mquser"), "");
+      config.put(config.getPos("mqpass"), "");
       clearStates();
       needsFsRestart = true;
       return("Device reset");//we look for this result, don't change
