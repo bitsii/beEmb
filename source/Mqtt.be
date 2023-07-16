@@ -64,7 +64,7 @@ void messageReceived(String &topic, String &payload) {
     }
     emit(cc) {
       """
-      client = std::make_unique<MQTTClient>(512);
+      client = std::make_unique<MQTTClient>(384);
       """
     }
   }
