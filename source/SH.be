@@ -132,6 +132,10 @@ class Embedded:AppShell {
      }
    }
 
+   pullUpdate(List cmdl) String {
+     return("would pull update");
+   }
+
    doState(List cmdl) String {
      //Int ctlPos = Int.new(cmdl[2]);
      Int ctlPos = app.strToInt(cmdl[2]);
@@ -366,11 +370,12 @@ class Embedded:AppShell {
          "mqtt undef".print();
          return(self);
        }
-      mqtt.minAsyncCapacity = controls.size;
-      unless (mqtt.hasAsyncCapacity(controls.size)) {
+       Int cap = controls.size + 1;
+       mqtt.minAsyncCapacity = cap;
+       unless (mqtt.hasAsyncCapacity(cap)) {
         "mqtt conf not enough space".print();
         return(self);
-      }
+       }
       //String tpp = "homeassistant/switch/" + did + "-" + i;
       //Map cf = Maps.from("name", conf["name"], "command_topic", tpp + "/set", "state_topic", tpp + "/state", "unique_id", did + "-" + i);
       //tpp = "homeassistant/light/" + did + "-" + i;
@@ -381,6 +386,13 @@ class Embedded:AppShell {
       if (TS.isEmpty(dname)) {
         dname = "CasNic Device";
       }
+
+      String csnc = "cncm/" + did + "/cmd";
+      //results to cncm/did/res
+      if (doSubs) {
+        mqtt.subscribeAsync(csnc);
+      }
+      mqtt.publishAsync("cnds", did);
 
       any ctl;
       String conName;
@@ -821,6 +833,19 @@ class Embedded:AppShell {
               }
             }
           }
+        } elseIf (topic.ends("cmd")) {
+          auto cmdl = payload.split(" ");
+          if (cmdl.size > 1) {
+            if (cmdl[1] == "pass") {
+              cmdl[1] = pass;
+            } elseIf (cmdl[1] == "spass") {
+              cmdl[1] = spass;
+            }
+            String res = doCmdl("mqtt", "", cmdl);
+            if (def(res)) {
+              mqtt.publishAsync("cncm/" + did + "/res", res);
+            }
+          }
         }
         needsGc = true;
       } else {
@@ -1155,6 +1180,8 @@ class Embedded:AppShell {
      } elseIf (cmd == "sysupdate") {
         supurl = cmdl[2];
         return("set supurl");
+     } elseIf (cmd == "pullupdate") {
+        return(pullUpdate(cmdl));
      } elseIf (cmd == "restart") {
        //"got restart".print();
        needsFsRestart = true;
