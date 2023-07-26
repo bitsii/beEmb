@@ -58,6 +58,7 @@ class Embedded:AppShell {
        Bool needsBuildControls = true;
        Bool needsLoadStates = true;
        Bool needsGc = false;
+       any pullUpd;
      }
      app.plugin = self;
 
@@ -133,7 +134,8 @@ class Embedded:AppShell {
    }
 
    pullUpdate(List cmdl) String {
-     return("would pull update");
+     pullUpd = Embedded:PullUpdate.new(cmdl);
+     return(pullUpd.start());
    }
 
    doState(List cmdl) String {
