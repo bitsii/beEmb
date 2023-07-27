@@ -18,7 +18,7 @@ class Embedded:NodeMcuLeds(Embedded:Lights) {
 
    buildSwInfo() {
      if (TS.isEmpty(swSpec)) {
-       swSpec = "0.NodeMcuLeds.16";
+       swSpec = "0.NodeMcuLeds.22";
      }
      super.buildSwInfo();
    }

@@ -134,8 +134,11 @@ class Embedded:AppShell {
    }
 
    pullUpdate(List cmdl) String {
-     pullUpd = Embedded:PullUpdate.new(cmdl);
-     return(pullUpd.start());
+     ifNotEmit(noPu) {
+      pullUpd = Embedded:PullUpdate.new(cmdl);
+      return(pullUpd.start());
+     }
+     return(null);
    }
 
    doState(List cmdl) String {
