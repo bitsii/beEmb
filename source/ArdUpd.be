@@ -7,34 +7,12 @@ use System:Exception;
 
 class Embedded:Update {
 
-     emit(cc_classHead) {
-   """
-BearSSL::PublicKey *signPubKey = nullptr;
-BearSSL::HashSHA256 *hash;
-BearSSL::SigningVerifier *sign;
-   """
-     }
-
-  signKey(String cert) {
-    emit(cc) {
-      """
-signPubKey = new BearSSL::PublicKey(beq->beva_cert->bems_toCcString().c_str());
-hash = new BearSSL::HashSHA256();
-sign = new BearSSL::SigningVerifier(signPubKey);
-      """
-    }
-  }
-
   updateFromUrl(String url) {
 
     Int res = Int.new();
     emit(cc) {
      """
      Serial.println("gonna update");
-     if (signPubKey != nullptr) {
-       Serial.println("setting update signature");
-       Update.installSignature(hash, sign);
-     }
      WiFiClient client;
      t_httpUpdate_return ret = ESPhttpUpdate.update(client, beq->beva_url->bems_toCcString().c_str());
      Serial.println("return ret");

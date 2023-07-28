@@ -11,7 +11,7 @@
 //
 //#define BESPEC_SW "0.Generic.22"  //supergeneric
 //#define BESPEC_SW "0.NodeMcuLeds.24"  //nodemcu
-#define BESPEC_SW  "0.DollaLed.17" //dollatek 2mb 1led
+#define BESPEC_SW  "0.DollaLed.20" //dollatek 2mb 1led
 //#define BESPEC_SW "0.AthomPlugV2.26" //Athom Plug V2 US
 //
 // CON - definition of device's controls

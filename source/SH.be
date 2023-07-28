@@ -601,7 +601,6 @@ class Embedded:AppShell {
       "upurl".print();
       upurl.print();
       auto eupd = Embedded:Update.new();
-      //eupd.signKey(updCert);
       eupd.updateFromUrl(upurl);
       "update done".print();
      }
