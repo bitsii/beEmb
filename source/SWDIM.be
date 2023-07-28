@@ -11,9 +11,7 @@ use Embedded:Aes as Crypt;
 use Encode:Url as EU;
 use Embedded:AppShell;
 
-class Embedded:Lights(Embedded:AppShell) {
-
-   //pinposes //16, 2 nodemcu - Athom 16A US 13 LED 14 RELAY, SONOFF BASIC R2 13 LED 12 RELAY, 16 for dollatek 8285
+class Embedded:SwitchAndDimmer(Embedded:AppShell) {
 
    buildControl(Int conPos, String conName, String conArgs) {
      if (conName == "sw") {
@@ -23,7 +21,7 @@ class Embedded:Lights(Embedded:AppShell) {
        auto dimc = Embedded:DimmerControl.new(self, conPos, conName, conArgs);
        return(dimc);
      } else {
-       "Unknown control conName in Lights".print();
+       "Unknown control conName in SwitchAndDimmer".print();
      }
      return(null);
    }

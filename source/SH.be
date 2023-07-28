@@ -58,6 +58,7 @@ class Embedded:AppShell {
        Bool needsBuildControls = true;
        Bool needsLoadStates = true;
        Bool needsGc = false;
+       Bool needsMqConfUp = false;
        any pullUpd;
      }
      app.plugin = self;
@@ -204,7 +205,7 @@ class Embedded:AppShell {
 
    }
 
-   buildSwInfo() {
+   buildSwInfoIn() {
      if (TS.isEmpty(swSpec)) {
        swSpec = "0.gsh.4";
      }
@@ -215,13 +216,29 @@ class Embedded:AppShell {
      swInfo = devCode + " " + version;
    }
 
+   buildSwInfo() {
+     if (TS.isEmpty(swSpec)) {
+      swSpec = config.get(config.getPos("swspec"));
+      if (TS.isEmpty(swSpec)) {
+        emit(cc) {
+          """
+          std::string swspec = BESPEC_SW;
+          bevp_swSpec = new BEC_2_4_6_TextString(swspec);
+          """
+        }
+      }
+     }
+     buildSwInfoIn();
+   }
+
+
    buildControl(Int conPos, String conName, String conArgs) {
      //sh no impl
      "buildControl called in SH".print();
      return(null);
    }
 
-   buildControls() {
+   buildControlsIn() {
      //config ctlconfver.control.ctlconf,args.control.ctlconf,args
      if (TS.isEmpty(controlSpec)) {
        controlSpec = "";
@@ -243,6 +260,21 @@ class Embedded:AppShell {
        i++=;
      }
      ("controlDef " + controlDef).print();
+   }
+
+   buildControls() {
+     if (TS.isEmpty(controlSpec)) {
+       controlSpec = config.get(config.getPos("conspec"));
+       if (TS.isEmpty(controlSpec)) {
+        emit(cc) {
+          """
+          std::string conspec = BESPEC_CON;
+          bevp_controlSpec = new BEC_2_4_6_TextString(conspec);
+          """
+        }
+       }
+     }
+     buildControlsIn();
    }
 
    initRandom() {
@@ -659,6 +691,14 @@ class Embedded:AppShell {
       }
       return(self);
      }
+     if (needsMqConfUp) {
+       needsMqConfUp = false;
+       ifNotEmit(noMqtt) {
+          mqConfUp(false);
+       }
+       needsGc = true;
+       return(self);
+     }
      if (nowup > nextMq) {
       nextMq = nowup + 11000;
       ifNotEmit(noMqtt) {
@@ -820,7 +860,9 @@ class Embedded:AppShell {
         ("Topic: " + topic + " Payload: " + payload).print();
         //Topic:homeassistant/status;Payload:online;
         if (topic == "homeassistant/status" && payload == "online") {
-          mqConfUp(false);
+          //mqConfUp(false);
+          needsGc = true;
+          needsMqConfUp = true;
         } elseIf (topic.ends("/set")) {
           //Topic: homeassistant/switch/PDBTLRHPDZCRLSGC-0/set Payload: ON
           auto twl = topic.split("/");
