@@ -23,7 +23,9 @@ class Embedded:ButtonControl {
        Int conPos = _conPos;
        Int lastEvent = Int.new();
        String conName = _conName;
-       Int butVal;
+       Int butVal = Int.new();
+       Int lastButVal = Int.new();
+       Int lastTrans = Int.new();
      }
      if (_conArgs.has(",")) {
         auto cal = _conArgs.split(",");
@@ -53,10 +55,13 @@ class Embedded:ButtonControl {
 
    }
 
-   handleLoop() {
+   handleLoop(Int nowup) {
      app.analogRead(pini, butVal);
-     //"butVal ".print();
-     //butVal.print();
+     if (butVal != lastButVal) {
+       lastButVal.setValue(butVal);
+       "butVal changed".print();
+       butVal.print();
+     }
    }
 
 }

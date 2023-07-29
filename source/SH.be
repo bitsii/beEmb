@@ -60,7 +60,7 @@ class Embedded:AppShell {
        Bool needsInitControls = true;
        Bool needsGc = false;
        Bool needsMqConfUp = false;
-       any pullUpd;
+       Int looperI = Int.new();
      }
      app.plugin = self;
 
@@ -133,14 +133,6 @@ class Embedded:AppShell {
      for (any control in controls) {
        control.initControl();
      }
-   }
-
-   pullUpdate(List cmdl) String {
-     ifNotEmit(noPu) {
-      pullUpd = Embedded:PullUpdate.new(cmdl);
-      return(pullUpd.start());
-     }
-     return(null);
    }
 
    doState(List cmdl) String {
@@ -826,6 +818,11 @@ class Embedded:AppShell {
         }
       }
      }
+     looperI.setValue(zero);
+     while (looperI < loopers.size) {
+       loopers.get(looperI).handleLoop(nowup);
+       looperI++=;
+     }
      if (needsStateUp) {
       needsStateUp = false;
       ifNotEmit(noMqtt) {
@@ -1227,8 +1224,6 @@ class Embedded:AppShell {
      } elseIf (cmd == "sysupdate") {
         supurl = cmdl[2];
         return("set supurl");
-     } elseIf (cmd == "pullupdate") {
-        return(pullUpdate(cmdl));
      } elseIf (cmd == "restart") {
        //"got restart".print();
        needsFsRestart = true;
