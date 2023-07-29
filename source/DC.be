@@ -26,7 +26,7 @@ class Embedded:DimmerControl {
      pini = app.strToInt(_conArgs);
    }
 
-   loadStates() {
+   initControl() {
      slots {
        String setlvll = "setlvl";
        String setrlvll = "setrlvl";

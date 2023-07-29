@@ -110,7 +110,7 @@ class Embedded:App {
      """
      }
    }
-   
+
    analogWrite(Int pin, Int value) {
      emit(cc) {
      """
@@ -119,6 +119,25 @@ class Embedded:App {
      analogWrite(pin,value);
      """
      }
+   }
+
+   pinModeInputPullup(Int pin) {
+     emit(cc) {
+     """
+     pinMode(beq->beva_pin->bevi_int,INPUT_PULLUP);
+     """
+     }
+   }
+   
+   analogRead(Int pin, Int value) Int {
+     emit(cc) {
+     """
+     uint8_t pin = (uint8_t) beq->beva_pin->bevi_int;
+     uint8_t value = analogRead(pin);
+     beq->beva_value->bevi_int = (int32_t) value;
+     """
+     }
+     return(value);
    }
    
    restart() {

@@ -36,7 +36,7 @@ class Embedded:SwitchControl {
      pini = app.strToInt(spin);
    }
 
-   loadStates() {
+   initControl() {
      slots {
        Int scswi;
        //on = 0, off = 255

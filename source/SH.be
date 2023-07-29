@@ -18,6 +18,8 @@ class Embedded:AppShell {
        String lastEventsRes;
        Bool needsStateUp = false;
        Bool needsStateUpSoon = false;
+       List controls = List.new();
+       List loopers = List.new();
      }
      slots {
        Int shpini;
@@ -52,11 +54,10 @@ class Embedded:AppShell {
        String supurl;
        String controlSpec;
        String controlDef;
-       List controls = List.new();
        Bool needsNetworkInit = true;
        Bool readyForAp = false;
        Bool needsBuildControls = true;
-       Bool needsLoadStates = true;
+       Bool needsInitControls = true;
        Bool needsGc = false;
        Bool needsMqConfUp = false;
        any pullUpd;
@@ -128,9 +129,9 @@ class Embedded:AppShell {
    }
    }
 
-   loadStates() {
+   initControls() {
      for (any control in controls) {
-       control.loadStates();
+       control.initControl();
      }
    }
 
@@ -621,9 +622,9 @@ class Embedded:AppShell {
        buildControls();
        return(self);
      }
-     if (needsLoadStates) {
-       needsLoadStates = false;
-       loadStates();
+     if (needsInitControls) {
+       needsInitControls = false;
+       initControls();
        needsStateUp = false;
        return(self);
      }
