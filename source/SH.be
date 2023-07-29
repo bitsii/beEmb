@@ -820,7 +820,7 @@ class Embedded:AppShell {
      }
      looperI.setValue(zero);
      while (looperI < loopers.size) {
-       loopers.get(looperI).handleLoop(nowup);
+       loopers.get(looperI).handleLoop();
        looperI++=;
      }
      if (needsStateUp) {

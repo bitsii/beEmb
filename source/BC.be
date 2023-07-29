@@ -55,7 +55,7 @@ class Embedded:ButtonControl {
 
    }
 
-   handleLoop(Int nowup) {
+   handleLoop() {
      app.analogRead(pini, butVal);
      if (butVal != lastButVal) {
        lastButVal.setValue(butVal);
