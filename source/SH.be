@@ -433,6 +433,8 @@ class Embedded:AppShell {
       for (ctl in controls) {
         conName = ctl.conName;
         conPoss = ctl.conPos.toString();
+        cf = null;
+        pt = null;
         if (conName == "sw") {
           tpp = "homeassistant/switch/" + did + "-" + conPoss;
           pt = tpp + "/config";
@@ -479,6 +481,8 @@ class Embedded:AppShell {
       for (ctl in controls) {
         conName = ctl.conName;
         conPoss = ctl.conPos.toString();
+        cf = null;
+        pt = null;
         if (conName == "sw") {
           tpp = "homeassistant/switch/" + did + "-" + conPoss;
           pt = tpp + "/state";
