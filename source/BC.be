@@ -15,9 +15,13 @@ class Embedded:ButtonControl {
      slots {
        Embedded:AppShell ash = _ash;
        Int pini;
-       Int diri = 0;
+       Int diri = 0; //if 0, on is zero, if this is 1, off is zero
        Config config = ash.config;
        Embedded:App app = ash.app;
+       Int onStart = Int.new();
+       Int pushTime;
+       Int swPos;
+       Int resetPushTime;
      }
      fields {
        Int conPos = _conPos;
@@ -28,14 +32,23 @@ class Embedded:ButtonControl {
        Int lastTrans = Int.new();
      }
      if (_conArgs.has(",")) {
+       //all ints comma sep, fields are:
+       //0 pin of button
+       //1 direction (0, on is 0, 1, off is 0)
+       //2 min push time to toggle a switch (0 disables) (millisecs)
+       //3 switch control position (if field 2 is 0, ignored)
+       //4 min push time to do a device reset, if 0 ignored (millisecs)
         auto cal = _conArgs.split(",");
         spin = cal[0];
-        String sdir = cal[1];
-        diri = app.strToInt(sdir);
+        diri = app.strToInt(cal[1]);
+        pushTime = app.strToInt(cal[2]);
+        swPos = app.strToInt(cal[3]);
+        resetPushTime = app.strToInt(cal[4]);
      } else {
       String spin = _conArgs;
      }
      pini = app.strToInt(spin);
+     onStart--=;
    }
 
    initControl() {
@@ -61,6 +74,32 @@ class Embedded:ButtonControl {
        lastButVal.setValue(butVal);
        "butVal changed".print();
        butVal.print();
+       Bool turnedOn = false;
+       if (diri == 0 && butVal == 0) {
+         turnedOn = true;
+       } elseIf (diri == 1 && butVal != 0) {
+         turnedOn = true;
+       }
+       if (turnedOn) {
+         onStart.setValue(ash.nowup);
+       } elseIf (onStart >= 0) {
+         Int ontime = ash.nowup - onStart;
+         ("ontime " + ontime).print();
+         if (resetPushTime > 0 && ontime > resetPushTime) {
+           "reset triggered, resetting".print();
+           ash.reset();
+         } elseIf (pushTime > 0 && ontime > pushTime) {
+           "switch toggle triggered".print();
+           Embedded:SwitchControl swc = ash.controls.get(swPos);
+           if (TS.notEmpty(swc.sw)) {
+             if (swc.sw == swc.on) {
+               swc.doState(List.new().addValue("dostate").addValue("notpw").addValue(swc.conPos.toString()).addValue(swc.setsw).addValue(swc.off));
+             } elseIf (swc.sw == swc.off) {
+               swc.doState(List.new().addValue("dostate").addValue("notpw").addValue(swc.conPos.toString()).addValue(swc.setsw).addValue(swc.on));
+             }
+           }
+         }
+       }
      }
    }
 

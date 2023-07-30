@@ -1126,16 +1126,7 @@ class Embedded:AppShell {
         if (Wifi.isConnected) {
           return("Error, resetbypin only available when not on wifi access point");
         }
-        config.put(shpassi, "");
-        config.put(shssidi, "");
-        config.put(shseci, "");
-        config.put(shspassi, "");
-        config.put(shdidi, "");
-        config.put(config.getPos("mqhost"), "");
-        config.put(config.getPos("mquser"), "");
-        config.put(config.getPos("mqpass"), "");
-        clearStates();
-        needsFsRestart = true;
+        reset();
         return("Device reset");
      }
 
@@ -1180,16 +1171,7 @@ class Embedded:AppShell {
           return("Wifi Setup cleared, restart to activate");
         }
      } elseIf (cmd == "reset") {
-      config.put(shpassi, "");
-      config.put(shssidi, "");
-      config.put(shseci, "");
-      config.put(shspassi, "");
-      config.put(shdidi, "");
-      config.put(config.getPos("mqhost"), "");
-      config.put(config.getPos("mquser"), "");
-      config.put(config.getPos("mqpass"), "");
-      clearStates();
-      needsFsRestart = true;
+      reset();
       return("Device reset");//we look for this result, don't change
     } elseIf (cmd == "putconfigs") {
         //String key = cmdl[3];
@@ -1241,6 +1223,19 @@ class Embedded:AppShell {
        return("unrecognized command");
      }
       return("Something's fishy");
+   }
+
+   reset() {
+    config.put(shpassi, "");
+    config.put(shssidi, "");
+    config.put(shseci, "");
+    config.put(shspassi, "");
+    config.put(shdidi, "");
+    config.put(config.getPos("mqhost"), "");
+    config.put(config.getPos("mquser"), "");
+    config.put(config.getPos("mqpass"), "");
+    clearStates();
+    needsFsRestart = true;
    }
    
 }

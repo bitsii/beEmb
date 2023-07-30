@@ -24,7 +24,7 @@
 //#define BESPEC_CON "0.dim.16"  //dollatek - one dim on 16
 //#define BESPEC_CON "0.sw.12,1" //Athom Plug V2 US - sw on 12, 13 is led, default - same for martin jerry
 //#define BESPEC_CON "0.sw.12.sw.13"  //12 is switch, 13 is led - athom plug v2 us - esp8266ex 2mb
-#define BESPEC_CON "0.sw.2.bu.5.sic.16,0,0" //nodemcu like athsw
+#define BESPEC_CON "0.sw.2.bu.5,0,30,0,10000.sic.16,0,0" //nodemcu like athsw
 //
 //pinposes //16, 2 nodemcu - Athom 16A US 13 LED 14 RELAY, SONOFF BASIC R2 13 LED 12 RELAY, 16 for dollatek 8285
 //

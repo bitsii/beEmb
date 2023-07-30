@@ -40,12 +40,12 @@ class Embedded:SwitchControl {
      slots {
        Int scswi;
        //on = 0, off = 255
-       String on = "on";
-       String off = "off";
        String getsw = "getsw";
-       String setsw = "setsw";
      }
      fields {
+       String on = "on";
+       String off = "off";
+       String setsw = "setsw";
        String sw;
      }
      scswi = config.getPos("sc.sw." + conPos);
