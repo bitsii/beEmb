@@ -28,5 +28,13 @@
 //
 //pinposes //16, 2 nodemcu - Athom 16A US 13 LED 14 RELAY, SONOFF BASIC R2 13 LED 12 RELAY, 16 for dollatek 8285
 //
+// Is Reset by Pin supported - when not on network can use pin to reset device (clear all config, prep for
+// re-setup).  For most (and secure) devices a physical option (button) is instead recommended, but for
+// things like bulbs/less sensitive devices w/out another reasonable choice, it should be enabled.  device
+// waits a bit for the wifi to come up when configured  to avoid power losses leading to entering this mode
+//
+//#define BE_RESETBYPIN "on" //enabled
+#define BE_RESETBYPIN "off" //disabled
+//
 // END OF CONFIGURATION OPTIONS
 //

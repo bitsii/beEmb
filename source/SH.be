@@ -37,7 +37,6 @@ class Embedded:AppShell {
        Int nextMaybeSave = 0;
        Int nextApCheck = 0;
        Int nextWifiCheck = 0;
-       Int nextResetWindow = 0;
        String slashn = "\n";
        String slashr = "\r";
        String htmlHead;
@@ -48,8 +47,7 @@ class Embedded:AppShell {
        String devCode;
        Int version;
        String swInfo;
-       Bool justStarted = true;
-       Bool inReset = false;
+       Bool resetByPin;
        String readBuf = String.new();
        String supurl;
        String controlSpec;
@@ -81,7 +79,6 @@ class Embedded:AppShell {
      nextMaybeSave = nowup + 45000;//45 secs
      nextApCheck = nowup + 240000;//4 mins
      nextWifiCheck = nowup + 300000;//13 mins
-     nextResetWindow = nowup + 570000;//9.5 mins
      
      //"making webPage".print();
      ifNotEmit(noWeb) {
@@ -608,6 +605,22 @@ class Embedded:AppShell {
      app.yield();
      //app.wdtDisable();
      app.uptime(nowup);
+     if (undef(resetByPin)) {
+       String rbps;
+       emit(cc) {
+          """
+          std::string rbps = BE_RESETBYPIN;
+          beq->bevl_rbps = new BEC_2_4_6_TextString(rbps);
+          """
+        }
+        if (TS.notEmpty(rbps) && rbps == "on") {
+          resetByPin = true;
+        } else {
+          resetByPin = false;
+        }
+        ("resetByPin set " + resetByPin).print();
+        return(self);
+     }
      if (needsNetworkInit) {
        needsNetworkInit = false;
        networkInit();
@@ -651,19 +664,6 @@ class Embedded:AppShell {
      if (nowup > nextWifiCheck) {
       nextWifiCheck = nowup + 300000;//5 mins
       checkWifiUp();
-      return(self);
-     }
-     if (nowup > nextResetWindow) {
-      nextResetWindow = nowup + 570000;//9.5 mins
-      if (inReset) {
-        inReset = false;
-        "leaving reset".print();
-      }
-      if (justStarted) {
-        justStarted = false;
-        inReset = true;
-        "entering reset".print();
-      }
       return(self);
      }
      if (nowup > nextSwInfo) {
@@ -1110,8 +1110,8 @@ class Embedded:AppShell {
          return("Password set");
         }
       } elseIf (cmd == "resetbypin") {
-        unless (inReset) {
-          return("Error, not in reset window");
+        unless (def(resetByPin) && resetByPin) {
+          return("Error, resetbypin not enabled, try physical reset");
         }
         inpin = cmdl[1];
         if (TS.notEmpty(pin)) {
@@ -1122,6 +1122,9 @@ class Embedded:AppShell {
           }
         } else {
           return("Error, pin must be set");
+        }
+        if (Wifi.isConnected) {
+          return("Error, resetbypin only available when not on wifi access point");
         }
         config.put(shpassi, "");
         config.put(shssidi, "");
