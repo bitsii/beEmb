@@ -20,6 +20,7 @@ class Embedded:AppShell {
        Bool needsStateUpSoon = false;
        List controls = List.new();
        List loopers = List.new();
+       Embedded:TCPClient concon;
      }
      slots {
        Int shpini;
@@ -306,6 +307,7 @@ class Embedded:AppShell {
      }
      fields {
        Embedded:TCPServer tcpserver;
+       Embedded:TCPServer conserver;
      }
 
      app.wdtFeed();
@@ -340,6 +342,20 @@ class Embedded:AppShell {
 
         tcpserver = Embedded:TCPServer.new(6420);
         tcpserver.start();
+
+        String tccon;
+        emit(cc) {
+          """
+          std::string tccon = BE_TCPCONSOLE;
+          beq->bevl_tccon = new BEC_2_4_6_TextString(tccon);
+          """
+        }
+
+        if (tccon == "on") {
+          conserver = Embedded:TCPServer.new(32259);
+          conserver.start();
+        }
+        ("tcpconsole " + tccon).print();
 
         ifNotEmit(noWeb) {
          tweb = Embedded:TinyWeb.new();
@@ -813,6 +829,15 @@ class Embedded:AppShell {
         preq.close();
         return(self);
       }
+     }
+     if (def(conserver)) {
+       if (undef(concon)) {
+        concon = conserver.checkGetClient();
+       } else {
+        unless (concon.connected) {
+          concon = null;
+        }
+       }
      }
      ifNotEmit(noMqtt) {
       if (def(mqtt)) {

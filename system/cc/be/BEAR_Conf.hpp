@@ -36,5 +36,12 @@
 //#define BE_RESETBYPIN "on" //enabled
 #define BE_RESETBYPIN "off" //disabled
 //
+// tcpconsole - if you want to enable a debugish tcp port on the device (all be prints will be echoed there)
+// turn BE_TCPCONSOLE on, otherwise leave off.  only for development, really only useful if serial connection
+// not available.  You can telnet to the device's ip port 32259 to see the messages.  output only, no input
+//
+//#define BE_TCPCONSOLE "on" //enabled
+#define BE_TCPCONSOLE "off" //disabled
+//
 // END OF CONFIGURATION OPTIONS
 //
