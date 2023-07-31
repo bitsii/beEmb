@@ -91,13 +91,11 @@ class Embedded:ButtonControl {
          } elseIf (pushTime > 0 && ontime > pushTime) {
            "switch toggle triggered".print();
            Embedded:SwitchControl swc = ash.controls.get(swPos);
-           if (TS.notEmpty(swc.sw)) {
-             if (swc.sw == swc.on) {
-               swc.doState(List.new().addValue("dostate").addValue("notpw").addValue(swc.conPos.toString()).addValue(swc.setsw).addValue(swc.off));
-             } elseIf (swc.sw == swc.off) {
-               swc.doState(List.new().addValue("dostate").addValue("notpw").addValue(swc.conPos.toString()).addValue(swc.setsw).addValue(swc.on));
-             }
-           }
+            if (TS.isEmpty(swc.sw) || swc.sw == swc.off) {
+              swc.doState(List.new().addValue("dostate").addValue("notpw").addValue(swc.conPos.toString()).addValue(swc.setsw).addValue(swc.on));
+            } elseIf (swc.sw == swc.on) {
+              swc.doState(List.new().addValue("dostate").addValue("notpw").addValue(swc.conPos.toString()).addValue(swc.setsw).addValue(swc.off));
+            }
          }
        }
      }
