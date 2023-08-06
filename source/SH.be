@@ -1030,7 +1030,7 @@ class Embedded:AppShell {
         if (TS.isEmpty(spass)) {
           return("State Password Must Be Set");
         }
-        inpass = cmdl[1];
+        String inpass = cmdl[1];
         if (TS.isEmpty(inpass)) {
           return("State password must be provided");
         }
@@ -1113,27 +1113,6 @@ class Embedded:AppShell {
 
       return("allset done");
 
-     } elseIf (cmd == "repass") {
-       //"got setpasswithpass".print();
-        String inpass = cmdl[1];
-        newpass = cmdl[2];
-         if (TS.notEmpty(pass)) {
-           if (TS.isEmpty(inpass)) {
-             return("Error, pass was not sent");
-           } elseIf (pass != inpass) {
-             return("Error, pass is incorrect");
-           }
-         } else {
-           return("Error, initial password must be set");
-         }
-
-        if (TS.isEmpty(newpass)) {
-         return("Error, new password is required");
-        } else {
-         config.put(shpassi, newpass);
-         pass = newpass;
-         return("Password set");
-        }
       } elseIf (cmd == "resetbypin") {
         unless (def(resetByPin) && resetByPin) {
           return("Error, resetbypin not enabled, try physical reset");
