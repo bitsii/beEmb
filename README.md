@@ -1,9 +1,9 @@
 
-beEmb is a project to support the Brickle programming language https://gitlab.com/bitsii/beBase
-on embedded microcontrollers for IOT/HomeAutomation (and other) applications.  Brickle is an
+Bennt Embed is a project to support the Bennt programming language https://gitlab.com/bitsii/beBase
+on embedded microcontrollers for IOT/HomeAutomation (and other) applications.  Bennt is an
 object oriented garbage collected programming lanugage and runtime built as a self-hosted
 source to source transpiler supporting several output languages.  At present the popular
-esp8266 is supported using the Arduino environment with Brickle generating C++.
+esp8266 is supported using the Arduino environment with Bennt generating C++.
 
 Stop here a second!  If you just want to USE the firmware go to
 (TODO wiki url) for download and firmware burning instructions.  Some of the downloads
@@ -11,8 +11,8 @@ support full customization of controls and their pins (switch, dimmer, etc) with
 to write custom code.  Check them out, or if you know you want to write some custom code,
 continue on.
 
-First you have to have already setup the Brickle language environment, see
-https://gitlab.com/bitsii/beBase (Getting Started in Readme.md) for that  (the Brickle 
+First you have to have already setup the Bennt language environment, see
+https://gitlab.com/bitsii/beBase (Getting Started in Readme.md) for that  (the Bennt
   java environment should be enough)
 
 then, from the directory containing "beBase" (where you cloned it, not the beBase 
@@ -37,4 +37,4 @@ under Tools/C++ exceptions (in the Arduino IDE).  The control spec in NodeMcuLed
 
 TODO add how to connect to the initial access point, connect to the network, etc, etc
 
-beEmb is a framework written in the [Brickle](https://gitlab.com/bitsii/beBase) programming language licensed under the [BSD-3-Clause](https://opensource.org/licenses/BSD-3-Clause) open source license.
+Bennt Embed is a framework written in the [Bennt](https://gitlab.com/bitsii/beBase) programming language licensed under the [BSD-3-Clause](https://opensource.org/licenses/BSD-3-Clause) open source license.
