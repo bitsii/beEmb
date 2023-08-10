@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023, the Bennt Embed Authors.
+ * Copyright (c) 2021-2023, the Bennt Embedded Authors.
  *
  * SPDX-License-Identifier: BSD-2-Clause
  *
