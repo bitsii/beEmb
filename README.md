@@ -37,4 +37,8 @@ under Tools/C++ exceptions (in the Arduino IDE).  The control spec in NodeMcuLed
 
 TODO add how to connect to the initial access point, connect to the network, etc, etc
 
-Bennt Embed is a framework written in the [Bennt](https://gitlab.com/bitsii/beBase) programming language licensed under the [BSD-3-Clause](https://opensource.org/licenses/BSD-3-Clause) open source license.
+Bennt Embed is a framework written in the [Bennt](https://gitlab.com/bitsii/beBase) programming language licensed under the [BSD-2-Clause](https://opensource.org/licenses/BSD-2-Clause) open source license.
+
+The official list of Bennt Embed Authors:
+
+Craig Welch <mebitsii@gmail.com>
