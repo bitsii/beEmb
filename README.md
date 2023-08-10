@@ -111,7 +111,7 @@ Next - Choose your configuration
 
 ### Choose your configuration
 
-* Open BEH_4_Base.hpp in the Arduino IDE (it is in the extracted directory next to the ard.ino sketch, it should be already in the IDE in the side menu or as a top tab)
+* Open BEH_4_Base.hpp in the Arduino IDE (it is in the chosen directory next to the *.ino sketch, it should be already in the IDE in the side menu or as a top tab)
 * At the top of the file are the configuration options, with a good deal of explanation and examples.  Refer to the information there and the details below to perform your configuration.  You'll pick one BESPEC_SW and one BESPEC_CON to define your device.
 * BESPEC_SW configures the devices as it appears for provisoning, it is a string with a ConfigVersion(currently 0).An identifier (short name for your device).the device version (num > 0, you control it to version your solution for updates).  Something like #define BESPEC_SW "0.LightSwitch.99"  
 * BESPEC_CON defines the controls and their order, sw is a switch, dim is a dimmer, bu is a button, and sic ties the state of one switch to another.  You should have at least one control (frequently that is all), but may have more if you have several components attached to different pins.  The leading number is a version for the definition, currently always 0.  Remaining controls are dot "." separated, with commas used to define other parameters that control understands (if any).  So  #define BESPEC_CON "0.sw.16.dim.2" would configure two controls, one on-off switch on pin 16, and one adjustable dimmer on pin 2 (those are the LED pins on a standard NodeMCU, fwiw).
