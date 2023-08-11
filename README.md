@@ -51,6 +51,8 @@ Bennt Embedded tries to strike a good balance:
 * Separate Administrative and Usage tokens (created during provisioning) allow privileged users to reconfigure the device and allow unprivileged users to use a device's capabilities but not change its configuration.
 * Secrets are not passed in the clear once provisioned and connected to the target wifi network.  Device commands are signed and validated with the shared secrets (the tokens) to protect against unauthorized use.  Signing includes the source network address to mitigate MITM attacks.
 
+(if you're using Mqtt its standard security applies, which might vary from the above)
+
 ## Just install something already
 
 TODO - coming soon, prebuilt binaries you can just put on the hardware.  For now you'll need to go ahead with Building my Own Thing if you want to get started
@@ -146,6 +148,12 @@ From your beEmb directory you run different scripts depending on the combination
 More may be added, obviously not all combinations are there, just the ones needed so far.  Some comparison and mixing and matching will allow you to put together other combos as you need them.
 
 When working in this mode you should setup your configuration for BESPEC_SW and BESPEC_CON in the system/cc/be/BEAR_Conf.hpp file BEFORE running the generator script instead of afterwards in the BEH_4_Base.hpp as the latter will be over written at every generation with the contents of the former (configuration works the same way, of course). Run the appropriate script, it should generate the code.  Look at the BC.be, DC.be, SC.be, SIC.be files for the control code.  SH.be is the "main app code", other files are there for the Wifi, etc.  You may need to work with the code a bit to learn how it works, feel free to reach out with questions.  When you make changes re-run the appropriate generator script to regenerate the C++ for the Arduino IDE, it will generate into the ard subdirectory in the project.  When you are ready to build and upload open the Arduino IDE, open the sketch in the subdirectory of the project for the script that you ran (see above), and choose Sketch/Upload to upload the sketch to the board as you normally would.
+
+## Be Careful
+
+Use of this information and the software is entirely at your own risk.  As with any interaction between software and something "acting in the real world" or "running electricity around" be sure system failure or unexpected behavior cannot result in harm or injury to anyone.
+
+## Credits
 
 The official list of Bennt Embedded Authors:
 
