@@ -1,4 +1,4 @@
-# Bennt Embedded
+# Brace Embedded
 
 <br />
 <div align="center">
@@ -9,7 +9,7 @@
   
 Batteries-included firmware for the Esp8266 targeted for home automation use cases.  Open TCP based protocol with companion mobile applications coming soon.
 
-Built on the Arduino platform, written in [Bennt](https://github.com/bitsii/beBase) - an object oriented, garbage collected language that transpiles to C++.  Licensed under the [BSD-2-Clause](https://opensource.org/licenses/BSD-2-Clause) open source license.
+Built on the Arduino platform, written in [Brace](https://github.com/bitsii/beBase) - an object oriented, garbage collected language that transpiles to C++.  Licensed under the [BSD-2-Clause](https://opensource.org/licenses/BSD-2-Clause) open source license.
 
 ## Prebuilt solutions
 
@@ -38,7 +38,7 @@ Common profiles are ready to go and can be customized through header configurati
 
 ## Pragmatic Security
 
-Bennt Embedded tries to strike a good balance in the security space by enforcing only authorized use while remaining performant and reliable:
+Brace Embedded tries to strike a good balance in the security space by enforcing only authorized use while remaining performant and reliable:
 
 * All Devices start with a random configuration code - no default passwords.
 * Authentication tokens are only exchanged in the clear during provisioning on the devices AP using the configuration codes.  Optional WPA support for the AP mode can provide isolation and encryption during this process if required.
@@ -60,7 +60,7 @@ You'll need a working installation of the Arduino IDE with a couple of libraries
 ### Get the Hardware
 
 * Some pre-built devices are supported, including the [Athom Plug V2 US](https://www.athom.tech/blank-1/tasmota-us-plug-v2)
-* Bennt Embedded should also work with most any Esp8266 development board.  2MB flash is recommended, though 1MB should work without OTA.
+* Brace Embedded should also work with most any Esp8266 development board.  2MB flash is recommended, though 1MB should work without OTA.
 * If your board has built in LED's you want to use make sure you know the GPIO/pin numbers for your configuration.
 * Of course, many folks will be wiring up their own solution for hobby use - pick good GPIOs for your board, connect things up, and make a note of the pin numbers.
 * If you are building a product and using the firmware on it, you should be able to follow the configuration spec below to prep your build for your product.
@@ -123,7 +123,7 @@ Consider starting with pfnodemcu, but you can pick any profile you like.
 #### Other Configuration elements
 
 * BE_RESETBYPIN can be set to "on" to enable resetbypin, or "off" to disable.  After a device is provisioned, if it is take away from it's wifi network and restarted, after 5 minutes it will start it's access point.  It can then be set to a new wifi network using the administrative credentials via commands to it on it's AP network.  That is all true regardless of this setting.  However, if this configuration is enabled, when the device is in this state (did not find provisioned network and started it's access point) it can also be reset using the pin which is part of the AP ssid it announces while in this mode.  This is for less security focused devices which do not have a physical reset option (button) built in (bulbs, etc).
-* BE_TCPCONSOLE can be set to "on" to enable the tcp console or "off" to disable.  If enabled the device will listen on port 32259 - you can telnet to this port to view most of the console output (everything from the Bennt language "print" statements, lower level Arduino console messages are not presently sent there).  The session is read only / just for viewing debug information.
+* BE_TCPCONSOLE can be set to "on" to enable the tcp console or "off" to disable.  If enabled the device will listen on port 32259 - you can telnet to this port to view most of the console output (everything from the Brace language "print" statements, lower level Arduino console messages are not presently sent there).  The session is read only / just for viewing debug information.
 
 ### If you want to make it your own
 
@@ -133,9 +133,9 @@ cp -R pfnodemcu pfmyprofile;mv pfmyprofile/pfnodemcu.ino pfmyprofile/pfmyprofile
 
 ### Further Customization
 
-If you need your controls to behave differently than they do out of the box, or you want to create your own new controls, you'll also need to setup a Bennt development environment and checkout/modify/build the actual project (the downloaded sketches are pre-generated and only support configuration based customization - [you'll need to have the above Arduino environment setup and working](#getting-ready), and then you can go further with the instructions below)
+If you need your controls to behave differently than they do out of the box, or you want to create your own new controls, you'll also need to setup a Brace development environment and checkout/modify/build the actual project (the downloaded sketches are pre-generated and only support configuration based customization - [you'll need to have the above Arduino environment setup and working](#getting-ready), and then you can go further with the instructions below)
 
-First you need to setup the Bennt language, see [The Bennt Project](https://github.com/bitsii/beBase) for that.  If must be a peer directory to where you checked out beEmb in [Check it out](#check-it-out) (e.g. both beEmb and beBase share the same parent directory) The java environment is sufficient.
+First you need to setup the Brace language, see [The Brace Project](https://github.com/bitsii/beBase) for that.  If must be a peer directory to where you checked out beEmb in [Check it out](#check-it-out) (e.g. both beEmb and beBase share the same parent directory) The java environment is sufficient.
 
 When working in this mode you should setup your configuration for BESPEC_SW and BESPEC_CON in the confs/profilename.hpp file BEFORE running the generator script instead of afterwards in the BEH_4_Base.hpp as the latter will be over written at every generation with the contents of the former. Run the appropriate script, it should generate the code.  Look at the BC.be, DC.be, SC.be, SIC.be files for the control code.  SH.be is the "main app code", other files are there for the Wifi, etc.  You may need to work with the code a bit to learn how it works, feel free to reach out with questions.  When you make changes re-run the appropriate generator script to regenerate the C++ for the Arduino IDE, it will generate into the ard subdirectory in the project.  When you are ready to build and upload open the Arduino IDE, open the sketch in the subdirectory of the project for the script that you ran (see above), and choose Sketch/Upload to upload the sketch to the board as you normally would.
 
@@ -149,6 +149,6 @@ Use of this information and the software is entirely at your own risk.  As with 
 
 ## Credits
 
-The official list of Bennt Embedded Authors:
+The official list of Brace Embedded Authors:
 
 Craig Welch <mebitsii@gmail.com>
