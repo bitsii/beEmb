@@ -26,15 +26,15 @@ Common profiles are ready to go and can be customized through header configurati
 
 * Device starts with access point for provisioning
 * Provisioning includes Wifi configuration, unique device identity and authentication tokens
-* Device announces itself over mDNS using the identity established during provisioning.  
-* A TCP based protocol can be used to interact with the device - see [CasProt](https://github.com/bitsii/CasProt)
-* MQTT is also supported and the device will announce its capabilities to Home Assistant and other compatible solutions via Autodiscovery
+* Device announces itself over mDNS
+* Configuration and usage supported an open TCP based protocol - see [CasProt](https://github.com/bitsii/CasProt)
+* MQTT is also supported and the device will announce it via [HomeAssistant MQTT Discovery](https://www.home-assistant.io/integrations/mqtt/#mqtt-discovery)
 * If a device loses it's Wifi for a period of time it can be reprovisioned to a new network.
-* Secure reset mechanisms available - via button long-push (on devices with buttons) or when removed from provisioned Wifi (configurable)
+* Secure reset mechanisms available - via button long-push (on devices with buttons) or via its Access Point when removed from provisioned Wifi (configurable)
 * OTA updates from the web are supported
-* A telnet addressable debug port can be enabled for use during development or support of equipment without a direct serial connection
+* A telnet addressable debug port can be enabled for use during development or for support
 * Mobile applications coming soon which handle provisioning, device control, and the rest (rewifi, reset, etc)
-* Device profies can be configured for different control combinations, GPIO selections, etc, through a couple of C++ header changes or via command over the network.
+* Device profies can be configured for different control combinations and GPIO selection through configuration in a C++ header or via command over the network (if enabled)
 
 ## Pragmatic Security
 
@@ -83,24 +83,26 @@ Then configure for the build, in the IDE change the following settings under the
 * Set SSL Support to Basic SSL Ciphers
 * Set C++ Exceptions to Enabled
 * Set the Upload Speed to 460800
-* Pick your Port to which you've connected the board via USB (If building firmward to upload via the network, you can skip this)
+* Pick your Port to which you've connected the board via USB (If building firmware to upload via the network, you can skip this)
 * Generally you set the Erase Flash to Only Sketch, unless you want to clear the provisioning on a development board (in which case you can pick All Flash Contents)
 
 ### Write the firmware
 
-Finally, choose Sketch / Upload in the Arduino IDE to put it on your device.  
+Finally, choose Sketch / Upload in the Arduino IDE to put it on your device.  If you are uploading over the network over OTA "Export Compiled Binary" instead (it will land in the sketch directory)  
 
 ### Provision the device
+
+### Use the device
 
 TODO casprot and app info
 
 ## Doing your Own Thing
 
-There are two levels available to you - one option that works when you all you need to customize the combination of controls and their in-built configuration is to modify the config in the header and upload.  Beyond that you can modify the code itself do to whatever you want - see Further Customization for starting points there.
+There are two levels available to you - one option that works when you all you need to customize the combination of controls and their in-built configuration is to modify the config in the header and upload.  Beyond that you can modify the code itself do to whatever you want - see Further Customization for starting points there.  [These instructions assume you've already completed a build and write to a device from here](#getting-ready)
 
 ### Pick your starter profile
 
-Similar to [pick your profile](#pick-your-profile) Depending on the combination of controls you need pick the sketch subdirectory that works.  You should understand your planned configuration (see Choose your configuration below) and target (a dev board or a prebuilt device) and then choose.  Prebuilt devices need a profile without serial input (not ending with 's') as the serial input causes them to fail. There will be serial output for those if you do use them with a development board, but no input.  
+Similar to [pick your profile](#pick-your-profile) Depending on the combination of controls you need pick the best sketch subdirectory.  You should understand your planned configuration (see [Choose your configuration](#choose-your-configuration) below) and target (a dev board or a prebuilt device) first.  Prebuilt devices need a profile without serial input (not ending with 's') as the serial input causes them to fail. There will be serial output for those if you do use them with a development board, but no input.  
 
 Consider starting with pfnodemcu, but you can pick any profile you like.
 
@@ -108,7 +110,7 @@ Consider starting with pfnodemcu, but you can pick any profile you like.
 
 * Open BEH_4_Base.hpp in the Arduino IDE (it is in the chosen directory next to the *.ino sketch, it should be already in the IDE in the side menu or as a top tab)
 * At the top of the file are the configuration options, with a good deal of explanation and examples.  Refer to the information there and the details below to perform your configuration.  You'll pick one BESPEC_SW and one BESPEC_CON to define your device.
-* BESPEC_SW configures the devices as it appears for provisoning, it is a string with a ConfigVersion(currently 0).An identifier (short name for your device).the device version (num > 0, you control it to version your solution for updates).  Something like #define BESPEC_SW "0.LightSwitch.99"  
+* BESPEC_SW configures the device type information, it is a string with a ConfigVersion(currently 0).An identifier (short name for your device, <=10 char).the device version (num > 0, you control it to version your solution for updates).  Something like #define BESPEC_SW "0.LightSwch.99"  
 * BESPEC_CON defines the controls and their order, sw is a switch, dim is a dimmer, bu is a button, and sic ties the state of one switch to another.  You should have at least one control (frequently that is all), but may have more if you have several components attached to different pins.  The leading number is a version for the definition, currently always 0.  Remaining controls are dot "." separated, with commas used to define other parameters that control understands (if any).  So  #define BESPEC_CON "0.sw.16.dim.2" would configure two controls, one on-off switch on pin 16, and one adjustable dimmer on pin 2 (those are the LED pins on a standard NodeMCU, fwiw).
 * The spec for sw takes a pin parameter first and uses it to set 0 or 255 with an optional "direction" if on and off is reversed for your application.  So sw.16 sets 0 for "on" and 255 for "off" on pin 16.  To reverse the 0 and 255 values use sw.16,1 
 * The spec for dim takes a pin parameter only, direction is not currently supported.  It understands on and off (and remembers the last level set, defaults to full on the first time).  It supports setting values between 0 and 254 for different light levels (0 is full on, 255 is not a dim level, it is off).
@@ -123,17 +125,11 @@ cp -R pfnodemcu pfmyprofile;mv pfmyprofile/pfnodemcu.ino pfmyprofile/pfmyprofile
 
 ### Further Customization
 
-If you need your controls to behave differently than they do out of the box, or you want to create your own new controls, you'll also need to setup a Bennt development environment and checkout/modify/build the actual project (the downloaded sketches are pre-generated and only support configuration based customization - you'll need to have the above Arduino environment setup and working, and then you can go further with the instructions below)
+If you need your controls to behave differently than they do out of the box, or you want to create your own new controls, you'll also need to setup a Bennt development environment and checkout/modify/build the actual project (the downloaded sketches are pre-generated and only support configuration based customization - [you'll need to have the above Arduino environment setup and working](#getting-ready), and then you can go further with the instructions below)
 
-First you need to setup the Bennt language, see [The Bennt Project](https://github.com/bitsii/beBase) for that.  The java environment is sufficient.
+First you need to setup the Bennt language, see [The Bennt Project](https://github.com/bitsii/beBase) for that.  If must be a peer directory to where you checked out beEmb in [Check it out](#check-it-out) (e.g. both beEmb and beBase share the same parent directory) The java environment is sufficient.
 
-then, from the directory containing "beBase" (where you cloned it, not the beBase directory itself, the one above it), clone beEmb
-(from your shell / on MSWin from the git shell you installed)
-
-git clone https://github.com/bitsii/beEmb
-cd beEmb
-
-When working in this mode you should setup your configuration for BESPEC_SW and BESPEC_CON in the confs/profilename.hpp file BEFORE running the generator script instead of afterwards in the BEH_4_Base.hpp as the latter will be over written at every generation with the contents of the former (configuration works the same way, of course). Run the appropriate script, it should generate the code.  Look at the BC.be, DC.be, SC.be, SIC.be files for the control code.  SH.be is the "main app code", other files are there for the Wifi, etc.  You may need to work with the code a bit to learn how it works, feel free to reach out with questions.  When you make changes re-run the appropriate generator script to regenerate the C++ for the Arduino IDE, it will generate into the ard subdirectory in the project.  When you are ready to build and upload open the Arduino IDE, open the sketch in the subdirectory of the project for the script that you ran (see above), and choose Sketch/Upload to upload the sketch to the board as you normally would.
+When working in this mode you should setup your configuration for BESPEC_SW and BESPEC_CON in the confs/profilename.hpp file BEFORE running the generator script instead of afterwards in the BEH_4_Base.hpp as the latter will be over written at every generation with the contents of the former. Run the appropriate script, it should generate the code.  Look at the BC.be, DC.be, SC.be, SIC.be files for the control code.  SH.be is the "main app code", other files are there for the Wifi, etc.  You may need to work with the code a bit to learn how it works, feel free to reach out with questions.  When you make changes re-run the appropriate generator script to regenerate the C++ for the Arduino IDE, it will generate into the ard subdirectory in the project.  When you are ready to build and upload open the Arduino IDE, open the sketch in the subdirectory of the project for the script that you ran (see above), and choose Sketch/Upload to upload the sketch to the board as you normally would.
 
 ### If you want to make it your own
 
@@ -141,7 +137,7 @@ To clone one of the existing profiles into a new name you should find the script
 
 ## Be Careful
 
-Use of this information and the software is entirely at your own risk.  As with any interaction between software and something "acting in the real world" or "running electricity around" be sure system failure or unexpected behavior cannot result in harm or injury to anyone.
+Use of this information and the software is entirely at your own risk.  As with any interaction between software and something "acting in the real world" or "running electricity around", be sure system failure or unexpected behavior cannot result in harm or injury to anyone.
 
 ## Credits
 
