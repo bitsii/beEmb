@@ -25,8 +25,6 @@ class BET_2_8_6_EmbeddedConfig;
 class BEC_2_8_6_EmbeddedConfig;
 class BET_2_8_4_EmbeddedWifi;
 class BEC_2_8_4_EmbeddedWifi;
-class BET_2_8_9_EmbeddedSerServer;
-class BEC_2_8_9_EmbeddedSerServer;
 class BET_2_8_9_EmbeddedTCPServer;
 class BEC_2_8_9_EmbeddedTCPServer;
 class BET_2_8_9_EmbeddedTCPClient;

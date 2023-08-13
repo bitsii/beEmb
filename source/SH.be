@@ -46,6 +46,7 @@ class Embedded:AppShell {
        Int nextWifiCheck = 0;
        String slashn = "\n";
        String slashr = "\r";
+       String fcdot = "fc.";
        String htmlHead;
        Bool needsFsRestart = false;
        Bool needsRestart = false;
@@ -392,9 +393,9 @@ class Embedded:AppShell {
          oldmqtt.close();
        }
        if (Wifi.isConnected) {
-        String mqhost = config.get(config.getPos("mqhost"));
-        String mquser = config.get(config.getPos("mquser"));
-        String mqpass = config.get(config.getPos("mqpass"));
+        String mqhost = config.get(config.getPos("fc.mqhost"));
+        String mquser = config.get(config.getPos("fc.mquser"));
+        String mqpass = config.get(config.getPos("fc.mqpass"));
         if (TS.notEmpty(mqhost) && TS.notEmpty(mquser) && TS.notEmpty(mqpass)) {
           mqtt = Embedded:Mqtt.new(mqhost, mquser, mqpass);
           if (mqtt.open()) {
@@ -430,7 +431,7 @@ class Embedded:AppShell {
       //tpp = "homeassistant/light/" + did + "-" + i;
       //cf = Maps.from("name", conf["name"], "command_topic", tpp + "/set", "state_topic", tpp + "/state", "unique_id", did + "-" + i, "schema", "json", "brightness", true, "brightness_scale", 255);
 
-      Int keyi = config.getPos("dname");
+      Int keyi = config.getPos("fc.dname");
       String dname = config.get(keyi);
       if (TS.isEmpty(dname)) {
         dname = "CasNic Device";
@@ -1204,14 +1205,18 @@ class Embedded:AppShell {
             value = null;
           }
           if (TS.notEmpty(key)) {
-            Int keyi = config.getPos(key);
-            if (TS.isEmpty(value)) {
-              config.put(keyi, "");
-            } else {
-              if (deHex) {
-                value = Encode:Hex.decode(value);
+            if (key.begins(fcdot)) {
+              Int keyi = config.getPos(key);
+              if (TS.isEmpty(value)) {
+                config.put(keyi, "");
+              } else {
+                if (deHex) {
+                  value = Encode:Hex.decode(value);
+                }
+                config.put(keyi, value);
               }
-              config.put(keyi, value);
+            } else {
+              return("configs failed bad key");
             }
           }
         }
@@ -1241,9 +1246,9 @@ class Embedded:AppShell {
     config.put(shseci, "");
     config.put(shspassi, "");
     config.put(shdidi, "");
-    config.put(config.getPos("mqhost"), "");
-    config.put(config.getPos("mquser"), "");
-    config.put(config.getPos("mqpass"), "");
+    config.put(config.getPos("fc.mqhost"), "");
+    config.put(config.getPos("fc.mquser"), "");
+    config.put(config.getPos("fc.mqpass"), "");
     clearStates();
     needsFsRestart = true;
    }
