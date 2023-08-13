@@ -44,6 +44,7 @@ Bennt Embedded tries to strike a good balance in the security space by enforcing
 * Authentication tokens are only exchanged in the clear during provisioning on the devices AP using the configuration codes.  Optional WPA support for the AP mode can provide isolation and encryption during this process if required.
 * Secrets are not passed in the clear once provisioned and connected to the target wifi network.  Device commands are signed and validated with the shared secrets (the tokens) to protect against unauthorized use.  Signing includes the source network address to mitigate MITM attacks.
 * Separate Administrative and Usage tokens (created during provisioning) are required for device control and use.  Users with the administrative token can configure the device and users with the usage token can only use the configured features (turn on and off, etc) 
+* Provisioned devices do not immediately start their access point after a power cycle if they do not find their configured SSID, they will wait 5 minutes and check again.  This is to protect against power losses putting devices which can be reset over the network into a mode which enables it.
 
 (if you're using Mqtt its security applies, which might vary from the above)
 
@@ -121,7 +122,7 @@ Consider starting with pfnodemcu, but you can pick any profile you like.
 
 #### Other Configuration elements
 
-* BE_RESETBYPIN can be set to "on" to enable resetbypin, or "off" to disable.  After a device is provisioned, if it is take away from it's wifi network and restarted, after 5 minutes it will start it's access point.  It can then be set to a new wifi network using the administrative credentials via commands to it on it's AP network.  That is all true regardless of this setting.  However, if this configuration is enabled, when the device is in this state it can also be reset using the pin which is part of the AP ssid it announces while in this mode.
+* BE_RESETBYPIN can be set to "on" to enable resetbypin, or "off" to disable.  After a device is provisioned, if it is take away from it's wifi network and restarted, after 5 minutes it will start it's access point.  It can then be set to a new wifi network using the administrative credentials via commands to it on it's AP network.  That is all true regardless of this setting.  However, if this configuration is enabled, when the device is in this state (did not find provisioned network and started it's access point) it can also be reset using the pin which is part of the AP ssid it announces while in this mode.  This is for less security focused devices which do not have a physical reset option (button) built in (bulbs, etc).
 * BE_TCPCONSOLE can be set to "on" to enable the tcp console or "off" to disable.  If enabled the device will listen on port 32259 - you can telnet to this port to view most of the console output (everything from the Bennt language "print" statements, lower level Arduino console messages are not presently sent there).  The session is read only / just for viewing debug information.
 
 ### If you want to make it your own
