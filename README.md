@@ -100,7 +100,7 @@ There are two levels available to you - one option that works when you all you n
 
 ### Pick your starter profile
 
-Depending on the combination of controls you need pick the sketch subdirectory that works.  You should understand your planned configuration (see Choose your configuration below) and target (a dev board or a prebuilt device) and then choose.  Prebuilt devices need a profile without serial input (not ending with 's') as the serial input causes them to fail. There will be serial output for those with a development board, but no input.
+Similar to [pick your profile](pick-your-starter-profile) Depending on the combination of controls you need pick the sketch subdirectory that works.  You should understand your planned configuration (see Choose your configuration below) and target (a dev board or a prebuilt device) and then choose.  Prebuilt devices need a profile without serial input (not ending with 's') as the serial input causes them to fail. There will be serial output for those if you do use them with a development board, but no input.  
 
 Consider starting with pfnodemcu, but you can pick any profile you like.
 
