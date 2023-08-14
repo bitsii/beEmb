@@ -262,7 +262,17 @@ class Embedded:AppShell {
 
    buildControls() {
      if (TS.isEmpty(controlSpec)) {
-       controlSpec = config.get(config.getPos("conspec"));
+        String csconf;
+        emit(cc) {
+          """
+          std::string csconf = BE_CSCONF;
+          beq->bevl_csconf = new BEC_2_4_6_TextString(csconf);
+          """
+        }
+        ("csconf " + csconf).print();
+      if (csconf == "on") {
+        controlSpec = config.get(config.getPos("cf.conspec"));
+      }
        if (TS.isEmpty(controlSpec)) {
         emit(cc) {
           """

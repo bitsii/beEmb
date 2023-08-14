@@ -38,15 +38,21 @@
 // things like bulbs/less sensitive devices w/out another reasonable choice, it should be enabled.  device
 // waits a bit for the wifi to come up when configured  to avoid power losses leading to entering this mode
 //
-#define BE_RESETBYPIN "on" //enabled
-//#define BE_RESETBYPIN "off" //disabled
+//#define BE_RESETBYPIN "on" //enabled
+#define BE_RESETBYPIN "off" //disabled
 //
 // tcpconsole - if you want to enable a debugish tcp port on the device (all be prints will be echoed there)
 // turn BE_TCPCONSOLE on, otherwise leave off.  only for development, really only useful if serial connection
 // not available.  You can telnet to the device's ip port 32259 to see the messages.  output only, no input
 //
-#define BE_TCPCONSOLE "on" //enabled
-//#define BE_TCPCONSOLE "off" //disabled
+//#define BE_TCPCONSOLE "on" //enabled
+#define BE_TCPCONSOLE "off" //disabled
+//
+// csconf - if you want to enable a the cf.conspec (same as BESPEC_CON) to be set via putconfig (and honored)
+// to enable post-compile-time configuration set BE_CSCONF to "on", otherwise to "off".
+//
+//#define BE_CSCONF "on" //enabled
+#define BE_CSCONF "off" //disabled
 //
 // END OF CONFIGURATION OPTIONS
 //
