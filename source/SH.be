@@ -85,8 +85,8 @@ class Embedded:AppShell {
      nextMq = nowup + 11000;
      nextSwInfo = nowup + 540000;
      nextMaybeSave = nowup + 45000;//45 secs
-     nextApCheck = nowup + 240000;//4 mins
-     nextWifiCheck = nowup + 300000;//13 mins
+     nextApCheck = nowup + 180000;//3 mins
+     nextWifiCheck = nowup + 420000;//7 mins
      
      //"making webPage".print();
      ifNotEmit(noWeb) {
@@ -685,7 +685,7 @@ class Embedded:AppShell {
       return(self);
      }
      if (nowup > nextApCheck) {
-      nextApCheck = nowup + 240000;//4 mins
+      nextApCheck = nowup + 180000;//3 mins
       unless (readyForAp) {
         readyForAp = true;
         unless (Wifi.up) {
@@ -695,7 +695,7 @@ class Embedded:AppShell {
       return(self);
      }
      if (nowup > nextWifiCheck) {
-      nextWifiCheck = nowup + 300000;//5 mins
+      nextWifiCheck = nowup + 420000;//7 mins
       checkWifiUp();
       return(self);
      }

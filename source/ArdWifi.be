@@ -111,7 +111,7 @@ class Embedded:Wifi {
     WiFi.persistent(false);
     WiFi.begin(bevp_ssid->bems_toCcString().c_str(), bevp_password->bems_toCcString().c_str());
     int count = 0;
-    while (WiFi.status() != WL_CONNECTED && count < 40) {
+    while (WiFi.status() != WL_CONNECTED && count < 60) {
       delay(500);
       Serial.print(".");
       count++;

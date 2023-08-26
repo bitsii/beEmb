@@ -108,7 +108,9 @@ WiFiClient client;
   write(String line) self {
     emit(cc) {
     """
-    client.write(beq->beva_line->bems_toCcString().c_str());
+    if (client && client.connected()) {
+      client.write(beq->beva_line->bems_toCcString().c_str());
+    }
     """
     }
   }
@@ -220,7 +222,7 @@ emit(cc) {
   close() {
     emit(cc) {
     """
-    if (client) {  
+    if (client && client.connected()) {
       client.stop();
     }
     """
