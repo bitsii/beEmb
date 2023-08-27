@@ -17,7 +17,7 @@ use Embedded:Aes as Crypt;
 use Encode:Url as EU;
 use Embedded:AppShell;
 
-class Embedded:SwitchAndDimmer(Embedded:AppShell) {
+class Embedded:SwitchDimmerButtonIndicator(Embedded:AppShell) {
 
    buildControl(Int conPos, String conName, String conArgs) {
      if (conName == "sw") {
@@ -26,8 +26,14 @@ class Embedded:SwitchAndDimmer(Embedded:AppShell) {
      } elseIf (conName == "dim") {
        auto dimc = Embedded:DimmerControl.new(self, conPos, conName, conArgs);
        return(dimc);
+     } elseIf (conName == "bu") {
+       auto buc = Embedded:ButtonControl.new(self, conPos, conName, conArgs);
+       return(buc);
+     } elseIf (conName == "sic") {
+       auto sic = Embedded:SwitchIndicatorControl.new(self, conPos, conName, conArgs);
+       return(sic);
      } else {
-       "Unknown control conName in SwitchAndDimmer".print();
+       "Unknown control conName in Switch".print();
      }
      return(null);
    }

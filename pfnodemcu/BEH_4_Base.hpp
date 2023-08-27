@@ -9,13 +9,10 @@
 // SW - name (type) and version of the device.  Typename 10 char max ssid rules (no spaces)
 // swconfver.DeviceTypeName.DeviceVersion
 //
-//#define BESPEC_SW "0.GEN.22"  //supergeneric
-#define BESPEC_SW "0.N.26"  //nodemcu
-//#define BESPEC_SW "0.NU.26"  //nodemcu unk name
-//#define BESPEC_SW  "0.DL.20" //dollatek 2mb 1led
-//#define BESPEC_SW "0.AP2.29" //Athom Plug V2 US THE REAL ONE
-//#define BESPEC_SW "0.NT.28"  //nodemcu like athsw
-//#define BESPEC_SW "0.NTU.28"  //nodemcu like athsw but unk name
+//#define BESPEC_SW "0.Generic.22"  //supergeneric
+#define BESPEC_SW "0.WNN.26"  //nodemcu
+//#define BESPEC_SW  "0.DollaTek.20" //dollatek 2mb 1led
+//#define BESPEC_SW "0.WNAP2.29" //Athom Plug V2 US THE REAL ONE
 //
 // CON - definition of device's controls
 // ctlconfver.control.ctlconf,args.control.ctlconf,args
@@ -52,8 +49,8 @@
 // csconf - if you want to enable a the cf.conspec (same as BESPEC_CON) to be set via putconfig (and honored)
 // to enable post-compile-time configuration set BE_CSCONF to "on", otherwise to "off".
 //
-//#define BE_CSCONF "on" //enabled
-#define BE_CSCONF "off" //disabled
+#define BE_CSCONF "on" //enabled
+//#define BE_CSCONF "off" //disabled
 //
 // END OF CONFIGURATION OPTIONS
 //
@@ -611,6 +608,41 @@ virtual BEC_2_6_6_SystemObject* bemd_2(int32_t callId, BEC_2_6_6_SystemObject* b
 static BET_2_8_4_EmbeddedWifi bece_BEC_2_8_4_EmbeddedWifi_bevs_type;
 };
 
+class BET_2_8_9_EmbeddedSerServer : public BETS_Object {
+public:
+BET_2_8_9_EmbeddedSerServer();
+virtual BEC_2_6_6_SystemObject* bems_createInstance();
+virtual void bemgt_doMark();
+static BEC_2_6_6_SystemObject** bevs_inst_ref;
+};
+class BEC_2_8_9_EmbeddedSerServer : public BEC_2_6_6_SystemObject {
+private:
+typedef BEC_2_6_6_SystemObject bevs_super;
+
+public:
+BEC_2_4_3_MathInt* bevp_baud = nullptr;
+virtual BEC_2_6_6_SystemObject* bem_new_0();
+virtual BEC_2_8_9_EmbeddedSerServer* bem_start_0();
+virtual BEC_2_8_9_EmbeddedSerServer* bem_enableDebug_0();
+virtual BEC_2_8_9_EmbeddedSerServer* bem_write_1(BEC_2_4_6_TextString* bevk_line);
+virtual BEC_2_4_6_TextString* bem_checkGetPayload_2(BEC_2_4_6_TextString* bevk_payload, BEC_2_4_6_TextString* bevk_endmark);
+virtual BEC_2_5_4_LogicBool* bem_availableGet_0();
+virtual BEC_2_4_3_MathInt* bem_baudGet_0();
+virtual BEC_2_8_9_EmbeddedSerServer* bem_baudSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
+virtual BEC_2_6_6_SystemObject* bemc_create();
+static BEC_2_8_9_EmbeddedSerServer* bece_BEC_2_8_9_EmbeddedSerServer_bevs_inst;
+virtual void bemc_setInitial(BEC_2_6_6_SystemObject* becc_inst);
+virtual BEC_2_6_6_SystemObject* bemc_getInitial();
+virtual void bemg_doMark();
+virtual size_t bemg_getSize();
+virtual BETS_Object* bemc_getType();
+virtual ~BEC_2_8_9_EmbeddedSerServer() = default;
+virtual BEC_2_6_6_SystemObject* bemd_0(int32_t callId);
+virtual BEC_2_6_6_SystemObject* bemd_1(int32_t callId, BEC_2_6_6_SystemObject* bevd_0);
+virtual BEC_2_6_6_SystemObject* bemd_2(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1);
+static BET_2_8_9_EmbeddedSerServer bece_BEC_2_8_9_EmbeddedSerServer_bevs_type;
+};
+
 class BET_2_8_9_EmbeddedTCPServer : public BETS_Object {
 public:
 BET_2_8_9_EmbeddedTCPServer();
@@ -952,6 +984,7 @@ BEC_2_4_3_MathInt* bevp_looperI = nullptr;
 BEC_2_4_6_TextString* bevp_pin = nullptr;
 BEC_2_4_6_TextString* bevp_pass = nullptr;
 BEC_2_4_6_TextString* bevp_spass = nullptr;
+BEC_2_8_9_EmbeddedSerServer* bevp_serserver = nullptr;
 BEC_2_8_4_EmbeddedMdns* bevp_mdserver = nullptr;
 BEC_2_8_4_EmbeddedMqtt* bevp_mqtt = nullptr;
 BEC_2_8_9_EmbeddedTCPServer* bevp_tcpserver = nullptr;
@@ -1010,6 +1043,8 @@ virtual BEC_2_8_9_EmbeddedTCPClient* bem_conconGet_0();
 virtual BEC_2_8_8_EmbeddedAppShell* bem_conconSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
 virtual BEC_2_4_6_TextString* bem_pinGet_0();
 virtual BEC_2_8_8_EmbeddedAppShell* bem_pinSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
+virtual BEC_2_8_9_EmbeddedSerServer* bem_serserverGet_0();
+virtual BEC_2_8_8_EmbeddedAppShell* bem_serserverSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
 virtual BEC_2_8_4_EmbeddedMdns* bem_mdserverGet_0();
 virtual BEC_2_8_8_EmbeddedAppShell* bem_mdserverSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
 virtual BEC_2_8_4_EmbeddedMqtt* bem_mqttGet_0();
@@ -1151,6 +1186,122 @@ virtual BEC_2_6_6_SystemObject* bemd_1(int32_t callId, BEC_2_6_6_SystemObject* b
 virtual BEC_2_6_6_SystemObject* bemd_2(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1);
 virtual BEC_2_6_6_SystemObject* bemd_4(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1, BEC_2_6_6_SystemObject* bevd_2, BEC_2_6_6_SystemObject* bevd_3);
 static BET_2_8_13_EmbeddedDimmerControl bece_BEC_2_8_13_EmbeddedDimmerControl_bevs_type;
+};
+
+class BET_2_8_13_EmbeddedButtonControl : public BETS_Object {
+public:
+BET_2_8_13_EmbeddedButtonControl();
+virtual BEC_2_6_6_SystemObject* bems_createInstance();
+virtual void bemgt_doMark();
+static BEC_2_6_6_SystemObject** bevs_inst_ref;
+};
+class BEC_2_8_13_EmbeddedButtonControl : public BEC_2_6_6_SystemObject {
+private:
+typedef BEC_2_6_6_SystemObject bevs_super;
+
+public:
+BEC_2_8_8_EmbeddedAppShell* bevp_ash = nullptr;
+BEC_2_4_3_MathInt* bevp_pini = nullptr;
+BEC_2_4_3_MathInt* bevp_diri = nullptr;
+BEC_2_8_6_EmbeddedConfig* bevp_config = nullptr;
+BEC_2_8_3_EmbeddedApp* bevp_app = nullptr;
+BEC_2_4_3_MathInt* bevp_onStart = nullptr;
+BEC_2_4_3_MathInt* bevp_pushTime = nullptr;
+BEC_2_4_3_MathInt* bevp_swPos = nullptr;
+BEC_2_4_3_MathInt* bevp_resetPushTime = nullptr;
+BEC_2_4_3_MathInt* bevp_conPos = nullptr;
+BEC_2_4_3_MathInt* bevp_lastEvent = nullptr;
+BEC_2_4_6_TextString* bevp_conName = nullptr;
+BEC_2_4_3_MathInt* bevp_butVal = nullptr;
+BEC_2_4_3_MathInt* bevp_lastButVal = nullptr;
+BEC_2_4_3_MathInt* bevp_lastTrans = nullptr;
+virtual BEC_2_8_13_EmbeddedButtonControl* bem_new_4(BEC_2_6_6_SystemObject* bevk__ash, BEC_2_4_3_MathInt* bevk__conPos, BEC_2_4_6_TextString* bevk__conName, BEC_2_4_6_TextString* bevk__conArgs);
+virtual BEC_2_8_13_EmbeddedButtonControl* bem_initControl_0();
+virtual BEC_2_4_6_TextString* bem_doStateMq_2(BEC_2_4_6_TextString* bevk_topic, BEC_2_4_6_TextString* bevk_payload);
+virtual BEC_2_4_6_TextString* bem_doState_1(BEC_2_9_4_ContainerList* bevk_cmdl);
+virtual BEC_2_8_13_EmbeddedButtonControl* bem_clearStates_0();
+virtual BEC_2_8_13_EmbeddedButtonControl* bem_handleLoop_0();
+virtual BEC_2_4_3_MathInt* bem_conPosGet_0();
+virtual BEC_2_8_13_EmbeddedButtonControl* bem_conPosSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
+virtual BEC_2_4_3_MathInt* bem_lastEventGet_0();
+virtual BEC_2_8_13_EmbeddedButtonControl* bem_lastEventSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
+virtual BEC_2_4_6_TextString* bem_conNameGet_0();
+virtual BEC_2_8_13_EmbeddedButtonControl* bem_conNameSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
+virtual BEC_2_4_3_MathInt* bem_butValGet_0();
+virtual BEC_2_8_13_EmbeddedButtonControl* bem_butValSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
+virtual BEC_2_4_3_MathInt* bem_lastButValGet_0();
+virtual BEC_2_8_13_EmbeddedButtonControl* bem_lastButValSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
+virtual BEC_2_4_3_MathInt* bem_lastTransGet_0();
+virtual BEC_2_8_13_EmbeddedButtonControl* bem_lastTransSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
+virtual BEC_2_6_6_SystemObject* bemc_create();
+static BEC_2_8_13_EmbeddedButtonControl* bece_BEC_2_8_13_EmbeddedButtonControl_bevs_inst;
+virtual void bemc_setInitial(BEC_2_6_6_SystemObject* becc_inst);
+virtual BEC_2_6_6_SystemObject* bemc_getInitial();
+virtual void bemg_doMark();
+virtual size_t bemg_getSize();
+virtual BETS_Object* bemc_getType();
+virtual ~BEC_2_8_13_EmbeddedButtonControl() = default;
+virtual BEC_2_6_6_SystemObject* bemd_0(int32_t callId);
+virtual BEC_2_6_6_SystemObject* bemd_1(int32_t callId, BEC_2_6_6_SystemObject* bevd_0);
+virtual BEC_2_6_6_SystemObject* bemd_2(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1);
+virtual BEC_2_6_6_SystemObject* bemd_4(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1, BEC_2_6_6_SystemObject* bevd_2, BEC_2_6_6_SystemObject* bevd_3);
+static BET_2_8_13_EmbeddedButtonControl bece_BEC_2_8_13_EmbeddedButtonControl_bevs_type;
+};
+
+class BET_2_8_22_EmbeddedSwitchIndicatorControl : public BETS_Object {
+public:
+BET_2_8_22_EmbeddedSwitchIndicatorControl();
+virtual BEC_2_6_6_SystemObject* bems_createInstance();
+virtual void bemgt_doMark();
+static BEC_2_6_6_SystemObject** bevs_inst_ref;
+};
+class BEC_2_8_22_EmbeddedSwitchIndicatorControl : public BEC_2_6_6_SystemObject {
+private:
+typedef BEC_2_6_6_SystemObject bevs_super;
+
+public:
+BEC_2_8_8_EmbeddedAppShell* bevp_ash = nullptr;
+BEC_2_4_3_MathInt* bevp_pini = nullptr;
+BEC_2_4_3_MathInt* bevp_diri = nullptr;
+BEC_2_8_6_EmbeddedConfig* bevp_config = nullptr;
+BEC_2_8_3_EmbeddedApp* bevp_app = nullptr;
+BEC_2_4_3_MathInt* bevp_ic = nullptr;
+BEC_2_4_3_MathInt* bevp_lastSwEvent = nullptr;
+BEC_2_4_3_MathInt* bevp_conPos = nullptr;
+BEC_2_4_3_MathInt* bevp_lastEvent = nullptr;
+BEC_2_4_6_TextString* bevp_conName = nullptr;
+BEC_2_4_6_TextString* bevp_on = nullptr;
+BEC_2_4_6_TextString* bevp_off = nullptr;
+BEC_2_8_13_EmbeddedSwitchControl* bevp_sc = nullptr;
+BEC_2_4_6_TextString* bevp_sw = nullptr;
+virtual BEC_2_8_22_EmbeddedSwitchIndicatorControl* bem_new_4(BEC_2_6_6_SystemObject* bevk__ash, BEC_2_4_3_MathInt* bevk__conPos, BEC_2_4_6_TextString* bevk__conName, BEC_2_4_6_TextString* bevk__conArgs);
+virtual BEC_2_8_22_EmbeddedSwitchIndicatorControl* bem_initControl_0();
+virtual BEC_2_4_6_TextString* bem_doStateMq_2(BEC_2_4_6_TextString* bevk_topic, BEC_2_4_6_TextString* bevk_payload);
+virtual BEC_2_4_6_TextString* bem_doState_1(BEC_2_9_4_ContainerList* bevk_cmdl);
+virtual BEC_2_8_22_EmbeddedSwitchIndicatorControl* bem_clearStates_0();
+virtual BEC_2_8_22_EmbeddedSwitchIndicatorControl* bem_handleLoop_0();
+virtual BEC_2_8_22_EmbeddedSwitchIndicatorControl* bem_doSwitch_1(BEC_2_4_6_TextString* bevk_insw);
+virtual BEC_2_4_3_MathInt* bem_conPosGet_0();
+virtual BEC_2_8_22_EmbeddedSwitchIndicatorControl* bem_conPosSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
+virtual BEC_2_4_3_MathInt* bem_lastEventGet_0();
+virtual BEC_2_8_22_EmbeddedSwitchIndicatorControl* bem_lastEventSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
+virtual BEC_2_4_6_TextString* bem_conNameGet_0();
+virtual BEC_2_8_22_EmbeddedSwitchIndicatorControl* bem_conNameSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
+virtual BEC_2_4_6_TextString* bem_swGet_0();
+virtual BEC_2_8_22_EmbeddedSwitchIndicatorControl* bem_swSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
+virtual BEC_2_6_6_SystemObject* bemc_create();
+static BEC_2_8_22_EmbeddedSwitchIndicatorControl* bece_BEC_2_8_22_EmbeddedSwitchIndicatorControl_bevs_inst;
+virtual void bemc_setInitial(BEC_2_6_6_SystemObject* becc_inst);
+virtual BEC_2_6_6_SystemObject* bemc_getInitial();
+virtual void bemg_doMark();
+virtual size_t bemg_getSize();
+virtual BETS_Object* bemc_getType();
+virtual ~BEC_2_8_22_EmbeddedSwitchIndicatorControl() = default;
+virtual BEC_2_6_6_SystemObject* bemd_0(int32_t callId);
+virtual BEC_2_6_6_SystemObject* bemd_1(int32_t callId, BEC_2_6_6_SystemObject* bevd_0);
+virtual BEC_2_6_6_SystemObject* bemd_2(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1);
+virtual BEC_2_6_6_SystemObject* bemd_4(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1, BEC_2_6_6_SystemObject* bevd_2, BEC_2_6_6_SystemObject* bevd_3);
+static BET_2_8_22_EmbeddedSwitchIndicatorControl bece_BEC_2_8_22_EmbeddedSwitchIndicatorControl_bevs_type;
 };
 
 class BET_2_4_3_MathInt : public BETS_Object {
@@ -2077,29 +2228,29 @@ virtual BEC_2_6_6_SystemObject* bemd_1(int32_t callId, BEC_2_6_6_SystemObject* b
 static BET_2_6_9_SystemException bece_BEC_2_6_9_SystemException_bevs_type;
 };
 
-class BET_2_8_15_EmbeddedSwitchAndDimmer : public BETS_Object {
+class BET_2_8_27_EmbeddedSwitchDimmerButtonIndicator : public BETS_Object {
 public:
-BET_2_8_15_EmbeddedSwitchAndDimmer();
+BET_2_8_27_EmbeddedSwitchDimmerButtonIndicator();
 virtual BEC_2_6_6_SystemObject* bems_createInstance();
 virtual void bemgt_doMark();
 static BEC_2_6_6_SystemObject** bevs_inst_ref;
 };
-class BEC_2_8_15_EmbeddedSwitchAndDimmer : public BEC_2_8_8_EmbeddedAppShell {
+class BEC_2_8_27_EmbeddedSwitchDimmerButtonIndicator : public BEC_2_8_8_EmbeddedAppShell {
 private:
 typedef BEC_2_8_8_EmbeddedAppShell bevs_super;
 
 public:
 virtual BEC_2_6_6_SystemObject* bem_buildControl_3(BEC_2_4_3_MathInt* bevk_conPos, BEC_2_4_6_TextString* bevk_conName, BEC_2_4_6_TextString* bevk_conArgs);
 virtual BEC_2_6_6_SystemObject* bemc_create();
-static BEC_2_8_15_EmbeddedSwitchAndDimmer* bece_BEC_2_8_15_EmbeddedSwitchAndDimmer_bevs_inst;
+static BEC_2_8_27_EmbeddedSwitchDimmerButtonIndicator* bece_BEC_2_8_27_EmbeddedSwitchDimmerButtonIndicator_bevs_inst;
 virtual void bemc_setInitial(BEC_2_6_6_SystemObject* becc_inst);
 virtual BEC_2_6_6_SystemObject* bemc_getInitial();
 virtual void bemg_doMark();
 virtual size_t bemg_getSize();
 virtual BETS_Object* bemc_getType();
-virtual ~BEC_2_8_15_EmbeddedSwitchAndDimmer() = default;
+virtual ~BEC_2_8_27_EmbeddedSwitchDimmerButtonIndicator() = default;
 virtual BEC_2_6_6_SystemObject* bemd_3(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1, BEC_2_6_6_SystemObject* bevd_2);
-static BET_2_8_15_EmbeddedSwitchAndDimmer bece_BEC_2_8_15_EmbeddedSwitchAndDimmer_bevs_type;
+static BET_2_8_27_EmbeddedSwitchDimmerButtonIndicator bece_BEC_2_8_27_EmbeddedSwitchDimmerButtonIndicator_bevs_type;
 };
 
 class BET_2_4_17_TextMultiByteIterator : public BETS_Object {

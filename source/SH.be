@@ -1084,6 +1084,17 @@ class Embedded:AppShell {
        config.put(shpini, pin);
        return("Pin set");
       }
+    } elseIf (cmd == "setconspec") {
+      String newspec = cmdl[1];
+      unless (channel == "serial") {
+        return("Error, only supported over Serial");
+      }
+      if (TS.isEmpty(newspec)) {
+       newspec = "";
+      }
+      newspec.print();
+      config.put(config.getPos("cf.conspec"), newspec);
+      return("conspec Set");
     } elseIf (cmd == "allset") {
 
       String inpin = cmdl[1];

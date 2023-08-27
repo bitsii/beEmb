@@ -9,13 +9,10 @@
 // SW - name (type) and version of the device.  Typename 10 char max ssid rules (no spaces)
 // swconfver.DeviceTypeName.DeviceVersion
 //
-//#define BESPEC_SW "0.GEN.22"  //supergeneric
-#define BESPEC_SW "0.N.26"  //nodemcu
-//#define BESPEC_SW "0.NU.26"  //nodemcu unk name
-//#define BESPEC_SW  "0.DL.20" //dollatek 2mb 1led
-//#define BESPEC_SW "0.AP2.29" //Athom Plug V2 US THE REAL ONE
-//#define BESPEC_SW "0.NT.28"  //nodemcu like athsw
-//#define BESPEC_SW "0.NTU.28"  //nodemcu like athsw but unk name
+//#define BESPEC_SW "0.Generic.22"  //supergeneric
+#define BESPEC_SW "0.WNN.26"  //nodemcu
+//#define BESPEC_SW  "0.DollaTek.20" //dollatek 2mb 1led
+//#define BESPEC_SW "0.WNAP2.29" //Athom Plug V2 US THE REAL ONE
 //
 // CON - definition of device's controls
 // ctlconfver.control.ctlconf,args.control.ctlconf,args
@@ -52,8 +49,8 @@
 // csconf - if you want to enable a the cf.conspec (same as BESPEC_CON) to be set via putconfig (and honored)
 // to enable post-compile-time configuration set BE_CSCONF to "on", otherwise to "off".
 //
-//#define BE_CSCONF "on" //enabled
-#define BE_CSCONF "off" //disabled
+#define BE_CSCONF "on" //enabled
+//#define BE_CSCONF "off" //disabled
 //
 // END OF CONFIGURATION OPTIONS
 //

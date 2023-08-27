@@ -1,1 +1,0 @@
-Profile for a typical Esp8266 NodeMCU with a switch wired to pin 5 (no resistor) and pin 16 and 2 both tied to a single switch control.  Button toggles the switch on +30ms hold and resets device on +10s hold. Serial input enabled
