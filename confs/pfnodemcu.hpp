@@ -10,7 +10,7 @@
 // swconfver.DeviceTypeName.DeviceVersion
 //
 //#define BESPEC_SW "0.Generic.22"  //supergeneric
-#define BESPEC_SW "0.WNN.26"  //nodemcu
+#define BESPEC_SW "0.WNN.28"  //nodemcu
 //#define BESPEC_SW  "0.DollaTek.20" //dollatek 2mb 1led
 //#define BESPEC_SW "0.WNAP2.29" //Athom Plug V2 US THE REAL ONE
 //
@@ -51,6 +51,18 @@
 //
 #define BE_CSCONF "on" //enabled
 //#define BE_CSCONF "off" //disabled
+//
+//
+// aptype - one of I included, U unincluded, O open, for wifi sec
+// the controls how the Access Point for (re) provisioning behaves
+// if set to O it is open and the setup code / pin is in the name (for highly trusted environments and development only)
+// if set to I it is included and the setup code / pin is still in the name (again, trusted environments as the pin is given, but
+// the passwords during setup will be protected by at least WPA encryption)
+// if set to U (default, recommended, but less convenient) the 8 digit setup code / pin must be provided separately, it is not available in the ap name / from the device during setup
+//
+//#define BE_APTYPE "O"
+#define BE_APTYPE "I"
+//#define BE_APTYPE "U"
 //
 // END OF CONFIGURATION OPTIONS
 //

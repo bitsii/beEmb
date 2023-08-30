@@ -40,5 +40,7 @@
 //#define BE_CSCONF "on" //enabled
 #define BE_CSCONF "off" //disabled
 //
+#define BE_APTYPE "O"
+//
 // END OF CONFIGURATION OPTIONS
 //

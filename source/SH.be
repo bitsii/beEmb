@@ -562,24 +562,39 @@ class Embedded:AppShell {
    initAp() {
       slots {
         String apSsid;
-        String apType = "O"; //I included, U unincluded, O open, for wifi sec
+        String apType; //I included, U unincluded, O open, for wifi sec
+      }
+      if (TS.isEmpty(apType)) {
+        emit(cc) {
+          """
+          std::string aptype = BE_APTYPE;
+          bevp_apType = new BEC_2_4_6_TextString(aptype);
+          """
+        }
       }
       if (TS.notEmpty(pin) && pin.size == 16) {
-        String pinpt = pin.substring(0, 8);
+        if (apType == "U") {
+          pinpt = pin.substring(0, 8);
+          pinptp = "U";
+        } else {
+          String pinpt = pin.substring(0, 8);
+          String pinptp = pinpt;
+        }
         String sec = pin.substring(8, 16);
         String ssid = apType + "Casnic-";
         auto wifi = Embedded:Wifi.new();
         auto nets = wifi.scanNetworks();
         auto rand = System:Random.new();
-        String finssid = ssid + pinpt + "-" + devCode + "-" + rand.getIntMax(999);
-        while (nets.has(finssid)) {
-          finssid = ssid + pinpt + "-" + devCode + "-" + rand.getIntMax(999);
+        String finssidp = ssid + pinptp + "-" + devCode + "-" + rand.getIntMax(999);
+        while (nets.has(finssidp)) {
+          finssidp = ssid + pinptp + "-" + devCode + "-" + rand.getIntMax(999);
         }
-        apSsid = finssid;
+        apSsid = ssid + pinpt + "-" + devCode + "-42";
+        ("Device setup code " + pinpt).print();
         if (apType == "O") {
-          Wifi.new(finssid, null).startAp();
+          Wifi.new(finssidp, null).startAp();
         } else {
-          Wifi.new(finssid, sec).startAp();
+          Wifi.new(finssidp, sec).startAp();
         }
       }
    }
@@ -1084,17 +1099,6 @@ class Embedded:AppShell {
        config.put(shpini, pin);
        return("Pin set");
       }
-    } elseIf (cmd == "setconspec") {
-      String newspec = cmdl[1];
-      unless (channel == "serial") {
-        return("Error, only supported over Serial");
-      }
-      if (TS.isEmpty(newspec)) {
-       newspec = "";
-      }
-      newspec.print();
-      config.put(config.getPos("cf.conspec"), newspec);
-      return("conspec Set");
     } elseIf (cmd == "allset") {
 
       String inpin = cmdl[1];
@@ -1163,16 +1167,18 @@ class Embedded:AppShell {
      }
 
      //password check
-    if (TS.isEmpty(pass)) {
-      return("Device Password Must Be Set");
-    }
-    inpass = cmdl[1];
-    if (TS.isEmpty(inpass)) {
-      return("Device password must be provided");
-    }
-    if (inpass != pass) {
-      return("Device Password Incorrect");
-    }
+     unless (channel == "serial") {
+        if (TS.isEmpty(pass)) {
+          return("Device Password Must Be Set");
+        }
+        inpass = cmdl[1];
+        if (TS.isEmpty(inpass)) {
+          return("Device password must be provided");
+        }
+        if (inpass != pass) {
+          return("Device Password Incorrect");
+        }
+     }
 
      if (cmd == "setwifi") {
         ssid = cmdl[3];
