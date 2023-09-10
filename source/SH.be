@@ -180,7 +180,15 @@ class Embedded:AppShell {
 
       pin = config.get(shpini);
       if (TS.isEmpty(pin) || pin.size != 16) {
-        auto pinpart = System:Random.getString(8).lowerValue();
+        emit(cc) {
+          """
+          std::string scode = BE_SCODE;
+          beq->bevl_pinpart = new BEC_2_4_6_TextString(scode);
+          """
+        }
+        if (TS.isEmpty(pinpart) || pinpart.size != 8) {
+          String pinpart = System:Random.getString(8).lowerValue();
+        }
         pin = pinpart + pinpart;
         config.put(shpini, pin);
       }

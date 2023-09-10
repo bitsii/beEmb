@@ -55,14 +55,21 @@
 //
 // aptype - one of I included, U unincluded, O open, for wifi sec
 // the controls how the Access Point for (re) provisioning behaves
-// if set to O it is open and the setup code / pin is in the name (for highly trusted environments and development only)
+// if set to O it is open and the setup code / pin is in the name (default, but for highly trusted environments and development only)
 // if set to I it is included and the setup code / pin is still in the name (again, trusted environments as the pin is given, but
-// the passwords during setup will be protected by at least WPA encryption)
-// if set to U (default, recommended, but less convenient) the 8 digit setup code / pin must be provided separately, it is not available in the ap name / from the device during setup
+// the passwords during setup will be protected by WPA)
+// if set to U (recommended, but less convenient) the 8 digit setup code / pin must be provided separately, it is not available in the ap name / from the device during setup
 //
-//#define BE_APTYPE "O"
-#define BE_APTYPE "I"
+#define BE_APTYPE "O"
+//#define BE_APTYPE "I"
 //#define BE_APTYPE "U"
+//
+// Setup Code - if set to 8 character string of lower case letters this will be used as your setup code instead of
+// a randomly generated one.  This can be especially useful for a BE_APTYPE of U so you don't have to search the
+// console for it / so you can do headless setup if you are putting on a sealed device OTA.
+//
+#define BE_SCODE "na" //a non-empty value should be set, set to < 8 chars to ignore/generate random
+//#define BE_SCODE "abcdefgh" //right length for use, set to 8 char lower case letters
 //
 // END OF CONFIGURATION OPTIONS
 //
