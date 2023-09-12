@@ -7,7 +7,7 @@
   </a>
   </div>
   
-Batteries-included firmware for the Esp8266 targeted for home automation use cases.  Open TCP based protocol with companion mobile applications coming soon.
+Batteries-included firmware for the Esp8266 targeted for home automation use cases.  Open mobile application for connecting devices running the firmware to your network and controlling them - [Casnic Control](https://gitlab.com/bitsii/CasCon) - in the Google Play Store [Casnic Android App](https://play.google.com/store/apps/details?id=casnic.control&gl=US) and the Apple App Store [Casnic IOS App](https://apps.apple.com/us/app/cascon/id6458984046)
 
 Built on the Arduino platform, written in [Brace](https://github.com/bitsii/beBase) - an object oriented, garbage collected language that transpiles to C++.  Licensed under the [BSD-2-Clause](https://opensource.org/licenses/BSD-2-Clause) open source license.
 
