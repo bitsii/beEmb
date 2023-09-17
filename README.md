@@ -7,7 +7,7 @@
   </a>
   </div>
   
-Batteries-included firmware for the Esp8266 targeted for home automation use cases.  Open mobile application for connecting devices running the firmware to your network and controlling them - [Casnic Control](https://gitlab.com/bitsii/CasCon) - in the Google Play Store [Casnic Android App](https://play.google.com/store/apps/details?id=casnic.control&gl=US) and the Apple App Store [Casnic IOS App](https://apps.apple.com/us/app/cascon/id6458984046)
+Batteries-included firmware for the Esp8266 targeted for home automation use cases.  Open Source mobile application for connecting devices running the firmware to your network and controlling them - [Casnic Control](https://gitlab.com/bitsii/CasCon) - in the Google Play Store [Casnic Android App](https://play.google.com/store/apps/details?id=casnic.control&gl=US) and the Apple App Store [Casnic IOS App](https://apps.apple.com/us/app/cascon/id6458984046)
 
 Built on the Arduino platform, written in [Brace](https://github.com/bitsii/beBase) - an object oriented, garbage collected language that transpiles to C++.  Licensed under the [BSD-2-Clause](https://opensource.org/licenses/BSD-2-Clause) open source license.
 
@@ -27,24 +27,23 @@ Common profiles are ready to go and can be customized through header configurati
 * Device starts with access point for provisioning
 * Provisioning includes Wifi configuration, unique device identity and authentication tokens
 * Device announces itself over mDNS
-* Configuration and usage supported an open TCP based protocol - see [CasProt](https://github.com/bitsii/CasProt)
+* Configuration and usage supported an open TCP based protocol with an open source mobile application - see [Casnic Control](https://gitlab.com/bitsii/CasCon)
 * MQTT is also supported and the device will announce it via [HomeAssistant MQTT Discovery](https://www.home-assistant.io/integrations/mqtt/#mqtt-discovery)
 * If a device loses it's Wifi for a period of time it can be reprovisioned to a new network.
 * Secure reset mechanisms available - via button long-push (on devices with buttons) or via its Access Point when removed from provisioned Wifi (configurable)
 * OTA updates from the web are supported
 * A telnet addressable debug port can be enabled for use during development or for support
-* Mobile applications coming soon which handle provisioning, device control, and the rest (rewifi, reset, etc)
 * Device profies can be configured for different control combinations and GPIO selection through configuration in a C++ header or via command over the network (if enabled)
 
 ## Pragmatic Security
 
 Brace Embedded tries to strike a good balance in the security space by enforcing only authorized use while remaining performant and reliable:
 
-* All Devices start with a random configuration code - no default passwords.
+* Devices start with a unique configuration code - no default passwords.
 * Authentication tokens are only exchanged in the clear during provisioning on the devices AP using the configuration codes.  Optional WPA support for the AP mode can provide isolation and encryption during this process if required.
 * Secrets are not passed in the clear once provisioned and connected to the target wifi network.  Device commands are signed and validated with the shared secrets (the tokens) to protect against unauthorized use.  Signing includes the source network address to mitigate MITM attacks.
 * Separate Administrative and Usage tokens (created during provisioning) are required for device control and use.  Users with the administrative token can configure the device and users with the usage token can only use the configured features (turn on and off, etc) 
-* Provisioned devices do not immediately start their access point after a power cycle if they do not find their configured SSID, they will wait 5 minutes and check again.  This is to protect against power losses putting devices which can be reset over the network into a mode which enables it.
+* Provisioned devices do not immediately start their access point after a power cycle if they do not find their configured SSID, they will wait a while and check again.  This is to protect against power losses putting devices which can be reset over the network into a mode which enables it.
 
 (if you're using Mqtt its security applies, which might vary from the above)
 
@@ -91,11 +90,9 @@ Then configure for the build, in the IDE change the following settings under the
 
 Finally, choose Sketch / Upload in the Arduino IDE to put it on your device.  If you are uploading over the network over OTA "Export Compiled Binary" instead (it will land in the sketch directory)  
 
-### Provision the device
+### Provision and use the device
 
-### Use the device
-
-TODO casprot and app info
+Grab the CasCon App - [Casnic Control](https://gitlab.com/bitsii/CasCon) - in the Google Play Store [Casnic Android App](https://play.google.com/store/apps/details?id=casnic.control&gl=US) and the Apple App Store [Casnic IOS App](https://apps.apple.com/us/app/cascon/id6458984046) - and "Setup A Device" (the first time it will ask you to enter a Wifi network, this is the network the esp8266 will be configured to connect to, after entering and saving the ssid and wpa do Setup A Device again.)  On IOS, after entering setup mode, you'll need to go to Settings / Wifi and connect to the network named OCasic-??? (or ICasnic-??? or UCasnic-???, depending on your security mode.  OCasnic is open, you won't need a WPA to connect, ICasnic sets the wpa key to the same 8 characters following the "-" in the ssid name, for UCasnic- you've decided to use a secret key, so you'll need that.  Here's a video for using the more secure UCasnic mode [Setting up a beEmb device with an Unshared key](https://www.youtube.com/watch?v=Vu9xA3vmt7s), and here is a video for the simpler open mode with OCasnic [Setting up a beEmb device with Open Mode](https://www.youtube.com/watch?v=_SArX4tCcmw)
 
 ## Doing your Own Thing
 
