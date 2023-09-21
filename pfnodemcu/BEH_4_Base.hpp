@@ -10,7 +10,8 @@
 // swconfver.DeviceTypeName.DeviceVersion
 //
 //#define BESPEC_SW "0.Generic.22"  //supergeneric
-#define BESPEC_SW "0.WNN.29"  //nodemcu
+#define BESPEC_SW "0.WNN.31"  //nodemcu
+//#define BESPEC_SW "0.Nmcu.29"  //nodemcu
 //#define BESPEC_SW  "0.DollaTek.20" //dollatek 2mb 1led
 //#define BESPEC_SW "0.WNAP2.29" //Athom Plug V2 US THE REAL ONE
 //
