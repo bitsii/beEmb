@@ -1164,7 +1164,6 @@ BEC_2_8_8_EmbeddedAppShell* bevp_ash = nullptr;
 BEC_2_4_3_MathInt* bevp_pini = nullptr;
 BEC_2_8_6_EmbeddedConfig* bevp_config = nullptr;
 BEC_2_8_3_EmbeddedApp* bevp_app = nullptr;
-BEC_2_5_4_LogicBool* bevp_persist = nullptr;
 BEC_2_4_3_MathInt* bevp_conPos = nullptr;
 BEC_2_4_3_MathInt* bevp_lastEvent = nullptr;
 BEC_2_4_6_TextString* bevp_conName = nullptr;

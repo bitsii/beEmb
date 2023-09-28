@@ -22,8 +22,6 @@ class Embedded:DimmerControl {
        Int pini;
        Config config = ash.config;
        Embedded:App app = ash.app;
-       Bool persist = true;
-       Int mode = 1; //default, output.  0 is none/don't set.
      }
      fields {
        Int conPos = _conPos;
@@ -36,13 +34,6 @@ class Embedded:DimmerControl {
         spin = cal[0];
         String dsv = cal[1];
         Int dsvi = app.strToInt(dsv);
-        if (dsvi == 0) {
-          persist = false;
-        }
-        if (cal.size > 2) {
-          dsv = cal[2];
-          mode = app.strToInt(dsv);
-        }
      } else {
       String spin = _conArgs;
      }
@@ -70,19 +61,16 @@ class Embedded:DimmerControl {
      dclvli = config.getPos("dc.lvl." + conPos);
      dcswi = config.getPos("dc.sw." + conPos);
 
-     if (persist) {
+    String inlvl = config.get(dclvli);
+    if (TS.notEmpty(inlvl)) {
+      lvl = inlvl;
+    }
 
-      String inlvl = config.get(dclvli);
-      if (TS.notEmpty(inlvl)) {
-        lvl = inlvl;
-      }
-
-      String insw = config.get(dcswi);
-      if (TS.notEmpty(insw)) {
-        sw = insw;
-        doState(List.new().addValue("dostate").addValue("notpw").addValue(conPos.toString()).addValue(setsw).addValue(sw));
-      }
-     }
+    String insw = config.get(dcswi);
+    if (TS.notEmpty(insw)) {
+      sw = insw;
+      doState(List.new().addValue("dostate").addValue("notpw").addValue(conPos.toString()).addValue(setsw).addValue(sw));
+    }
 
    }
 
@@ -152,13 +140,9 @@ class Embedded:DimmerControl {
         lvl = inlvl;
         inlvl.print();
         sw = on;
-        if (persist) {
-          config.put(dcswi, on);
-          config.put(dclvli, inlvl);
-        }
-        if (mode == 1) {
-          app.pinModeOutput(pini);
-        }
+        config.put(dcswi, on);
+        config.put(dclvli, inlvl);
+        app.pinModeOutput(pini);
         app.analogWrite(pini, inlvli);
         lastEvent.setValue(ash.nowup);
         ash.lastEventsRes = null;
@@ -173,24 +157,16 @@ class Embedded:DimmerControl {
             inlvli = 0;
           }
           on.print(); //write crashes without
-          if (mode == 1) {
-            app.pinModeOutput(pini);
-          }
+          app.pinModeOutput(pini);
           app.analogWrite(pini, inlvli);
           sw = insw;
-          if (persist) {
-            config.put(dcswi, on);
-          }
+          config.put(dcswi, on);
         } elseIf (insw == off) {
           off.print(); //write crashes without
-          if (mode == 1) {
-            app.pinModeOutput(pini);
-          }
+          app.pinModeOutput(pini);
           app.analogWrite(pini, 255);
           sw = insw;
-          if (persist) {
-            config.put(dcswi, off);
-          }
+          config.put(dcswi, off);
         }
         lastEvent.setValue(ash.nowup);
         ash.lastEventsRes = null;
