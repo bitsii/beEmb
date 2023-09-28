@@ -279,7 +279,7 @@ class Embedded:AppShell {
         }
         ("csconf " + csconf).print();
       if (csconf == "on") {
-        controlSpec = config.get(config.getPos("cf.conspec"));
+        controlSpec = config.get(config.getPos("fc.conspec"));
       }
        if (TS.isEmpty(controlSpec)) {
         emit(cc) {

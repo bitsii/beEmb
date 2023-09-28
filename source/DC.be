@@ -22,6 +22,8 @@ class Embedded:DimmerControl {
        Int pini;
        Config config = ash.config;
        Embedded:App app = ash.app;
+       Bool persist = true;
+       Int mode = 1; //default, output.  0 is none/don't set.
      }
      fields {
        Int conPos = _conPos;
@@ -29,7 +31,22 @@ class Embedded:DimmerControl {
        String conName = _conName;
      }
      //pini = Int.new(_conArgs);
-     pini = app.strToInt(_conArgs);
+     if (_conArgs.has(",")) {
+        auto cal = _conArgs.split(",");
+        spin = cal[0];
+        String dsv = cal[1];
+        Int dsvi = app.strToInt(dsv);
+        if (dsvi == 0) {
+          persist = false;
+        }
+        if (cal.size > 2) {
+          dsv = cal[2];
+          mode = app.strToInt(dsv);
+        }
+     } else {
+      String spin = _conArgs;
+     }
+     pini = app.strToInt(spin);
    }
 
    initControl() {
@@ -49,19 +66,24 @@ class Embedded:DimmerControl {
        String lvl;
        String sw;
      }
+
      dclvli = config.getPos("dc.lvl." + conPos);
      dcswi = config.getPos("dc.sw." + conPos);
 
-     String inlvl = config.get(dclvli);
-     if (TS.notEmpty(inlvl)) {
-       lvl = inlvl;
+     if (persist) {
+
+      String inlvl = config.get(dclvli);
+      if (TS.notEmpty(inlvl)) {
+        lvl = inlvl;
+      }
+
+      String insw = config.get(dcswi);
+      if (TS.notEmpty(insw)) {
+        sw = insw;
+        doState(List.new().addValue("dostate").addValue("notpw").addValue(conPos.toString()).addValue(setsw).addValue(sw));
+      }
      }
 
-     String insw = config.get(dcswi);
-     if (TS.notEmpty(insw)) {
-       sw = insw;
-       doState(List.new().addValue("dostate").addValue("notpw").addValue(conPos.toString()).addValue(setsw).addValue(sw));
-     }
    }
 
    doStateMq(String topic, String payload) String {
@@ -130,9 +152,13 @@ class Embedded:DimmerControl {
         lvl = inlvl;
         inlvl.print();
         sw = on;
-        config.put(dcswi, on);
-        config.put(dclvli, inlvl);
-        app.pinModeOutput(pini);
+        if (persist) {
+          config.put(dcswi, on);
+          config.put(dclvli, inlvl);
+        }
+        if (mode == 1) {
+          app.pinModeOutput(pini);
+        }
         app.analogWrite(pini, inlvli);
         lastEvent.setValue(ash.nowup);
         ash.lastEventsRes = null;
@@ -147,16 +173,24 @@ class Embedded:DimmerControl {
             inlvli = 0;
           }
           on.print(); //write crashes without
-          app.pinModeOutput(pini);
+          if (mode == 1) {
+            app.pinModeOutput(pini);
+          }
           app.analogWrite(pini, inlvli);
           sw = insw;
-          config.put(dcswi, on);
+          if (persist) {
+            config.put(dcswi, on);
+          }
         } elseIf (insw == off) {
           off.print(); //write crashes without
-          app.pinModeOutput(pini);
+          if (mode == 1) {
+            app.pinModeOutput(pini);
+          }
           app.analogWrite(pini, 255);
           sw = insw;
-          config.put(dcswi, off);
+          if (persist) {
+            config.put(dcswi, off);
+          }
         }
         lastEvent.setValue(ash.nowup);
         ash.lastEventsRes = null;
