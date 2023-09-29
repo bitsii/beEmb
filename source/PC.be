@@ -45,7 +45,7 @@ class Embedded:PWMControl {
        String setlvll = "setlvl";
        String setrlvll = "setrlvl";
        String getlvl = "getlvl";
-       //on = 0, off = 255
+       Int lmax = 255;
        Int dclvli;
      }
      fields {
@@ -73,14 +73,14 @@ class Embedded:PWMControl {
         Int inlvli = app.strToInt(inlvl);
         //Int inlvli = Int.new(inlvl);
         if (scm == setlvll) {
-          if (inlvli < 0 || inlvli > 255) {
-            inlvli = 255;
+          if (inlvli < 0 || inlvli > lmax) {
+            inlvli = lmax;
           }
         } else {
-          if (inlvli < 0 || inlvli > 255) {
-            inlvli = 255;
+          if (inlvli < 0 || inlvli > lmax) {
+            inlvli = lmax;
           } else {
-            inlvli = 255 - inlvli;//255 - x = y; y + x = 255;255 - y = x
+            inlvli = lmax - inlvli;//lmax - x = y; y + x = lmax;lmax - y = x
           }
         }
         //inlvl = inlvli.toString();

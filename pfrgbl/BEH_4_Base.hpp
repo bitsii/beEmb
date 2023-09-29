@@ -1060,6 +1060,7 @@ BEC_2_4_6_TextString* bevp_conName = nullptr;
 BEC_2_4_6_TextString* bevp_setlvll = nullptr;
 BEC_2_4_6_TextString* bevp_setrlvll = nullptr;
 BEC_2_4_6_TextString* bevp_getlvl = nullptr;
+BEC_2_4_3_MathInt* bevp_lmax = nullptr;
 BEC_2_4_3_MathInt* bevp_dclvli = nullptr;
 BEC_2_4_6_TextString* bevp_lvl = nullptr;
 virtual BEC_2_8_10_EmbeddedPWMControl* bem_new_4(BEC_2_6_6_SystemObject* bevk__ash, BEC_2_4_3_MathInt* bevk__conPos, BEC_2_4_6_TextString* bevk__conName, BEC_2_4_6_TextString* bevk__conArgs);
