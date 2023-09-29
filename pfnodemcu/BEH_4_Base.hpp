@@ -50,8 +50,8 @@
 // csconf - if you want to enable a the cf.conspec (same as BESPEC_CON) to be set via putconfig (and honored)
 // to enable post-compile-time configuration set BE_CSCONF to "on", otherwise to "off".
 //
-#define BE_CSCONF "on" //enabled
-//#define BE_CSCONF "off" //disabled
+//#define BE_CSCONF "on" //enabled
+#define BE_CSCONF "off" //disabled
 //
 //
 // aptype - one of I included, U unincluded, O open, for wifi sec
