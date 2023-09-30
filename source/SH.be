@@ -483,7 +483,8 @@ class Embedded:AppShell {
         } elseIf (conName == "dim") {
           tpp = "homeassistant/light/" + did + "-" + conPoss;
           pt = tpp + "/config";
-          cf = "{ \"name\": \"" += dname += " " += conPoss += "\", \"command_topic\": \"" += tpp += "/set\", \"state_topic\": \"" += tpp += "/state\", \"unique_id\": \"" += did += "-" += conPoss += "\", \"schema\": \"json\", \"brightness\": true, \"brightness_scale\": 255 }";
+          cf = "{ \"name\": \"" += dname += " " += conPoss += "\", \"command_topic\": \"" += tpp += "/set\", \"state_topic\": \"" += tpp += "/state\", \"unique_id\": \"" += did += "-" += conPoss += "\", \"schema\": \"json\", \"brightness\": true, \"brightness_scale\": 255 }"; //noncolor dimmer for reals
+          //cf = "{ \"name\": \"" += dname += " " += conPoss += "\", \"command_topic\": \"" += tpp += "/set\", \"state_topic\": \"" += tpp += "/state\", \"unique_id\": \"" += did += "-" += conPoss += "\", \"schema\": \"json\", \"brightness\": true, \"rgb\": true, \"color_temp\": true }";//trying for rgbcct
           if (doSubs) {
             mqtt.subscribeAsync(tpp += "/set");
           }
