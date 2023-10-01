@@ -41,6 +41,8 @@ class BET_2_8_8_EmbeddedAppShell;
 class BEC_2_8_8_EmbeddedAppShell;
 class BET_2_8_10_EmbeddedPWMControl;
 class BEC_2_8_10_EmbeddedPWMControl;
+class BET_2_8_12_EmbeddedRGBCWControl;
+class BEC_2_8_12_EmbeddedRGBCWControl;
 class BET_2_4_3_MathInt;
 class BEC_2_4_3_MathInt;
 class BET_2_4_4_MathInts;

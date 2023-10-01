@@ -9,12 +9,15 @@
 // SW - name (type) and version of the device.  Typename 10 char max ssid rules (no spaces)
 // swconfver.DeviceTypeName.DeviceVersion
 //
-#define BESPEC_SW "0.Rgbt.12"  //generic configurable controls
+#define BESPEC_SW "0.Rgbt.14"  //generic configurable controls
 //
 // CON - definition of device's controls
 // ctlconfver.control.ctlconf,args.control.ctlconf,args
 //
-#define BESPEC_CON "" //supergeneric
+//#define BESPEC_CON "" //supergeneric
+//next really rgbcct, rgbcw red green blue cold warm
+//R W G T B || R C G W B pin order
+#define BESPEC_CON "0.pwm.4.pwm.5.pwm.12.pwm.13.pwm.14.rgbcw.0,2,4,1,3" //Athom 7W 600lm RGBCCT Bulb (LB01-7W-B22)
 //putconfigs pass raw fc.conspec 0.dim.2,0 e
 //
 //pinposes //16, 2 nodemcu - Athom 16A US 13 LED 14 RELAY, SONOFF BASIC R2 13 LED 12 RELAY, 16 for dollatek 8285
@@ -38,8 +41,8 @@
 // csconf - if you want to enable a the fc.conspec (same as BESPEC_CON) to be set via putconfig (and honored)
 // to enable post-compile-time configuration set BE_CSCONF to "on", otherwise to "off".
 //
-#define BE_CSCONF "on" //enabled
-//#define BE_CSCONF "off" //disabled
+//#define BE_CSCONF "on" //enabled
+#define BE_CSCONF "off" //disabled
 //
 //
 // aptype - one of I included, U unincluded, O open, for wifi sec
@@ -1089,6 +1092,55 @@ virtual BEC_2_6_6_SystemObject* bemd_1(int32_t callId, BEC_2_6_6_SystemObject* b
 virtual BEC_2_6_6_SystemObject* bemd_2(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1);
 virtual BEC_2_6_6_SystemObject* bemd_4(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1, BEC_2_6_6_SystemObject* bevd_2, BEC_2_6_6_SystemObject* bevd_3);
 static BET_2_8_10_EmbeddedPWMControl bece_BEC_2_8_10_EmbeddedPWMControl_bevs_type;
+};
+
+class BET_2_8_12_EmbeddedRGBCWControl : public BETS_Object {
+public:
+BET_2_8_12_EmbeddedRGBCWControl();
+virtual BEC_2_6_6_SystemObject* bems_createInstance();
+virtual void bemgt_doMark();
+static BEC_2_6_6_SystemObject** bevs_inst_ref;
+};
+class BEC_2_8_12_EmbeddedRGBCWControl : public BEC_2_6_6_SystemObject {
+private:
+typedef BEC_2_6_6_SystemObject bevs_super;
+
+public:
+BEC_2_8_8_EmbeddedAppShell* bevp_ash = nullptr;
+BEC_2_8_6_EmbeddedConfig* bevp_config = nullptr;
+BEC_2_8_3_EmbeddedApp* bevp_app = nullptr;
+BEC_2_4_3_MathInt* bevp_lastSwEvent = nullptr;
+BEC_2_4_6_TextString* bevp_conArgs = nullptr;
+BEC_2_9_4_ContainerList* bevp_pwms = nullptr;
+BEC_2_4_3_MathInt* bevp_conPos = nullptr;
+BEC_2_4_3_MathInt* bevp_lastEvent = nullptr;
+BEC_2_4_6_TextString* bevp_conName = nullptr;
+BEC_2_4_6_TextString* bevp_on = nullptr;
+BEC_2_4_6_TextString* bevp_off = nullptr;
+virtual BEC_2_8_12_EmbeddedRGBCWControl* bem_new_4(BEC_2_6_6_SystemObject* bevk__ash, BEC_2_4_3_MathInt* bevk__conPos, BEC_2_4_6_TextString* bevk__conName, BEC_2_4_6_TextString* bevk__conArgs);
+virtual BEC_2_8_12_EmbeddedRGBCWControl* bem_initControl_0();
+virtual BEC_2_4_6_TextString* bem_doStateMq_2(BEC_2_4_6_TextString* bevk_topic, BEC_2_4_6_TextString* bevk_payload);
+virtual BEC_2_4_6_TextString* bem_doState_1(BEC_2_9_4_ContainerList* bevk_cmdl);
+virtual BEC_2_8_12_EmbeddedRGBCWControl* bem_clearStates_0();
+virtual BEC_2_4_3_MathInt* bem_conPosGet_0();
+virtual BEC_2_8_12_EmbeddedRGBCWControl* bem_conPosSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
+virtual BEC_2_4_3_MathInt* bem_lastEventGet_0();
+virtual BEC_2_8_12_EmbeddedRGBCWControl* bem_lastEventSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
+virtual BEC_2_4_6_TextString* bem_conNameGet_0();
+virtual BEC_2_8_12_EmbeddedRGBCWControl* bem_conNameSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
+virtual BEC_2_6_6_SystemObject* bemc_create();
+static BEC_2_8_12_EmbeddedRGBCWControl* bece_BEC_2_8_12_EmbeddedRGBCWControl_bevs_inst;
+virtual void bemc_setInitial(BEC_2_6_6_SystemObject* becc_inst);
+virtual BEC_2_6_6_SystemObject* bemc_getInitial();
+virtual void bemg_doMark();
+virtual size_t bemg_getSize();
+virtual BETS_Object* bemc_getType();
+virtual ~BEC_2_8_12_EmbeddedRGBCWControl() = default;
+virtual BEC_2_6_6_SystemObject* bemd_0(int32_t callId);
+virtual BEC_2_6_6_SystemObject* bemd_1(int32_t callId, BEC_2_6_6_SystemObject* bevd_0);
+virtual BEC_2_6_6_SystemObject* bemd_2(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1);
+virtual BEC_2_6_6_SystemObject* bemd_4(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1, BEC_2_6_6_SystemObject* bevd_2, BEC_2_6_6_SystemObject* bevd_3);
+static BET_2_8_12_EmbeddedRGBCWControl bece_BEC_2_8_12_EmbeddedRGBCWControl_bevs_type;
 };
 
 class BET_2_4_3_MathInt : public BETS_Object {

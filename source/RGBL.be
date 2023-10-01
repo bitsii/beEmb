@@ -23,6 +23,9 @@ class Embedded:RGBL(Embedded:AppShell) {
      if (conName == "pwm") {
        auto swc = Embedded:PWMControl.new(self, conPos, conName, conArgs);
        return(swc);
+     } elseIf (conName == "rgbcw") {
+       auto rgbcw = Embedded:RGBCWControl.new(self, conPos, conName, conArgs);
+       return(rgbcw);
      } else {
        "Unknown control conName".print();
      }

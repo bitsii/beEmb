@@ -9,12 +9,15 @@
 // SW - name (type) and version of the device.  Typename 10 char max ssid rules (no spaces)
 // swconfver.DeviceTypeName.DeviceVersion
 //
-#define BESPEC_SW "0.Rgbt.12"  //generic configurable controls
+#define BESPEC_SW "0.Rgbt.14"  //generic configurable controls
 //
 // CON - definition of device's controls
 // ctlconfver.control.ctlconf,args.control.ctlconf,args
 //
-#define BESPEC_CON "" //supergeneric
+//#define BESPEC_CON "" //supergeneric
+//next really rgbcct, rgbcw red green blue cold warm
+//R W G T B || R C G W B pin order
+#define BESPEC_CON "0.pwm.4.pwm.5.pwm.12.pwm.13.pwm.14.rgbcw.0,2,4,1,3" //Athom 7W 600lm RGBCCT Bulb (LB01-7W-B22)
 //putconfigs pass raw fc.conspec 0.dim.2,0 e
 //
 //pinposes //16, 2 nodemcu - Athom 16A US 13 LED 14 RELAY, SONOFF BASIC R2 13 LED 12 RELAY, 16 for dollatek 8285
@@ -38,8 +41,8 @@
 // csconf - if you want to enable a the fc.conspec (same as BESPEC_CON) to be set via putconfig (and honored)
 // to enable post-compile-time configuration set BE_CSCONF to "on", otherwise to "off".
 //
-#define BE_CSCONF "on" //enabled
-//#define BE_CSCONF "off" //disabled
+//#define BE_CSCONF "on" //enabled
+#define BE_CSCONF "off" //disabled
 //
 //
 // aptype - one of I included, U unincluded, O open, for wifi sec

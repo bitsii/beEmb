@@ -8,7 +8,7 @@ echo "Profile for RGBLight.  PWM Control. Telnet debug enabled, reset by pin ena
 
 export BEEMB_CONF=../beEmb/confs/${APPBLDNM}.hpp
 
-./scripts/bldesp8266noser.sh --mainClass Embedded:RGBL source/PC.be source/RGBL.be
+./scripts/bldesp8266noser.sh --mainClass Embedded:RGBL source/PC.be source/RGBCWC.be source/RGBL.be
 
 cp ard/* $APPBLDNM
 
