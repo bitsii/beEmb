@@ -103,7 +103,6 @@ class Embedded:SwitchControl {
         }
         lastEvent.setValue(ash.nowup);
         ash.lastEventsRes = null;
-        ash.needsStateUp = true;
      }
      return("ok");
    }

@@ -90,7 +90,6 @@ class Embedded:PWMControl {
         app.analogWrite(pini, inlvli);
         lastEvent.setValue(ash.nowup);
         ash.lastEventsRes = null;
-        ash.needsStateUp = true;
      }
      return("ok");
    }

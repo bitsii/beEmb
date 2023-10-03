@@ -83,9 +83,6 @@
 #include <ESP8266httpUpdate.h>
 #include <EEPROM.h>
 #include <Hash.h>
-//for Mqtt.be
-//in BEAR_Imports.hpp
-#include <MQTT.h>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -791,134 +788,6 @@ virtual BEC_2_6_6_SystemObject* bemd_1(int32_t callId, BEC_2_6_6_SystemObject* b
 static BET_2_8_4_EmbeddedMdns bece_BEC_2_8_4_EmbeddedMdns_bevs_type;
 };
 
-class BET_2_8_4_EmbeddedMqtt : public BETS_Object {
-public:
-BET_2_8_4_EmbeddedMqtt();
-virtual BEC_2_6_6_SystemObject* bems_createInstance();
-virtual void bemgt_doMark();
-static BEC_2_6_6_SystemObject** bevs_inst_ref;
-};
-class BEC_2_8_4_EmbeddedMqtt : public BEC_2_6_6_SystemObject {
-private:
-typedef BEC_2_6_6_SystemObject bevs_super;
-
-public:
-BEC_2_4_6_TextString* bevp_mqttServer = nullptr;
-BEC_2_4_6_TextString* bevp_user = nullptr;
-BEC_2_4_6_TextString* bevp_pass = nullptr;
-BEC_2_4_3_MathInt* bevp_mqttPort = nullptr;
-BEC_2_4_6_TextString* bevp_id = nullptr;
-BEC_2_9_4_ContainerList* bevp_mqsubl = nullptr;
-BEC_3_9_4_8_ContainerListIterator* bevp_mqsubi = nullptr;
-BEC_2_8_11_EmbeddedMqttMessage* bevp_mqpubm = nullptr;
-BEC_2_9_4_ContainerList* bevp_mqpubl = nullptr;
-BEC_3_9_4_8_ContainerListIterator* bevp_mqpubi = nullptr;
-BEC_2_4_3_MathInt* bevp_mqpublmax = nullptr;
-BEC_2_8_11_EmbeddedMqttMessage* bevp_mqrcm = nullptr;
-BEC_2_9_4_ContainerList* bevp_mqrcl = nullptr;
-BEC_3_9_4_8_ContainerListIterator* bevp_mqrci = nullptr;
-BEC_2_4_3_MathInt* bevp_mqrcmax = nullptr;
-BEC_2_4_3_MathInt* bevp_zero = nullptr;
-virtual BEC_2_6_6_SystemObject* bem_new_0();
-virtual BEC_2_8_4_EmbeddedMqtt* bem_new_3(BEC_2_4_6_TextString* bevk__mqttServer, BEC_2_4_6_TextString* bevk__user, BEC_2_4_6_TextString* bevk__pass);
-virtual BEC_2_8_4_EmbeddedMqtt* bem_minAsyncCapacitySet_1(BEC_2_4_3_MathInt* bevk_size);
-virtual BEC_2_5_4_LogicBool* bem_hasAsyncCapacity_1(BEC_2_4_3_MathInt* bevk_amount);
-virtual BEC_2_5_4_LogicBool* bem_publishAsync_2(BEC_2_4_6_TextString* bevk_pt, BEC_2_4_6_TextString* bevk_cf);
-virtual BEC_2_5_4_LogicBool* bem_publishAsync_1(BEC_2_8_11_EmbeddedMqttMessage* bevk_msg);
-virtual BEC_2_5_4_LogicBool* bem_subscribeAsync_1(BEC_2_4_6_TextString* bevk_topic);
-virtual BEC_2_5_4_LogicBool* bem_isOpenGet_0();
-virtual BEC_2_5_4_LogicBool* bem_close_0();
-virtual BEC_2_5_4_LogicBool* bem_open_0();
-virtual BEC_2_5_4_LogicBool* bem_publish_2(BEC_2_4_6_TextString* bevk_topic, BEC_2_4_6_TextString* bevk_payload);
-virtual BEC_2_5_4_LogicBool* bem_publish_1(BEC_2_8_11_EmbeddedMqttMessage* bevk_msg);
-virtual BEC_2_5_4_LogicBool* bem_handleAsync_1(BEC_2_6_6_SystemObject* bevk_mqttHandler);
-virtual BEC_2_8_4_EmbeddedMqtt* bem_subscribe_1(BEC_2_4_6_TextString* bevk_topic);
-virtual BEC_2_4_6_TextString* bem_mqttServerGet_0();
-virtual BEC_2_8_4_EmbeddedMqtt* bem_mqttServerSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
-virtual BEC_2_4_6_TextString* bem_userGet_0();
-virtual BEC_2_8_4_EmbeddedMqtt* bem_userSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
-virtual BEC_2_4_6_TextString* bem_passGet_0();
-virtual BEC_2_8_4_EmbeddedMqtt* bem_passSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
-virtual BEC_2_4_3_MathInt* bem_mqttPortGet_0();
-virtual BEC_2_8_4_EmbeddedMqtt* bem_mqttPortSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
-virtual BEC_2_4_6_TextString* bem_idGet_0();
-virtual BEC_2_8_4_EmbeddedMqtt* bem_idSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
-virtual BEC_2_9_4_ContainerList* bem_mqsublGet_0();
-virtual BEC_2_8_4_EmbeddedMqtt* bem_mqsublSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
-virtual BEC_3_9_4_8_ContainerListIterator* bem_mqsubiGet_0();
-virtual BEC_2_8_4_EmbeddedMqtt* bem_mqsubiSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
-virtual BEC_2_8_11_EmbeddedMqttMessage* bem_mqpubmGet_0();
-virtual BEC_2_8_4_EmbeddedMqtt* bem_mqpubmSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
-virtual BEC_2_9_4_ContainerList* bem_mqpublGet_0();
-virtual BEC_2_8_4_EmbeddedMqtt* bem_mqpublSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
-virtual BEC_3_9_4_8_ContainerListIterator* bem_mqpubiGet_0();
-virtual BEC_2_8_4_EmbeddedMqtt* bem_mqpubiSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
-virtual BEC_2_4_3_MathInt* bem_mqpublmaxGet_0();
-virtual BEC_2_8_4_EmbeddedMqtt* bem_mqpublmaxSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
-virtual BEC_2_8_11_EmbeddedMqttMessage* bem_mqrcmGet_0();
-virtual BEC_2_8_4_EmbeddedMqtt* bem_mqrcmSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
-virtual BEC_2_9_4_ContainerList* bem_mqrclGet_0();
-virtual BEC_2_8_4_EmbeddedMqtt* bem_mqrclSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
-virtual BEC_3_9_4_8_ContainerListIterator* bem_mqrciGet_0();
-virtual BEC_2_8_4_EmbeddedMqtt* bem_mqrciSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
-virtual BEC_2_4_3_MathInt* bem_mqrcmaxGet_0();
-virtual BEC_2_8_4_EmbeddedMqtt* bem_mqrcmaxSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
-virtual BEC_2_4_3_MathInt* bem_zeroGet_0();
-virtual BEC_2_8_4_EmbeddedMqtt* bem_zeroSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
-virtual BEC_2_6_6_SystemObject* bemc_create();
-static BEC_2_8_4_EmbeddedMqtt* bece_BEC_2_8_4_EmbeddedMqtt_bevs_inst;
-virtual void bemc_setInitial(BEC_2_6_6_SystemObject* becc_inst);
-virtual BEC_2_6_6_SystemObject* bemc_getInitial();
-virtual void bemg_doMark();
-virtual size_t bemg_getSize();
-virtual BETS_Object* bemc_getType();
-virtual ~BEC_2_8_4_EmbeddedMqtt() = default;
-
-std::unique_ptr<MQTTClient> client;
-WiFiClient net;
-static std::string gotTopic;
-static std::string gotPayload;
-virtual BEC_2_6_6_SystemObject* bemd_0(int32_t callId);
-virtual BEC_2_6_6_SystemObject* bemd_1(int32_t callId, BEC_2_6_6_SystemObject* bevd_0);
-virtual BEC_2_6_6_SystemObject* bemd_2(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1);
-virtual BEC_2_6_6_SystemObject* bemd_3(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1, BEC_2_6_6_SystemObject* bevd_2);
-static BET_2_8_4_EmbeddedMqtt bece_BEC_2_8_4_EmbeddedMqtt_bevs_type;
-};
-
-class BET_2_8_11_EmbeddedMqttMessage : public BETS_Object {
-public:
-BET_2_8_11_EmbeddedMqttMessage();
-virtual BEC_2_6_6_SystemObject* bems_createInstance();
-virtual void bemgt_doMark();
-static BEC_2_6_6_SystemObject** bevs_inst_ref;
-};
-class BEC_2_8_11_EmbeddedMqttMessage : public BEC_2_6_6_SystemObject {
-private:
-typedef BEC_2_6_6_SystemObject bevs_super;
-
-public:
-BEC_2_4_6_TextString* bevp_topic = nullptr;
-BEC_2_4_6_TextString* bevp_payload = nullptr;
-virtual BEC_2_8_11_EmbeddedMqttMessage* bem_new_2(BEC_2_4_6_TextString* bevk__topic, BEC_2_4_6_TextString* bevk__payload);
-virtual BEC_2_4_6_TextString* bem_toString_0();
-virtual BEC_2_4_6_TextString* bem_topicGet_0();
-virtual BEC_2_8_11_EmbeddedMqttMessage* bem_topicSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
-virtual BEC_2_4_6_TextString* bem_payloadGet_0();
-virtual BEC_2_8_11_EmbeddedMqttMessage* bem_payloadSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
-virtual BEC_2_6_6_SystemObject* bemc_create();
-static BEC_2_8_11_EmbeddedMqttMessage* bece_BEC_2_8_11_EmbeddedMqttMessage_bevs_inst;
-virtual void bemc_setInitial(BEC_2_6_6_SystemObject* becc_inst);
-virtual BEC_2_6_6_SystemObject* bemc_getInitial();
-virtual void bemg_doMark();
-virtual size_t bemg_getSize();
-virtual BETS_Object* bemc_getType();
-virtual ~BEC_2_8_11_EmbeddedMqttMessage() = default;
-virtual BEC_2_6_6_SystemObject* bemd_0(int32_t callId);
-virtual BEC_2_6_6_SystemObject* bemd_1(int32_t callId, BEC_2_6_6_SystemObject* bevd_0);
-virtual BEC_2_6_6_SystemObject* bemd_2(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1);
-static BET_2_8_11_EmbeddedMqttMessage bece_BEC_2_8_11_EmbeddedMqttMessage_bevs_type;
-};
-
 class BET_2_8_6_EmbeddedUpdate : public BETS_Object {
 public:
 BET_2_8_6_EmbeddedUpdate();
@@ -960,8 +829,6 @@ BEC_2_8_3_EmbeddedApp* bevp_app = nullptr;
 BEC_2_8_6_EmbeddedConfig* bevp_config = nullptr;
 BEC_2_4_3_MathInt* bevp_nowup = nullptr;
 BEC_2_4_6_TextString* bevp_lastEventsRes = nullptr;
-BEC_2_5_4_LogicBool* bevp_needsStateUp = nullptr;
-BEC_2_5_4_LogicBool* bevp_needsStateUpSoon = nullptr;
 BEC_2_9_4_ContainerList* bevp_controls = nullptr;
 BEC_2_9_4_ContainerList* bevp_loopers = nullptr;
 BEC_2_8_9_EmbeddedTCPClient* bevp_concon = nullptr;
@@ -973,7 +840,6 @@ BEC_2_4_3_MathInt* bevp_shseci = nullptr;
 BEC_2_4_3_MathInt* bevp_shdidi = nullptr;
 BEC_2_4_3_MathInt* bevp_zero = nullptr;
 BEC_2_4_3_MathInt* bevp_nextUpdateCheck = nullptr;
-BEC_2_4_3_MathInt* bevp_nextMq = nullptr;
 BEC_2_4_3_MathInt* bevp_nextSwInfo = nullptr;
 BEC_2_4_3_MathInt* bevp_nextRestart = nullptr;
 BEC_2_4_3_MathInt* bevp_nextMaybeSave = nullptr;
@@ -1000,14 +866,12 @@ BEC_2_5_4_LogicBool* bevp_readyForAp = nullptr;
 BEC_2_5_4_LogicBool* bevp_needsBuildControls = nullptr;
 BEC_2_5_4_LogicBool* bevp_needsInitControls = nullptr;
 BEC_2_5_4_LogicBool* bevp_needsGc = nullptr;
-BEC_2_5_4_LogicBool* bevp_needsMqConfUp = nullptr;
 BEC_2_4_3_MathInt* bevp_looperI = nullptr;
 BEC_2_4_6_TextString* bevp_pin = nullptr;
 BEC_2_4_6_TextString* bevp_pass = nullptr;
 BEC_2_4_6_TextString* bevp_spass = nullptr;
 BEC_2_8_9_EmbeddedSerServer* bevp_serserver = nullptr;
 BEC_2_8_4_EmbeddedMdns* bevp_mdserver = nullptr;
-BEC_2_8_4_EmbeddedMqtt* bevp_mqtt = nullptr;
 BEC_2_8_9_EmbeddedTCPServer* bevp_tcpserver = nullptr;
 BEC_2_8_9_EmbeddedTCPServer* bevp_conserver = nullptr;
 BEC_2_4_6_TextString* bevp_apSsid = nullptr;
@@ -1030,16 +894,12 @@ virtual BEC_2_8_8_EmbeddedAppShell* bem_buildControls_0();
 virtual BEC_2_8_8_EmbeddedAppShell* bem_initRandom_0();
 virtual BEC_2_8_8_EmbeddedAppShell* bem_startLoop_0();
 virtual BEC_2_8_8_EmbeddedAppShell* bem_networkInit_0();
-virtual BEC_2_8_8_EmbeddedAppShell* bem_initMq_0();
-virtual BEC_2_8_8_EmbeddedAppShell* bem_mqConfUp_1(BEC_2_5_4_LogicBool* bevk_doSubs);
-virtual BEC_2_8_8_EmbeddedAppShell* bem_mqStateUp_0();
 virtual BEC_2_8_8_EmbeddedAppShell* bem_checkWifiAp_0();
 virtual BEC_2_8_8_EmbeddedAppShell* bem_initAp_0();
 virtual BEC_2_8_8_EmbeddedAppShell* bem_startWifi_0();
 virtual BEC_2_8_8_EmbeddedAppShell* bem_checkWifiUp_0();
 virtual BEC_2_8_8_EmbeddedAppShell* bem_sysupdate_1(BEC_2_4_6_TextString* bevk_upurl);
 virtual BEC_2_8_8_EmbeddedAppShell* bem_handleLoop_0();
-virtual BEC_2_8_8_EmbeddedAppShell* bem_handleMqtt_2(BEC_2_4_6_TextString* bevk_topic, BEC_2_4_6_TextString* bevk_payload);
 virtual BEC_2_4_6_TextString* bem_doCmd_3(BEC_2_4_6_TextString* bevk_channel, BEC_2_4_6_TextString* bevk_origin, BEC_2_4_6_TextString* bevk_cmdline);
 virtual BEC_2_4_6_TextString* bem_doCmdlSec_3(BEC_2_4_6_TextString* bevk_channel, BEC_2_4_6_TextString* bevk_origin, BEC_2_9_4_ContainerList* bevk_cmdl);
 virtual BEC_2_4_6_TextString* bem_doCmdl_3(BEC_2_4_6_TextString* bevk_channel, BEC_2_4_6_TextString* bevk_origin, BEC_2_9_4_ContainerList* bevk_cmdl);
@@ -1052,10 +912,6 @@ virtual BEC_2_4_3_MathInt* bem_nowupGet_0();
 virtual BEC_2_8_8_EmbeddedAppShell* bem_nowupSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
 virtual BEC_2_4_6_TextString* bem_lastEventsResGet_0();
 virtual BEC_2_8_8_EmbeddedAppShell* bem_lastEventsResSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
-virtual BEC_2_5_4_LogicBool* bem_needsStateUpGet_0();
-virtual BEC_2_8_8_EmbeddedAppShell* bem_needsStateUpSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
-virtual BEC_2_5_4_LogicBool* bem_needsStateUpSoonGet_0();
-virtual BEC_2_8_8_EmbeddedAppShell* bem_needsStateUpSoonSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
 virtual BEC_2_9_4_ContainerList* bem_controlsGet_0();
 virtual BEC_2_8_8_EmbeddedAppShell* bem_controlsSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
 virtual BEC_2_9_4_ContainerList* bem_loopersGet_0();
@@ -1068,8 +924,6 @@ virtual BEC_2_8_9_EmbeddedSerServer* bem_serserverGet_0();
 virtual BEC_2_8_8_EmbeddedAppShell* bem_serserverSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
 virtual BEC_2_8_4_EmbeddedMdns* bem_mdserverGet_0();
 virtual BEC_2_8_8_EmbeddedAppShell* bem_mdserverSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
-virtual BEC_2_8_4_EmbeddedMqtt* bem_mqttGet_0();
-virtual BEC_2_8_8_EmbeddedAppShell* bem_mqttSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
 virtual BEC_2_8_9_EmbeddedTCPServer* bem_tcpserverGet_0();
 virtual BEC_2_8_8_EmbeddedAppShell* bem_tcpserverSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
 virtual BEC_2_8_9_EmbeddedTCPServer* bem_conserverGet_0();
@@ -1084,7 +938,6 @@ virtual BETS_Object* bemc_getType();
 virtual ~BEC_2_8_8_EmbeddedAppShell() = default;
 virtual BEC_2_6_6_SystemObject* bemd_0(int32_t callId);
 virtual BEC_2_6_6_SystemObject* bemd_1(int32_t callId, BEC_2_6_6_SystemObject* bevd_0);
-virtual BEC_2_6_6_SystemObject* bemd_2(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1);
 virtual BEC_2_6_6_SystemObject* bemd_3(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1, BEC_2_6_6_SystemObject* bevd_2);
 static BET_2_8_8_EmbeddedAppShell bece_BEC_2_8_8_EmbeddedAppShell_bevs_type;
 };
