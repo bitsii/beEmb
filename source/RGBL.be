@@ -20,7 +20,7 @@ use Embedded:AppShell;
 class Embedded:RGBL(Embedded:AppShell) {
 
    buildControl(Int conPos, String conName, String conArgs) {
-     if (conName == "pwm") {
+     if (conName == "pwm" || conName == "pwmh") {
        auto swc = Embedded:PWMControl.new(self, conPos, conName, conArgs);
        return(swc);
      } elseIf (conName == "rgbcw") {
