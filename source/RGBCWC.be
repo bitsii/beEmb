@@ -39,6 +39,8 @@ class Embedded:RGBCWControl {
      slots {
        String on = "on";
        String off = "off";
+       String getrgbcw = "getrgbcw";
+       String setrgbcw = "setrgbcw";
      }
      if (conArgs.has(",")) {
         auto cal = conArgs.split(",");
@@ -50,12 +52,18 @@ class Embedded:RGBCWControl {
      }
    }
 
-   doStateMq(String topic, String payload) String {
-     return("na");
-   }
-
    doState(List cmdl) String {
-     return("na");
+     "in dostate rgbcw".print();
+     String scm = cmdl[3];
+     if (scm == getrgbcw) {
+      return("undefined");
+     } elseIf (scm == setrgbcw) {
+        String evtype = cmdl[4];
+        ("evtype " + evtype).print();
+        String evmsg = cmdl[5];
+        ("evmsg " + evmsg).print();
+     }
+     return("ok");
    }
 
    clearStates() {
