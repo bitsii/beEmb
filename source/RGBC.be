@@ -16,7 +16,7 @@ use Embedded:AppShell;
 use Embedded:Config;
 use Embedded:PWMControl as PWM;
 
-class Embedded:RGBCWControl {
+class Embedded:RGBControl {
 
    new(_ash, Int _conPos, String _conName, String _conArgs) {
      slots {
@@ -25,7 +25,7 @@ class Embedded:RGBCWControl {
        Embedded:App app = ash.app;
        Int lastSwEvent = Int.new();
        String conArgs = _conArgs;
-       List pwms = List.new(); //rgbcw red green blue cold warm
+       List pwms = List.new(); //rgb red green blue
      }
      fields {
        Int conPos = _conPos;
@@ -39,8 +39,14 @@ class Embedded:RGBCWControl {
      slots {
        String on = "on";
        String off = "off";
-       String getrgbcw = "getrgbcw";
-       String setrgbcw = "setrgbcw";
+       String getrgb = "getrgb";
+       String setrgb = "setrgb";
+       String setsw = "setsw";
+       String getsw = "getsw";
+     }
+     fields {
+       String rgb;
+       String sw;
      }
      if (conArgs.has(",")) {
         auto cal = conArgs.split(",");
@@ -53,15 +59,19 @@ class Embedded:RGBCWControl {
    }
 
    doState(List cmdl) String {
-     "in dostate rgbcw".print();
+     "in dostate rgb".print();
      String scm = cmdl[3];
-     if (scm == getrgbcw) {
+     if (scm == getsw) {
+        if (TS.notEmpty(sw)) {
+          return(sw);
+        } else {
+        return("undefined");
+        }
+     } elseIf (scm == getrgb) {
       return("undefined");
-     } elseIf (scm == setrgbcw) {
-        String evtype = cmdl[4];
-        ("evtype " + evtype).print();
-        String evmsg = cmdl[5];
-        ("evmsg " + evmsg).print();
+     } elseIf (scm == setrgb) {
+        rgb = cmdl[4];
+        ("rgb " + rgb).print();
      }
      return("ok");
    }

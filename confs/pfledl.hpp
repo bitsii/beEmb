@@ -17,7 +17,9 @@
 //#define BESPEC_CON "" //supergeneric
 //next really rgbcct, rgbcw red green blue cold warm
 //R W G T B || R C G W B pin order
-#define BESPEC_CON "0.pwmh.4.pwmh.5.pwmh.12.pwmh.13.pwmh.14.rgbcw.0,2,4,1,3" //Athom 7W 600lm RGBCCT Bulb (LB01-7W-B22)
+//#define BESPEC_CON "0.pwmh.4.pwmh.5.pwmh.12.pwmh.13.pwmh.14.rgbcw.0,2,4,1,3" //Athom 7W 600lm RGBCCT Bulb (LB01-7W-B22)
+//Just the R G B part now
+#define BESPEC_CON "0.pwmh.4.pwmh.12.pwmh.14.rgbcw.0,1,2" //Athom 7W 600lm RGBCCT Bulb (LB01-7W-B22)
 //putconfigs pass raw fc.conspec 0.dim.2,0 e
 //
 //pinposes //16, 2 nodemcu - Athom 16A US 13 LED 14 RELAY, SONOFF BASIC R2 13 LED 12 RELAY, 16 for dollatek 8285

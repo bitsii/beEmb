@@ -17,7 +17,9 @@
 //#define BESPEC_CON "" //supergeneric
 //next really rgbcct, rgbcw red green blue cold warm
 //R W G T B || R C G W B pin order
-#define BESPEC_CON "0.pwmh.4.pwmh.5.pwmh.12.pwmh.13.pwmh.14.rgbcw.0,2,4,1,3" //Athom 7W 600lm RGBCCT Bulb (LB01-7W-B22)
+//#define BESPEC_CON "0.pwmh.4.pwmh.5.pwmh.12.pwmh.13.pwmh.14.rgbcw.0,2,4,1,3" //Athom 7W 600lm RGBCCT Bulb (LB01-7W-B22)
+//Just the R G B part now
+#define BESPEC_CON "0.pwmh.4.pwmh.12.pwmh.14.rgbcw.0,1,2" //Athom 7W 600lm RGBCCT Bulb (LB01-7W-B22)
 //putconfigs pass raw fc.conspec 0.dim.2,0 e
 //
 //pinposes //16, 2 nodemcu - Athom 16A US 13 LED 14 RELAY, SONOFF BASIC R2 13 LED 12 RELAY, 16 for dollatek 8285
@@ -983,14 +985,14 @@ virtual BEC_2_6_6_SystemObject* bemd_4(int32_t callId, BEC_2_6_6_SystemObject* b
 static BET_2_8_10_EmbeddedPWMControl bece_BEC_2_8_10_EmbeddedPWMControl_bevs_type;
 };
 
-class BET_2_8_12_EmbeddedRGBCWControl : public BETS_Object {
+class BET_2_8_10_EmbeddedRGBControl : public BETS_Object {
 public:
-BET_2_8_12_EmbeddedRGBCWControl();
+BET_2_8_10_EmbeddedRGBControl();
 virtual BEC_2_6_6_SystemObject* bems_createInstance();
 virtual void bemgt_doMark();
 static BEC_2_6_6_SystemObject** bevs_inst_ref;
 };
-class BEC_2_8_12_EmbeddedRGBCWControl : public BEC_2_6_6_SystemObject {
+class BEC_2_8_10_EmbeddedRGBControl : public BEC_2_6_6_SystemObject {
 private:
 typedef BEC_2_6_6_SystemObject bevs_super;
 
@@ -1006,30 +1008,38 @@ BEC_2_4_3_MathInt* bevp_lastEvent = nullptr;
 BEC_2_4_6_TextString* bevp_conName = nullptr;
 BEC_2_4_6_TextString* bevp_on = nullptr;
 BEC_2_4_6_TextString* bevp_off = nullptr;
-BEC_2_4_6_TextString* bevp_getrgbcw = nullptr;
-BEC_2_4_6_TextString* bevp_setrgbcw = nullptr;
-virtual BEC_2_8_12_EmbeddedRGBCWControl* bem_new_4(BEC_2_6_6_SystemObject* bevk__ash, BEC_2_4_3_MathInt* bevk__conPos, BEC_2_4_6_TextString* bevk__conName, BEC_2_4_6_TextString* bevk__conArgs);
-virtual BEC_2_8_12_EmbeddedRGBCWControl* bem_initControl_0();
+BEC_2_4_6_TextString* bevp_getrgb = nullptr;
+BEC_2_4_6_TextString* bevp_setrgb = nullptr;
+BEC_2_4_6_TextString* bevp_setsw = nullptr;
+BEC_2_4_6_TextString* bevp_getsw = nullptr;
+BEC_2_4_6_TextString* bevp_rgb = nullptr;
+BEC_2_4_6_TextString* bevp_sw = nullptr;
+virtual BEC_2_8_10_EmbeddedRGBControl* bem_new_4(BEC_2_6_6_SystemObject* bevk__ash, BEC_2_4_3_MathInt* bevk__conPos, BEC_2_4_6_TextString* bevk__conName, BEC_2_4_6_TextString* bevk__conArgs);
+virtual BEC_2_8_10_EmbeddedRGBControl* bem_initControl_0();
 virtual BEC_2_4_6_TextString* bem_doState_1(BEC_2_9_4_ContainerList* bevk_cmdl);
-virtual BEC_2_8_12_EmbeddedRGBCWControl* bem_clearStates_0();
+virtual BEC_2_8_10_EmbeddedRGBControl* bem_clearStates_0();
 virtual BEC_2_4_3_MathInt* bem_conPosGet_0();
-virtual BEC_2_8_12_EmbeddedRGBCWControl* bem_conPosSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
+virtual BEC_2_8_10_EmbeddedRGBControl* bem_conPosSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
 virtual BEC_2_4_3_MathInt* bem_lastEventGet_0();
-virtual BEC_2_8_12_EmbeddedRGBCWControl* bem_lastEventSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
+virtual BEC_2_8_10_EmbeddedRGBControl* bem_lastEventSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
 virtual BEC_2_4_6_TextString* bem_conNameGet_0();
-virtual BEC_2_8_12_EmbeddedRGBCWControl* bem_conNameSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
+virtual BEC_2_8_10_EmbeddedRGBControl* bem_conNameSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
+virtual BEC_2_4_6_TextString* bem_rgbGet_0();
+virtual BEC_2_8_10_EmbeddedRGBControl* bem_rgbSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
+virtual BEC_2_4_6_TextString* bem_swGet_0();
+virtual BEC_2_8_10_EmbeddedRGBControl* bem_swSet_1(BEC_2_6_6_SystemObject* bevt_0_ta_SET);
 virtual BEC_2_6_6_SystemObject* bemc_create();
-static BEC_2_8_12_EmbeddedRGBCWControl* bece_BEC_2_8_12_EmbeddedRGBCWControl_bevs_inst;
+static BEC_2_8_10_EmbeddedRGBControl* bece_BEC_2_8_10_EmbeddedRGBControl_bevs_inst;
 virtual void bemc_setInitial(BEC_2_6_6_SystemObject* becc_inst);
 virtual BEC_2_6_6_SystemObject* bemc_getInitial();
 virtual void bemg_doMark();
 virtual size_t bemg_getSize();
 virtual BETS_Object* bemc_getType();
-virtual ~BEC_2_8_12_EmbeddedRGBCWControl() = default;
+virtual ~BEC_2_8_10_EmbeddedRGBControl() = default;
 virtual BEC_2_6_6_SystemObject* bemd_0(int32_t callId);
 virtual BEC_2_6_6_SystemObject* bemd_1(int32_t callId, BEC_2_6_6_SystemObject* bevd_0);
 virtual BEC_2_6_6_SystemObject* bemd_4(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1, BEC_2_6_6_SystemObject* bevd_2, BEC_2_6_6_SystemObject* bevd_3);
-static BET_2_8_12_EmbeddedRGBCWControl bece_BEC_2_8_12_EmbeddedRGBCWControl_bevs_type;
+static BET_2_8_10_EmbeddedRGBControl bece_BEC_2_8_10_EmbeddedRGBControl_bevs_type;
 };
 
 class BET_2_4_3_MathInt : public BETS_Object {
@@ -1956,29 +1966,29 @@ virtual BEC_2_6_6_SystemObject* bemd_1(int32_t callId, BEC_2_6_6_SystemObject* b
 static BET_2_6_9_SystemException bece_BEC_2_6_9_SystemException_bevs_type;
 };
 
-class BET_2_8_4_EmbeddedRGBL : public BETS_Object {
+class BET_2_8_4_EmbeddedLedL : public BETS_Object {
 public:
-BET_2_8_4_EmbeddedRGBL();
+BET_2_8_4_EmbeddedLedL();
 virtual BEC_2_6_6_SystemObject* bems_createInstance();
 virtual void bemgt_doMark();
 static BEC_2_6_6_SystemObject** bevs_inst_ref;
 };
-class BEC_2_8_4_EmbeddedRGBL : public BEC_2_8_8_EmbeddedAppShell {
+class BEC_2_8_4_EmbeddedLedL : public BEC_2_8_8_EmbeddedAppShell {
 private:
 typedef BEC_2_8_8_EmbeddedAppShell bevs_super;
 
 public:
 virtual BEC_2_6_6_SystemObject* bem_buildControl_3(BEC_2_4_3_MathInt* bevk_conPos, BEC_2_4_6_TextString* bevk_conName, BEC_2_4_6_TextString* bevk_conArgs);
 virtual BEC_2_6_6_SystemObject* bemc_create();
-static BEC_2_8_4_EmbeddedRGBL* bece_BEC_2_8_4_EmbeddedRGBL_bevs_inst;
+static BEC_2_8_4_EmbeddedLedL* bece_BEC_2_8_4_EmbeddedLedL_bevs_inst;
 virtual void bemc_setInitial(BEC_2_6_6_SystemObject* becc_inst);
 virtual BEC_2_6_6_SystemObject* bemc_getInitial();
 virtual void bemg_doMark();
 virtual size_t bemg_getSize();
 virtual BETS_Object* bemc_getType();
-virtual ~BEC_2_8_4_EmbeddedRGBL() = default;
+virtual ~BEC_2_8_4_EmbeddedLedL() = default;
 virtual BEC_2_6_6_SystemObject* bemd_3(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1, BEC_2_6_6_SystemObject* bevd_2);
-static BET_2_8_4_EmbeddedRGBL bece_BEC_2_8_4_EmbeddedRGBL_bevs_type;
+static BET_2_8_4_EmbeddedLedL bece_BEC_2_8_4_EmbeddedLedL_bevs_type;
 };
 
 class BET_2_4_17_TextMultiByteIterator : public BETS_Object {

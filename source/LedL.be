@@ -17,15 +17,15 @@ use Embedded:Aes as Crypt;
 use Encode:Url as EU;
 use Embedded:AppShell;
 
-class Embedded:RGBL(Embedded:AppShell) {
+class Embedded:LedL(Embedded:AppShell) {
 
    buildControl(Int conPos, String conName, String conArgs) {
      if (conName == "pwm" || conName == "pwmh") {
        auto swc = Embedded:PWMControl.new(self, conPos, conName, conArgs);
        return(swc);
-     } elseIf (conName == "rgbcw") {
-       auto rgbcw = Embedded:RGBCWControl.new(self, conPos, conName, conArgs);
-       return(rgbcw);
+     } elseIf (conName == "rgb") {
+       auto rgb = Embedded:RGBControl.new(self, conPos, conName, conArgs);
+       return(rgb);
      } else {
        "Unknown control conName".print();
      }

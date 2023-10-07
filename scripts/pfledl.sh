@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export APPBLDNM=pfrgbl
+export APPBLDNM=pfledl
 
 mkdir -p $APPBLDNM
 
@@ -8,7 +8,7 @@ echo "Profile for RGBLight.  PWM Control. Telnet debug enabled, reset by pin ena
 
 export BEEMB_CONF=../beEmb/confs/${APPBLDNM}.hpp
 
-./scripts/bldesp8266.sh --mainClass Embedded:RGBL source/PC.be source/RGBCWC.be source/RGBL.be
+./scripts/bldesp8266.sh --mainClass Embedded:LedL source/PC.be source/RGBC.be source/LedL.be
 
 cp ard/* $APPBLDNM
 
