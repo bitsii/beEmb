@@ -9,7 +9,7 @@
 // SW - name (type) and version of the device.  Typename 10 char max ssid rules (no spaces)
 // swconfver.DeviceTypeName.DeviceVersion
 //
-#define BESPEC_SW "0.Rgbt.14"  //generic configurable controls
+#define BESPEC_SW "0.Rgbt.15"  //generic configurable controls
 //
 // CON - definition of device's controls
 // ctlconfver.control.ctlconf,args.control.ctlconf,args
@@ -19,7 +19,7 @@
 //R W G T B || R C G W B pin order
 //#define BESPEC_CON "0.pwmh.4.pwmh.5.pwmh.12.pwmh.13.pwmh.14.rgbcw.0,2,4,1,3" //Athom 7W 600lm RGBCCT Bulb (LB01-7W-B22)
 //Just the R G B part now
-#define BESPEC_CON "0.pwmh.4.pwmh.12.pwmh.14.rgbcw.0,1,2" //Athom 7W 600lm RGBCCT Bulb (LB01-7W-B22)
+#define BESPEC_CON "0.rgb.4,12,14" //Athom 7W 600lm RGBCCT Bulb (LB01-7W-B22)
 //putconfigs pass raw fc.conspec 0.dim.2,0 e
 //
 //pinposes //16, 2 nodemcu - Athom 16A US 13 LED 14 RELAY, SONOFF BASIC R2 13 LED 12 RELAY, 16 for dollatek 8285
@@ -1002,7 +1002,8 @@ BEC_2_8_6_EmbeddedConfig* bevp_config = nullptr;
 BEC_2_8_3_EmbeddedApp* bevp_app = nullptr;
 BEC_2_4_3_MathInt* bevp_lastSwEvent = nullptr;
 BEC_2_4_6_TextString* bevp_conArgs = nullptr;
-BEC_2_9_4_ContainerList* bevp_pwms = nullptr;
+BEC_2_4_3_MathInt* bevp_zero = nullptr;
+BEC_2_4_3_MathInt* bevp_twofity = nullptr;
 BEC_2_4_3_MathInt* bevp_conPos = nullptr;
 BEC_2_4_3_MathInt* bevp_lastEvent = nullptr;
 BEC_2_4_6_TextString* bevp_conName = nullptr;
@@ -1012,6 +1013,9 @@ BEC_2_4_6_TextString* bevp_getrgb = nullptr;
 BEC_2_4_6_TextString* bevp_setrgb = nullptr;
 BEC_2_4_6_TextString* bevp_setsw = nullptr;
 BEC_2_4_6_TextString* bevp_getsw = nullptr;
+BEC_2_4_3_MathInt* bevp_rp = nullptr;
+BEC_2_4_3_MathInt* bevp_gp = nullptr;
+BEC_2_4_3_MathInt* bevp_bp = nullptr;
 BEC_2_4_6_TextString* bevp_rgb = nullptr;
 BEC_2_4_6_TextString* bevp_sw = nullptr;
 virtual BEC_2_8_10_EmbeddedRGBControl* bem_new_4(BEC_2_6_6_SystemObject* bevk__ash, BEC_2_4_3_MathInt* bevk__conPos, BEC_2_4_6_TextString* bevk__conName, BEC_2_4_6_TextString* bevk__conArgs);

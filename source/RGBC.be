@@ -14,18 +14,19 @@ use Text:String;
 use Text:Strings as TS;
 use Embedded:AppShell;
 use Embedded:Config;
-use Embedded:PWMControl as PWM;
 
 class Embedded:RGBControl {
 
    new(_ash, Int _conPos, String _conName, String _conArgs) {
+
      slots {
        Embedded:AppShell ash = _ash;
        Config config = ash.config;
        Embedded:App app = ash.app;
        Int lastSwEvent = Int.new();
        String conArgs = _conArgs;
-       List pwms = List.new(); //rgb red green blue
+       Int zero = 0;
+       Int twofity = 255;
      }
      fields {
        Int conPos = _conPos;
@@ -43,6 +44,9 @@ class Embedded:RGBControl {
        String setrgb = "setrgb";
        String setsw = "setsw";
        String getsw = "getsw";
+       Int rp;
+       Int gp;
+       Int bp;
      }
      fields {
        String rgb;
@@ -50,11 +54,12 @@ class Embedded:RGBControl {
      }
      if (conArgs.has(",")) {
         auto cal = conArgs.split(",");
-        for (Int i = 0;i < cal.size;i++=) {
-          Int ic = app.strToInt(cal[i]);
-          PWM pwm = ash.controls.get(ic);
-          pwms += pwm;
+        if (cal.size < 3) {
+          "not enough pins for rgbc".print();
         }
+        rp = app.strToInt(cal[0]);
+        gp = app.strToInt(cal[1]);
+        bp = app.strToInt(cal[2]);
      }
    }
 
@@ -65,13 +70,38 @@ class Embedded:RGBControl {
         if (TS.notEmpty(sw)) {
           return(sw);
         } else {
-        return("undefined");
+          return("undefined");
         }
      } elseIf (scm == getrgb) {
-      return("undefined");
+      if (TS.notEmpty(rgb)) {
+        return(rgb);
+      } else {
+        return("undefined");
+      }
      } elseIf (scm == setrgb) {
         rgb = cmdl[4];
         ("rgb " + rgb).print();
+        List rgbl = rgb.split(",");
+        Int ri = app.strToInt(rgbl[0]);
+        Int gi = app.strToInt(rgbl[1]);
+        Int bi = app.strToInt(rgbl[2]);
+        if (ri < zero || ri > twofity) {
+          ri = zero;
+        }
+        if (gi < zero || gi > twofity) {
+          gi = zero;
+        }
+        if (bi < zero || bi > twofity) {
+          bi = zero;
+        }
+        app.analogWrite(rp, ri);
+        ("rp ri " + rp + " " + ri).print();
+        app.analogWrite(gp, gi);
+        ("gp gi " + gp + " " + gi).print();
+        app.analogWrite(bp, bi);
+        ("bp bi " + bp + " " + bi).print();
+        lastEvent.setValue(ash.nowup);
+        ash.lastEventsRes = null;
      }
      return("ok");
    }
