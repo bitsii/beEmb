@@ -1004,6 +1004,7 @@ BEC_2_4_3_MathInt* bevp_lastSwEvent = nullptr;
 BEC_2_4_6_TextString* bevp_conArgs = nullptr;
 BEC_2_4_3_MathInt* bevp_zero = nullptr;
 BEC_2_4_3_MathInt* bevp_twofity = nullptr;
+BEC_2_4_6_TextString* bevp_ok = nullptr;
 BEC_2_4_3_MathInt* bevp_conPos = nullptr;
 BEC_2_4_3_MathInt* bevp_lastEvent = nullptr;
 BEC_2_4_6_TextString* bevp_conName = nullptr;

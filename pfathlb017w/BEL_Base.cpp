@@ -906,7 +906,7 @@ break;
         }
         beq->bevt_17_ta_ph = static_cast<BEC_2_5_4_LogicBool*>(BECS_Runtime::boolFalse);
 if (beq->bevt_17_ta_ph->bevi_bool) {
-beq->bevl_rval->bemd_0(2029554860);
+beq->bevl_rval->bemd_0(465233440);
 } 
 return beq->bevl_rval;
 }
@@ -970,7 +970,7 @@ beq->bevl_cname = beq->bevt_6_ta_ph->bem_add_1(beq->bevt_8_ta_ph);
       
       beq->bevt_9_ta_ph = static_cast<BEC_2_5_4_LogicBool*>(BECS_Runtime::boolFalse);
 if (beq->bevt_9_ta_ph->bevi_bool) {
-beq->bevl_rval->bemd_0(2029554860);
+beq->bevl_rval->bemd_0(465233440);
 } 
 if (beq->bevl_rval == nullptr) {
 beq->bevt_10_ta_ph = BECS_Runtime::boolFalse;
@@ -1126,32 +1126,32 @@ BECS_StackFrame bevs_stackFrame(2);
 }
 BEC_2_6_6_SystemObject* BEC_2_6_6_SystemObject::bemd_0(int32_t callId) {
 switch (callId) {
-case 650212097: return bem_new_0();
-case 1103447987: return bem_print_0();
-case 2029554860: return bem_toString_0();
-case -1222203411: return bem_hashGet_0();
-case -1042086112: return bem_iteratorGet_0();
-case 1215180824: return bem_copy_0();
-case 1564024999: return bem_create_0();
+case 1740670062: return bem_hashGet_0();
+case -1421617167: return bem_print_0();
+case 1413366086: return bem_copy_0();
+case -1779978680: return bem_iteratorGet_0();
+case 1651365770: return bem_new_0();
+case -1102163697: return bem_create_0();
+case 465233440: return bem_toString_0();
 }
 return bevs_super::bemd_0(callId);
 }
 BEC_2_6_6_SystemObject* BEC_2_6_6_SystemObject::bemd_1(int32_t callId, BEC_2_6_6_SystemObject* bevd_0) {
 switch (callId) {
-case -985410098: return bem_equals_1(bevd_0);
-case -102704773: return bem_copyTo_1(bevd_0);
-case 1623354685: return bem_undef_1(bevd_0);
-case 461411474: return bem_notEquals_1(bevd_0);
-case -184471461: return bem_def_1(bevd_0);
+case 187023574: return bem_copyTo_1(bevd_0);
+case 510427847: return bem_equals_1(bevd_0);
+case -1474283268: return bem_undef_1(bevd_0);
+case -1918011873: return bem_notEquals_1(bevd_0);
+case 539857800: return bem_def_1(bevd_0);
 }
 return bevs_super::bemd_1(callId, bevd_0);
 }
 BEC_2_6_6_SystemObject* BEC_2_6_6_SystemObject::bemd_2(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1) {
 switch (callId) {
-case 1301967933: return bem_can_2(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
-case -1658729900: return bem_methodNotDefined_2(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_9_4_ContainerList*>(bevd_1));
-case -1035657594: return bem_invoke_2(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_9_4_ContainerList*>(bevd_1));
-case 1273973510: return bem_forwardCall_2(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_9_4_ContainerList*>(bevd_1));
+case -26439676: return bem_can_2(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
+case 1337289766: return bem_methodNotDefined_2(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_9_4_ContainerList*>(bevd_1));
+case 1588187594: return bem_forwardCall_2(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_9_4_ContainerList*>(bevd_1));
+case -1807964287: return bem_invoke_2(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_9_4_ContainerList*>(bevd_1));
 }
 return bevs_super::bemd_2(callId, bevd_0, bevd_1);
 }
@@ -1208,7 +1208,7 @@ bes* beq = (bes*) bevs_myStack->bevs_hs;
 beq->beva_request = bevk_request;
 beq->bevr_this = this;
 BECS_StackFrame bevs_stackFrame(2);
-bevp_plugin->bemd_1(2067143539, beq->beva_request);
+bevp_plugin->bemd_1(925635506, beq->beva_request);
 return this;
 }
 BEC_2_8_3_EmbeddedApp* BEC_2_8_3_EmbeddedApp::bem_startLoop_0() {
@@ -1221,7 +1221,7 @@ beq->bevr_this = this;
 BECS_StackFrame bevs_stackFrame(3);
 beq->bevt_0_ta_ph = static_cast<BEC_2_4_6_TextString*>(((BEC_2_4_6_TextString*) (new BEC_2_4_6_TextString(12, {0x49,0x4E,0x20,0x53,0x54,0x41,0x52,0x54,0x4C,0x4F,0x4F,0x50}))));
 beq->bevt_0_ta_ph->bem_print_0();
-bevp_plugin->bemd_0(-2143755976);
+bevp_plugin->bemd_0(1821314126);
 beq->bevt_1_ta_ph = static_cast<BEC_2_4_6_TextString*>(((BEC_2_4_6_TextString*) (new BEC_2_4_6_TextString(19, {0x46,0x49,0x4E,0x49,0x53,0x48,0x49,0x4E,0x47,0x20,0x53,0x54,0x41,0x52,0x54,0x4C,0x4F,0x4F,0x50}))));
 beq->bevt_1_ta_ph->bem_print_0();
 return this;
@@ -1244,7 +1244,7 @@ beq->bevt_1_ta_ph = static_cast<BEC_2_4_6_TextString*>(((BEC_2_4_6_TextString*) 
 beq->bevt_1_ta_ph->bem_print_0();
 } 
 bevp_hlCount->bevi_int++;
-bevp_plugin->bemd_0(-638442325);
+bevp_plugin->bemd_0(76290592);
 bevp_hlCount->bem_decrementValue_0();
 return this;
 }
@@ -1486,41 +1486,41 @@ return this;
 }
 BEC_2_6_6_SystemObject* BEC_2_8_3_EmbeddedApp::bemd_0(int32_t callId) {
 switch (callId) {
-case -636327005: return bem_wdtDisable_0();
-case -1822473278: return bem_restart_0();
-case 438536366: return bem_maybeGc_0();
-case -871011331: return bem_yield_0();
-case -2143755976: return bem_startLoop_0();
-case -638442325: return bem_handleLoop_0();
-case 1933120000: return bem_uptime_0();
-case 384782263: return bem_zeroGet_0();
-case 1478015284: return bem_default_0();
-case 660262707: return bem_pluginGet_0();
-case -777465268: return bem_wdtFeed_0();
-case -1832099219: return bem_hlCountGet_0();
+case -1512749709: return bem_pluginGet_0();
+case 76290592: return bem_handleLoop_0();
+case -1103544732: return bem_wdtDisable_0();
+case 1638605000: return bem_default_0();
+case 1987878174: return bem_maybeGc_0();
+case 101926142: return bem_wdtFeed_0();
+case 1821314126: return bem_startLoop_0();
+case 1187019567: return bem_restart_0();
+case 17261489: return bem_uptime_0();
+case 286183277: return bem_hlCountGet_0();
+case -920401655: return bem_yield_0();
+case 24814164: return bem_zeroGet_0();
 }
 return bevs_super::bemd_0(callId);
 }
 BEC_2_6_6_SystemObject* BEC_2_8_3_EmbeddedApp::bemd_1(int32_t callId, BEC_2_6_6_SystemObject* bevd_0) {
 switch (callId) {
-case 1666640780: return bem_pinModeInputPullup_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case 1304747926: return bem_wdtEnable_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case -822479755: return bem_uptime_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case 514699651: return bem_pluginSet_1(bevd_0);
-case 2067143539: return bem_handleWeb_1(bevd_0);
-case 585216343: return bem_hlCountSet_1(bevd_0);
-case 255641301: return bem_intToStr_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case 2038201940: return bem_pinModeOutput_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case -1228826836: return bem_strToInt_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
-case -565482657: return bem_delay_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case 1024387838: return bem_zeroSet_1(bevd_0);
+case 925635506: return bem_handleWeb_1(bevd_0);
+case -531733973: return bem_strToInt_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
+case 1571808271: return bem_pinModeInputPullup_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case 1095673423: return bem_hlCountSet_1(bevd_0);
+case 1513476611: return bem_intToStr_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case 1741453068: return bem_pinModeOutput_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case -1621545157: return bem_delay_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case 220381525: return bem_pluginSet_1(bevd_0);
+case 1509387351: return bem_uptime_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case 1470785968: return bem_zeroSet_1(bevd_0);
+case 1216681724: return bem_wdtEnable_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
 }
 return bevs_super::bemd_1(callId, bevd_0);
 }
 BEC_2_6_6_SystemObject* BEC_2_8_3_EmbeddedApp::bemd_2(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1) {
 switch (callId) {
-case -801032842: return bem_analogRead_2(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
-case 997979893: return bem_analogWrite_2(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
+case -96655252: return bem_analogWrite_2(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
+case 1597626389: return bem_analogRead_2(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
 }
 return bevs_super::bemd_2(callId, bevd_0, bevd_1);
 }
@@ -2299,47 +2299,47 @@ return this;
 }
 BEC_2_6_6_SystemObject* BEC_2_8_6_EmbeddedConfig::bemd_0(int32_t callId) {
 switch (callId) {
-case -1665472574: return bem_namesGet_0();
-case 650212097: return bem_new_0();
-case -1135152957: return bem_save_0();
-case 266719029: return bem_valuesGet_0();
-case 1137166404: return bem_magicGet_0();
-case -1147425211: return bem_maxszGet_0();
-case -2043567036: return bem_maybeSave_0();
-case 2035140183: return bem_load_0();
-case 1113361665: return bem_changedGet_0();
-case -1839255857: return bem_eesizeGet_0();
+case 1519424460: return bem_maybeSave_0();
+case 2053635396: return bem_namesGet_0();
+case 1102356768: return bem_save_0();
+case 485894438: return bem_eesizeGet_0();
+case 497242261: return bem_magicGet_0();
+case 983587174: return bem_changedGet_0();
+case -2131813161: return bem_valuesGet_0();
+case -781253829: return bem_maxszGet_0();
+case 1651365770: return bem_new_0();
+case -1304878388: return bem_load_0();
 }
 return bevs_super::bemd_0(callId);
 }
 BEC_2_6_6_SystemObject* BEC_2_8_6_EmbeddedConfig::bemd_1(int32_t callId, BEC_2_6_6_SystemObject* bevd_0) {
 switch (callId) {
-case -1756478651: return bem_valuesSet_1(bevd_0);
-case -1605599019: return bem_magicSet_1(bevd_0);
-case 880313343: return bem_eesizeSet_1(bevd_0);
-case 413679760: return bem_get_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case 1542640376: return bem_maxszSet_1(bevd_0);
-case 1985205341: return bem_getPos_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
-case 755738804: return bem_namesSet_1(bevd_0);
-case 1617147132: return bem_changedSet_1(bevd_0);
+case -209164484: return bem_maxszSet_1(bevd_0);
+case -936003309: return bem_get_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case 1531241033: return bem_eesizeSet_1(bevd_0);
+case 1734609525: return bem_valuesSet_1(bevd_0);
+case 401998084: return bem_magicSet_1(bevd_0);
+case 1792345740: return bem_changedSet_1(bevd_0);
+case 1923002304: return bem_namesSet_1(bevd_0);
+case -1247963138: return bem_getPos_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
 }
 return bevs_super::bemd_1(callId, bevd_0);
 }
 BEC_2_6_6_SystemObject* BEC_2_8_6_EmbeddedConfig::bemd_2(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1) {
 switch (callId) {
-case -2069242331: return bem_put_2(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_6_TextString*>(bevd_1));
+case -886247550: return bem_put_2(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_6_TextString*>(bevd_1));
 }
 return bevs_super::bemd_2(callId, bevd_0, bevd_1);
 }
 BEC_2_6_6_SystemObject* BEC_2_8_6_EmbeddedConfig::bemd_5(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1, BEC_2_6_6_SystemObject* bevd_2, BEC_2_6_6_SystemObject* bevd_3, BEC_2_6_6_SystemObject* bevd_4) {
 switch (callId) {
-case -627664621: return bem_epread_5(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1), static_cast<BEC_2_4_3_MathInt*>(bevd_2), static_cast<BEC_2_4_3_MathInt*>(bevd_3), static_cast<BEC_2_4_3_MathInt*>(bevd_4));
+case -427608955: return bem_epread_5(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1), static_cast<BEC_2_4_3_MathInt*>(bevd_2), static_cast<BEC_2_4_3_MathInt*>(bevd_3), static_cast<BEC_2_4_3_MathInt*>(bevd_4));
 }
 return bevs_super::bemd_5(callId, bevd_0, bevd_1, bevd_2, bevd_3, bevd_4);
 }
 BEC_2_6_6_SystemObject* BEC_2_8_6_EmbeddedConfig::bemd_6(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1, BEC_2_6_6_SystemObject* bevd_2, BEC_2_6_6_SystemObject* bevd_3, BEC_2_6_6_SystemObject* bevd_4, BEC_2_6_6_SystemObject* bevd_5) {
 switch (callId) {
-case 1592952864: return bem_epwrite_6(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1), static_cast<BEC_2_4_3_MathInt*>(bevd_2), static_cast<BEC_2_4_3_MathInt*>(bevd_3), static_cast<BEC_2_4_3_MathInt*>(bevd_4), static_cast<BEC_2_5_4_LogicBool*>(bevd_5));
+case -1182013608: return bem_epwrite_6(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1), static_cast<BEC_2_4_3_MathInt*>(bevd_2), static_cast<BEC_2_4_3_MathInt*>(bevd_3), static_cast<BEC_2_4_3_MathInt*>(bevd_4), static_cast<BEC_2_5_4_LogicBool*>(bevd_5));
 }
 return bevs_super::bemd_6(callId, bevd_0, bevd_1, bevd_2, bevd_3, bevd_4, bevd_5);
 }
@@ -2736,36 +2736,36 @@ return this;
 }
 BEC_2_6_6_SystemObject* BEC_2_8_4_EmbeddedWifi::bemd_0(int32_t callId) {
 switch (callId) {
-case 1300399048: return bem_scanNetworks_0();
-case -993879175: return bem_clearAll_0();
-case 119001376: return bem_localIPGet_0();
-case 737007830: return bem_clear_0();
-case -656138133: return bem_stop_0();
-case 1347695769: return bem_modeGet_0();
-case 1738826460: return bem_upGet_0();
-case -1447208951: return bem_startAp_0();
-case 1478015284: return bem_default_0();
-case 1867795823: return bem_isConnectedGet_0();
-case 898010368: return bem_start_0();
-case -2051440432: return bem_passwordGet_0();
-case -992126980: return bem_macAddressGet_0();
-case -1951503769: return bem_ssidGet_0();
+case 1638605000: return bem_default_0();
+case 275209403: return bem_stop_0();
+case 110035143: return bem_localIPGet_0();
+case -1581107466: return bem_startAp_0();
+case -452835667: return bem_clear_0();
+case 886273334: return bem_upGet_0();
+case -1518595407: return bem_start_0();
+case -1177560826: return bem_modeGet_0();
+case -234091100: return bem_isConnectedGet_0();
+case -477705356: return bem_ssidGet_0();
+case 2105544530: return bem_clearAll_0();
+case -844521325: return bem_macAddressGet_0();
+case -959488029: return bem_passwordGet_0();
+case -1898440495: return bem_scanNetworks_0();
 }
 return bevs_super::bemd_0(callId);
 }
 BEC_2_6_6_SystemObject* BEC_2_8_4_EmbeddedWifi::bemd_1(int32_t callId, BEC_2_6_6_SystemObject* bevd_0) {
 switch (callId) {
-case -1915217504: return bem_upSet_1(bevd_0);
-case 230131817: return bem_modeSet_1(bevd_0);
-case -1166598691: return bem_ssidSet_1(bevd_0);
-case -276805743: return bem_passwordSet_1(bevd_0);
-case 749919562: return bem_localIPSet_1(bevd_0);
+case -1595327581: return bem_modeSet_1(bevd_0);
+case -2007683616: return bem_ssidSet_1(bevd_0);
+case 768260266: return bem_passwordSet_1(bevd_0);
+case 1502777018: return bem_localIPSet_1(bevd_0);
+case -876069325: return bem_upSet_1(bevd_0);
 }
 return bevs_super::bemd_1(callId, bevd_0);
 }
 BEC_2_6_6_SystemObject* BEC_2_8_4_EmbeddedWifi::bemd_2(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1) {
 switch (callId) {
-case 1287864112: return bem_new_2(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_4_6_TextString*>(bevd_1));
+case -1959823526: return bem_new_2(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_4_6_TextString*>(bevd_1));
 }
 return bevs_super::bemd_2(callId, bevd_0, bevd_1);
 }
@@ -2881,16 +2881,16 @@ return this;
 }
 BEC_2_6_6_SystemObject* BEC_2_8_9_EmbeddedTCPServer::bemd_0(int32_t callId) {
 switch (callId) {
-case 898010368: return bem_start_0();
-case -137371975: return bem_portGet_0();
-case 512844514: return bem_checkGetClient_0();
+case 284121070: return bem_portGet_0();
+case 788812549: return bem_checkGetClient_0();
+case -1518595407: return bem_start_0();
 }
 return bevs_super::bemd_0(callId);
 }
 BEC_2_6_6_SystemObject* BEC_2_8_9_EmbeddedTCPServer::bemd_1(int32_t callId, BEC_2_6_6_SystemObject* bevd_0) {
 switch (callId) {
-case -730113353: return bem_new_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case 1495058747: return bem_portSet_1(bevd_0);
+case 26449439: return bem_new_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case 479364308: return bem_portSet_1(bevd_0);
 }
 return bevs_super::bemd_1(callId, bevd_0);
 }
@@ -3253,35 +3253,35 @@ return this;
 }
 BEC_2_6_6_SystemObject* BEC_2_8_9_EmbeddedTCPClient::bemd_0(int32_t callId) {
 switch (callId) {
-case -565069920: return bem_openedGet_0();
-case 423793442: return bem_hostGet_0();
-case -137371975: return bem_portGet_0();
-case -1903673964: return bem_connectedGet_0();
-case 650212097: return bem_new_0();
-case -208563530: return bem_remoteIpGet_0();
-case 2029139365: return bem_close_0();
-case 659551527: return bem_connectTimeoutGet_0();
-case 95947624: return bem_availableGet_0();
-case 905395146: return bem_open_0();
-case 997013563: return bem_streamTimeoutGet_0();
+case 340614448: return bem_connectTimeoutGet_0();
+case -1062343121: return bem_hostGet_0();
+case 1476011350: return bem_remoteIpGet_0();
+case 1651365770: return bem_new_0();
+case -1353424875: return bem_open_0();
+case 234398525: return bem_openedGet_0();
+case 1389614485: return bem_availableGet_0();
+case 1569218439: return bem_streamTimeoutGet_0();
+case 427169225: return bem_connectedGet_0();
+case 2090040860: return bem_close_0();
+case 284121070: return bem_portGet_0();
 }
 return bevs_super::bemd_0(callId);
 }
 BEC_2_6_6_SystemObject* BEC_2_8_9_EmbeddedTCPClient::bemd_1(int32_t callId, BEC_2_6_6_SystemObject* bevd_0) {
 switch (callId) {
-case -465061146: return bem_openedSet_1(bevd_0);
-case -493571351: return bem_streamTimeoutSet_1(bevd_0);
-case -1013312310: return bem_write_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
-case 1142367170: return bem_hostSet_1(bevd_0);
-case 1495058747: return bem_portSet_1(bevd_0);
-case -1573447611: return bem_connectTimeoutSet_1(bevd_0);
+case -411620682: return bem_openedSet_1(bevd_0);
+case -184060065: return bem_hostSet_1(bevd_0);
+case 479364308: return bem_portSet_1(bevd_0);
+case -209084070: return bem_streamTimeoutSet_1(bevd_0);
+case 2053367842: return bem_write_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
+case -57300308: return bem_connectTimeoutSet_1(bevd_0);
 }
 return bevs_super::bemd_1(callId, bevd_0);
 }
 BEC_2_6_6_SystemObject* BEC_2_8_9_EmbeddedTCPClient::bemd_2(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1) {
 switch (callId) {
-case 1287864112: return bem_new_2(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
-case 957739276: return bem_checkGetPayload_2(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_4_6_TextString*>(bevd_1));
+case -477689564: return bem_checkGetPayload_2(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_4_6_TextString*>(bevd_1));
+case -1959823526: return bem_new_2(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
 }
 return bevs_super::bemd_2(callId, bevd_0, bevd_1);
 }
@@ -3496,22 +3496,22 @@ return this;
 }
 BEC_2_6_6_SystemObject* BEC_2_8_4_EmbeddedMdns::bemd_0(int32_t callId) {
 switch (callId) {
-case 134558732: return bem_protocolGet_0();
-case 898010368: return bem_start_0();
-case 194295270: return bem_nameGet_0();
-case -137371975: return bem_portGet_0();
-case 650212097: return bem_new_0();
-case -2138016284: return bem_update_0();
-case 1095509139: return bem_serviceGet_0();
+case 1179005294: return bem_protocolGet_0();
+case 284121070: return bem_portGet_0();
+case -1518595407: return bem_start_0();
+case 976197407: return bem_update_0();
+case 922900029: return bem_nameGet_0();
+case 1651365770: return bem_new_0();
+case -223620403: return bem_serviceGet_0();
 }
 return bevs_super::bemd_0(callId);
 }
 BEC_2_6_6_SystemObject* BEC_2_8_4_EmbeddedMdns::bemd_1(int32_t callId, BEC_2_6_6_SystemObject* bevd_0) {
 switch (callId) {
-case -815431216: return bem_nameSet_1(bevd_0);
-case 1495058747: return bem_portSet_1(bevd_0);
-case -41205519: return bem_serviceSet_1(bevd_0);
-case -598323733: return bem_protocolSet_1(bevd_0);
+case -537909252: return bem_serviceSet_1(bevd_0);
+case -1059074821: return bem_protocolSet_1(bevd_0);
+case 479364308: return bem_portSet_1(bevd_0);
+case 2107707542: return bem_nameSet_1(bevd_0);
 }
 return bevs_super::bemd_1(callId, bevd_0);
 }
@@ -3583,7 +3583,7 @@ beq->bevl_res = static_cast<BEC_2_4_3_MathInt*>(((BEC_2_4_3_MathInt*) (new BEC_2
 }
 BEC_2_6_6_SystemObject* BEC_2_8_6_EmbeddedUpdate::bemd_1(int32_t callId, BEC_2_6_6_SystemObject* bevd_0) {
 switch (callId) {
-case 418724992: return bem_updateFromUrl_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
+case 2034015045: return bem_updateFromUrl_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
 }
 return bevs_super::bemd_1(callId, bevd_0);
 }
@@ -3715,10 +3715,10 @@ BECS_StackFrame bevs_stackFrame(4);
 beq->bevt_0_ta_loop = bevp_controls->bem_iteratorGet_0();
 while (true)
  {
-beq->bevt_1_ta_ph = beq->bevt_0_ta_loop->bemd_0(-358011515);
+beq->bevt_1_ta_ph = beq->bevt_0_ta_loop->bemd_0(2015231);
 if ((static_cast<BEC_2_5_4_LogicBool*>(beq->bevt_1_ta_ph))->bevi_bool) {
-beq->bevl_control = beq->bevt_0_ta_loop->bemd_0(2029804291);
-beq->bevl_control->bemd_0(-1478823613);
+beq->bevl_control = beq->bevt_0_ta_loop->bemd_0(190031348);
+beq->bevl_control->bemd_0(742334863);
 } 
  else  {
 break;
@@ -3742,7 +3742,7 @@ beq->bevt_1_ta_ph = static_cast<BEC_2_4_3_MathInt*>(((BEC_2_4_3_MathInt*) (new B
 beq->bevt_0_ta_ph = beq->beva_cmdl->bem_get_1(beq->bevt_1_ta_ph);
 beq->bevl_ctlPos = bevp_app->bem_strToInt_1(static_cast<BEC_2_4_6_TextString*>(beq->bevt_0_ta_ph) );
 beq->bevt_3_ta_ph = bevp_controls->bem_get_1(beq->bevl_ctlPos);
-beq->bevt_2_ta_ph = beq->bevt_3_ta_ph->bemd_1(-1579908023, beq->beva_cmdl);
+beq->bevt_2_ta_ph = beq->bevt_3_ta_ph->bemd_1(1811502321, beq->beva_cmdl);
 return static_cast<BEC_2_4_6_TextString*>(beq->bevt_2_ta_ph);
 }
 BEC_2_4_6_TextString* BEC_2_8_8_EmbeddedAppShell::bem_getLastEvents_1(BEC_2_9_4_ContainerList* bevk_cmdl) {
@@ -3789,12 +3789,12 @@ beq->bevl_cd = static_cast<BEC_2_4_6_TextString*>(((BEC_2_4_6_TextString*) (new 
 beq->bevt_0_ta_loop = bevp_controls->bem_iteratorGet_0();
 while (true)
  {
-beq->bevt_5_ta_ph = beq->bevt_0_ta_loop->bemd_0(-358011515);
+beq->bevt_5_ta_ph = beq->bevt_0_ta_loop->bemd_0(2015231);
 if ((static_cast<BEC_2_5_4_LogicBool*>(beq->bevt_5_ta_ph))->bevi_bool) {
-beq->bevl_control = beq->bevt_0_ta_loop->bemd_0(2029804291);
-beq->bevl_conName = static_cast<BEC_2_4_6_TextString*>(beq->bevl_control->bemd_0(-1538862042));
-beq->bevl_le = static_cast<BEC_2_4_3_MathInt*>(beq->bevl_control->bemd_0(-79600757));
-beq->bevl_conPos = static_cast<BEC_2_4_3_MathInt*>(beq->bevl_control->bemd_0(331643939));
+beq->bevl_control = beq->bevt_0_ta_loop->bemd_0(190031348);
+beq->bevl_conName = static_cast<BEC_2_4_6_TextString*>(beq->bevl_control->bemd_0(2135733714));
+beq->bevl_le = static_cast<BEC_2_4_3_MathInt*>(beq->bevl_control->bemd_0(1118572426));
+beq->bevl_conPos = static_cast<BEC_2_4_3_MathInt*>(beq->bevl_control->bemd_0(-920207615));
 if (beq->bevl_le == nullptr) {
 beq->bevt_6_ta_ph = BECS_Runtime::boolFalse;
  } else { 
@@ -3845,10 +3845,10 @@ BECS_StackFrame bevs_stackFrame(4);
 beq->bevt_0_ta_loop = bevp_controls->bem_iteratorGet_0();
 while (true)
  {
-beq->bevt_1_ta_ph = beq->bevt_0_ta_loop->bemd_0(-358011515);
+beq->bevt_1_ta_ph = beq->bevt_0_ta_loop->bemd_0(2015231);
 if ((static_cast<BEC_2_5_4_LogicBool*>(beq->bevt_1_ta_ph))->bevi_bool) {
-beq->bevl_control = beq->bevt_0_ta_loop->bemd_0(2029804291);
-beq->bevl_control->bemd_0(-1109196329);
+beq->bevl_control = beq->bevt_0_ta_loop->bemd_0(190031348);
+beq->bevl_control->bemd_0(1656244755);
 } 
  else  {
 break;
@@ -4171,9 +4171,9 @@ beq->bevt_1_ta_ph = beq->bevl_wifi->bem_scanNetworks_0();
 beq->bevt_0_ta_loop = beq->bevt_1_ta_ph->bem_iteratorGet_0();
 while (true)
  {
-beq->bevt_2_ta_ph = beq->bevt_0_ta_loop->bemd_0(-358011515);
+beq->bevt_2_ta_ph = beq->bevt_0_ta_loop->bemd_0(2015231);
 if ((static_cast<BEC_2_5_4_LogicBool*>(beq->bevt_2_ta_ph))->bevi_bool) {
-beq->bevl_net = static_cast<BEC_2_4_6_TextString*>(beq->bevt_0_ta_loop->bemd_0(2029804291));
+beq->bevl_net = static_cast<BEC_2_4_6_TextString*>(beq->bevt_0_ta_loop->bemd_0(190031348));
 beq->bevl_rhash->bem_addValue_1(beq->bevl_net);
 beq->bevl_i->bevi_int++;
 beq->bevt_4_ta_ph = static_cast<BEC_2_4_3_MathInt*>(((BEC_2_4_3_MathInt*) (new BEC_2_4_3_MathInt(7))));
@@ -4951,7 +4951,7 @@ beq->bevt_43_ta_ph->bem_print_0();
 beq->bevl_pdce = BECS_ThrowBack::handleThrow(beve_0);
 beq->bevt_44_ta_ph = static_cast<BEC_2_4_6_TextString*>(((BEC_2_4_6_TextString*) (new BEC_2_4_6_TextString(22, {0x65,0x72,0x72,0x6F,0x72,0x20,0x68,0x61,0x6E,0x64,0x6C,0x69,0x6E,0x67,0x20,0x63,0x6F,0x6D,0x6D,0x61,0x6E,0x64}))));
 beq->bevt_44_ta_ph->bem_print_0();
-beq->bevl_pdce->bemd_0(1103447987);
+beq->bevl_pdce->bemd_0(-1421617167);
 } 
 } 
 beq->bevl_preq->bem_close_0();
@@ -4990,7 +4990,7 @@ beq->bevt_48_ta_ph = BECS_Runtime::boolFalse;
 }
 if (beq->bevt_48_ta_ph->bevi_bool) {
 beq->bevt_50_ta_ph = bevp_loopers->bem_get_1(bevp_looperI);
-beq->bevt_50_ta_ph->bemd_0(-638442325);
+beq->bevt_50_ta_ph->bemd_0(76290592);
 bevp_looperI->bevi_int++;
 } 
  else  {
@@ -5088,7 +5088,7 @@ if (beq->bevt_11_ta_ph->bevi_bool) {
 beq->bevt_16_ta_ph = static_cast<BEC_2_4_3_MathInt*>(((BEC_2_4_3_MathInt*) (new BEC_2_4_3_MathInt(0))));
 beq->bevt_15_ta_ph = beq->bevl_cmdl->bem_get_1(beq->bevt_16_ta_ph);
 beq->bevt_17_ta_ph = static_cast<BEC_2_4_6_TextString*>(((BEC_2_4_6_TextString*) (new BEC_2_4_6_TextString(3, {0x73,0x70,0x32}))));
-beq->bevt_14_ta_ph = beq->bevt_15_ta_ph->bemd_1(-985410098, beq->bevt_17_ta_ph);
+beq->bevt_14_ta_ph = beq->bevt_15_ta_ph->bemd_1(510427847, beq->bevt_17_ta_ph);
 if ((static_cast<BEC_2_5_4_LogicBool*>(beq->bevt_14_ta_ph))->bevi_bool) {
 beq->bevt_1_ta_anchor = BECS_Runtime::boolTrue;
 } 
@@ -5106,7 +5106,7 @@ beq->bevt_0_ta_anchor = BECS_Runtime::boolTrue;
 beq->bevt_20_ta_ph = static_cast<BEC_2_4_3_MathInt*>(((BEC_2_4_3_MathInt*) (new BEC_2_4_3_MathInt(0))));
 beq->bevt_19_ta_ph = beq->bevl_cmdl->bem_get_1(beq->bevt_20_ta_ph);
 beq->bevt_21_ta_ph = static_cast<BEC_2_4_6_TextString*>(((BEC_2_4_6_TextString*) (new BEC_2_4_6_TextString(3, {0x61,0x70,0x32}))));
-beq->bevt_18_ta_ph = beq->bevt_19_ta_ph->bemd_1(-985410098, beq->bevt_21_ta_ph);
+beq->bevt_18_ta_ph = beq->bevt_19_ta_ph->bemd_1(510427847, beq->bevt_21_ta_ph);
 if ((static_cast<BEC_2_5_4_LogicBool*>(beq->bevt_18_ta_ph))->bevi_bool) {
 beq->bevt_0_ta_anchor = BECS_Runtime::boolTrue;
 } 
@@ -5203,7 +5203,7 @@ beq->bevl_spw = static_cast<BEC_2_4_6_TextString*>(((BEC_2_4_6_TextString*) (new
 beq->bevt_7_ta_ph = static_cast<BEC_2_4_3_MathInt*>(((BEC_2_4_3_MathInt*) (new BEC_2_4_3_MathInt(0))));
 beq->bevt_6_ta_ph = beq->beva_cmdl->bem_get_1(beq->bevt_7_ta_ph);
 beq->bevt_8_ta_ph = static_cast<BEC_2_4_6_TextString*>(((BEC_2_4_6_TextString*) (new BEC_2_4_6_TextString(3, {0x73,0x70,0x32}))));
-beq->bevt_5_ta_ph = beq->bevt_6_ta_ph->bemd_1(-985410098, beq->bevt_8_ta_ph);
+beq->bevt_5_ta_ph = beq->bevt_6_ta_ph->bemd_1(510427847, beq->bevt_8_ta_ph);
 if ((static_cast<BEC_2_5_4_LogicBool*>(beq->bevt_5_ta_ph))->bevi_bool) {
 beq->bevl_spw = bevp_spass;
 } 
@@ -5211,7 +5211,7 @@ beq->bevl_spw = bevp_spass;
 beq->bevt_11_ta_ph = static_cast<BEC_2_4_3_MathInt*>(((BEC_2_4_3_MathInt*) (new BEC_2_4_3_MathInt(0))));
 beq->bevt_10_ta_ph = beq->beva_cmdl->bem_get_1(beq->bevt_11_ta_ph);
 beq->bevt_12_ta_ph = static_cast<BEC_2_4_6_TextString*>(((BEC_2_4_6_TextString*) (new BEC_2_4_6_TextString(3, {0x61,0x70,0x32}))));
-beq->bevt_9_ta_ph = beq->bevt_10_ta_ph->bemd_1(-985410098, beq->bevt_12_ta_ph);
+beq->bevt_9_ta_ph = beq->bevt_10_ta_ph->bemd_1(510427847, beq->bevt_12_ta_ph);
 if ((static_cast<BEC_2_5_4_LogicBool*>(beq->bevt_9_ta_ph))->bevi_bool) {
 beq->bevl_spw = bevp_pass;
 } 
@@ -5233,13 +5233,13 @@ beq->beva_origin = static_cast<BEC_2_4_6_TextString*>(((BEC_2_4_6_TextString*) (
 beq->bevt_24_ta_ph = static_cast<BEC_2_4_3_MathInt*>(((BEC_2_4_3_MathInt*) (new BEC_2_4_3_MathInt(1))));
 beq->bevt_23_ta_ph = beq->beva_cmdl->bem_get_1(beq->bevt_24_ta_ph);
 beq->bevt_25_ta_ph = static_cast<BEC_2_4_6_TextString*>(((BEC_2_4_6_TextString*) (new BEC_2_4_6_TextString(1, {0x2C}))));
-beq->bevt_22_ta_ph = beq->bevt_23_ta_ph->bemd_1(-1835085595, beq->bevt_25_ta_ph);
-beq->bevt_21_ta_ph = beq->bevt_22_ta_ph->bemd_1(-1835085595, beq->beva_origin);
+beq->bevt_22_ta_ph = beq->bevt_23_ta_ph->bemd_1(-1685209855, beq->bevt_25_ta_ph);
+beq->bevt_21_ta_ph = beq->bevt_22_ta_ph->bemd_1(-1685209855, beq->beva_origin);
 beq->bevt_26_ta_ph = static_cast<BEC_2_4_6_TextString*>(((BEC_2_4_6_TextString*) (new BEC_2_4_6_TextString(1, {0x2C}))));
-beq->bevt_20_ta_ph = beq->bevt_21_ta_ph->bemd_1(-1835085595, beq->bevt_26_ta_ph);
-beq->bevt_19_ta_ph = beq->bevt_20_ta_ph->bemd_1(-1835085595, beq->bevl_spw);
+beq->bevt_20_ta_ph = beq->bevt_21_ta_ph->bemd_1(-1685209855, beq->bevt_26_ta_ph);
+beq->bevt_19_ta_ph = beq->bevt_20_ta_ph->bemd_1(-1685209855, beq->bevl_spw);
 beq->bevt_27_ta_ph = static_cast<BEC_2_4_6_TextString*>(((BEC_2_4_6_TextString*) (new BEC_2_4_6_TextString(1, {0x2C}))));
-beq->bevl_tohash = static_cast<BEC_2_4_6_TextString*>(beq->bevt_19_ta_ph->bemd_1(-1835085595, beq->bevt_27_ta_ph));
+beq->bevl_tohash = static_cast<BEC_2_4_6_TextString*>(beq->bevt_19_ta_ph->bemd_1(-1685209855, beq->bevt_27_ta_ph));
 beq->bevt_28_ta_ph = beq->beva_cmdl->bem_sizeGet_0();
 beq->bevt_29_ta_ph = static_cast<BEC_2_4_3_MathInt*>(((BEC_2_4_3_MathInt*) (new BEC_2_4_3_MathInt(1))));
 beq->bevl_toc = beq->bevt_28_ta_ph->bem_subtract_1(beq->bevt_29_ta_ph);
@@ -5854,7 +5854,7 @@ bevp_sec = static_cast<BEC_2_4_6_TextString*>(beq->beva_cmdl->bem_get_1(beq->bev
 beq->bevt_116_ta_ph = static_cast<BEC_2_4_3_MathInt*>(((BEC_2_4_3_MathInt*) (new BEC_2_4_3_MathInt(2))));
 beq->bevt_115_ta_ph = beq->beva_cmdl->bem_get_1(beq->bevt_116_ta_ph);
 beq->bevt_117_ta_ph = static_cast<BEC_2_4_6_TextString*>(((BEC_2_4_6_TextString*) (new BEC_2_4_6_TextString(3, {0x68,0x65,0x78}))));
-beq->bevt_114_ta_ph = beq->bevt_115_ta_ph->bemd_1(-985410098, beq->bevt_117_ta_ph);
+beq->bevt_114_ta_ph = beq->bevt_115_ta_ph->bemd_1(510427847, beq->bevt_117_ta_ph);
 if ((static_cast<BEC_2_5_4_LogicBool*>(beq->bevt_114_ta_ph))->bevi_bool) {
 beq->bevt_119_ta_ph = static_cast<BEC_2_4_7_TextStrings*>(BEC_2_4_7_TextStrings::bece_BEC_2_4_7_TextStrings_bevs_inst);
 beq->bevt_118_ta_ph = beq->bevt_119_ta_ph->bem_notEmpty_1(bevp_ssid);
@@ -5913,7 +5913,7 @@ if (beq->bevt_138_ta_ph->bevi_bool) {
 beq->bevt_142_ta_ph = static_cast<BEC_2_4_3_MathInt*>(((BEC_2_4_3_MathInt*) (new BEC_2_4_3_MathInt(2))));
 beq->bevt_141_ta_ph = beq->beva_cmdl->bem_get_1(beq->bevt_142_ta_ph);
 beq->bevt_143_ta_ph = static_cast<BEC_2_4_6_TextString*>(((BEC_2_4_6_TextString*) (new BEC_2_4_6_TextString(4, {0x76,0x68,0x65,0x78}))));
-beq->bevt_140_ta_ph = beq->bevt_141_ta_ph->bemd_1(-985410098, beq->bevt_143_ta_ph);
+beq->bevt_140_ta_ph = beq->bevt_141_ta_ph->bemd_1(510427847, beq->bevt_143_ta_ph);
 if ((static_cast<BEC_2_5_4_LogicBool*>(beq->bevt_140_ta_ph))->bevi_bool) {
 beq->bevl_deHex = static_cast<BEC_2_5_4_LogicBool*>(BECS_Runtime::boolTrue);
 } 
@@ -6249,64 +6249,64 @@ return this;
 }
 BEC_2_6_6_SystemObject* BEC_2_8_8_EmbeddedAppShell::bemd_0(int32_t callId) {
 switch (callId) {
-case 1749252404: return bem_checkMakeIds_0();
-case -2143755976: return bem_startLoop_0();
-case -189943930: return bem_startWifi_0();
-case 17811521: return bem_configGet_0();
-case 1572455848: return bem_networkInit_0();
-case -1619698254: return bem_appGet_0();
-case 2006532778: return bem_initRandom_0();
-case -122484558: return bem_pinGet_0();
-case 1448020585: return bem_buildSwInfoIn_0();
-case 563726676: return bem_initAp_0();
-case -1237930120: return bem_buildControlsIn_0();
-case 232172780: return bem_loopersGet_0();
-case -1641412176: return bem_checkWifiAp_0();
-case 1051469517: return bem_checkWifiUp_0();
-case -1564672810: return bem_loadPasses_0();
-case -1526965696: return bem_nowupGet_0();
-case 477351740: return bem_tcpserverGet_0();
-case 947943958: return bem_buildControls_0();
-case -222218832: return bem_buildSwInfo_0();
-case -1645021669: return bem_conserverGet_0();
-case -32622585: return bem_mdserverGet_0();
-case 2095894835: return bem_initControls_0();
-case 2026707314: return bem_main_0();
-case -638442325: return bem_handleLoop_0();
-case -1109196329: return bem_clearStates_0();
-case -818372358: return bem_controlsGet_0();
-case -2130613583: return bem_conconGet_0();
-case 1205508155: return bem_reset_0();
-case 1422893972: return bem_lastEventsResGet_0();
+case -1989221341: return bem_startWifi_0();
+case -561926472: return bem_conconGet_0();
+case 1601263634: return bem_buildSwInfoIn_0();
+case 1509631733: return bem_conserverGet_0();
+case -1469448529: return bem_nowupGet_0();
+case 806832466: return bem_initControls_0();
+case 1877236481: return bem_initRandom_0();
+case 1738988950: return bem_tcpserverGet_0();
+case 520891080: return bem_reset_0();
+case 1552478894: return bem_mdserverGet_0();
+case -1410771939: return bem_loopersGet_0();
+case -1753141265: return bem_checkMakeIds_0();
+case -880681615: return bem_lastEventsResGet_0();
+case -1272176285: return bem_loadPasses_0();
+case -485300245: return bem_configGet_0();
+case 1200070447: return bem_initAp_0();
+case 87636014: return bem_appGet_0();
+case 326683218: return bem_checkWifiAp_0();
+case 1656244755: return bem_clearStates_0();
+case -434053634: return bem_pinGet_0();
+case 1973902042: return bem_buildControlsIn_0();
+case 747721283: return bem_buildSwInfo_0();
+case 1821314126: return bem_startLoop_0();
+case -845754507: return bem_networkInit_0();
+case 200986804: return bem_buildControls_0();
+case 1463935302: return bem_checkWifiUp_0();
+case 406215097: return bem_main_0();
+case 1024572045: return bem_controlsGet_0();
+case 76290592: return bem_handleLoop_0();
 }
 return bevs_super::bemd_0(callId);
 }
 BEC_2_6_6_SystemObject* BEC_2_8_8_EmbeddedAppShell::bemd_1(int32_t callId, BEC_2_6_6_SystemObject* bevd_0) {
 switch (callId) {
-case -245835693: return bem_conserverSet_1(bevd_0);
-case 42756762: return bem_loopersSet_1(bevd_0);
-case 2131583906: return bem_lastEventsResSet_1(bevd_0);
-case 1171566916: return bem_pinSet_1(bevd_0);
-case 1173375540: return bem_configSet_1(bevd_0);
-case -1135577043: return bem_tcpserverSet_1(bevd_0);
-case 1201384025: return bem_appSet_1(bevd_0);
-case -1579908023: return bem_doState_1(static_cast<BEC_2_9_4_ContainerList*>(bevd_0));
-case 1749326465: return bem_getLastEvents_1(static_cast<BEC_2_9_4_ContainerList*>(bevd_0));
-case -1652783382: return bem_mdserverSet_1(bevd_0);
-case 38544912: return bem_controlsSet_1(bevd_0);
-case 1486252004: return bem_sysupdate_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
-case 1825637322: return bem_conconSet_1(bevd_0);
-case 1946002608: return bem_sendWebPage_1(bevd_0);
-case -1337494739: return bem_nowupSet_1(bevd_0);
+case -248631530: return bem_loopersSet_1(bevd_0);
+case -188682354: return bem_controlsSet_1(bevd_0);
+case -1791804125: return bem_sendWebPage_1(bevd_0);
+case -583001435: return bem_lastEventsResSet_1(bevd_0);
+case -1300105706: return bem_mdserverSet_1(bevd_0);
+case 1059079498: return bem_pinSet_1(bevd_0);
+case 2067062939: return bem_getLastEvents_1(static_cast<BEC_2_9_4_ContainerList*>(bevd_0));
+case -1734136296: return bem_appSet_1(bevd_0);
+case -568005882: return bem_conserverSet_1(bevd_0);
+case 73625514: return bem_tcpserverSet_1(bevd_0);
+case 1811502321: return bem_doState_1(static_cast<BEC_2_9_4_ContainerList*>(bevd_0));
+case -1323184748: return bem_configSet_1(bevd_0);
+case -1515637376: return bem_nowupSet_1(bevd_0);
+case 1610217478: return bem_conconSet_1(bevd_0);
+case 979023054: return bem_sysupdate_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
 }
 return bevs_super::bemd_1(callId, bevd_0);
 }
 BEC_2_6_6_SystemObject* BEC_2_8_8_EmbeddedAppShell::bemd_3(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1, BEC_2_6_6_SystemObject* bevd_2) {
 switch (callId) {
-case 912096290: return bem_buildControl_3(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_6_TextString*>(bevd_1), static_cast<BEC_2_4_6_TextString*>(bevd_2));
-case -1470671484: return bem_doCmdlSec_3(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_4_6_TextString*>(bevd_1), static_cast<BEC_2_9_4_ContainerList*>(bevd_2));
-case 1388781611: return bem_doCmd_3(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_4_6_TextString*>(bevd_1), static_cast<BEC_2_4_6_TextString*>(bevd_2));
-case 983282474: return bem_doCmdl_3(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_4_6_TextString*>(bevd_1), static_cast<BEC_2_9_4_ContainerList*>(bevd_2));
+case 1171665266: return bem_buildControl_3(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_6_TextString*>(bevd_1), static_cast<BEC_2_4_6_TextString*>(bevd_2));
+case 1721993453: return bem_doCmdl_3(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_4_6_TextString*>(bevd_1), static_cast<BEC_2_9_4_ContainerList*>(bevd_2));
+case 1176378384: return bem_doCmdlSec_3(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_4_6_TextString*>(bevd_1), static_cast<BEC_2_9_4_ContainerList*>(bevd_2));
+case -130016731: return bem_doCmd_3(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_4_6_TextString*>(bevd_1), static_cast<BEC_2_4_6_TextString*>(bevd_2));
 }
 return bevs_super::bemd_3(callId, bevd_0, bevd_1, bevd_2);
 }
@@ -6773,28 +6773,28 @@ return this;
 }
 BEC_2_6_6_SystemObject* BEC_2_8_10_EmbeddedPWMControl::bemd_0(int32_t callId) {
 switch (callId) {
-case 331643939: return bem_conPosGet_0();
-case -424472510: return bem_lvlGet_0();
-case -1478823613: return bem_initControl_0();
-case -1538862042: return bem_conNameGet_0();
-case -79600757: return bem_lastEventGet_0();
-case -1109196329: return bem_clearStates_0();
+case 1656244755: return bem_clearStates_0();
+case 1536906836: return bem_lvlGet_0();
+case 1118572426: return bem_lastEventGet_0();
+case 2135733714: return bem_conNameGet_0();
+case 742334863: return bem_initControl_0();
+case -920207615: return bem_conPosGet_0();
 }
 return bevs_super::bemd_0(callId);
 }
 BEC_2_6_6_SystemObject* BEC_2_8_10_EmbeddedPWMControl::bemd_1(int32_t callId, BEC_2_6_6_SystemObject* bevd_0) {
 switch (callId) {
-case -33420024: return bem_lastEventSet_1(bevd_0);
-case -1579908023: return bem_doState_1(static_cast<BEC_2_9_4_ContainerList*>(bevd_0));
-case 186709572: return bem_conPosSet_1(bevd_0);
-case 1714495777: return bem_lvlSet_1(bevd_0);
-case -130000042: return bem_conNameSet_1(bevd_0);
+case 1811502321: return bem_doState_1(static_cast<BEC_2_9_4_ContainerList*>(bevd_0));
+case -165378458: return bem_conPosSet_1(bevd_0);
+case -1688320199: return bem_conNameSet_1(bevd_0);
+case 719961679: return bem_lvlSet_1(bevd_0);
+case 1506287242: return bem_lastEventSet_1(bevd_0);
 }
 return bevs_super::bemd_1(callId, bevd_0);
 }
 BEC_2_6_6_SystemObject* BEC_2_8_10_EmbeddedPWMControl::bemd_4(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1, BEC_2_6_6_SystemObject* bevd_2, BEC_2_6_6_SystemObject* bevd_3) {
 switch (callId) {
-case -671724396: return bem_new_4(bevd_0, static_cast<BEC_2_4_3_MathInt*>(bevd_1), static_cast<BEC_2_4_6_TextString*>(bevd_2), static_cast<BEC_2_4_6_TextString*>(bevd_3));
+case 1997396375: return bem_new_4(bevd_0, static_cast<BEC_2_4_3_MathInt*>(bevd_1), static_cast<BEC_2_4_6_TextString*>(bevd_2), static_cast<BEC_2_4_6_TextString*>(bevd_3));
 }
 return bevs_super::bemd_4(callId, bevd_0, bevd_1, bevd_2, bevd_3);
 }
@@ -7258,30 +7258,30 @@ return this;
 }
 BEC_2_6_6_SystemObject* BEC_2_8_10_EmbeddedRGBControl::bemd_0(int32_t callId) {
 switch (callId) {
-case 331643939: return bem_conPosGet_0();
-case 319636350: return bem_swGet_0();
-case -1478823613: return bem_initControl_0();
-case -1538862042: return bem_conNameGet_0();
-case -79600757: return bem_lastEventGet_0();
-case 1929372706: return bem_rgbGet_0();
-case -1109196329: return bem_clearStates_0();
+case 1656244755: return bem_clearStates_0();
+case -1786863034: return bem_rgbGet_0();
+case 1118572426: return bem_lastEventGet_0();
+case 2135733714: return bem_conNameGet_0();
+case 742334863: return bem_initControl_0();
+case -2117918633: return bem_swGet_0();
+case -920207615: return bem_conPosGet_0();
 }
 return bevs_super::bemd_0(callId);
 }
 BEC_2_6_6_SystemObject* BEC_2_8_10_EmbeddedRGBControl::bemd_1(int32_t callId, BEC_2_6_6_SystemObject* bevd_0) {
 switch (callId) {
-case -1579908023: return bem_doState_1(static_cast<BEC_2_9_4_ContainerList*>(bevd_0));
-case 186709572: return bem_conPosSet_1(bevd_0);
-case -33420024: return bem_lastEventSet_1(bevd_0);
-case -895168270: return bem_swSet_1(bevd_0);
-case -130000042: return bem_conNameSet_1(bevd_0);
-case 376117387: return bem_rgbSet_1(bevd_0);
+case -453244496: return bem_swSet_1(bevd_0);
+case 1811502321: return bem_doState_1(static_cast<BEC_2_9_4_ContainerList*>(bevd_0));
+case -165378458: return bem_conPosSet_1(bevd_0);
+case -1688320199: return bem_conNameSet_1(bevd_0);
+case 974415656: return bem_rgbSet_1(bevd_0);
+case 1506287242: return bem_lastEventSet_1(bevd_0);
 }
 return bevs_super::bemd_1(callId, bevd_0);
 }
 BEC_2_6_6_SystemObject* BEC_2_8_10_EmbeddedRGBControl::bemd_4(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1, BEC_2_6_6_SystemObject* bevd_2, BEC_2_6_6_SystemObject* bevd_3) {
 switch (callId) {
-case -671724396: return bem_new_4(bevd_0, static_cast<BEC_2_4_3_MathInt*>(bevd_1), static_cast<BEC_2_4_6_TextString*>(bevd_2), static_cast<BEC_2_4_6_TextString*>(bevd_3));
+case 1997396375: return bem_new_4(bevd_0, static_cast<BEC_2_4_3_MathInt*>(bevd_1), static_cast<BEC_2_4_6_TextString*>(bevd_2), static_cast<BEC_2_4_6_TextString*>(bevd_3));
 }
 return bevs_super::bemd_4(callId, bevd_0, bevd_1, bevd_2, bevd_3);
 }
@@ -8454,84 +8454,84 @@ return beq->bevt_0_ta_ph;
 }
 BEC_2_6_6_SystemObject* BEC_2_4_3_MathInt::bemd_0(int32_t callId) {
 switch (callId) {
-case 2106933771: return bem_serializeContentsGet_0();
-case 1215180824: return bem_copy_0();
-case 886879997: return bem_serializeToString_0();
-case -646645373: return bem_vintSet_0();
-case 2029554860: return bem_toString_0();
-case -734022943: return bem_incrementValue_0();
-case -1087481748: return bem_vintGet_0();
-case 405838259: return bem_toHexString_0();
-case -491781190: return bem_decrementValue_0();
-case 1564024999: return bem_create_0();
-case 1457713680: return bem_abs_0();
-case 994091063: return bem_absValue_0();
-case 1018081323: return bem_decrement_0();
-case -1222203411: return bem_hashGet_0();
-case -1601205348: return bem_increment_0();
-case 650212097: return bem_new_0();
+case -2004071120: return bem_decrementValue_0();
+case -263035645: return bem_absValue_0();
+case -680168592: return bem_abs_0();
+case 1740670062: return bem_hashGet_0();
+case -1855583984: return bem_vintGet_0();
+case -1661922459: return bem_decrement_0();
+case -1102163697: return bem_create_0();
+case -274713941: return bem_increment_0();
+case -472610450: return bem_serializeContentsGet_0();
+case -878199501: return bem_incrementValue_0();
+case 465233440: return bem_toString_0();
+case 1413366086: return bem_copy_0();
+case 7034155: return bem_serializeToString_0();
+case -2110486351: return bem_vintSet_0();
+case 1651365770: return bem_new_0();
+case -898836881: return bem_toHexString_0();
 }
 return bevs_super::bemd_0(callId);
 }
 BEC_2_6_6_SystemObject* BEC_2_4_3_MathInt::bemd_1(int32_t callId, BEC_2_6_6_SystemObject* bevd_0) {
 switch (callId) {
-case -730113353: return bem_new_1(bevd_0);
-case -1477172234: return bem_lesserEquals_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case 1768684078: return bem_setStringValueHex_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
-case -2049004465: return bem_shiftLeftValue_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case 828730677: return bem_lesser_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case -445048734: return bem_toHexString_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
-case -360627880: return bem_shiftRight_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case 974237920: return bem_shiftLeft_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case 18048571: return bem_modulus_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case -985410098: return bem_equals_1(bevd_0);
-case -1900603048: return bem_shiftRightValue_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case -136150396: return bem_power_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case 556090649: return bem_andValue_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case -1069389034: return bem_greaterEquals_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case -1794988308: return bem_or_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case -1270033799: return bem_and_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case 1882839165: return bem_greater_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case -212107928: return bem_multiplyValue_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case 1655331817: return bem_subtract_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case 1484739981: return bem_setStringValueDec_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
-case -14892228: return bem_deserializeFromStringNew_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
-case 1097434963: return bem_modulusValue_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case 2088319094: return bem_divide_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case -2088181387: return bem_setValue_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case -175005634: return bem_hexNew_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
-case 461411474: return bem_notEquals_1(bevd_0);
-case -1983034944: return bem_divideValue_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case -1038610618: return bem_subtractValue_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case 1998094155: return bem_orValue_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case 581084447: return bem_multiply_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case -569218194: return bem_addValue_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case -1835085595: return bem_add_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case 963327618: return bem_andValue_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case 801467867: return bem_shiftRight_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case -1665024674: return bem_divideValue_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case 26449439: return bem_new_1(bevd_0);
+case -1452179528: return bem_and_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case 1259511866: return bem_greaterEquals_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case -1335581298: return bem_multiply_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case 703729249: return bem_subtractValue_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case -1395615898: return bem_lesser_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case -1918011873: return bem_notEquals_1(bevd_0);
+case -39023363: return bem_setStringValueDec_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
+case -1028482031: return bem_setValue_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case -2082289712: return bem_shiftLeft_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case 395575728: return bem_multiplyValue_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case -1486137753: return bem_hexNew_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
+case 1636048701: return bem_lesserEquals_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case -2045973055: return bem_setStringValueHex_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
+case 439042876: return bem_shiftLeftValue_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case 1234084162: return bem_shiftRightValue_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case 521633536: return bem_divide_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case 141133476: return bem_modulusValue_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case -1702606917: return bem_modulus_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case -527262784: return bem_power_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case 365535198: return bem_deserializeFromStringNew_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
+case -1685209855: return bem_add_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case -818269926: return bem_addValue_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case -148011018: return bem_greater_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case 510427847: return bem_equals_1(bevd_0);
+case -63971020: return bem_or_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case 1740557900: return bem_toHexString_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
+case -636442383: return bem_orValue_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case 1863504026: return bem_subtract_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
 }
 return bevs_super::bemd_1(callId, bevd_0);
 }
 BEC_2_6_6_SystemObject* BEC_2_4_3_MathInt::bemd_2(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1) {
 switch (callId) {
-case -701727441: return bem_toString_2(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
-case -1569687349: return bem_setStringValue_2(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
+case -552487112: return bem_toString_2(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
+case 1705293512: return bem_setStringValue_2(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
 }
 return bevs_super::bemd_2(callId, bevd_0, bevd_1);
 }
 BEC_2_6_6_SystemObject* BEC_2_4_3_MathInt::bemd_3(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1, BEC_2_6_6_SystemObject* bevd_2) {
 switch (callId) {
-case -325162570: return bem_toString_3(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1), static_cast<BEC_2_4_3_MathInt*>(bevd_2));
+case 970137219: return bem_toString_3(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1), static_cast<BEC_2_4_3_MathInt*>(bevd_2));
 }
 return bevs_super::bemd_3(callId, bevd_0, bevd_1, bevd_2);
 }
 BEC_2_6_6_SystemObject* BEC_2_4_3_MathInt::bemd_4(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1, BEC_2_6_6_SystemObject* bevd_2, BEC_2_6_6_SystemObject* bevd_3) {
 switch (callId) {
-case -81906999: return bem_toString_4(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1), static_cast<BEC_2_4_3_MathInt*>(bevd_2), static_cast<BEC_2_4_3_MathInt*>(bevd_3));
+case -991291211: return bem_toString_4(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1), static_cast<BEC_2_4_3_MathInt*>(bevd_2), static_cast<BEC_2_4_3_MathInt*>(bevd_3));
 }
 return bevs_super::bemd_4(callId, bevd_0, bevd_1, bevd_2, bevd_3);
 }
 BEC_2_6_6_SystemObject* BEC_2_4_3_MathInt::bemd_5(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1, BEC_2_6_6_SystemObject* bevd_2, BEC_2_6_6_SystemObject* bevd_3, BEC_2_6_6_SystemObject* bevd_4) {
 switch (callId) {
-case -2007648390: return bem_setStringValue_5(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1), static_cast<BEC_2_4_3_MathInt*>(bevd_2), static_cast<BEC_2_4_3_MathInt*>(bevd_3), static_cast<BEC_2_4_3_MathInt*>(bevd_4));
+case -2121632821: return bem_setStringValue_5(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1), static_cast<BEC_2_4_3_MathInt*>(bevd_2), static_cast<BEC_2_4_3_MathInt*>(bevd_3), static_cast<BEC_2_4_3_MathInt*>(bevd_4));
 }
 return bevs_super::bemd_5(callId, bevd_0, bevd_1, bevd_2, bevd_3, bevd_4);
 }
@@ -8746,28 +8746,28 @@ return this;
 }
 BEC_2_6_6_SystemObject* BEC_2_4_4_MathInts::bemd_0(int32_t callId) {
 switch (callId) {
-case 1313598913: return bem_minGet_0();
-case -498884049: return bem_maxGet_0();
-case 1806825786: return bem_oneGet_0();
-case 384782263: return bem_zeroGet_0();
-case 1564024999: return bem_create_0();
-case 1478015284: return bem_default_0();
+case 24814164: return bem_zeroGet_0();
+case 1556832366: return bem_oneGet_0();
+case 1316872374: return bem_minGet_0();
+case -1102163697: return bem_create_0();
+case 156279153: return bem_maxGet_0();
+case 1638605000: return bem_default_0();
 }
 return bevs_super::bemd_0(callId);
 }
 BEC_2_6_6_SystemObject* BEC_2_4_4_MathInts::bemd_1(int32_t callId, BEC_2_6_6_SystemObject* bevd_0) {
 switch (callId) {
-case 1024387838: return bem_zeroSet_1(bevd_0);
-case -405812091: return bem_minSet_1(bevd_0);
-case 349006299: return bem_oneSet_1(bevd_0);
-case -1057440183: return bem_maxSet_1(bevd_0);
+case -390445739: return bem_oneSet_1(bevd_0);
+case -1919252338: return bem_minSet_1(bevd_0);
+case 1470785968: return bem_zeroSet_1(bevd_0);
+case -1214299080: return bem_maxSet_1(bevd_0);
 }
 return bevs_super::bemd_1(callId, bevd_0);
 }
 BEC_2_6_6_SystemObject* BEC_2_4_4_MathInts::bemd_2(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1) {
 switch (callId) {
-case 1971441199: return bem_max_2(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
-case 1688760685: return bem_min_2(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
+case 461804354: return bem_max_2(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
+case -489115625: return bem_min_2(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
 }
 return bevs_super::bemd_2(callId, bevd_0, bevd_1);
 }
@@ -8988,7 +8988,7 @@ beq->bevt_8_ta_ph = nullptr;
 beq->bevt_9_ta_ph = nullptr;
 beq->bevr_this = this;
 BECS_StackFrame bevs_stackFrame(15);
-beq->bevl_str = static_cast<BEC_2_4_6_TextString*>(beq->beva_astr->bemd_0(2029554860));
+beq->bevl_str = static_cast<BEC_2_4_6_TextString*>(beq->beva_astr->bemd_0(465233440));
 beq->bevl_sizi = static_cast<BEC_2_4_3_MathInt*>(((BEC_2_4_3_MathInt*) (new BEC_2_4_3_MathInt())));
 beq->bevt_0_ta_ph = beq->bevl_str->bem_sizeGet_0();
 beq->bevl_sizi->bevi_int = beq->bevt_0_ta_ph->bevi_int;
@@ -9046,7 +9046,7 @@ bes* beq = (bes*) bevs_myStack->bevs_hs;
 beq->beva_w = bevk_w;
 beq->bevr_this = this;
 BECS_StackFrame bevs_stackFrame(2);
-beq->beva_w->bemd_1(-1013312310, this);
+beq->beva_w->bemd_1(2053367842, this);
 return this;
 }
 BEC_2_4_6_TextString* BEC_2_4_6_TextString::bem_open_0() {
@@ -10713,7 +10713,7 @@ if (beq->bevt_0_ta_anchor->bevi_bool) {
 return nullptr;
 } 
 beq->bevl_mysize = bevp_size;
-beq->bevl_osize = static_cast<BEC_2_4_3_MathInt*>(beq->beva_stri->bemd_0(-1254041937));
+beq->bevl_osize = static_cast<BEC_2_4_3_MathInt*>(beq->beva_stri->bemd_0(1949765092));
 if (beq->bevl_mysize->bevi_int > beq->bevl_osize->bevi_int) {
 beq->bevt_4_ta_ph = BECS_Runtime::boolTrue;
  } else { 
@@ -10738,7 +10738,7 @@ beq->bevt_5_ta_ph = BECS_Runtime::boolFalse;
 }
 if (beq->bevt_5_ta_ph->bevi_bool) {
 bem_getCode_2(beq->bevl_i, beq->bevl_mv);
-beq->beva_stri->bemd_2(-1522489964, beq->bevl_i, beq->bevl_ov);
+beq->beva_stri->bemd_2(1291798032, beq->bevl_i, beq->bevl_ov);
 if (beq->bevl_mv->bevi_int != beq->bevl_ov->bevi_int) {
 beq->bevt_6_ta_ph = BECS_Runtime::boolTrue;
  } else { 
@@ -10921,7 +10921,7 @@ beq->bevt_4_ta_ph = nullptr;
 beq->bevt_5_ta_ph = nullptr;
 beq->bevr_this = this;
 BECS_StackFrame bevs_stackFrame(10);
-beq->bevl_str = static_cast<BEC_2_4_6_TextString*>(beq->beva_astr->bemd_0(2029554860));
+beq->bevl_str = static_cast<BEC_2_4_6_TextString*>(beq->beva_astr->bemd_0(465233440));
 beq->bevt_1_ta_ph = beq->bevl_str->bem_sizeGet_0();
 beq->bevt_0_ta_ph = bevp_size->bem_add_1(beq->bevt_1_ta_ph);
 beq->bevl_res = static_cast<BEC_2_4_6_TextString*>(((BEC_2_4_6_TextString*) (new BEC_2_4_6_TextString()))->bem_new_1(beq->bevt_0_ta_ph));
@@ -11116,14 +11116,14 @@ beq->bevt_2_ta_ph = BECS_Runtime::boolFalse;
 beq->bevt_2_ta_ph = BECS_Runtime::boolTrue;
 }
 if (beq->bevt_2_ta_ph->bevi_bool) {
-beq->bevl_concon = beq->bevl_pl->bemd_0(-2130613583);
+beq->bevl_concon = beq->bevl_pl->bemd_0(-561926472);
 if (beq->bevl_concon == nullptr) {
 beq->bevt_3_ta_ph = BECS_Runtime::boolFalse;
  } else { 
 beq->bevt_3_ta_ph = BECS_Runtime::boolTrue;
 }
 if (beq->bevt_3_ta_ph->bevi_bool) {
-beq->bevt_4_ta_ph = beq->bevl_concon->bemd_0(-1903673964);
+beq->bevt_4_ta_ph = beq->bevl_concon->bemd_0(427169225);
 if ((static_cast<BEC_2_5_4_LogicBool*>(beq->bevt_4_ta_ph))->bevi_bool) {
 beq->bevt_0_ta_anchor = BECS_Runtime::boolTrue;
 } 
@@ -11135,10 +11135,10 @@ beq->bevt_0_ta_anchor = BECS_Runtime::boolFalse;
 beq->bevt_0_ta_anchor = BECS_Runtime::boolFalse;
 } 
 if (beq->bevt_0_ta_anchor->bevi_bool) {
-beq->bevl_concon->bemd_1(-1013312310, this);
+beq->bevl_concon->bemd_1(2053367842, this);
 beq->bevt_6_ta_ph = static_cast<BEC_2_4_7_TextStrings*>(BEC_2_4_7_TextStrings::bece_BEC_2_4_7_TextStrings_bevs_inst);
 beq->bevt_5_ta_ph = beq->bevt_6_ta_ph->bem_unixNewlineGet_0();
-beq->bevl_concon->bemd_1(-1013312310, beq->bevt_5_ta_ph);
+beq->bevl_concon->bemd_1(2053367842, beq->bevt_5_ta_ph);
 } 
 } 
 return this;
@@ -11336,100 +11336,100 @@ return bevp_capacity;
 }
 BEC_2_6_6_SystemObject* BEC_2_4_6_TextString::bemd_0(int32_t callId) {
 switch (callId) {
-case 1344487971: return bem_readString_0();
-case 97147215: return bem_upperValue_0();
-case 1897661623: return bem_toAlphaNum_0();
-case -503232317: return bem_reverseBytes_0();
-case -1460162374: return bem_vstringGet_0();
-case -739094597: return bem_lower_0();
-case -1042086112: return bem_iteratorGet_0();
-case 1215180824: return bem_copy_0();
-case -1369177635: return bem_output_0();
-case 2029139365: return bem_close_0();
-case -67267585: return bem_multiByteIteratorGet_0();
-case 438740242: return bem_isInteger_0();
-case 380734709: return bem_isAlphaNumGet_0();
-case -408774280: return bem_echo_0();
-case 1130726013: return bem_isIntegerGet_0();
-case -811902325: return bem_capacityGet_0();
-case -876207826: return bem_extractString_0();
-case -925854841: return bem_strip_0();
-case 1564024999: return bem_create_0();
-case -236036193: return bem_biterGet_0();
-case -1254041937: return bem_sizeGet_0();
-case 1103447987: return bem_print_0();
-case 2029554860: return bem_toString_0();
-case -407932965: return bem_lowerValue_0();
-case -739882563: return bem_stringIteratorGet_0();
-case 905395146: return bem_open_0();
-case -1222203411: return bem_hashGet_0();
-case 737007830: return bem_clear_0();
-case -1324146605: return bem_byteIteratorGet_0();
-case 886879997: return bem_serializeToString_0();
-case -139426711: return bem_readBuffer_0();
-case 1124145362: return bem_isAlphaNumericGet_0();
-case 650212097: return bem_new_0();
-case 2106933771: return bem_serializeContentsGet_0();
-case -1723885757: return bem_upper_0();
-case 932998879: return bem_mbiterGet_0();
-case -304391142: return bem_isEmptyGet_0();
-case -2032871620: return bem_vstringSet_0();
-case 961694356: return bem_chomp_0();
+case -1102163697: return bem_create_0();
+case -897961903: return bem_biterGet_0();
+case -1911032924: return bem_isIntegerGet_0();
+case 2132706815: return bem_vstringSet_0();
+case -352642319: return bem_stringIteratorGet_0();
+case -1421617167: return bem_print_0();
+case -1947999351: return bem_mbiterGet_0();
+case 453067245: return bem_strip_0();
+case -1330143394: return bem_lowerValue_0();
+case -777136218: return bem_byteIteratorGet_0();
+case 828369746: return bem_vstringGet_0();
+case 2078754462: return bem_readString_0();
+case -946604554: return bem_extractString_0();
+case 11390563: return bem_upper_0();
+case -669964434: return bem_isEmptyGet_0();
+case -1353424875: return bem_open_0();
+case -522670691: return bem_upperValue_0();
+case 1740670062: return bem_hashGet_0();
+case 1949765092: return bem_sizeGet_0();
+case -452835667: return bem_clear_0();
+case 184327006: return bem_toAlphaNum_0();
+case 1438061099: return bem_chomp_0();
+case 465233440: return bem_toString_0();
+case -581514156: return bem_multiByteIteratorGet_0();
+case 2090040860: return bem_close_0();
+case 304013816: return bem_isAlphaNumericGet_0();
+case -724224183: return bem_lower_0();
+case 737545313: return bem_output_0();
+case 1940666674: return bem_reverseBytes_0();
+case -422073981: return bem_isAlphaNumGet_0();
+case -472610450: return bem_serializeContentsGet_0();
+case -101745808: return bem_isInteger_0();
+case -1930305397: return bem_echo_0();
+case 1413366086: return bem_copy_0();
+case -2006153582: return bem_readBuffer_0();
+case -1779978680: return bem_iteratorGet_0();
+case 7034155: return bem_serializeToString_0();
+case 1651365770: return bem_new_0();
+case 930897967: return bem_capacityGet_0();
 }
 return bevs_super::bemd_0(callId);
 }
 BEC_2_6_6_SystemObject* BEC_2_4_6_TextString::bemd_1(int32_t callId, BEC_2_6_6_SystemObject* bevd_0) {
 switch (callId) {
-case 1829699821: return bem_rfind_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
-case -1840395307: return bem_reverseFind_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
-case 1757671873: return bem_ends_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
-case 678836776: return bem_sizeSet_1(bevd_0);
-case -14892228: return bem_deserializeFromStringNew_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
-case -1769659556: return bem_getHex_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case -634359778: return bem_codeNew_1(bevd_0);
-case -581040649: return bem_find_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
-case -1013312310: return bem_write_1(bevd_0);
-case -569218194: return bem_addValue_1(bevd_0);
-case -1835085595: return bem_add_1(bevd_0);
-case -175005634: return bem_hexNew_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
-case 1836649404: return bem_compare_1(bevd_0);
-case 1882839165: return bem_greater_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
-case -288996141: return bem_has_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
-case -2079199322: return bem_writeTo_1(bevd_0);
-case -730113353: return bem_new_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case 1336622994: return bem_hashValue_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case 651262785: return bem_substring_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case 199188566: return bem_split_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
-case 828730677: return bem_lesser_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
-case -985410098: return bem_equals_1(bevd_0);
-case 461411474: return bem_notEquals_1(bevd_0);
-case 841356660: return bem_getCode_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case 1255533197: return bem_begins_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
-case -16898972: return bem_capacitySet_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case 2103782117: return bem_getPoint_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case -396371746: return bem_find_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
+case -1918011873: return bem_notEquals_1(bevd_0);
+case -1845555261: return bem_split_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
+case -1486137753: return bem_hexNew_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
+case 365535198: return bem_deserializeFromStringNew_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
+case 1200217144: return bem_capacitySet_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case -148011018: return bem_greater_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
+case 317974288: return bem_ends_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
+case -1395615898: return bem_lesser_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
+case -818269926: return bem_addValue_1(bevd_0);
+case -1685209855: return bem_add_1(bevd_0);
+case -1987062590: return bem_getHex_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case -1815326424: return bem_codeNew_1(bevd_0);
+case 1119971385: return bem_compare_1(bevd_0);
+case -196446867: return bem_rfind_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
+case 510427847: return bem_equals_1(bevd_0);
+case -1577714073: return bem_writeTo_1(bevd_0);
+case -598853140: return bem_hashValue_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case -932239270: return bem_has_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
+case 107542339: return bem_begins_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
+case 1124297317: return bem_getCode_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case 26449439: return bem_new_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case -1839441035: return bem_reverseFind_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
+case -1418083958: return bem_substring_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case 2053367842: return bem_write_1(bevd_0);
+case -93651622: return bem_sizeSet_1(bevd_0);
+case 1082187637: return bem_getPoint_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
 }
 return bevs_super::bemd_1(callId, bevd_0);
 }
 BEC_2_6_6_SystemObject* BEC_2_4_6_TextString::bemd_2(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1) {
 switch (callId) {
-case -1651494275: return bem_setCodeUnchecked_2(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
-case 11248045: return bem_swap_2(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_4_6_TextString*>(bevd_1));
-case -950302314: return bem_find_2(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
-case -1413858380: return bem_setCode_2(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
-case -282640344: return bem_setInt_2(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
-case -765528546: return bem_setIntUnchecked_2(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
-case 1798814287: return bem_join_2(static_cast<BEC_2_4_6_TextString*>(bevd_0), bevd_1);
-case -1522489964: return bem_getCode_2(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
-case -1813436180: return bem_substring_2(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
-case -1096591949: return bem_swapFirst_2(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_4_6_TextString*>(bevd_1));
-case -1804012967: return bem_getInt_2(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
-case 1007157441: return bem_setHex_2(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_6_TextString*>(bevd_1));
+case 307568236: return bem_substring_2(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
+case -1494218255: return bem_setHex_2(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_6_TextString*>(bevd_1));
+case -1841080105: return bem_getInt_2(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
+case -230529188: return bem_setInt_2(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
+case -635725294: return bem_setCodeUnchecked_2(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
+case 899935891: return bem_setIntUnchecked_2(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
+case 746312521: return bem_join_2(static_cast<BEC_2_4_6_TextString*>(bevd_0), bevd_1);
+case 932527194: return bem_swapFirst_2(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_4_6_TextString*>(bevd_1));
+case 138043600: return bem_swap_2(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_4_6_TextString*>(bevd_1));
+case 1291798032: return bem_getCode_2(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
+case 1508614939: return bem_find_2(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
+case 605661690: return bem_setCode_2(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
 }
 return bevs_super::bemd_2(callId, bevd_0, bevd_1);
 }
 BEC_2_6_6_SystemObject* BEC_2_4_6_TextString::bemd_4(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1, BEC_2_6_6_SystemObject* bevd_2, BEC_2_6_6_SystemObject* bevd_3) {
 switch (callId) {
-case 837829191: return bem_copyValue_4(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1), static_cast<BEC_2_4_3_MathInt*>(bevd_2), static_cast<BEC_2_4_3_MathInt*>(bevd_3));
+case -1303813219: return bem_copyValue_4(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1), static_cast<BEC_2_4_3_MathInt*>(bevd_2), static_cast<BEC_2_4_3_MathInt*>(bevd_3));
 }
 return bevs_super::bemd_4(callId, bevd_0, bevd_1, bevd_2, bevd_3);
 }
@@ -11536,22 +11536,22 @@ beq->bevt_4_ta_ph = nullptr;
 beq->bevt_5_ta_ph = nullptr;
 beq->bevr_this = this;
 BECS_StackFrame bevs_stackFrame(11);
-beq->bevl_i = beq->beva_splits->bemd_0(-1042086112);
-beq->bevt_1_ta_ph = beq->bevl_i->bemd_0(-358011515);
-beq->bevt_0_ta_ph = beq->bevt_1_ta_ph->bemd_0(-1044009238);
+beq->bevl_i = beq->beva_splits->bemd_0(-1779978680);
+beq->bevt_1_ta_ph = beq->bevl_i->bemd_0(2015231);
+beq->bevt_0_ta_ph = beq->bevt_1_ta_ph->bemd_0(202933373);
 if ((static_cast<BEC_2_5_4_LogicBool*>(beq->bevt_0_ta_ph))->bevi_bool) {
 beq->bevt_2_ta_ph = static_cast<BEC_2_4_6_TextString*>(((BEC_2_4_6_TextString*) (new BEC_2_4_6_TextString()))->bem_new_0());
 return beq->bevt_2_ta_ph;
 } 
 beq->bevl_buf = static_cast<BEC_2_4_6_TextString*>(((BEC_2_4_6_TextString*) (new BEC_2_4_6_TextString()))->bem_new_0());
-beq->bevt_3_ta_ph = beq->bevl_i->bemd_0(2029804291);
+beq->bevt_3_ta_ph = beq->bevl_i->bemd_0(190031348);
 beq->bevl_buf->bem_addValue_1(beq->bevt_3_ta_ph);
 while (true)
  {
-beq->bevt_4_ta_ph = beq->bevl_i->bemd_0(-358011515);
+beq->bevt_4_ta_ph = beq->bevl_i->bemd_0(2015231);
 if ((static_cast<BEC_2_5_4_LogicBool*>(beq->bevt_4_ta_ph))->bevi_bool) {
 beq->bevl_buf->bem_addValue_1(beq->beva_delim);
-beq->bevt_5_ta_ph = beq->bevl_i->bemd_0(2029804291);
+beq->bevt_5_ta_ph = beq->bevl_i->bemd_0(190031348);
 beq->bevl_buf->bem_addValue_1(beq->bevt_5_ta_ph);
 } 
  else  {
@@ -11725,8 +11725,8 @@ beq->bevt_6_ta_ph = BECS_Runtime::boolTrue;
 beq->bevt_6_ta_ph = BECS_Runtime::boolFalse;
 }
 if (beq->bevt_6_ta_ph->bevi_bool) {
-beq->bevl_ai->bemd_1(-737842399, beq->bevl_av);
-beq->bevl_bi->bemd_1(-737842399, beq->bevl_bv);
+beq->bevl_ai->bemd_1(-1886527784, beq->bevl_av);
+beq->bevl_bi->bemd_1(-1886527784, beq->bevl_bv);
 beq->bevt_7_ta_ph = beq->bevl_av->bem_notEquals_1(beq->bevl_bv);
 if (beq->bevt_7_ta_ph->bevi_bool) {
 beq->bevt_9_ta_ph = static_cast<BEC_2_4_3_MathInt*>(((BEC_2_4_3_MathInt*) (new BEC_2_4_3_MathInt(0))));
@@ -11756,12 +11756,12 @@ beq->bevt_3_ta_ph = nullptr;
 beq->bevt_4_ta_ph = nullptr;
 beq->bevr_this = this;
 BECS_StackFrame bevs_stackFrame(8);
-beq->bevt_0_ta_loop = beq->beva_strs->bemd_0(-1042086112);
+beq->bevt_0_ta_loop = beq->beva_strs->bemd_0(-1779978680);
 while (true)
  {
-beq->bevt_1_ta_ph = beq->bevt_0_ta_loop->bemd_0(-358011515);
+beq->bevt_1_ta_ph = beq->bevt_0_ta_loop->bemd_0(2015231);
 if ((static_cast<BEC_2_5_4_LogicBool*>(beq->bevt_1_ta_ph))->bevi_bool) {
-beq->bevl_i = static_cast<BEC_2_4_6_TextString*>(beq->bevt_0_ta_loop->bemd_0(2029804291));
+beq->bevl_i = static_cast<BEC_2_4_6_TextString*>(beq->bevt_0_ta_loop->bemd_0(190031348));
 beq->bevt_2_ta_ph = bem_isEmpty_1(beq->bevl_i);
 if (beq->bevt_2_ta_ph->bevi_bool) {
 beq->bevt_3_ta_ph = static_cast<BEC_2_5_4_LogicBool*>(BECS_Runtime::boolTrue);
@@ -12077,49 +12077,49 @@ return this;
 }
 BEC_2_6_6_SystemObject* BEC_2_4_7_TextStrings::bemd_0(int32_t callId) {
 switch (callId) {
-case 1564024999: return bem_create_0();
-case -2005702189: return bem_tabGet_0();
-case 274687309: return bem_lfGet_0();
-case 354499320: return bem_unixNewlineGet_0();
-case -1960998091: return bem_colonGet_0();
-case -1293608401: return bem_newlineGet_0();
-case 1478015284: return bem_default_0();
-case 384782263: return bem_zeroGet_0();
-case 1015496323: return bem_spaceGet_0();
-case 614573635: return bem_dosNewlineGet_0();
-case 1873976046: return bem_emptyGet_0();
-case -906235855: return bem_crGet_0();
-case 1806825786: return bem_oneGet_0();
-case 503548223: return bem_quoteGet_0();
+case 40581426: return bem_dosNewlineGet_0();
+case 1075674396: return bem_newlineGet_0();
+case -1270807570: return bem_crGet_0();
+case 353518322: return bem_quoteGet_0();
+case 692216220: return bem_unixNewlineGet_0();
+case 24814164: return bem_zeroGet_0();
+case 1638605000: return bem_default_0();
+case 2037377662: return bem_emptyGet_0();
+case -1102163697: return bem_create_0();
+case 1906079797: return bem_colonGet_0();
+case -1949446707: return bem_tabGet_0();
+case -1998901472: return bem_spaceGet_0();
+case 286312672: return bem_lfGet_0();
+case 1556832366: return bem_oneGet_0();
 }
 return bevs_super::bemd_0(callId);
 }
 BEC_2_6_6_SystemObject* BEC_2_4_7_TextStrings::bemd_1(int32_t callId, BEC_2_6_6_SystemObject* bevd_0) {
 switch (callId) {
-case 575767450: return bem_dosNewlineSet_1(bevd_0);
-case 1724234231: return bem_strip_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
-case -2071117901: return bem_crSet_1(bevd_0);
-case -19523172: return bem_colonSet_1(bevd_0);
-case -1867796532: return bem_lfSet_1(bevd_0);
-case 962879359: return bem_quoteSet_1(bevd_0);
-case 671340891: return bem_isEmpty_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
-case 2064617351: return bem_tabSet_1(bevd_0);
-case 1588114459: return bem_anyEmpty_1(bevd_0);
-case 349006299: return bem_oneSet_1(bevd_0);
-case 406323793: return bem_unixNewlineSet_1(bevd_0);
-case 366188100: return bem_emptySet_1(bevd_0);
-case -1952530310: return bem_spaceSet_1(bevd_0);
-case -163684687: return bem_newlineSet_1(bevd_0);
-case 1695925160: return bem_notEmpty_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
-case 1024387838: return bem_zeroSet_1(bevd_0);
+case 1744858254: return bem_quoteSet_1(bevd_0);
+case 1768468030: return bem_newlineSet_1(bevd_0);
+case -188150132: return bem_unixNewlineSet_1(bevd_0);
+case 272717983: return bem_tabSet_1(bevd_0);
+case -1780454709: return bem_emptySet_1(bevd_0);
+case -2005575685: return bem_dosNewlineSet_1(bevd_0);
+case -1162004412: return bem_lfSet_1(bevd_0);
+case 412033263: return bem_spaceSet_1(bevd_0);
+case -390445739: return bem_oneSet_1(bevd_0);
+case -1439578040: return bem_notEmpty_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
+case 861078691: return bem_strip_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
+case 1470785968: return bem_zeroSet_1(bevd_0);
+case -290237493: return bem_colonSet_1(bevd_0);
+case -2040699471: return bem_isEmpty_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
+case -2012017871: return bem_crSet_1(bevd_0);
+case 1732173898: return bem_anyEmpty_1(bevd_0);
 }
 return bevs_super::bemd_1(callId, bevd_0);
 }
 BEC_2_6_6_SystemObject* BEC_2_4_7_TextStrings::bemd_2(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1) {
 switch (callId) {
-case -598603295: return bem_joinBuffer_2(static_cast<BEC_2_4_6_TextString*>(bevd_0), bevd_1);
-case -1620912341: return bem_commonPrefix_2(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_4_6_TextString*>(bevd_1));
-case 1798814287: return bem_join_2(static_cast<BEC_2_4_6_TextString*>(bevd_0), bevd_1);
+case 1055878408: return bem_commonPrefix_2(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_4_6_TextString*>(bevd_1));
+case 1373944205: return bem_joinBuffer_2(static_cast<BEC_2_4_6_TextString*>(bevd_0), bevd_1);
+case 746312521: return bem_join_2(static_cast<BEC_2_4_6_TextString*>(bevd_0), bevd_1);
 }
 return bevs_super::bemd_2(callId, bevd_0, bevd_1);
 }
@@ -12481,26 +12481,26 @@ return this;
 }
 BEC_2_6_6_SystemObject* BEC_2_4_12_TextByteIterator::bemd_0(int32_t callId) {
 switch (callId) {
-case -358011515: return bem_hasNextGet_0();
-case 650212097: return bem_new_0();
-case 2029804291: return bem_nextGet_0();
-case 2034355836: return bem_byteIteratorIteratorGet_0();
-case -339824511: return bem_posGet_0();
-case -1042086112: return bem_iteratorGet_0();
-case 549246690: return bem_containerGet_0();
-case 886879997: return bem_serializeToString_0();
+case 190031348: return bem_nextGet_0();
+case -307684710: return bem_posGet_0();
+case 531419717: return bem_byteIteratorIteratorGet_0();
+case -1473119918: return bem_containerGet_0();
+case -1779978680: return bem_iteratorGet_0();
+case 7034155: return bem_serializeToString_0();
+case 2015231: return bem_hasNextGet_0();
+case 1651365770: return bem_new_0();
 }
 return bevs_super::bemd_0(callId);
 }
 BEC_2_6_6_SystemObject* BEC_2_4_12_TextByteIterator::bemd_1(int32_t callId, BEC_2_6_6_SystemObject* bevd_0) {
 switch (callId) {
-case -2052077930: return bem_posSet_1(bevd_0);
-case -730113353: return bem_new_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
-case 455203036: return bem_currentInt_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case 2039989173: return bem_currentIntSet_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case -1894295894: return bem_nextInt_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case -737842399: return bem_next_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
-case -14892228: return bem_deserializeFromStringNew_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
+case -1947625240: return bem_currentInt_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case 75330585: return bem_posSet_1(bevd_0);
+case 548937897: return bem_currentIntSet_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case 26449439: return bem_new_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
+case 365535198: return bem_deserializeFromStringNew_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
+case -1886527784: return bem_next_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
+case 60923300: return bem_nextInt_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
 }
 return bevs_super::bemd_1(callId, bevd_0);
 }
@@ -12569,7 +12569,7 @@ beq->bevt_3_ta_ph = nullptr;
 beq->bevr_this = this;
 BECS_StackFrame bevs_stackFrame(6);
 beq->bevt_1_ta_ph = static_cast<BEC_2_4_6_TextString*>(((BEC_2_4_6_TextString*) (new BEC_2_4_6_TextString(4, {0x74,0x72,0x75,0x65}))));
-beq->bevt_0_ta_ph = beq->beva_str->bemd_1(-985410098, beq->bevt_1_ta_ph);
+beq->bevt_0_ta_ph = beq->beva_str->bemd_1(510427847, beq->bevt_1_ta_ph);
 if ((static_cast<BEC_2_5_4_LogicBool*>(beq->bevt_0_ta_ph))->bevi_bool) {
 beq->bevt_2_ta_ph = static_cast<BEC_2_5_4_LogicBool*>(BECS_Runtime::boolTrue);
 return beq->bevt_2_ta_ph;
@@ -12597,7 +12597,7 @@ beq->bevt_1_ta_ph = BECS_Runtime::boolTrue;
 }
 if (beq->bevt_1_ta_ph->bevi_bool) {
 beq->bevt_3_ta_ph = static_cast<BEC_2_4_6_TextString*>(((BEC_2_4_6_TextString*) (new BEC_2_4_6_TextString(4, {0x74,0x72,0x75,0x65}))));
-beq->bevt_2_ta_ph = beq->beva_str->bemd_1(-985410098, beq->bevt_3_ta_ph);
+beq->bevt_2_ta_ph = beq->beva_str->bemd_1(510427847, beq->bevt_3_ta_ph);
 if ((static_cast<BEC_2_5_4_LogicBool*>(beq->bevt_2_ta_ph))->bevi_bool) {
 beq->bevt_0_ta_anchor = BECS_Runtime::boolTrue;
 } 
@@ -12725,23 +12725,23 @@ return this;
 }
 BEC_2_6_6_SystemObject* BEC_2_5_4_LogicBool::bemd_0(int32_t callId) {
 switch (callId) {
-case -1044009238: return bem_not_0();
-case 2106933771: return bem_serializeContentsGet_0();
-case 650212097: return bem_new_0();
-case -1647670764: return bem_deserializeClassNameGet_0();
-case 1018081323: return bem_decrement_0();
-case 2029554860: return bem_toString_0();
-case -1222203411: return bem_hashGet_0();
-case -1601205348: return bem_increment_0();
-case 1215180824: return bem_copy_0();
-case 886879997: return bem_serializeToString_0();
+case 2036581308: return bem_deserializeClassNameGet_0();
+case 1740670062: return bem_hashGet_0();
+case -1661922459: return bem_decrement_0();
+case 202933373: return bem_not_0();
+case -274713941: return bem_increment_0();
+case -472610450: return bem_serializeContentsGet_0();
+case 465233440: return bem_toString_0();
+case 1413366086: return bem_copy_0();
+case 7034155: return bem_serializeToString_0();
+case 1651365770: return bem_new_0();
 }
 return bevs_super::bemd_0(callId);
 }
 BEC_2_6_6_SystemObject* BEC_2_5_4_LogicBool::bemd_1(int32_t callId, BEC_2_6_6_SystemObject* bevd_0) {
 switch (callId) {
-case -730113353: return bem_new_1(bevd_0);
-case -1662475446: return bem_checkDefNew_1(bevd_0);
+case 26449439: return bem_new_1(bevd_0);
+case 984973340: return bem_checkDefNew_1(bevd_0);
 }
 return bevs_super::bemd_1(callId, bevd_0);
 }
@@ -12809,7 +12809,7 @@ beq->bevt_3_ta_ph = nullptr;
 beq->bevr_this = this;
 BECS_StackFrame bevs_stackFrame(6);
 beq->bevt_1_ta_ph = static_cast<BEC_2_4_6_TextString*>(((BEC_2_4_6_TextString*) (new BEC_2_4_6_TextString(4, {0x74,0x72,0x75,0x65}))));
-beq->bevt_0_ta_ph = beq->beva_str->bemd_1(-985410098, beq->bevt_1_ta_ph);
+beq->bevt_0_ta_ph = beq->beva_str->bemd_1(510427847, beq->bevt_1_ta_ph);
 if ((static_cast<BEC_2_5_4_LogicBool*>(beq->bevt_0_ta_ph))->bevi_bool) {
 beq->bevt_2_ta_ph = static_cast<BEC_2_5_4_LogicBool*>(BECS_Runtime::boolTrue);
 return beq->bevt_2_ta_ph;
@@ -12837,7 +12837,7 @@ beq->bevt_1_ta_ph = BECS_Runtime::boolTrue;
 }
 if (beq->bevt_1_ta_ph->bevi_bool) {
 beq->bevt_3_ta_ph = static_cast<BEC_2_4_6_TextString*>(((BEC_2_4_6_TextString*) (new BEC_2_4_6_TextString(4, {0x74,0x72,0x75,0x65}))));
-beq->bevt_2_ta_ph = beq->beva_str->bemd_1(-985410098, beq->bevt_3_ta_ph);
+beq->bevt_2_ta_ph = beq->beva_str->bemd_1(510427847, beq->bevt_3_ta_ph);
 if ((static_cast<BEC_2_5_4_LogicBool*>(beq->bevt_2_ta_ph))->bevi_bool) {
 beq->bevt_0_ta_anchor = BECS_Runtime::boolTrue;
 } 
@@ -12911,17 +12911,17 @@ return beq->bevt_3_ta_ph;
 }
 BEC_2_6_6_SystemObject* BEC_2_5_5_LogicBools::bemd_0(int32_t callId) {
 switch (callId) {
-case 1564024999: return bem_create_0();
-case 1478015284: return bem_default_0();
+case -1102163697: return bem_create_0();
+case 1638605000: return bem_default_0();
 }
 return bevs_super::bemd_0(callId);
 }
 BEC_2_6_6_SystemObject* BEC_2_5_5_LogicBools::bemd_1(int32_t callId, BEC_2_6_6_SystemObject* bevd_0) {
 switch (callId) {
-case -597322275: return bem_isTrue_1(static_cast<BEC_2_5_4_LogicBool*>(bevd_0));
-case 1330159473: return bem_forString_1(bevd_0);
-case -2058301657: return bem_fromString_1(bevd_0);
-case -1657504562: return bem_deserializeFromString_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
+case 731120995: return bem_fromString_1(bevd_0);
+case -407318234: return bem_deserializeFromString_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
+case 669520221: return bem_isTrue_1(static_cast<BEC_2_5_4_LogicBool*>(bevd_0));
+case 1298271708: return bem_forString_1(bevd_0);
 }
 return bevs_super::bemd_1(callId, bevd_0);
 }
@@ -13111,15 +13111,15 @@ return beq->bevl_r;
 }
 BEC_2_6_6_SystemObject* BEC_2_6_3_EncodeHex::bemd_0(int32_t callId) {
 switch (callId) {
-case 1564024999: return bem_create_0();
-case 1478015284: return bem_default_0();
+case -1102163697: return bem_create_0();
+case 1638605000: return bem_default_0();
 }
 return bevs_super::bemd_0(callId);
 }
 BEC_2_6_6_SystemObject* BEC_2_6_3_EncodeHex::bemd_1(int32_t callId, BEC_2_6_6_SystemObject* bevd_0) {
 switch (callId) {
-case 556519239: return bem_encode_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
-case -2062957477: return bem_decode_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
+case -1315514541: return bem_decode_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
+case 2013880468: return bem_encode_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
 }
 return bevs_super::bemd_1(callId, bevd_0);
 }
@@ -13618,15 +13618,15 @@ return beq->bevt_30_ta_ph;
 }
 BEC_2_6_6_SystemObject* BEC_2_6_3_EncodeUrl::bemd_0(int32_t callId) {
 switch (callId) {
-case 1564024999: return bem_create_0();
-case 1478015284: return bem_default_0();
+case -1102163697: return bem_create_0();
+case 1638605000: return bem_default_0();
 }
 return bevs_super::bemd_0(callId);
 }
 BEC_2_6_6_SystemObject* BEC_2_6_3_EncodeUrl::bemd_1(int32_t callId, BEC_2_6_6_SystemObject* bevd_0) {
 switch (callId) {
-case 556519239: return bem_encode_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
-case -2062957477: return bem_decode_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
+case -1315514541: return bem_decode_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
+case 2013880468: return bem_encode_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
 }
 return bevs_super::bemd_1(callId, bevd_0);
 }
@@ -13843,21 +13843,21 @@ return this;
 }
 BEC_2_6_6_SystemObject* BEC_3_9_4_8_ContainerListIterator::bemd_0(int32_t callId) {
 switch (callId) {
-case -32732745: return bem_currentGet_0();
-case 549246690: return bem_containerGet_0();
-case 1373197885: return bem_hasCurrentGet_0();
-case -358011515: return bem_hasNextGet_0();
-case 650212097: return bem_new_0();
-case 2029804291: return bem_nextGet_0();
+case 1241129593: return bem_hasCurrentGet_0();
+case 190031348: return bem_nextGet_0();
+case -631447918: return bem_currentGet_0();
+case -1473119918: return bem_containerGet_0();
+case 2015231: return bem_hasNextGet_0();
+case 1651365770: return bem_new_0();
 }
 return bevs_super::bemd_0(callId);
 }
 BEC_2_6_6_SystemObject* BEC_3_9_4_8_ContainerListIterator::bemd_1(int32_t callId, BEC_2_6_6_SystemObject* bevd_0) {
 switch (callId) {
-case -381015471: return bem_currentSet_1(bevd_0);
-case -730113353: return bem_new_1(bevd_0);
-case -1501538703: return bem_skip_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case 970838505: return bem_nextSet_1(bevd_0);
+case 26449439: return bem_new_1(bevd_0);
+case 879008531: return bem_skip_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case 1084254510: return bem_currentSet_1(bevd_0);
+case -294069719: return bem_nextSet_1(bevd_0);
 }
 return bevs_super::bemd_1(callId, bevd_0);
 }
@@ -14364,9 +14364,9 @@ beq->bevl_yi = static_cast<BEC_2_9_4_ContainerList*>(((BEC_2_9_4_ContainerList*)
 beq->bevt_0_ta_loop = bem_iteratorGet_0();
 while (true)
  {
-beq->bevt_5_ta_ph = beq->bevt_0_ta_loop->bemd_0(-358011515);
+beq->bevt_5_ta_ph = beq->bevt_0_ta_loop->bemd_0(2015231);
 if ((static_cast<BEC_2_5_4_LogicBool*>(beq->bevt_5_ta_ph))->bevi_bool) {
-beq->bevl_c = beq->bevt_0_ta_loop->bemd_0(2029804291);
+beq->bevl_c = beq->bevt_0_ta_loop->bemd_0(190031348);
 beq->bevl_yi->bem_addValueWhole_1(beq->bevl_c);
 } 
  else  {
@@ -14376,9 +14376,9 @@ break;
 beq->bevt_1_ta_loop = beq->beva_xi->bem_iteratorGet_0();
 while (true)
  {
-beq->bevt_6_ta_ph = beq->bevt_1_ta_loop->bemd_0(-358011515);
+beq->bevt_6_ta_ph = beq->bevt_1_ta_loop->bemd_0(2015231);
 if ((static_cast<BEC_2_5_4_LogicBool*>(beq->bevt_6_ta_ph))->bevi_bool) {
-beq->bevl_c = beq->bevt_1_ta_loop->bemd_0(2029804291);
+beq->bevl_c = beq->bevt_1_ta_loop->bemd_0(190031348);
 beq->bevl_yi->bem_addValueWhole_1(beq->bevl_c);
 } 
  else  {
@@ -14447,7 +14447,7 @@ beq->bevt_1_ta_ph = BECS_Runtime::boolFalse;
 if (beq->bevt_1_ta_ph->bevi_bool) {
 beq->bevt_3_ta_ph = bem_get_1(beq->bevl_j);
 beq->bevt_4_ta_ph = bem_get_1(beq->bevl_c);
-beq->bevt_2_ta_ph = beq->bevt_3_ta_ph->bemd_1(828730677, beq->bevt_4_ta_ph);
+beq->bevt_2_ta_ph = beq->bevt_3_ta_ph->bemd_1(-1395615898, beq->bevt_4_ta_ph);
 if ((static_cast<BEC_2_5_4_LogicBool*>(beq->bevt_2_ta_ph))->bevi_bool) {
 beq->bevl_c = static_cast<BEC_2_4_3_MathInt*>(beq->bevl_j->bem_copy_0());
 } 
@@ -14528,7 +14528,7 @@ beq->bevt_0_ta_anchor = BECS_Runtime::boolFalse;
 if (beq->bevt_0_ta_anchor->bevi_bool) {
 beq->bevl_fo = beq->beva_first->bem_get_1(beq->bevl_fi);
 beq->bevl_so = beq->beva_second->bem_get_1(beq->bevl_si);
-beq->bevt_4_ta_ph = beq->bevl_so->bemd_1(828730677, beq->bevl_fo);
+beq->bevt_4_ta_ph = beq->bevl_so->bemd_1(-1395615898, beq->bevl_fo);
 if ((static_cast<BEC_2_5_4_LogicBool*>(beq->bevt_4_ta_ph))->bevi_bool) {
 beq->bevl_si->bevi_int++;
 bem_put_2(beq->bevl_i, beq->bevl_so);
@@ -14723,9 +14723,9 @@ beq->bevt_0_ta_ph = BECS_Runtime::boolTrue;
 if (beq->bevt_0_ta_ph->bevi_bool) {
 while (true)
  {
-beq->bevt_1_ta_ph = beq->beva_val->bemd_0(-358011515);
+beq->bevt_1_ta_ph = beq->beva_val->bemd_0(2015231);
 if ((static_cast<BEC_2_5_4_LogicBool*>(beq->bevt_1_ta_ph))->bevi_bool) {
-beq->bevt_2_ta_ph = beq->beva_val->bemd_0(2029804291);
+beq->bevt_2_ta_ph = beq->beva_val->bemd_0(190031348);
 bem_addValueWhole_1(beq->bevt_2_ta_ph);
 } 
  else  {
@@ -14750,7 +14750,7 @@ beq->bevt_0_ta_ph = BECS_Runtime::boolFalse;
 beq->bevt_0_ta_ph = BECS_Runtime::boolTrue;
 }
 if (beq->bevt_0_ta_ph->bevi_bool) {
-beq->bevt_1_ta_ph = beq->beva_val->bemd_0(-1042086112);
+beq->bevt_1_ta_ph = beq->beva_val->bemd_0(-1779978680);
 bem_iterateAdd_1(beq->bevt_1_ta_ph);
 } 
 return this;
@@ -14846,7 +14846,7 @@ beq->bevt_2_ta_ph = BECS_Runtime::boolFalse;
 beq->bevt_2_ta_ph = BECS_Runtime::boolTrue;
 }
 if (beq->bevt_2_ta_ph->bevi_bool) {
-beq->bevt_3_ta_ph = beq->beva_value->bemd_1(-985410098, beq->bevl_aval);
+beq->bevt_3_ta_ph = beq->beva_value->bemd_1(510427847, beq->bevl_aval);
 if ((static_cast<BEC_2_5_4_LogicBool*>(beq->bevt_3_ta_ph))->bevi_bool) {
 beq->bevt_0_ta_anchor = BECS_Runtime::boolTrue;
 } 
@@ -14940,17 +14940,17 @@ beq->bevt_4_ta_ph = static_cast<BEC_2_4_3_MathInt*>(((BEC_2_4_3_MathInt*) (new B
 beq->bevt_2_ta_ph = beq->bevt_3_ta_ph->bem_divide_1(beq->bevt_4_ta_ph);
 beq->bevl_mid = beq->bevt_2_ta_ph->bem_add_1(beq->bevl_low);
 beq->bevl_aval = bem_get_1(beq->bevl_mid);
-beq->bevt_5_ta_ph = beq->beva_value->bemd_1(-985410098, beq->bevl_aval);
+beq->bevt_5_ta_ph = beq->beva_value->bemd_1(510427847, beq->bevl_aval);
 if ((static_cast<BEC_2_5_4_LogicBool*>(beq->bevt_5_ta_ph))->bevi_bool) {
 return beq->bevl_mid;
 } 
  else  {
-beq->bevt_6_ta_ph = beq->beva_value->bemd_1(1882839165, beq->bevl_aval);
+beq->bevt_6_ta_ph = beq->beva_value->bemd_1(-148011018, beq->bevl_aval);
 if ((static_cast<BEC_2_5_4_LogicBool*>(beq->bevt_6_ta_ph))->bevi_bool) {
 beq->bevl_low = beq->bevl_mid;
 } 
  else  {
-beq->bevt_7_ta_ph = beq->beva_value->bemd_1(828730677, beq->bevl_aval);
+beq->bevt_7_ta_ph = beq->beva_value->bemd_1(-1395615898, beq->bevl_aval);
 if ((static_cast<BEC_2_5_4_LogicBool*>(beq->bevt_7_ta_ph))->bevi_bool) {
 beq->bevl_high = beq->bevl_mid;
 } 
@@ -14980,7 +14980,7 @@ beq->bevt_0_ta_anchor = BECS_Runtime::boolFalse;
 if (beq->bevt_0_ta_anchor->bevi_bool) {
 if (beq->beva_returnNoMatch->bevi_bool) {
 beq->bevt_11_ta_ph = bem_get_1(beq->bevl_low);
-beq->bevt_10_ta_ph = beq->bevt_11_ta_ph->bemd_1(828730677, beq->beva_value);
+beq->bevt_10_ta_ph = beq->bevt_11_ta_ph->bemd_1(-1395615898, beq->beva_value);
 if ((static_cast<BEC_2_5_4_LogicBool*>(beq->bevt_10_ta_ph))->bevi_bool) {
 beq->bevt_1_ta_anchor = BECS_Runtime::boolTrue;
 } 
@@ -15039,58 +15039,58 @@ return this;
 }
 BEC_2_6_6_SystemObject* BEC_2_9_4_ContainerList::bemd_0(int32_t callId) {
 switch (callId) {
-case -1754886551: return bem_sort_0();
-case 1564024999: return bem_create_0();
-case 1215180824: return bem_copy_0();
-case 2048138070: return bem_sortValue_0();
-case 737007830: return bem_clear_0();
-case -811902325: return bem_capacityGet_0();
-case -304391142: return bem_isEmptyGet_0();
-case 1741943690: return bem_arrayIteratorGet_0();
-case 224933247: return bem_anyrayGet_0();
-case -1254041937: return bem_sizeGet_0();
-case -1042086112: return bem_iteratorGet_0();
-case 274815002: return bem_mergeSort_0();
-case 460453365: return bem_multiplierGet_0();
-case 113113709: return bem_anyraySet_0();
-case -1237256411: return bem_lengthGet_0();
-case -280890192: return bem_lastGet_0();
-case 650212097: return bem_new_0();
-case 612167451: return bem_firstGet_0();
-case 886879997: return bem_serializeToString_0();
+case 734315079: return bem_mergeSort_0();
+case -2044267405: return bem_sortValue_0();
+case -80550776: return bem_multiplierGet_0();
+case -1102163697: return bem_create_0();
+case -669964434: return bem_isEmptyGet_0();
+case -452835667: return bem_clear_0();
+case -128400597: return bem_anyrayGet_0();
+case 1949765092: return bem_sizeGet_0();
+case 1553107840: return bem_firstGet_0();
+case -344305254: return bem_lastGet_0();
+case 930897967: return bem_capacityGet_0();
+case -1779978680: return bem_iteratorGet_0();
+case -478902214: return bem_sort_0();
+case 1413366086: return bem_copy_0();
+case 7034155: return bem_serializeToString_0();
+case 1787065015: return bem_anyraySet_0();
+case 1651365770: return bem_new_0();
+case -1963936733: return bem_lengthGet_0();
+case -329178645: return bem_arrayIteratorGet_0();
 }
 return bevs_super::bemd_0(callId);
 }
 BEC_2_6_6_SystemObject* BEC_2_9_4_ContainerList::bemd_1(int32_t callId, BEC_2_6_6_SystemObject* bevd_0) {
 switch (callId) {
-case -581040649: return bem_find_1(bevd_0);
-case 413679760: return bem_get_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case -288996141: return bem_has_1(bevd_0);
-case -1835085595: return bem_add_1(static_cast<BEC_2_9_4_ContainerList*>(bevd_0));
-case -569218194: return bem_addValue_1(bevd_0);
-case -1989505275: return bem_addValueWhole_1(bevd_0);
-case -326225048: return bem_iterateAdd_1(bevd_0);
-case 1479749200: return bem_sortedFind_1(bevd_0);
-case 1238617770: return bem_multiplierSet_1(bevd_0);
-case -16898972: return bem_capacitySet_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case -189432401: return bem_addAll_1(bevd_0);
-case 1410592934: return bem_create_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case 678836776: return bem_sizeSet_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case -730113353: return bem_new_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case -1800374893: return bem_delete_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case -14892228: return bem_deserializeFromStringNew_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
-case 127617359: return bem_lengthSet_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case -936003309: return bem_get_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case 26449439: return bem_new_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case -551678340: return bem_iterateAdd_1(bevd_0);
+case -932239270: return bem_has_1(bevd_0);
+case -1539011952: return bem_addAll_1(bevd_0);
+case -1430119720: return bem_multiplierSet_1(bevd_0);
+case 122355823: return bem_delete_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case -396371746: return bem_find_1(bevd_0);
+case -818269926: return bem_addValue_1(bevd_0);
+case 1368291046: return bem_create_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case 1788215230: return bem_lengthSet_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case -1878161010: return bem_addValueWhole_1(bevd_0);
+case 365535198: return bem_deserializeFromStringNew_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
+case -93651622: return bem_sizeSet_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case -2129685139: return bem_sortedFind_1(bevd_0);
+case -1685209855: return bem_add_1(static_cast<BEC_2_9_4_ContainerList*>(bevd_0));
+case 1200217144: return bem_capacitySet_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
 }
 return bevs_super::bemd_1(callId, bevd_0);
 }
 BEC_2_6_6_SystemObject* BEC_2_9_4_ContainerList::bemd_2(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1) {
 switch (callId) {
-case -234322121: return bem_mergeSort_2(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
-case -1122202643: return bem_sortedFind_2(bevd_0, static_cast<BEC_2_5_4_LogicBool*>(bevd_1));
-case -2069242331: return bem_put_2(static_cast<BEC_2_4_3_MathInt*>(bevd_0), bevd_1);
-case -255097606: return bem_mergeIn_2(static_cast<BEC_2_9_4_ContainerList*>(bevd_0), static_cast<BEC_2_9_4_ContainerList*>(bevd_1));
-case -416160784: return bem_sortValue_2(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
-case 1287864112: return bem_new_2(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
+case -1959823526: return bem_new_2(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
+case -886247550: return bem_put_2(static_cast<BEC_2_4_3_MathInt*>(bevd_0), bevd_1);
+case 683937678: return bem_sortedFind_2(bevd_0, static_cast<BEC_2_5_4_LogicBool*>(bevd_1));
+case 2127942605: return bem_mergeSort_2(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
+case -1138228089: return bem_mergeIn_2(static_cast<BEC_2_9_4_ContainerList*>(bevd_0), static_cast<BEC_2_9_4_ContainerList*>(bevd_1));
+case 718287657: return bem_sortValue_2(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
 }
 return bevs_super::bemd_2(callId, bevd_0, bevd_1);
 }
@@ -15187,19 +15187,19 @@ return beq->beva_list;
 }
 BEC_2_6_6_SystemObject* BEC_2_9_5_ContainerLists::bemd_0(int32_t callId) {
 switch (callId) {
-case 1478015284: return bem_default_0();
+case 1638605000: return bem_default_0();
 }
 return bevs_super::bemd_0(callId);
 }
 BEC_2_6_6_SystemObject* BEC_2_9_5_ContainerLists::bemd_1(int32_t callId, BEC_2_6_6_SystemObject* bevd_0) {
 switch (callId) {
-case -634267562: return bem_fromHandler_1(static_cast<BEC_2_9_4_ContainerList*>(bevd_0));
+case -454425551: return bem_fromHandler_1(static_cast<BEC_2_9_4_ContainerList*>(bevd_0));
 }
 return bevs_super::bemd_1(callId, bevd_0);
 }
 BEC_2_6_6_SystemObject* BEC_2_9_5_ContainerLists::bemd_2(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1) {
 switch (callId) {
-case 1273973510: return bem_forwardCall_2(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_9_4_ContainerList*>(bevd_1));
+case 1588187594: return bem_forwardCall_2(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_9_4_ContainerList*>(bevd_1));
 }
 return bevs_super::bemd_2(callId, bevd_0, bevd_1);
 }
@@ -15253,12 +15253,12 @@ beq->bevr_this = this;
 BECS_StackFrame bevs_stackFrame(7);
 beq->bevt_1_ta_ph = static_cast<BEC_2_4_6_TextString*>(((BEC_2_4_6_TextString*) (new BEC_2_4_6_TextString(7, {0x64,0x65,0x66,0x61,0x75,0x6C,0x74}))));
 beq->bevt_2_ta_ph = static_cast<BEC_2_4_3_MathInt*>(((BEC_2_4_3_MathInt*) (new BEC_2_4_3_MathInt(0))));
-beq->bevt_0_ta_ph = beq->beva_inst->bemd_2(1301967933, beq->bevt_1_ta_ph, beq->bevt_2_ta_ph);
+beq->bevt_0_ta_ph = beq->beva_inst->bemd_2(-26439676, beq->bevt_1_ta_ph, beq->bevt_2_ta_ph);
 if ((static_cast<BEC_2_5_4_LogicBool*>(beq->bevt_0_ta_ph))->bevi_bool) {
 beq->bevt_3_ta_ph = bem_initializeIt_1(beq->beva_inst);
 return beq->bevt_3_ta_ph;
 } 
-beq->bevt_4_ta_ph = beq->beva_inst->bemd_0(650212097);
+beq->bevt_4_ta_ph = beq->beva_inst->bemd_0(1651365770);
 return beq->bevt_4_ta_ph;
 }
 BEC_2_6_6_SystemObject* BEC_2_6_11_SystemInitializer::bem_notNullInitConstruct_1(BEC_2_6_6_SystemObject* bevk_inst) {
@@ -15294,7 +15294,7 @@ beq->bevr_this = this;
 BECS_StackFrame bevs_stackFrame(3);
 
       beq->bevl_init = beq->beva_inst->bemc_getInitial();
-      beq->bevl_init->bemd_0(1478015284);
+      beq->bevl_init->bemd_0(1638605000);
 return this;
 }
 BEC_2_6_6_SystemObject* BEC_2_6_11_SystemInitializer::bem_notNullInitIt_1(BEC_2_6_6_SystemObject* bevk_inst) {
@@ -15318,9 +15318,9 @@ if (beq->bevt_0_ta_ph->bevi_bool) {
 beq->bevl_init = beq->beva_inst;
 beq->bevt_2_ta_ph = static_cast<BEC_2_4_6_TextString*>(((BEC_2_4_6_TextString*) (new BEC_2_4_6_TextString(7, {0x64,0x65,0x66,0x61,0x75,0x6C,0x74}))));
 beq->bevt_3_ta_ph = static_cast<BEC_2_4_3_MathInt*>(((BEC_2_4_3_MathInt*) (new BEC_2_4_3_MathInt(0))));
-beq->bevt_1_ta_ph = beq->bevl_init->bemd_2(1301967933, beq->bevt_2_ta_ph, beq->bevt_3_ta_ph);
+beq->bevt_1_ta_ph = beq->bevl_init->bemd_2(-26439676, beq->bevt_2_ta_ph, beq->bevt_3_ta_ph);
 if ((static_cast<BEC_2_5_4_LogicBool*>(beq->bevt_1_ta_ph))->bevi_bool) {
-beq->bevl_init->bemd_0(1478015284);
+beq->bevl_init->bemd_0(1638605000);
 } 
 } 
 return beq->bevl_init;
@@ -15341,17 +15341,17 @@ beq->bevt_0_ta_ph = BECS_Runtime::boolFalse;
 }
 if (beq->bevt_0_ta_ph->bevi_bool) {
 beq->bevl_init = beq->beva_inst;
-beq->bevl_init->bemd_0(1478015284);
+beq->bevl_init->bemd_0(1638605000);
 } 
 return beq->bevl_init;
 }
 BEC_2_6_6_SystemObject* BEC_2_6_11_SystemInitializer::bemd_1(int32_t callId, BEC_2_6_6_SystemObject* bevd_0) {
 switch (callId) {
-case -888012314: return bem_initializeIfShould_1(bevd_0);
-case -1568419503: return bem_notNullInitIt_1(bevd_0);
-case -44852273: return bem_notNullInitConstruct_1(bevd_0);
-case -1922034250: return bem_initializeIt_1(bevd_0);
-case 1241529651: return bem_notNullInitDefault_1(bevd_0);
+case 958194018: return bem_notNullInitDefault_1(bevd_0);
+case -2032617303: return bem_notNullInitConstruct_1(bevd_0);
+case 1830153286: return bem_notNullInitIt_1(bevd_0);
+case -2047199546: return bem_initializeIfShould_1(bevd_0);
+case -1303047987: return bem_initializeIt_1(bevd_0);
 }
 return bevs_super::bemd_1(callId, bevd_0);
 }
@@ -15553,26 +15553,26 @@ return beq->beva_str;
 }
 BEC_2_6_6_SystemObject* BEC_2_6_6_SystemRandom::bemd_0(int32_t callId) {
 switch (callId) {
-case 532162693: return bem_seedNow_0();
-case -360299804: return bem_getInt_0();
-case 1564024999: return bem_create_0();
-case 1478015284: return bem_default_0();
+case 834882002: return bem_seedNow_0();
+case 565198840: return bem_getInt_0();
+case 1638605000: return bem_default_0();
+case -1102163697: return bem_create_0();
 }
 return bevs_super::bemd_0(callId);
 }
 BEC_2_6_6_SystemObject* BEC_2_6_6_SystemRandom::bemd_1(int32_t callId, BEC_2_6_6_SystemObject* bevd_0) {
 switch (callId) {
-case -1850213118: return bem_seed_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case -611471097: return bem_getString_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case 1854445843: return bem_getIntMax_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
-case -1453682228: return bem_getInt_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case 194082639: return bem_getString_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case -648588264: return bem_getInt_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case -342651944: return bem_getIntMax_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
+case -587451126: return bem_seed_1(static_cast<BEC_2_4_3_MathInt*>(bevd_0));
 }
 return bevs_super::bemd_1(callId, bevd_0);
 }
 BEC_2_6_6_SystemObject* BEC_2_6_6_SystemRandom::bemd_2(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1) {
 switch (callId) {
-case 1456636192: return bem_getString_2(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
-case -1366300773: return bem_getIntMax_2(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
+case 1896403477: return bem_getIntMax_2(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
+case -809848695: return bem_getString_2(static_cast<BEC_2_4_6_TextString*>(bevd_0), static_cast<BEC_2_4_3_MathInt*>(bevd_1));
 }
 return bevs_super::bemd_2(callId, bevd_0, bevd_1);
 }
@@ -15668,22 +15668,22 @@ return this;
 }
 BEC_2_6_6_SystemObject* BEC_2_6_19_SystemObjectFieldIterator::bemd_0(int32_t callId) {
 switch (callId) {
-case -358011515: return bem_hasNextGet_0();
-case 650212097: return bem_new_0();
-case 2029804291: return bem_nextGet_0();
+case 190031348: return bem_nextGet_0();
+case 2015231: return bem_hasNextGet_0();
+case 1651365770: return bem_new_0();
 }
 return bevs_super::bemd_0(callId);
 }
 BEC_2_6_6_SystemObject* BEC_2_6_19_SystemObjectFieldIterator::bemd_1(int32_t callId, BEC_2_6_6_SystemObject* bevd_0) {
 switch (callId) {
-case -730113353: return bem_new_1(bevd_0);
-case 970838505: return bem_nextSet_1(bevd_0);
+case 26449439: return bem_new_1(bevd_0);
+case -294069719: return bem_nextSet_1(bevd_0);
 }
 return bevs_super::bemd_1(callId, bevd_0);
 }
 BEC_2_6_6_SystemObject* BEC_2_6_19_SystemObjectFieldIterator::bemd_2(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1) {
 switch (callId) {
-case 1287864112: return bem_new_2(bevd_0, static_cast<BEC_2_5_4_LogicBool*>(bevd_1));
+case -1959823526: return bem_new_2(bevd_0, static_cast<BEC_2_5_4_LogicBool*>(bevd_1));
 }
 return bevs_super::bemd_2(callId, bevd_0, bevd_1);
 }
@@ -15784,15 +15784,15 @@ return beq->bevt_0_ta_ph;
 }
 BEC_2_6_6_SystemObject* BEC_2_6_5_SystemTypes::bemd_0(int32_t callId) {
 switch (callId) {
-case 1564024999: return bem_create_0();
-case 1478015284: return bem_default_0();
+case -1102163697: return bem_create_0();
+case 1638605000: return bem_default_0();
 }
 return bevs_super::bemd_0(callId);
 }
 BEC_2_6_6_SystemObject* BEC_2_6_5_SystemTypes::bemd_2(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1) {
 switch (callId) {
-case 783670288: return bem_otherType_2(bevd_0, bevd_1);
-case -727787179: return bem_sameType_2(bevd_0, bevd_1);
+case -574798510: return bem_otherType_2(bevd_0, bevd_1);
+case -514729463: return bem_sameType_2(bevd_0, bevd_1);
 }
 return bevs_super::bemd_2(callId, bevd_0, bevd_1);
 }
@@ -15870,15 +15870,15 @@ return this;
 }
 BEC_2_6_6_SystemObject* BEC_2_6_9_SystemException::bemd_0(int32_t callId) {
 switch (callId) {
-case 2029554860: return bem_toString_0();
-case 1555507324: return bem_descriptionGet_0();
+case 1765884109: return bem_descriptionGet_0();
+case 465233440: return bem_toString_0();
 }
 return bevs_super::bemd_0(callId);
 }
 BEC_2_6_6_SystemObject* BEC_2_6_9_SystemException::bemd_1(int32_t callId, BEC_2_6_6_SystemObject* bevd_0) {
 switch (callId) {
-case -730113353: return bem_new_1(bevd_0);
-case 839618850: return bem_descriptionSet_1(bevd_0);
+case 26449439: return bem_new_1(bevd_0);
+case 672230982: return bem_descriptionSet_1(bevd_0);
 }
 return bevs_super::bemd_1(callId, bevd_0);
 }
@@ -15975,7 +15975,7 @@ return nullptr;
 }
 BEC_2_6_6_SystemObject* BEC_2_8_4_EmbeddedLedL::bemd_3(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1, BEC_2_6_6_SystemObject* bevd_2) {
 switch (callId) {
-case 912096290: return bem_buildControl_3(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_6_TextString*>(bevd_1), static_cast<BEC_2_4_6_TextString*>(bevd_2));
+case 1171665266: return bem_buildControl_3(static_cast<BEC_2_4_3_MathInt*>(bevd_0), static_cast<BEC_2_4_6_TextString*>(bevd_1), static_cast<BEC_2_4_6_TextString*>(bevd_2));
 }
 return bevs_super::bemd_3(callId, bevd_0, bevd_1, bevd_2);
 }
@@ -16186,16 +16186,16 @@ return this;
 }
 BEC_2_6_6_SystemObject* BEC_2_4_17_TextMultiByteIterator::bemd_0(int32_t callId) {
 switch (callId) {
-case -513011290: return bem_multiByteIteratorIteratorGet_0();
-case -1042086112: return bem_iteratorGet_0();
-case 2029804291: return bem_nextGet_0();
+case 190031348: return bem_nextGet_0();
+case -1779978680: return bem_iteratorGet_0();
+case -956642738: return bem_multiByteIteratorIteratorGet_0();
 }
 return bevs_super::bemd_0(callId);
 }
 BEC_2_6_6_SystemObject* BEC_2_4_17_TextMultiByteIterator::bemd_1(int32_t callId, BEC_2_6_6_SystemObject* bevd_0) {
 switch (callId) {
-case -730113353: return bem_new_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
-case -737842399: return bem_next_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
+case 26449439: return bem_new_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
+case -1886527784: return bem_next_1(static_cast<BEC_2_4_6_TextString*>(bevd_0));
 }
 return bevs_super::bemd_1(callId, bevd_0);
 }

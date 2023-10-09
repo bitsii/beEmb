@@ -27,6 +27,7 @@ class Embedded:RGBControl {
        String conArgs = _conArgs;
        Int zero = 0;
        Int twofity = 255;
+       String ok = "ok";
      }
      fields {
        Int conPos = _conPos;
@@ -78,32 +79,52 @@ class Embedded:RGBControl {
       } else {
         return("undefined");
       }
+     } elseIf (scm == setsw) {
+        String insw = cmdl[4];
+        if (insw == on) {
+          if (TS.isEmpty(rgb)) {
+            rgb = "255,255,255";
+          }
+          sw = insw;
+        } elseIf (insw == off) {
+          sw = insw;
+          app.analogWrite(rp, zero);
+          app.analogWrite(gp, zero);
+          app.analogWrite(bp, zero);
+          "offed wrote zeros".print();
+          lastEvent.setValue(ash.nowup);
+          ash.lastEventsRes = null;
+          return(ok);
+        }
      } elseIf (scm == setrgb) {
+        sw = on;
         rgb = cmdl[4];
-        ("rgb " + rgb).print();
-        List rgbl = rgb.split(",");
-        Int ri = app.strToInt(rgbl[0]);
-        Int gi = app.strToInt(rgbl[1]);
-        Int bi = app.strToInt(rgbl[2]);
-        if (ri < zero || ri > twofity) {
-          ri = zero;
-        }
-        if (gi < zero || gi > twofity) {
-          gi = zero;
-        }
-        if (bi < zero || bi > twofity) {
-          bi = zero;
-        }
-        app.analogWrite(rp, ri);
-        ("rp ri " + rp + " " + ri).print();
-        app.analogWrite(gp, gi);
-        ("gp gi " + gp + " " + gi).print();
-        app.analogWrite(bp, bi);
-        ("bp bi " + bp + " " + bi).print();
-        lastEvent.setValue(ash.nowup);
-        ash.lastEventsRes = null;
+     } else {
+       return(ok);
      }
-     return("ok");
+      ("rgb " + rgb).print();
+      List rgbl = rgb.split(",");
+      Int ri = app.strToInt(rgbl[0]);
+      Int gi = app.strToInt(rgbl[1]);
+      Int bi = app.strToInt(rgbl[2]);
+      if (ri < zero || ri > twofity) {
+        ri = zero;
+      }
+      if (gi < zero || gi > twofity) {
+        gi = zero;
+      }
+      if (bi < zero || bi > twofity) {
+        bi = zero;
+      }
+      app.analogWrite(rp, ri);
+      //("rp ri " + rp + " " + ri).print();
+      app.analogWrite(gp, gi);
+      //("gp gi " + gp + " " + gi).print();
+      app.analogWrite(bp, bi);
+      //("bp bi " + bp + " " + bi).print();
+      lastEvent.setValue(ash.nowup);
+      ash.lastEventsRes = null;
+      return(ok);
    }
 
    clearStates() {
