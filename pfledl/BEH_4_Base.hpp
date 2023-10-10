@@ -9,7 +9,7 @@
 // SW - name (type) and version of the device.  Typename 10 char max ssid rules (no spaces)
 // swconfver.DeviceTypeName.DeviceVersion
 //
-#define BESPEC_SW "0.Rgbt.15"  //generic configurable controls
+#define BESPEC_SW "0.Rgbt.16"  //generic configurable controls
 //
 // CON - definition of device's controls
 // ctlconfver.control.ctlconf,args.control.ctlconf,args
@@ -1017,6 +1017,8 @@ BEC_2_4_6_TextString* bevp_getsw = nullptr;
 BEC_2_4_3_MathInt* bevp_rp = nullptr;
 BEC_2_4_3_MathInt* bevp_gp = nullptr;
 BEC_2_4_3_MathInt* bevp_bp = nullptr;
+BEC_2_4_3_MathInt* bevp_rgbrgbi = nullptr;
+BEC_2_4_3_MathInt* bevp_rgbswi = nullptr;
 BEC_2_4_6_TextString* bevp_rgb = nullptr;
 BEC_2_4_6_TextString* bevp_sw = nullptr;
 virtual BEC_2_8_10_EmbeddedRGBControl* bem_new_4(BEC_2_6_6_SystemObject* bevk__ash, BEC_2_4_3_MathInt* bevk__conPos, BEC_2_4_6_TextString* bevk__conName, BEC_2_4_6_TextString* bevk__conArgs);

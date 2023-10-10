@@ -48,11 +48,17 @@ class Embedded:RGBControl {
        Int rp;
        Int gp;
        Int bp;
+       Int rgbrgbi;
+       Int rgbswi;
      }
      fields {
        String rgb;
        String sw;
      }
+
+     rgbrgbi = config.getPos("rgb.rgb." + conPos);
+     rgbswi = config.getPos("rgb.sw." + conPos);
+
      if (conArgs.has(",")) {
         auto cal = conArgs.split(",");
         if (cal.size < 3) {
@@ -62,6 +68,18 @@ class Embedded:RGBControl {
         gp = app.strToInt(cal[1]);
         bp = app.strToInt(cal[2]);
      }
+
+    String inrgb = config.get(rgbrgbi);
+    if (TS.notEmpty(inrgb)) {
+      rgb = inrgb;
+    }
+
+    String insw = config.get(rgbswi);
+    if (TS.notEmpty(insw)) {
+      sw = insw;
+      doState(List.new().addValue("dostate").addValue("notpw").addValue(conPos.toString()).addValue(setsw).addValue(sw));
+    }
+
    }
 
    doState(List cmdl) String {
@@ -86,8 +104,10 @@ class Embedded:RGBControl {
             rgb = "255,255,255";
           }
           sw = insw;
+          config.put(rgbswi, on);
         } elseIf (insw == off) {
           sw = insw;
+          config.put(rgbswi, off);
           app.analogWrite(rp, zero);
           app.analogWrite(gp, zero);
           app.analogWrite(bp, zero);
@@ -99,6 +119,8 @@ class Embedded:RGBControl {
      } elseIf (scm == setrgb) {
         sw = on;
         rgb = cmdl[4];
+        config.put(rgbswi, on);
+        config.put(rgbrgbi, rgb);
      } else {
        return(ok);
      }
@@ -128,7 +150,8 @@ class Embedded:RGBControl {
    }
 
    clearStates() {
-
+     config.put(rgbswi, off);
+     config.put(rgbrgbi, "255,255,255");
    }
    
 }
