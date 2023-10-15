@@ -103,6 +103,7 @@ class Embedded:RGBControl {
           if (TS.isEmpty(rgb)) {
             rgb = "255,255,255";
           }
+          //check and off other control if present
           sw = insw;
           config.put(rgbswi, on);
         } elseIf (insw == off) {
@@ -114,9 +115,13 @@ class Embedded:RGBControl {
           "offed wrote zeros".print();
           lastEvent.setValue(ash.nowup);
           ash.lastEventsRes = null;
+          ifNotEmit(noMqtt) {
+            ash.needsStateUp = true;
+          }
           return(ok);
         }
      } elseIf (scm == setrgb) {
+        //check and off other control if present
         sw = on;
         rgb = cmdl[4];
         config.put(rgbswi, on);
@@ -146,6 +151,9 @@ class Embedded:RGBControl {
       //("bp bi " + bp + " " + bi).print();
       lastEvent.setValue(ash.nowup);
       ash.lastEventsRes = null;
+      ifNotEmit(noMqtt) {
+        ash.needsStateUp = true;
+      }
       return(ok);
    }
 

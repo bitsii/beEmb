@@ -97,6 +97,9 @@ class Embedded:SwitchControl {
         }
         lastEvent.setValue(ash.nowup);
         ash.lastEventsRes = null;
+        ifNotEmit(noMqtt) {
+          ash.needsStateUp = true;
+        }
      }
      return("ok");
    }

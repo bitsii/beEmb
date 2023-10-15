@@ -26,6 +26,12 @@ class Embedded:AppShell {
        List loopers = List.new();
        Embedded:TCPClient concon;
      }
+     ifNotEmit(noMqtt) {
+       fields {
+         Bool needsStateUp = false;
+         Bool needsStateUpSoon = false;
+       }
+     }
      slots {
        Int shpini;
        Int shpassi;
@@ -64,6 +70,12 @@ class Embedded:AppShell {
        Bool needsGc = false;
        Int looperI = Int.new();
      }
+     ifNotEmit(noMqtt) {
+       slots {
+         Int nextMq = 0;
+         Bool needsMqConfUp = false;
+       }
+     }
      app.plugin = self;
 
      "loading config".print();
@@ -78,6 +90,9 @@ class Embedded:AppShell {
 
      app.uptime(nowup);
      nextUpdateCheck = nowup + 60000;
+     ifNotEmit(noMqtt) {
+       nextMq = nowup + 11000;
+     }
      nextSwInfo = nowup + 540000;
      nextMaybeSave = nowup + 45000;//45 secs
      nextApCheck = nowup + 180000;//3 mins
@@ -320,6 +335,11 @@ class Embedded:AppShell {
         Embedded:Mdns mdserver;
        }
      }
+     ifNotEmit(noMqtt) {
+       fields {
+        Embedded:Mqtt mqtt;
+       }
+     }
      fields {
        Embedded:TCPServer tcpserver;
        Embedded:TCPServer conserver;
@@ -391,6 +411,158 @@ class Embedded:AppShell {
 
        }
       }
+   }
+
+   initMq() {
+     ifNotEmit(noMqtt) {
+       if (def(mqtt)) {
+         auto oldmqtt = mqtt;
+         mqtt = null;
+         oldmqtt.close();
+       }
+       if (Wifi.isConnected) {
+        String mqhost = config.get(config.getPos("fc.mqhost"));
+        String mquser = config.get(config.getPos("fc.mquser"));
+        String mqpass = config.get(config.getPos("fc.mqpass"));
+        if (TS.notEmpty(mqhost) && TS.notEmpty(mquser) && TS.notEmpty(mqpass)) {
+          mqtt = Embedded:Mqtt.new(mqhost, mquser, mqpass);
+          if (mqtt.open()) {
+            mqtt.subscribeAsync("homeassistant/status");
+            //mqtt.subscribeAsync("/test");
+            mqConfUp(true);
+            needsGc = true;
+          } else {
+            oldmqtt = mqtt;
+            mqtt = null;
+            oldmqtt.close();
+          }
+        }
+       }
+     }
+   }
+
+   mqConfUp(Bool doSubs) {
+     ifNotEmit(noMqtt) {
+       "mqConfUp".print();
+       if (undef(mqtt)) {
+         "mqtt undef".print();
+         return(self);
+       }
+       Int cap = controls.size + 1;
+       mqtt.minAsyncCapacity = cap;
+       unless (mqtt.hasAsyncCapacity(cap)) {
+        "mqtt conf not enough space".print();
+        return(self);
+       }
+      //String tpp = "homeassistant/switch/" + did + "-" + i;
+      //Map cf = Maps.from("name", conf["name"], "command_topic", tpp + "/set", "state_topic", tpp + "/state", "unique_id", did + "-" + i);
+      //tpp = "homeassistant/light/" + did + "-" + i;
+      //cf = Maps.from("name", conf["name"], "command_topic", tpp + "/set", "state_topic", tpp + "/state", "unique_id", did + "-" + i, "schema", "json", "brightness", true, "brightness_scale", 255);
+
+      Int keyi = config.getPos("fc.dname");
+      String dname = config.get(keyi);
+      if (TS.isEmpty(dname)) {
+        dname = "CasNic Device";
+      }
+
+      String csnc = "cncm/" + did + "/cmd";
+      //results to cncm/did/res
+      if (doSubs) {
+        mqtt.subscribeAsync(csnc);
+      }
+      mqtt.publishAsync("cnds", did);
+
+      any ctl;
+      String conName;
+      Int conPoss;
+      String tpp;
+      String cf;
+      String pt;
+      for (ctl in controls) {
+        conName = ctl.conName;
+        conPoss = ctl.conPos.toString();
+        cf = null;
+        pt = null;
+        if (conName == "sw") {
+          tpp = "homeassistant/switch/" + did + "-" + conPoss;
+          pt = tpp + "/config";
+          cf = "{ \"name\": \"" += dname += " " += conPoss += "\", \"command_topic\": \"" += tpp += "/set\", \"state_topic\": \"" += tpp += "/state\", \"unique_id\": \"" += did += "-" += conPoss += "\" }";
+          if (doSubs) {
+            mqtt.subscribeAsync(tpp += "/set");
+          }
+        } elseIf (conName == "dim") {
+          tpp = "homeassistant/light/" + did + "-" + conPoss;
+          pt = tpp + "/config";
+          //cf = "{ \"name\": \"" += dname += " " += conPoss += "\", \"command_topic\": \"" += tpp += "/set\", \"state_topic\": \"" += tpp += "/state\", \"unique_id\": \"" += did += "-" += conPoss += "\", \"schema\": \"json\", \"brightness\": true, \"brightness_scale\": 255 }"; //noncolor dimmer for reals
+          cf = "{ \"name\": \"" += dname += " " += conPoss += "\", \"command_topic\": \"" += tpp += "/set\", \"state_topic\": \"" += tpp += "/state\", \"unique_id\": \"" += did += "-" += conPoss += "\", \"schema\": \"json\", \"brightness\": true, \"rgb\": true, \"color_temp\": true }";//trying for rgbcct
+          if (doSubs) {
+            mqtt.subscribeAsync(tpp += "/set");
+          }
+        }
+        if (TS.notEmpty(pt) && TS.notEmpty(cf)) {
+          cf.print();
+          mqtt.publishAsync(pt, cf);
+        }
+      }
+      //mqStateUp();
+      needsStateUpSoon = true;
+    }
+   }
+
+    mqStateUp() {
+     ifNotEmit(noMqtt) {
+      "mqStateUp".print();
+      if (undef(mqtt)) {
+         "mqtt undef".print();
+         return(self);
+       }
+      unless (mqtt.hasAsyncCapacity(controls.size)) {
+        "mqtt state not enough space".print();
+        return(self);
+      }
+
+      any ctl;
+      String conName;
+      Int conPoss;
+      String tpp;
+      String cf;
+      String pt;
+      for (ctl in controls) {
+        conName = ctl.conName;
+        conPoss = ctl.conPos.toString();
+        cf = null;
+        pt = null;
+        if (conName == "sw") {
+          tpp = "homeassistant/switch/" + did + "-" + conPoss;
+          pt = tpp + "/state";
+          if (TS.notEmpty(ctl.sw)) {
+            cf = ctl.sw.upper();
+          } else {
+            cf = "OFF";
+          }
+        } elseIf (conName == "dim") {
+          tpp = "homeassistant/light/" + did + "-" + conPoss;
+          pt = tpp + "/state";
+          cf = "{ \"state\": \"";
+          if (TS.notEmpty(ctl.sw)) {
+            cf += ctl.sw.upper();
+          } else {
+            cf += "OFF";
+          }
+          cf += "\"";
+          if (TS.notEmpty(ctl.lvl)) {
+            Int inlvli = Int.new(ctl.lvl);
+            inlvli = 255 - inlvli;//255 - x = y; y + x = 255;255 - y = x
+            cf += ", \"brightness\": " += inlvli.toString();
+          }
+          cf += " }";
+        }
+        if (TS.notEmpty(pt) && TS.notEmpty(cf)) {
+          cf.print();
+          mqtt.publishAsync(pt, cf);
+        }
+      }
+     }
    }
    
   checkWifiAp() {
@@ -581,6 +753,27 @@ class Embedded:AppShell {
       }
       return(self);
      }
+     ifNotEmit(noMqtt) {
+       if (needsMqConfUp) {
+         needsMqConfUp = false;
+         mqConfUp(false);
+         needsGc = true;
+         return(self);
+       }
+        if (nowup > nextMq) {
+          nextMq = nowup + 11000;
+            unless (def(mqtt) && mqtt.isOpen) {
+              initMq();
+            } else {
+              //mqtt.publish("/test", "test from sh pub");
+              if (needsStateUpSoon) {
+                needsStateUpSoon = false;
+                needsStateUp = true;
+              }
+            }
+          return(self);
+        }
+     }
      ifNotEmit(noSer) {
       if (def(serserver) && serserver.available) {
         "got serpay".print();
@@ -694,10 +887,28 @@ class Embedded:AppShell {
         }
        }
      }
+     ifNotEmit(noMqtt) {
+      if (def(mqtt)) {
+        if (mqtt.handleAsync(self)) {
+          needsGc = true;
+          return(self);
+        }
+      }
+     }
      looperI.setValue(zero);
      while (looperI < loopers.size) {
        loopers.get(looperI).handleLoop();
        looperI++=;
+     }
+     ifNotEmit(noMqtt) {
+       if (needsStateUp) {
+        needsStateUp = false;
+        if (def(mqtt)) {
+          mqStateUp();
+        }
+        needsGc = true;
+      }
+      return(self);
      }
      ifNotEmit(noMdns) {
       if (def(mdserver)) {
@@ -714,6 +925,54 @@ class Embedded:AppShell {
        "maybeSave config".print();
        config.maybeSave();
        needsRestart = true;
+     }
+   }
+
+   handleMqtt(String topic, String payload) {
+    "got mqtt".print();
+     ifNotEmit(noMqtt) {
+      if (TS.notEmpty(topic) && TS.notEmpty(payload)) {
+        ("Topic: " + topic + " Payload: " + payload).print();
+        //Topic:homeassistant/status;Payload:online;
+        if (topic == "homeassistant/status" && payload == "online") {
+          //mqConfUp(false);
+          needsGc = true;
+          needsMqConfUp = true;
+        } elseIf (topic.ends("/set")) {
+          //Topic: homeassistant/switch/PDBTLRHPDZCRLSGC-0/set Payload: ON
+          auto twl = topic.split("/");
+          if (twl.size == 4) {
+            String cid = twl[2];
+            auto cl = cid.split("-");
+            if (cl.size == 2) {
+              String cps = cl[1];
+              if (TS.notEmpty(cps) && cps.isInteger) {
+                Int cp = Int.new(cps);
+                ("got cp " + cps).print();
+                if (def(controls) && cp < controls.size) {
+                  controls[cp].doStateMq(topic, payload);
+                }
+              }
+            }
+          }
+        } elseIf (topic.ends("cmd")) {
+          auto cmdl = payload.split(" ");
+          if (cmdl.size > 1) {
+            if (cmdl[1] == "pass") {
+              cmdl[1] = pass;
+            } elseIf (cmdl[1] == "spass") {
+              cmdl[1] = spass;
+            }
+            String res = doCmdl("mqtt", "", cmdl);
+            if (def(res)) {
+              mqtt.publishAsync("cncm/" + did + "/res", res);
+            }
+          }
+        }
+        needsGc = true;
+      } else {
+        "Topic or Payload Empty".print();
+      }
      }
    }
 
@@ -1032,6 +1291,11 @@ class Embedded:AppShell {
     config.put(shseci, "");
     config.put(shspassi, "");
     config.put(shdidi, "");
+    ifNotEmit(noMqtt) {
+      config.put(config.getPos("fc.mqhost"), "");
+      config.put(config.getPos("fc.mquser"), "");
+      config.put(config.getPos("fc.mqpass"), "");
+    }
     clearStates();
     needsFsRestart = true;
    }
