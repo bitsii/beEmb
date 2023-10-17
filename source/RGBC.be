@@ -82,6 +82,10 @@ class Embedded:RGBControl {
 
    }
 
+   doStateMq(String topic, String payload) String {
+     return("na");
+   }
+
    doState(List cmdl) String {
      "in dostate rgb".print();
      String scm = cmdl[3];

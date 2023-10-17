@@ -493,8 +493,8 @@ class Embedded:AppShell {
         } elseIf (conName == "dim") {
           tpp = "homeassistant/light/" + did + "-" + conPoss;
           pt = tpp + "/config";
-          //cf = "{ \"name\": \"" += dname += " " += conPoss += "\", \"command_topic\": \"" += tpp += "/set\", \"state_topic\": \"" += tpp += "/state\", \"unique_id\": \"" += did += "-" += conPoss += "\", \"schema\": \"json\", \"brightness\": true, \"brightness_scale\": 255 }"; //noncolor dimmer for reals
-          cf = "{ \"name\": \"" += dname += " " += conPoss += "\", \"command_topic\": \"" += tpp += "/set\", \"state_topic\": \"" += tpp += "/state\", \"unique_id\": \"" += did += "-" += conPoss += "\", \"schema\": \"json\", \"brightness\": true, \"rgb\": true, \"color_temp\": true }";//trying for rgbcct
+          cf = "{ \"name\": \"" += dname += " " += conPoss += "\", \"command_topic\": \"" += tpp += "/set\", \"state_topic\": \"" += tpp += "/state\", \"unique_id\": \"" += did += "-" += conPoss += "\", \"schema\": \"json\", \"brightness\": true, \"brightness_scale\": 255 }"; //noncolor dimmer for reals
+          //cf = "{ \"name\": \"" += dname += " " += conPoss += "\", \"command_topic\": \"" += tpp += "/set\", \"state_topic\": \"" += tpp += "/state\", \"unique_id\": \"" += did += "-" += conPoss += "\", \"schema\": \"json\", \"brightness\": true, \"rgb\": true, \"color_temp\": true }";//trying for rgbcct
           if (doSubs) {
             mqtt.subscribeAsync(tpp += "/set");
           }
@@ -760,7 +760,7 @@ class Embedded:AppShell {
          needsGc = true;
          return(self);
        }
-        if (nowup > nextMq) {
+      if (nowup > nextMq) {
           nextMq = nowup + 11000;
             unless (def(mqtt) && mqtt.isOpen) {
               initMq();
@@ -905,10 +905,10 @@ class Embedded:AppShell {
         needsStateUp = false;
         if (def(mqtt)) {
           mqStateUp();
+          needsGc = true;
+          return(self);
         }
-        needsGc = true;
       }
-      return(self);
      }
      ifNotEmit(noMdns) {
       if (def(mdserver)) {

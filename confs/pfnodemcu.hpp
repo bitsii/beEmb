@@ -10,8 +10,8 @@
 // swconfver.DeviceTypeName.DeviceVersion
 //
 //#define BESPEC_SW "0.Generic.22"  //supergeneric
-#define BESPEC_SW "0.WNN.31"  //nodemcu
-//#define BESPEC_SW "0.Nmcu.29"  //nodemcu
+//#define BESPEC_SW "0.WNN.31"  //nodemcu
+#define BESPEC_SW "0.Nmcu.32"  //nodemcu
 //#define BESPEC_SW  "0.DollaTek.20" //dollatek 2mb 1led
 //#define BESPEC_SW "0.WNAP2.29" //Athom Plug V2 US THE REAL ONE
 //
@@ -19,8 +19,8 @@
 // ctlconfver.control.ctlconf,args.control.ctlconf,args
 //
 //#define BESPEC_CON "" //supergeneric
-#define BESPEC_CON "0.dim.2" //nodemcu just dim
-//#define BESPEC_CON "0.sw.16.dim.2" //nodemcu
+//#define BESPEC_CON "0.dim.2" //nodemcu just dim
+#define BESPEC_CON "0.sw.16.dim.2" //nodemcu
 //#define BESPEC_CON "0.sw.16"  //dollatek - one sw on 16
 //#define BESPEC_CON "0.dim.16"  //dollatek - one dim on 16
 //#define BESPEC_CON "0.sw.12,1.bu.5,0,30,0,30000"  //12 is switch, 13 is led, 5 button - athom plug v2 us - esp8266ex 2mb THE REAL ONE sic look unnecessary led does on it's own

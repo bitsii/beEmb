@@ -10,8 +10,8 @@
 // swconfver.DeviceTypeName.DeviceVersion
 //
 //#define BESPEC_SW "0.Generic.22"  //supergeneric
-#define BESPEC_SW "0.WNN.31"  //nodemcu
-//#define BESPEC_SW "0.Nmcu.29"  //nodemcu
+//#define BESPEC_SW "0.WNN.31"  //nodemcu
+#define BESPEC_SW "0.Nmcu.32"  //nodemcu
 //#define BESPEC_SW  "0.DollaTek.20" //dollatek 2mb 1led
 //#define BESPEC_SW "0.WNAP2.29" //Athom Plug V2 US THE REAL ONE
 //
@@ -19,8 +19,8 @@
 // ctlconfver.control.ctlconf,args.control.ctlconf,args
 //
 //#define BESPEC_CON "" //supergeneric
-#define BESPEC_CON "0.dim.2" //nodemcu just dim
-//#define BESPEC_CON "0.sw.16.dim.2" //nodemcu
+//#define BESPEC_CON "0.dim.2" //nodemcu just dim
+#define BESPEC_CON "0.sw.16.dim.2" //nodemcu
 //#define BESPEC_CON "0.sw.16"  //dollatek - one sw on 16
 //#define BESPEC_CON "0.dim.16"  //dollatek - one dim on 16
 //#define BESPEC_CON "0.sw.12,1.bu.5,0,30,0,30000"  //12 is switch, 13 is led, 5 button - athom plug v2 us - esp8266ex 2mb THE REAL ONE sic look unnecessary led does on it's own
@@ -1117,6 +1117,7 @@ BEC_2_4_6_TextString* bevp_setsw = nullptr;
 BEC_2_4_6_TextString* bevp_sw = nullptr;
 virtual BEC_2_8_13_EmbeddedSwitchControl* bem_new_4(BEC_2_6_6_SystemObject* bevk__ash, BEC_2_4_3_MathInt* bevk__conPos, BEC_2_4_6_TextString* bevk__conName, BEC_2_4_6_TextString* bevk__conArgs);
 virtual BEC_2_8_13_EmbeddedSwitchControl* bem_initControl_0();
+virtual BEC_2_4_6_TextString* bem_doStateMq_2(BEC_2_4_6_TextString* bevk_topic, BEC_2_4_6_TextString* bevk_payload);
 virtual BEC_2_4_6_TextString* bem_doState_1(BEC_2_9_4_ContainerList* bevk_cmdl);
 virtual BEC_2_8_13_EmbeddedSwitchControl* bem_clearStates_0();
 virtual BEC_2_4_3_MathInt* bem_conPosGet_0();
@@ -1143,6 +1144,7 @@ virtual BETS_Object* bemc_getType();
 virtual ~BEC_2_8_13_EmbeddedSwitchControl() = default;
 virtual BEC_2_6_6_SystemObject* bemd_0(int32_t callId);
 virtual BEC_2_6_6_SystemObject* bemd_1(int32_t callId, BEC_2_6_6_SystemObject* bevd_0);
+virtual BEC_2_6_6_SystemObject* bemd_2(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1);
 virtual BEC_2_6_6_SystemObject* bemd_4(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1, BEC_2_6_6_SystemObject* bevd_2, BEC_2_6_6_SystemObject* bevd_3);
 static BET_2_8_13_EmbeddedSwitchControl bece_BEC_2_8_13_EmbeddedSwitchControl_bevs_type;
 };
@@ -1295,6 +1297,7 @@ BEC_2_8_13_EmbeddedSwitchControl* bevp_sc = nullptr;
 BEC_2_4_6_TextString* bevp_sw = nullptr;
 virtual BEC_2_8_22_EmbeddedSwitchIndicatorControl* bem_new_4(BEC_2_6_6_SystemObject* bevk__ash, BEC_2_4_3_MathInt* bevk__conPos, BEC_2_4_6_TextString* bevk__conName, BEC_2_4_6_TextString* bevk__conArgs);
 virtual BEC_2_8_22_EmbeddedSwitchIndicatorControl* bem_initControl_0();
+virtual BEC_2_4_6_TextString* bem_doStateMq_2(BEC_2_4_6_TextString* bevk_topic, BEC_2_4_6_TextString* bevk_payload);
 virtual BEC_2_4_6_TextString* bem_doState_1(BEC_2_9_4_ContainerList* bevk_cmdl);
 virtual BEC_2_8_22_EmbeddedSwitchIndicatorControl* bem_clearStates_0();
 virtual BEC_2_8_22_EmbeddedSwitchIndicatorControl* bem_handleLoop_0();
@@ -1317,6 +1320,7 @@ virtual BETS_Object* bemc_getType();
 virtual ~BEC_2_8_22_EmbeddedSwitchIndicatorControl() = default;
 virtual BEC_2_6_6_SystemObject* bemd_0(int32_t callId);
 virtual BEC_2_6_6_SystemObject* bemd_1(int32_t callId, BEC_2_6_6_SystemObject* bevd_0);
+virtual BEC_2_6_6_SystemObject* bemd_2(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1);
 virtual BEC_2_6_6_SystemObject* bemd_4(int32_t callId, BEC_2_6_6_SystemObject* bevd_0, BEC_2_6_6_SystemObject* bevd_1, BEC_2_6_6_SystemObject* bevd_2, BEC_2_6_6_SystemObject* bevd_3);
 static BET_2_8_22_EmbeddedSwitchIndicatorControl bece_BEC_2_8_22_EmbeddedSwitchIndicatorControl_bevs_type;
 };

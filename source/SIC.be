@@ -57,6 +57,10 @@ class Embedded:SwitchIndicatorControl {
      ash.loopers += self;
    }
 
+   doStateMq(String topic, String payload) String {
+     return("na");
+   }
+
    doState(List cmdl) String {
      return("na");
    }
