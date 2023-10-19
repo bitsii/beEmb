@@ -74,8 +74,45 @@ class Embedded:DimmerControl {
 
    }
 
-   doStateMq(String topic, String payload) String {
-     ("in doStateMq dc " + topic + " " + payload).print();
+   doMqConf(mqtta, String qpref, String did, String dname, Bool doSubs) {
+     ifNotEmit(noMqtt) {
+      Embedded:Mqtt mqtt = mqtta;
+      String conPoss = conPos.toString();
+      String tpp = qpref + "/light/" + did + "-" + conPoss;
+      String pt = tpp + "/config";
+      String cf = "{ \"name\": \"" += dname += " " += conPoss += "\", \"command_topic\": \"" += tpp += "/set\", \"state_topic\": \"" += tpp += "/state\", \"unique_id\": \"" += did += "-" += conPoss += "\", \"schema\": \"json\", \"brightness\": true, \"brightness_scale\": 255 }"; //noncolor dimmer for reals
+      if (doSubs) {
+        mqtt.subscribeAsync(tpp += "/set");
+      }
+      mqtt.publishAsync(pt, cf);
+     }
+   }
+
+   doMqStatePub(mqtta, String qpref, String did) {
+     ifNotEmit(noMqtt) {
+        Embedded:Mqtt mqtt = mqtta;
+        String conPoss = conPos.toString();
+        String tpp = qpref + "/light/" + did + "-" + conPoss;
+        String pt = tpp + "/state";
+        String cf = "{ \"state\": \"";
+        if (TS.notEmpty(sw)) {
+          cf += sw.upper();
+        } else {
+          cf += "OFF";
+        }
+        cf += "\"";
+        if (TS.notEmpty(lvl)) {
+          Int inlvli = Int.new(lvl);
+          inlvli = 255 - inlvli;//255 - x = y; y + x = 255;255 - y = x
+          cf += ", \"brightness\": " += inlvli.toString();
+        }
+        cf += " }";
+        mqtt.publishAsync(pt, cf);
+     }
+   }
+
+   doMqState(String topic, String payload) String {
+     ("in doMqState dc " + topic + " " + payload).print();
      Int stok = payload.find("brightness");
      if (def(stok) ) {
        payload = payload.substring(stok, payload.size);

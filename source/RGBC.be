@@ -82,7 +82,13 @@ class Embedded:RGBControl {
 
    }
 
-   doStateMq(String topic, String payload) String {
+   doMqConf(mqtta, String qpref, String did, String dname, Bool doSubs) {
+   }
+
+   doMqStatePub(mqtta, String qpref, String did) {
+   }
+
+   doMqState(String topic, String payload) String {
      return("na");
    }
 

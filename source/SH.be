@@ -74,6 +74,7 @@ class Embedded:AppShell {
        slots {
          Int nextMq = 0;
          Bool needsMqConfUp = false;
+         String qpref = "homeassistant";
        }
      }
      app.plugin = self;
@@ -427,7 +428,7 @@ class Embedded:AppShell {
         if (TS.notEmpty(mqhost) && TS.notEmpty(mquser) && TS.notEmpty(mqpass)) {
           mqtt = Embedded:Mqtt.new(mqhost, mquser, mqpass);
           if (mqtt.open()) {
-            mqtt.subscribeAsync("homeassistant/status");
+            mqtt.subscribeAsync(qpref + "/status");
             //mqtt.subscribeAsync("/test");
             mqConfUp(true);
             needsGc = true;
@@ -454,10 +455,6 @@ class Embedded:AppShell {
         "mqtt conf not enough space".print();
         return(self);
        }
-      //String tpp = "homeassistant/switch/" + did + "-" + i;
-      //Map cf = Maps.from("name", conf["name"], "command_topic", tpp + "/set", "state_topic", tpp + "/state", "unique_id", did + "-" + i);
-      //tpp = "homeassistant/light/" + did + "-" + i;
-      //cf = Maps.from("name", conf["name"], "command_topic", tpp + "/set", "state_topic", tpp + "/state", "unique_id", did + "-" + i, "schema", "json", "brightness", true, "brightness_scale", 255);
 
       Int keyi = config.getPos("fc.dname");
       String dname = config.get(keyi);
@@ -479,30 +476,8 @@ class Embedded:AppShell {
       String cf;
       String pt;
       for (ctl in controls) {
-        conName = ctl.conName;
-        conPoss = ctl.conPos.toString();
-        cf = null;
-        pt = null;
-        if (conName == "sw") {
-          tpp = "homeassistant/switch/" + did + "-" + conPoss;
-          pt = tpp + "/config";
-          cf = "{ \"name\": \"" += dname += " " += conPoss += "\", \"command_topic\": \"" += tpp += "/set\", \"state_topic\": \"" += tpp += "/state\", \"unique_id\": \"" += did += "-" += conPoss += "\" }";
-          if (doSubs) {
-            mqtt.subscribeAsync(tpp += "/set");
-          }
-        } elseIf (conName == "dim") {
-          tpp = "homeassistant/light/" + did + "-" + conPoss;
-          pt = tpp + "/config";
-          cf = "{ \"name\": \"" += dname += " " += conPoss += "\", \"command_topic\": \"" += tpp += "/set\", \"state_topic\": \"" += tpp += "/state\", \"unique_id\": \"" += did += "-" += conPoss += "\", \"schema\": \"json\", \"brightness\": true, \"brightness_scale\": 255 }"; //noncolor dimmer for reals
-          //cf = "{ \"name\": \"" += dname += " " += conPoss += "\", \"command_topic\": \"" += tpp += "/set\", \"state_topic\": \"" += tpp += "/state\", \"unique_id\": \"" += did += "-" += conPoss += "\", \"schema\": \"json\", \"brightness\": true, \"rgb\": true, \"color_temp\": true }";//trying for rgbcct
-          if (doSubs) {
-            mqtt.subscribeAsync(tpp += "/set");
-          }
-        }
-        if (TS.notEmpty(pt) && TS.notEmpty(cf)) {
-          cf.print();
-          mqtt.publishAsync(pt, cf);
-        }
+        //cf = "{ \"name\": \"" += dname += " " += conPoss += "\", \"command_topic\": \"" += tpp += "/set\", \"state_topic\": \"" += tpp += "/state\", \"unique_id\": \"" += did += "-" += conPoss += "\", \"schema\": \"json\", \"brightness\": true, \"rgb\": true, \"color_temp\": true }";//trying for rgbcct
+        ctl.doMqConf(mqtt, qpref, did, dname, doSubs);
       }
       //mqStateUp();
       needsStateUpSoon = true;
@@ -528,39 +503,7 @@ class Embedded:AppShell {
       String cf;
       String pt;
       for (ctl in controls) {
-        conName = ctl.conName;
-        conPoss = ctl.conPos.toString();
-        cf = null;
-        pt = null;
-        if (conName == "sw") {
-          tpp = "homeassistant/switch/" + did + "-" + conPoss;
-          pt = tpp + "/state";
-          if (TS.notEmpty(ctl.sw)) {
-            cf = ctl.sw.upper();
-          } else {
-            cf = "OFF";
-          }
-        } elseIf (conName == "dim") {
-          tpp = "homeassistant/light/" + did + "-" + conPoss;
-          pt = tpp + "/state";
-          cf = "{ \"state\": \"";
-          if (TS.notEmpty(ctl.sw)) {
-            cf += ctl.sw.upper();
-          } else {
-            cf += "OFF";
-          }
-          cf += "\"";
-          if (TS.notEmpty(ctl.lvl)) {
-            Int inlvli = Int.new(ctl.lvl);
-            inlvli = 255 - inlvli;//255 - x = y; y + x = 255;255 - y = x
-            cf += ", \"brightness\": " += inlvli.toString();
-          }
-          cf += " }";
-        }
-        if (TS.notEmpty(pt) && TS.notEmpty(cf)) {
-          cf.print();
-          mqtt.publishAsync(pt, cf);
-        }
+        ctl.doMqStatePub(mqtt, qpref, did);
       }
      }
    }
@@ -934,7 +877,7 @@ class Embedded:AppShell {
       if (TS.notEmpty(topic) && TS.notEmpty(payload)) {
         ("Topic: " + topic + " Payload: " + payload).print();
         //Topic:homeassistant/status;Payload:online;
-        if (topic == "homeassistant/status" && payload == "online") {
+        if (topic == qpref + "/status" && payload == "online") {
           //mqConfUp(false);
           needsGc = true;
           needsMqConfUp = true;
@@ -950,7 +893,7 @@ class Embedded:AppShell {
                 Int cp = Int.new(cps);
                 ("got cp " + cps).print();
                 if (def(controls) && cp < controls.size) {
-                  controls[cp].doStateMq(topic, payload);
+                  controls[cp].doMqState(topic, payload);
                 }
               }
             }
