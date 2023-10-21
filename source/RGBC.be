@@ -41,6 +41,10 @@ class Embedded:RGBControl {
      slots {
        String on = "on";
        String off = "off";
+       String brightness = "brightness";
+       String color = "color";
+       String ON = "ON";
+       String OFF = "OFF";
        String getrgb = "getrgb";
        String setrgb = "setrgb";
        String setsw = "setsw";
@@ -48,6 +52,8 @@ class Embedded:RGBControl {
        Int rp;
        Int gp;
        Int bp;
+       Int rmq; Int gmq; Int bmq;
+       Int lvlmq;
        Int rgbrgbi;
        Int rgbswi;
      }
@@ -83,13 +89,99 @@ class Embedded:RGBControl {
    }
 
    doMqConf(mqtta, String qpref, String did, String dname, Bool doSubs) {
+     ifNotEmit(noMqtt) {
+      Embedded:Mqtt mqtt = mqtta;
+      String conPoss = conPos.toString();
+      String tpp = qpref + "/light/" + did + "-" + conPoss;
+      String pt = tpp + "/config";
+      String cf = "{ \"name\": \"" += dname += " " += conPoss += "\", \"command_topic\": \"" += tpp += "/set\", \"state_topic\": \"" += tpp += "/state\", \"unique_id\": \"" += did += "-" += conPoss += "\", \"schema\": \"json\", \"brightness\": true, \"rgb\": true, \"color_temp\": false }";//trying for rgbcct
+      if (doSubs) {
+        mqtt.subscribeAsync(tpp += "/set");
+      }
+      mqtt.publishAsync(pt, cf);
+     }
    }
 
    doMqStatePub(mqtta, String qpref, String did) {
+     ifNotEmit(noMqtt) {
+        Embedded:Mqtt mqtt = mqtta;
+        String conPoss = conPos.toString();
+        String tpp = qpref + "/light/" + did + "-" + conPoss;
+        String pt = tpp + "/state";
+        String cf = "{ \"state\": \"";
+        if (TS.notEmpty(sw)) {
+          cf += sw.upper();
+        } else {
+          cf += OFF;
+        }
+        cf += "\"";
+        if (def(lvlmq)) {
+          cf += ", \"brightness\": " += lvlmq.toString();
+        }
+        cf += " }";
+        mqtt.publishAsync(pt, cf);
+     }
    }
 
    doMqState(String topic, String payload) String {
-     return("na");
+     //("in doMqState rgb " + topic + " " + payload).print();
+     Int stok = payload.find(brightness);
+     Int ctok = payload.find(color);
+     if (def(stok) ) {
+       payload = payload.substring(stok, payload.size);
+       stok = payload.find(":");
+       if (def(stok)) {
+         payload = payload.substring(stok + 1, payload.size);
+         stok = payload.find("}");
+         if (def(stok)) {
+           payload = payload.substring(0, stok);
+         }
+         stok = payload.find(",");
+         if (def(stok)) {
+           payload = payload.substring(0, stok);
+         }
+         //("brightness |" + payload + "|").print();
+         lvlmq = app.strToInt(payload);
+         //List ds = List.new() += "na" += "na" += "na" += setrlvll += payload;
+         //return(doState(ds));
+       }
+     } elseIf (def(ctok) ) {
+       //{"state":"ON","color":{"r":255,"g":28,"b":54}}
+       payload = payload.substring(ctok, payload.size);
+       Int btok = payload.find("{");
+       Int etok = payload.find("}");
+       if (def(btok) && def(etok)) {
+         btok++=;
+         payload = payload.substring(btok, etok);
+         List cvs = payload.split(",");
+         for (String cv in cvs) {
+           List icv = cv.split(":");
+           if (icv.size > 1) {
+             //"got icv".print();
+             //icv[0].print();
+             //icv[1].print();
+             if (icv[0] == '"r"') {
+               rmq = app.strToInt(icv[1]);
+             } elseIf (icv[0] == '"g"') {
+               gmq = app.strToInt(icv[1]);
+             } elseIf (icv[0] == '"b"') {
+               bmq = app.strToInt(icv[1]);
+             }
+           }// else {
+           //  "bad icv".print();
+           //}
+         }
+       }// else {
+       //  "bad btok etok".print();
+       //}
+     } elseIf (payload.has(ON)) {
+       List ds = List.new() += "na" += "na" += "na" += setsw += on;
+       return(doState(ds));
+     } elseIf (payload.has(OFF)) {
+       ds = List.new() += "na" += "na" += "na" += setsw += off;
+       return(doState(ds));
+     }
+     return(null);
    }
 
    doState(List cmdl) String {
@@ -116,6 +208,7 @@ class Embedded:RGBControl {
           //check and off other control if present
           sw = insw;
           config.put(rgbswi, on);
+          //lastevent et all handled below in common with setrgb
         } elseIf (insw == off) {
           sw = insw;
           config.put(rgbswi, off);

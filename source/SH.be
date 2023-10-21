@@ -55,6 +55,7 @@ class Embedded:AppShell {
        Bool needsRestart = false;
        String did;
        String swSpec;
+       String supports;
        String devCode;
        Int version;
        String swInfo;
@@ -224,9 +225,10 @@ class Embedded:AppShell {
 
    buildSwInfoIn() {
      if (TS.isEmpty(swSpec)) {
-       swSpec = "0.gsh.4";
+       swSpec = "1,p2.gsh.4";
      }
      auto swl = swSpec.split(".");
+     supports = swl[0];
      devCode = swl[1];
      //version = Int.new(swl[2]);
      version = app.strToInt(swl[2]);
@@ -476,7 +478,6 @@ class Embedded:AppShell {
       String cf;
       String pt;
       for (ctl in controls) {
-        //cf = "{ \"name\": \"" += dname += " " += conPoss += "\", \"command_topic\": \"" += tpp += "/set\", \"state_topic\": \"" += tpp += "/state\", \"unique_id\": \"" += did += "-" += conPoss += "\", \"schema\": \"json\", \"brightness\": true, \"rgb\": true, \"color_temp\": true }";//trying for rgbcct
         ctl.doMqConf(mqtt, qpref, did, dname, doSubs);
       }
       //mqStateUp();
@@ -891,7 +892,7 @@ class Embedded:AppShell {
               String cps = cl[1];
               if (TS.notEmpty(cps) && cps.isInteger) {
                 Int cp = Int.new(cps);
-                ("got cp " + cps).print();
+                //("got cp " + cps).print();
                 if (def(controls) && cp < controls.size) {
                   controls[cp].doMqState(topic, payload);
                 }
@@ -1017,7 +1018,7 @@ class Embedded:AppShell {
        stateres = getLastEvents(cmdl);
        return(stateres);
      }
-     if (cmd == "dostate" || cmd == "getcontroldef") {
+     if (cmd.begins("do") || cmd == "getcontroldef") {
         //"got dostate".print();
         //state password check
         if (TS.isEmpty(spass)) {
@@ -1033,6 +1034,10 @@ class Embedded:AppShell {
         if (cmd == "dostate") {
           String stateres = doState(cmdl);
           return(stateres);
+        } elseIf (cmd == "dosupports") {
+          return(supports);
+        } elseIf (cmd == "doswinfo") {
+          return(swInfo);
         } else {
           if (def(controlDef)) {
             return(controlDef);
@@ -1220,8 +1225,6 @@ class Embedded:AppShell {
        //"got restart".print();
        needsFsRestart = true;
        return("Will restart soonish");
-     } elseIf (cmd == "getswinfo") {
-       return(swInfo);
      } else {
        return("unrecognized command");
      }

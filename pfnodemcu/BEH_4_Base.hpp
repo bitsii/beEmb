@@ -9,11 +9,11 @@
 // SW - name (type) and version of the device.  Typename 10 char max ssid rules (no spaces)
 // swconfver.DeviceTypeName.DeviceVersion
 //
-//#define BESPEC_SW "0.Generic.22"  //supergeneric
-//#define BESPEC_SW "0.WNN.31"  //nodemcu
-#define BESPEC_SW "0.Nmcu.32"  //nodemcu
+//#define BESPEC_SW "1,p2.Generic.22"  //supergeneric
+//#define BESPEC_SW "1,p2.WNN.31"  //nodemcu
+#define BESPEC_SW "1,p2.Nmcu.32"  //nodemcu
 //#define BESPEC_SW  "0.DollaTek.20" //dollatek 2mb 1led
-//#define BESPEC_SW "0.WNAP2.29" //Athom Plug V2 US THE REAL ONE
+//#define BESPEC_SW "1,p2.WNAP2.29" //Athom Plug V2 US THE REAL ONE
 //
 // CON - definition of device's controls
 // ctlconfver.control.ctlconf,args.control.ctlconf,args
@@ -986,6 +986,7 @@ BEC_2_5_4_LogicBool* bevp_needsFsRestart = nullptr;
 BEC_2_5_4_LogicBool* bevp_needsRestart = nullptr;
 BEC_2_4_6_TextString* bevp_did = nullptr;
 BEC_2_4_6_TextString* bevp_swSpec = nullptr;
+BEC_2_4_6_TextString* bevp_supports = nullptr;
 BEC_2_4_6_TextString* bevp_devCode = nullptr;
 BEC_2_4_3_MathInt* bevp_version = nullptr;
 BEC_2_4_6_TextString* bevp_swInfo = nullptr;
