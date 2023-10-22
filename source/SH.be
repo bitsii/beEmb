@@ -98,7 +98,8 @@ class Embedded:AppShell {
      nextSwInfo = nowup + 540000;
      nextMaybeSave = nowup + 45000;//45 secs
      nextApCheck = nowup + 180000;//3 mins
-     nextWifiCheck = nowup + 420000;//7 mins
+     //nextWifiCheck = nowup + 420000;//7 mins
+     nextWifiCheck = nowup + 25000;//25 secs
      
      //"making webPage".print();
      ifNotEmit(noWeb) {
@@ -589,8 +590,12 @@ class Embedded:AppShell {
        auto wifi = Embedded:Wifi.new();
        auto nets = wifi.scanNetworks();
        if (nets.has(ssid)) {
-         "my ssid present, restarting".print();
-         needsFsRestart = true;
+         "my ssid present".print();
+         Wifi.new(ssid, sec).start();
+         unless (Wifi.isConnected) {
+           "no reconnect restarting".print();
+           needsFsRestart = true;
+         }
        }
      }
      unless(needsFsRestart) {
@@ -672,8 +677,10 @@ class Embedded:AppShell {
       return(self);
      }
      if (nowup > nextWifiCheck) {
-      nextWifiCheck = nowup + 420000;//7 mins
+      //nextWifiCheck = nowup + 420000;//7 mins
+      nextWifiCheck = nowup + 25000;//25 secs
       checkWifiUp();
+      needsGc = true;
       return(self);
      }
      if (nowup > nextSwInfo) {
