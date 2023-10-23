@@ -9,7 +9,7 @@
 // SW - name (type) and version of the device.  Typename 10 char max ssid rules (no spaces)
 // swconfver.DeviceTypeName.DeviceVersion
 //
-#define BESPEC_SW "1,p2.Athlb017w.17"  //generic configurable controls
+#define BESPEC_SW "1,p2.WNABLB01.18"  //generic configurable controls Athlb017w LB01-7W-B22
 //
 // CON - definition of device's controls
 // ctlconfver.control.ctlconf,args.control.ctlconf,args
@@ -36,8 +36,8 @@
 // turn BE_TCPCONSOLE on, otherwise leave off.  only for development, really only useful if serial connection
 // not available.  You can telnet to the device's ip port 32259 to see the messages.  output only, no input
 //
-#define BE_TCPCONSOLE "on" //enabled
-//#define BE_TCPCONSOLE "off" //disabled
+//#define BE_TCPCONSOLE "on" //enabled
+#define BE_TCPCONSOLE "off" //disabled
 //
 //
 // csconf - if you want to enable a the fc.conspec (same as BESPEC_CON) to be set via putconfig (and honored)
