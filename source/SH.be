@@ -96,7 +96,7 @@ class Embedded:AppShell {
        nextMq = nowup + 11000;
      }
      nextSwInfo = nowup + 540000;
-     nextMaybeSave = nowup + 45000;//45 secs
+     nextMaybeSave = nowup + 15000;//15 secs
      nextApCheck = nowup + 180000;//3 mins
      //nextWifiCheck = nowup + 420000;//7 mins
      nextWifiCheck = nowup + 25000;//25 secs
@@ -637,11 +637,6 @@ class Embedded:AppShell {
         ("resetByPin set " + resetByPin).print();
         return(self);
      }
-     if (needsNetworkInit) {
-       needsNetworkInit = false;
-       networkInit();
-       return(self);
-     }
      if (needsBuildControls) {
        needsBuildControls = false;
        buildControls();
@@ -652,13 +647,18 @@ class Embedded:AppShell {
        initControls();
        return(self);
      }
+     if (needsNetworkInit) {
+       needsNetworkInit = false;
+       networkInit();
+       return(self);
+     }
      if (needsGc) {
        needsGc = false;
        app.maybeGc();
        return(self);
      }
      if (nowup > nextMaybeSave) {
-      nextMaybeSave = nowup + 45000;//45 secs
+      nextMaybeSave = nowup + 15000;//15 secs
       if (config.changed) {
         "maybeSave config".print();
         config.maybeSave();
