@@ -7,7 +7,7 @@
   </a>
   </div>
   
-Batteries-included firmware for the Esp8266 targeted for home automation use cases.  Open Source mobile application for connecting devices running the firmware to your network and controlling them - [Casnic Control](https://gitlab.com/bitsii/CasCon) - in the Google Play Store [Casnic Android App](https://play.google.com/store/apps/details?id=casnic.control&gl=US) and the Apple App Store [Casnic IOS App](https://apps.apple.com/us/app/cascon/id6458984046)
+Batteries-included firmware for the Esp8266 targeted for home automation use cases.  Applications for connecting devices running the firmware to your network and controlling them - including an Open Source desktop application  - [Casnic Control](https://gitlab.com/bitsii/CasCon) - and mobile apps in the Google Play Store [Casnic Android App](https://play.google.com/store/apps/details?id=casnic.control&gl=US) and the Apple App Store [Casnic IOS App](https://apps.apple.com/us/app/cascon/id6458984046)
 
 Built on the Arduino platform, written in [Brace](https://github.com/bitsii/beBase) - an object oriented, garbage collected language that transpiles to C++.  Licensed under the [BSD-2-Clause](https://opensource.org/licenses/BSD-2-Clause) open source license.
 
@@ -45,34 +45,39 @@ Brace Embedded tries to strike a good balance in the security space by enforcing
 * Separate Administrative and Usage tokens (created during provisioning) are required for device control and use.  Users with the administrative token can configure the device and users with the usage token can only use the configured features (turn on and off, etc) 
 * Provisioned devices do not immediately start their access point after a power cycle if they do not find their configured SSID, they will wait a while and check again.  This is to protect against power losses putting devices which can be reset over the network into a mode which enables it.
 
-(if you're using Mqtt its security applies, which might vary from the above)
-
-### Getting Ready
-
-You'll need a working installation of the Arduino IDE with a couple of libraries installed.  
-
-* If you don't have the IDE, see [here](https://support.arduino.cc/hc/en-us/articles/360019833020-Download-and-install-Arduino-IDE) (note, some experience with the ecosystem is expected...)
-* You'll need to install the Esp8266 boards manager - in the Arduino IDE go to Preferences, find Additional boards manager urls and add http://arduino.esp8266.com/stable/package_esp8266com_index.json .  Tested with version 3.1.1.
-* [More detailed instructions for adding the Esp8266 board manager here if you need it](https://randomnerdtutorials.com/how-to-install-esp8266-board-arduino-ide/)
-* You'll also need to install the Mqtt library, go to the IDE's library manager, search for [MQTT by Joel Gaehwiler](https://github.com/256dpi/arduino-mqtt).  Tested with version 2.5.1
-
 ### Get the Hardware
 
-* Some pre-built devices are supported, including the [Athom Plug V2 US](https://www.athom.tech/blank-1/tasmota-us-plug-v2)
-* Brace Embedded should also work with most any Esp8266 development board.  2MB flash is recommended, though 1MB should work without OTA.
+* Some pre-built devices are supported, including the [Athom Plug V2 US](https://www.athom.tech/blank-1/tasmota-us-plug-v2) and the [Athom 7w Color Bulb](https://www.athom.tech/blank-1/color-bulb)
+* Brace Embedded should also work with most any Esp8266 development board.  2MB flash is recommended, though 1MB should work but will be unable to OTA.
 * If your board has built in LED's you want to use make sure you know the GPIO/pin numbers for your configuration.
 * Of course, many folks will be wiring up their own solution for hobby use - pick good GPIOs for your board, connect things up, and make a note of the pin numbers.
 * If you are building a product and using the firmware on it, you should be able to follow the configuration spec below to prep your build for your product.
 
-### Check it out
+### Download a Genned Sketh
 
-Check out [the repo](https://github.com/bitsii/beEmb) with git (or choose Code/Download Zip and then extract it)
+Grab the zip file from the latest release for the hardware you want to use - [beEmb Releases](https://github.com/bitsii/beEmb/releases)  They are named for the hardware they support, details are in the release description.  Unzip the file, it will create a directory with the source files and a .bin and .bin.gz firmware files for the device.
 
-### Pick your profile
+### Upload to hardware
 
-There are several ready to go profile subdirectories in the project after checkout.  They all start with "pf" and are named for their usecase/device, with details in a README.txt in the subdirectory.  A good place to start is with pfnodemcu
+If you are working with the prebuilt hardware you'll need to switch out the tasmota firmware for beEmb.  First get the device onto your wifi network [using it's wifi AP and the web interface](https://tasmota.github.io/docs/Getting-Started/#initial-configuration).  It will give you a link for the device on your wifi network (with it's address), be sure to note the address and follow the link (you'll have to reconnect to your own wifi network).  Then [download tasmota-minimal.bin.gz](https://ota.tasmota.com/tasmota/release/) from the latest release nad upload it to your device via firmware update / upload.  Now you are ready to upload the .bin.gz which you downloaded and prepared in the previous step.
 
-When you've made your choice open the sketch (.ino) in the selected subdirectory in your Arduino IDE.
+### Provision and use the device
+
+Grab the CasCon App - [Casnic Control](https://gitlab.com/bitsii/CasCon) - in the Google Play Store [Casnic Android App](https://play.google.com/store/apps/details?id=casnic.control&gl=US) and the Apple App Store [Casnic IOS App](https://apps.apple.com/us/app/cascon/id6458984046) - and "Setup A Device" (the first time it will ask you to enter a Wifi network, this is the network the esp8266 will be configured to connect to, after entering and saving the ssid and wpa do Setup A Device again.)  On IOS, after entering setup mode, you'll need to go to Settings / Wifi and connect to the network named OCasic-??? (or ICasnic-??? or UCasnic-???, depending on your security mode.  OCasnic is open, you won't need a WPA to connect, ICasnic sets the wpa key to the same 8 characters following the "-" in the ssid name, for UCasnic- you've decided to use a secret key, so you'll need that.  Here's a video for using the more secure UCasnic mode [Setting up a beEmb device with an Unshared key](https://www.youtube.com/watch?v=Vu9xA3vmt7s), and here is a video for the simpler open mode with OCasnic [Setting up a beEmb device with Open Mode](https://www.youtube.com/watch?v=_SArX4tCcmw)
+
+### Working with a development board or building your own binaries
+
+With a development board you have connected you can work with the firmware via the Arduino IDE and serial console. A good place to start is with pfnodemcu
+
+### Getting Ready
+
+For this you'll need a working installation of the Arduino IDE, version 1.x or 2.x.
+
+* If you don't have the IDE, see [here](https://support.arduino.cc/hc/en-us/articles/360019833020-Download-and-install-Arduino-IDE) (note, some experience with the ecosystem is expected...)
+* You'll need to install the Esp8266 boards manager - in the Arduino IDE go to Preferences, find Additional boards manager urls and add http://arduino.esp8266.com/stable/package_esp8266com_index.json .  Tested with version 3.1.1.
+* [More detailed instructions for adding the Esp8266 board manager here if you need it](https://randomnerdtutorials.com/how-to-install-esp8266-board-arduino-ide/)
+
+When you've made your choice open the sketch (.ino) from the directory the pfnodemcu.zip was previusly downloaded and extracted to.
 
 ### Configure for build and upload
 
@@ -88,15 +93,11 @@ Then configure for the build, in the IDE change the following settings under the
 
 ### Write the firmware
 
-Finally, choose Sketch / Upload in the Arduino IDE to put it on your device.  If you are uploading over the network over OTA "Export Compiled Binary" instead (it will land in the sketch directory)  
-
-### Provision and use the device
-
-Grab the CasCon App - [Casnic Control](https://gitlab.com/bitsii/CasCon) - in the Google Play Store [Casnic Android App](https://play.google.com/store/apps/details?id=casnic.control&gl=US) and the Apple App Store [Casnic IOS App](https://apps.apple.com/us/app/cascon/id6458984046) - and "Setup A Device" (the first time it will ask you to enter a Wifi network, this is the network the esp8266 will be configured to connect to, after entering and saving the ssid and wpa do Setup A Device again.)  On IOS, after entering setup mode, you'll need to go to Settings / Wifi and connect to the network named OCasic-??? (or ICasnic-??? or UCasnic-???, depending on your security mode.  OCasnic is open, you won't need a WPA to connect, ICasnic sets the wpa key to the same 8 characters following the "-" in the ssid name, for UCasnic- you've decided to use a secret key, so you'll need that.  Here's a video for using the more secure UCasnic mode [Setting up a beEmb device with an Unshared key](https://www.youtube.com/watch?v=Vu9xA3vmt7s), and here is a video for the simpler open mode with OCasnic [Setting up a beEmb device with Open Mode](https://www.youtube.com/watch?v=_SArX4tCcmw)
+Finally, choose Sketch / Upload in the Arduino IDE to put it on your device.  If you are uploading over the network over OTA "Export Compiled Binary" instead (it will land in the sketch directory)  This can be uploaded instead of the prepackaged one (IF CORRECT FOR YOUR HARDWARE) in the final update from tasmota minimal to the firmware.
 
 ## Doing your Own Thing
 
-There are two levels available to you - one option that works when you all you need to customize the combination of controls and their in-built configuration is to modify the config in the header and upload.  Beyond that you can modify the code itself do to whatever you want - see Further Customization for starting points there.  [These instructions assume you've already completed a build and write to a device from here](#getting-ready)
+There are two levels available to you - one option that works when you all you need to customize the combination of controls and their in-built configuration is to modify the config in the header and rebuild/reupload.  For this case it's sufficient to work with the directories contained in the downloaded .zip files.  Beyond that you can modify the code itself do to whatever you want - see Further Customization for starting points there.  [These instructions assume you've already completed a build and write to a device from here](#getting-ready)
 
 ### Pick your starter profile
 
@@ -132,7 +133,9 @@ cp -R pfnodemcu pfmyprofile;mv pfmyprofile/pfnodemcu.ino pfmyprofile/pfmyprofile
 
 If you need your controls to behave differently than they do out of the box, or you want to create your own new controls, you'll also need to setup a Brace development environment and checkout/modify/build the actual project (the downloaded sketches are pre-generated and only support configuration based customization - [you'll need to have the above Arduino environment setup and working](#getting-ready), and then you can go further with the instructions below)
 
-First you need to setup the Brace language, see [The Brace Project](https://github.com/bitsii/beBase) for that.  If must be a peer directory to where you checked out beEmb in [Check it out](#check-it-out) (e.g. both beEmb and beBase share the same parent directory) The java environment is sufficient (you will be generating C++ code, but the Brace Build process will do so from it's self-hosted java edition).  There are some limitations on Brace when running with beEmb due to the teeny tiny nature of microcontrollers - the base library is greatly cut down (only List containers, no Maps or LinkedLists/Stacks), exceptions are not translated back into Brace line numbers (but you can find them from the stack trace lines by opening the generated code).  Invocation and introspection (invoke, "can") and variadic behavior is not available.  Both static and dynamic call dispatch and garbage collection are available, however.
+For this approach you won't be using the downloaded .zip files but you will want to checkout the [beEmb git repo](https://github.com/bitsii/beEmb) into a working directory - you'll want a dedicated parent diretory as other directories will need to live alongside the beEmb one.
+
+Next you need to setup the Brace language, see [The Brace Project](https://github.com/bitsii/beBase) for that.  If must be a peer directory to where you checked out beEmb in [Check it out](#check-it-out) (e.g. both beEmb and beBase share the same parent directory) The java environment is sufficient (you will be generating C++ code, but the Brace Build process will do so from it's self-hosted java edition).  There are some limitations on Brace when running with beEmb due to the teeny tiny nature of microcontrollers - the base library is greatly cut down (only List containers, no Maps or LinkedLists/Stacks), exceptions are not translated back into Brace line numbers (but you can find them from the stack trace lines by opening the generated code).  Invocation and introspection (invoke, "can") and variadic behavior is not available.  Both static and dynamic call dispatch and garbage collection are available, however.
 
 When working in this mode you should setup your configuration for BESPEC_SW and BESPEC_CON in the confs/profilename.hpp file BEFORE running the generator script instead of afterwards in the BEH_4_Base.hpp as the latter will be over written at every generation with the contents of the former. Run the appropriate script, it should generate the code.  Look at the BC.be, DC.be, SC.be, SIC.be files for the control code.  SH.be is the "main app code", other files are there for the Wifi, etc.  You may need to work with the code a bit to learn how it works, feel free to reach out with questions.  When you make changes re-run the appropriate generator script to regenerate the C++ for the Arduino IDE, it will generate into the ard subdirectory in the project.  When you are ready to build and upload open the Arduino IDE, open the sketch in the subdirectory of the project for the script that you ran (see above), and choose Sketch/Upload to upload the sketch to the board as you normally would.
 
