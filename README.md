@@ -53,7 +53,7 @@ Brace Embedded tries to strike a good balance in the security space by enforcing
 * Of course, many folks will be wiring up their own solution for hobby use - pick good GPIOs for your board, connect things up, and make a note of the pin numbers.
 * If you are building a product and using the firmware on it, you should be able to follow the configuration spec below to prep your build for your product.
 
-### Download a Genned Sketh
+### Download a Genned Sketch
 
 Grab the zip file from the latest release for the hardware you want to use - [beEmb Releases](https://github.com/bitsii/beEmb/releases)  They are named for the hardware they support, details are in the release description.  Unzip the file, it will create a directory with the source files and a .bin and .bin.gz firmware files for the device.
 
