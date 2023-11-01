@@ -8,7 +8,7 @@ echo "Profile for a typical Esp8266 NodeMCU with a switch control on built in LE
 
 export BEEMB_CONF=../beEmb/confs/${APPBLDNM}.hpp
 
-./scripts/bldesp8266.sh --mainClass Embedded:SwitchDimmerButtonIndicator source/SC.be source/DC.be source/BC.be source/SIC.be source/SWDIMBUSIC.be
+./scripts/bldesp8266.sh --mainClass Embedded:Grande source/SC.be source/DC.be source/BC.be source/RGBC.be source/Grande.be
 
 cp ard/* $APPBLDNM
 

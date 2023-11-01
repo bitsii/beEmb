@@ -17,14 +17,23 @@ use Embedded:Aes as Crypt;
 use Encode:Url as EU;
 use Embedded:AppShell;
 
-class Embedded:LedL(Embedded:AppShell) {
+class Embedded:Grande(Embedded:AppShell) {
 
    buildControl(Int conPos, String conName, String conArgs) {
-     if (conName == "rgb") {
+     if (conName == "sw") {
+       auto swc = Embedded:SwitchControl.new(self, conPos, conName, conArgs);
+       return(swc);
+     } elseIf (conName == "dim") {
+       auto dimc = Embedded:DimmerControl.new(self, conPos, conName, conArgs);
+       return(dimc);
+     } elseIf (conName == "bu") {
+       auto buc = Embedded:ButtonControl.new(self, conPos, conName, conArgs);
+       return(buc);
+     } elseIf (conName == "rgb") {
        auto rgb = Embedded:RGBControl.new(self, conPos, conName, conArgs);
        return(rgb);
      } else {
-       "Unknown control conName".print();
+       "Unknown control conName in Switch".print();
      }
      return(null);
    }
