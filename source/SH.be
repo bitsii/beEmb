@@ -42,7 +42,7 @@ class Embedded:AppShell {
 
        Int zero = 0;
        Int nextUpdateCheck = 0;
-       Int nextSwInfo = 0;
+       Int nextSwSpec = 0;
        Int nextRestart = 0;
        Int nextMaybeSave = 0;
        Int nextApCheck = 0;
@@ -55,10 +55,7 @@ class Embedded:AppShell {
        Bool needsRestart = false;
        String did;
        String swSpec;
-       String supports;
        String devCode;
-       Int version;
-       String swInfo;
        Bool resetByPin;
        String readBuf = String.new();
        String supurl;
@@ -95,7 +92,7 @@ class Embedded:AppShell {
      ifNotEmit(noMqtt) {
        nextMq = nowup + 11000;
      }
-     nextSwInfo = nowup + 540000;
+     nextSwSpec = nowup + 540000;
      nextMaybeSave = nowup + 15000;//15 secs
      nextApCheck = nowup + 180000;//3 mins
      //nextWifiCheck = nowup + 420000;//7 mins
@@ -229,11 +226,7 @@ class Embedded:AppShell {
        swSpec = "1,p2.gsh.4";
      }
      auto swl = swSpec.split(".");
-     supports = swl[0];
      devCode = swl[1];
-     //version = Int.new(swl[2]);
-     version = app.strToInt(swl[2]);
-     swInfo = devCode + " " + version;
    }
 
    buildSwInfo() {
@@ -358,12 +351,12 @@ class Embedded:AppShell {
      checkMakeIds();
      loadPasses();
 
-     swInfo.print();
+     swSpec.print();
      "Device Id".print();
      did.print();
      "Pin".print();
      pin.print();
-     swInfo.print();
+     swSpec.print();
 
      ifNotEmit(noSer) {
       serserver = Embedded:SerServer.new();
@@ -683,9 +676,9 @@ class Embedded:AppShell {
       needsGc = true;
       return(self);
      }
-     if (nowup > nextSwInfo) {
-      nextSwInfo = nowup + 540000;
-      swInfo.print();
+     if (nowup > nextSwSpec) {
+      nextSwSpec = nowup + 540000;
+      swSpec.print();
       return(self);
      }
      if (nextRestart > zero && nowup > nextRestart) {
@@ -1041,10 +1034,8 @@ class Embedded:AppShell {
         if (cmd == "dostate") {
           String stateres = doState(cmdl);
           return(stateres);
-        } elseIf (cmd == "dosupports") {
-          return(supports);
-        } elseIf (cmd == "doswinfo") {
-          return(swInfo);
+        } elseIf (cmd == "doswspec") {
+          return(swSpec);
         } else {
           if (def(controlDef)) {
             return(controlDef);
