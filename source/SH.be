@@ -997,6 +997,40 @@ class Embedded:AppShell {
      }
      return("nodice");
    }
+
+   getvisnets(List cmdl) String {
+     slots {
+       List visnets;
+     }
+     if (undef(visnets)) {
+       auto wifi = Embedded:Wifi.new();
+       visnets = wifi.scanNetworks()
+     }
+      if (cmdl.size > 1) {
+        String st = cmdl[1];
+        if (st.isInteger) {
+          Int sti = Int.new(st);
+        }
+      }
+      if (undef(sti)) {
+        sti = 0;
+      }
+      "sti".print();
+      sti.print();
+
+      Int i = 0;
+      Int j = 0;
+      String res = "ssids";
+      for (String net in visnets) {
+        i++=;
+        if (i > sti) {
+          j++=;
+          res += ":" += Encode:Hex.encode(net);
+          if (j > 3) { break; }
+        }
+      }
+      return(res);
+   }
    
    doCmdl(String channel, String origin, List cmdl) String {
      app.maybeGc();
@@ -1017,6 +1051,12 @@ class Embedded:AppShell {
      } elseIf (cmd == "getlastevents") {
        stateres = getLastEvents(cmdl);
        return(stateres);
+     } elseIf (cmd == "previsnets") {
+       if (def(apSsid)) {
+         return(getvisnets(cmdl));
+       } else {
+         return("on network nope");
+       }
      }
      if (cmd.begins("do") || cmd == "getcontroldef") {
         //"got dostate".print();
