@@ -1004,7 +1004,7 @@ class Embedded:AppShell {
      }
      if (undef(visnets)) {
        auto wifi = Embedded:Wifi.new();
-       visnets = wifi.scanNetworks()
+       visnets = wifi.scanNetworks();
      }
       if (cmdl.size > 1) {
         String st = cmdl[1];
