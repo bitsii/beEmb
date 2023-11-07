@@ -89,106 +89,6 @@ class Embedded:RGBControl {
 
    }
 
-   doMqConf(mqtta, String qpref, String did, String dname, Bool doSubs) {
-     ifNotEmit(noMqtt) {
-      Embedded:Mqtt mqtt = mqtta;
-      String conPoss = conPos.toString();
-      String tpp = qpref + "/light/" + did + "-" + conPoss;
-      String pt = tpp + "/config";
-      String cf = "{ \"name\": \"" += dname += " " += conPoss += "\", \"command_topic\": \"" += tpp += "/set\", \"state_topic\": \"" += tpp += "/state\", \"unique_id\": \"" += did += "-" += conPoss += "\", \"schema\": \"json\", \"brightness\": true, \"rgb\": true, \"color_temp\": false }";//trying for rgbcct
-      if (doSubs) {
-        mqtt.subscribeAsync(tpp += "/set");
-      }
-      mqtt.publishAsync(pt, cf);
-     }
-   }
-
-   doMqStatePub(mqtta, String qpref, String did) {
-     ifNotEmit(noMqtt) {
-        Embedded:Mqtt mqtt = mqtta;
-        String conPoss = conPos.toString();
-        String tpp = qpref + "/light/" + did + "-" + conPoss;
-        String pt = tpp + "/state";
-        String cf = "{ \"state\": \"";
-        cf += sw.upper();
-        cf += "\"";
-        cf += ", \"brightness\": " += lvlmq;
-        cf += ", \"color\": {\"r\":" += rmq += ",\"g\":" += gmq += ",\"b\":" += bmq += "}";
-        cf += " }";
-        mqtt.publishAsync(pt, cf);
-     }
-   }
-
-   doMqState(String topic, String payload) String {
-     ifNotEmit(noMqtt) {
-     //("in doMqState rgb " + topic + " " + payload).print();
-     Int stok = payload.find(brightness);
-     Int ctok = payload.find(color);
-     if (def(stok) || def(ctok)) {
-      if (def(stok) ) {
-        payload = payload.substring(stok, payload.size);
-        stok = payload.find(":");
-        if (def(stok)) {
-          payload = payload.substring(stok + 1, payload.size);
-          stok = payload.find("}");
-          if (def(stok)) {
-            payload = payload.substring(0, stok);
-          }
-          stok = payload.find(",");
-          if (def(stok)) {
-            payload = payload.substring(0, stok);
-          }
-          //("brightness |" + payload + "|").print();
-          lvlmq = app.strToInt(payload);
-          //List ds = List.new() += "na" += "na" += "na" += setrlvll += payload;
-          //return(doState(ds));
-        }
-      } elseIf (def(ctok) ) {
-        //{"state":"ON","color":{"r":255,"g":28,"b":54}}
-        payload = payload.substring(ctok, payload.size);
-        Int btok = payload.find("{");
-        Int etok = payload.find("}");
-        if (def(btok) && def(etok)) {
-          btok++=;
-          payload = payload.substring(btok, etok);
-          List cvs = payload.split(",");
-          for (String cv in cvs) {
-            List icv = cv.split(":");
-            if (icv.size > 1) {
-              //"got icv".print();
-              //icv[0].print();
-              //icv[1].print();
-              if (icv[0] == '"r"') {
-                rmq = app.strToInt(icv[1]);
-              } elseIf (icv[0] == '"g"') {
-                gmq = app.strToInt(icv[1]);
-              } elseIf (icv[0] == '"b"') {
-                bmq = app.strToInt(icv[1]);
-              }
-            }// else {
-            //  "bad icv".print();
-            //}
-          }
-        }// else {
-        //  "bad btok etok".print();
-        //}
-      }
-      lastEvent.setValue(ash.nowup);
-      ash.lastEventsRes = null;
-      ifNotEmit(noMqtt) {
-        ash.needsStateUp = true;
-      }
-     } elseIf (payload.has(ON)) {
-       List ds = List.new() += "na" += "na" += "na" += setsw += on;
-       return(doState(ds));
-     } elseIf (payload.has(OFF)) {
-       ds = List.new() += "na" += "na" += "na" += setsw += off;
-       return(doState(ds));
-     }
-     }
-     return(null);
-   }
-
    doState(List cmdl) String {
      "in dostate rgb".print();
      String scm = cmdl[3];
@@ -212,9 +112,6 @@ class Embedded:RGBControl {
           "offed wrote zeros".print();
           lastEvent.setValue(ash.nowup);
           ash.lastEventsRes = null;
-          ifNotEmit(noMqtt) {
-            ash.needsStateUp = true;
-          }
           return(ok);
         }
      } elseIf (scm == setrgb) {
@@ -248,9 +145,6 @@ class Embedded:RGBControl {
       //("bp bi " + bp + " " + bi).print();
       lastEvent.setValue(ash.nowup);
       ash.lastEventsRes = null;
-      ifNotEmit(noMqtt) {
-        ash.needsStateUp = true;
-      }
       return(ok);
    }
 

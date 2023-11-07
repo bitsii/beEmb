@@ -62,16 +62,6 @@ class Embedded:ButtonControl {
      ash.loopers += self;
    }
 
-   doMqConf(mqtta, String qpref, String did, String dname, Bool doSubs) {
-   }
-
-   doMqStatePub(mqtta, String qpref, String did) {
-   }
-
-   doMqState(String topic, String payload) String {
-     return("na");
-   }
-
    doState(List cmdl) String {
      return("na");
    }

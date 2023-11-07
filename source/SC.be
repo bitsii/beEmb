@@ -63,41 +63,6 @@ class Embedded:SwitchControl {
      }
    }
 
-   doMqConf(mqtta, String qpref, String did, String dname, Bool doSubs) {
-     ifNotEmit(noMqtt) {
-      Embedded:Mqtt mqtt = mqtta;
-      String conPoss = conPos.toString();
-      String tpp = qpref + "/switch/" + did + "-" + conPoss;
-      String pt = tpp + "/config";
-      String cf = "{ \"name\": \"" += dname += " " += conPoss += "\", \"command_topic\": \"" += tpp += "/set\", \"state_topic\": \"" += tpp += "/state\", \"unique_id\": \"" += did += "-" += conPoss += "\" }";
-      if (doSubs) {
-        mqtt.subscribeAsync(tpp += "/set");
-      }
-      mqtt.publishAsync(pt, cf);
-     }
-   }
-
-   doMqStatePub(mqtta, String qpref, String did) {
-     ifNotEmit(noMqtt) {
-        Embedded:Mqtt mqtt = mqtta;
-        String conPoss = conPos.toString();
-        String tpp = qpref + "/switch/" + did + "-" + conPoss;
-        String pt = tpp + "/state";
-        if (TS.notEmpty(sw)) {
-          String cf = sw.upper();
-        } else {
-          cf = "OFF";
-        }
-        mqtt.publishAsync(pt, cf);
-     }
-   }
-
-   doMqState(String topic, String payload) String {
-     ("in doMqState sc " + topic + " " + payload).print();
-     List ds = List.new() += "na" += "na" += "na" += setsw += payload.lower();
-     return(doState(ds));
-   }
-
    doState(List cmdl) String {
      "in dostate".print();
      String scm = cmdl[3];
@@ -132,9 +97,6 @@ class Embedded:SwitchControl {
         }
         lastEvent.setValue(ash.nowup);
         ash.lastEventsRes = null;
-        ifNotEmit(noMqtt) {
-          ash.needsStateUp = true;
-        }
      }
      return("ok");
    }
