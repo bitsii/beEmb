@@ -856,6 +856,9 @@ class Embedded:AppShell {
        } else {
          return("on network nope");
        }
+     } elseIf (cmd == "dostate" && cmdl.size > 3 && cmdl[3].begins("get")) {
+       stateres = doState(cmdl);
+       return(stateres);
      }
      if (cmd.begins("do") || cmd == "getcontroldef") {
         //"got dostate".print();
