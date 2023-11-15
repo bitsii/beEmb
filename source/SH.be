@@ -33,13 +33,14 @@ class Embedded:AppShell {
        Int shssidi;
        Int shseci;
        Int shdidi;
+       Int shpowi;
 
        Int zero = 0;
        Int nextUpdateCheck = 0;
        Int nextSwSpec = 0;
        Int nextRestart = 0;
        Int nextMaybeSave = 0;
-       Int nextApCheck = 0;
+       Int nextPow = 0;
        Int nextWifiCheck = 0;
        String slashn = "\n";
        String slashr = "\r";
@@ -50,13 +51,13 @@ class Embedded:AppShell {
        String did;
        String swSpec;
        String devCode;
-       Bool resetByPin;
+       Bool resetByPow; //4 times 20 secs
+       Bool inResetByPow = false;
        String readBuf = String.new();
        String supurl;
        String controlSpec;
        String controlDef;
        Bool needsNetworkInit = true;
-       Bool readyForAp = false;
        Bool needsBuildControls = true;
        Bool needsInitControls = true;
        Bool needsGc = false;
@@ -73,14 +74,14 @@ class Embedded:AppShell {
      shssidi = config.getPos("sh.ssid");
      shseci = config.getPos("sh.sec");
      shdidi = config.getPos("sh.did");
+     shpowi = config.getPos("sh.pow");
 
      app.uptime(nowup);
      nextUpdateCheck = nowup + 60000;
      nextSwSpec = nowup + 540000;
-     nextMaybeSave = nowup + 15000;//15 secs
-     nextApCheck = nowup + 180000;//3 mins
-     //nextWifiCheck = nowup + 420000;//7 mins
-     nextWifiCheck = nowup + 25000;//25 secs
+     nextMaybeSave = nowup + 10000;//10 secs
+     nextPow = nowup + 30000;//30 secs
+     nextWifiCheck = nowup + 180000;//3 mins
      
      //"making webPage".print();
      ifNotEmit(noWeb) {
@@ -392,12 +393,13 @@ class Embedded:AppShell {
   checkWifiAp() {
      //"in checkWifiAp".print();
      unless (Wifi.up && Wifi.mode == "station") {
-      startWifi();
+       if (inResetByPow) {
+         "in resetByPow, going to AP".print();
+       } else {
+        startWifi();
+       }
       unless (Wifi.up) {
-        if (TS.isEmpty(ssid) || readyForAp) {
-          //"start ap in checkWifiAp".print();
-          initAp();
-        }
+        initAp();
       }
      }
    }
@@ -495,49 +497,78 @@ class Embedded:AppShell {
      }
    }
 
+   initPow() {
+     "init pow".print();
+     String pow = config.get(shpowi);
+     if (TS.notEmpty(pow)) {
+       Int powi = Int.new(pow);
+       powi++=;
+       if (powi > 4) {
+         powi = 4;
+       }
+       if (powi == 4 && resetByPow) {
+         inResetByPow = true;
+       }
+     } else {
+       powi = 1;
+     }
+     config.put(shpowi, powi.toString());
+   }
+
+   clearPow() {
+     if (TS.notEmpty(config.get(shpowi))) {
+      config.put(shpowi, "");
+     }
+   }
+
    handleLoop() {
      app.wdtFeed();
      app.yield();
      //app.wdtDisable();
      app.uptime(nowup);
-     if (undef(resetByPin)) {
-       String rbps;
-       emit(cc) {
-          """
-          std::string rbps = BE_RESETBYPIN;
-          beq->bevl_rbps = new BEC_2_4_6_TextString(rbps);
-          """
-        }
-        if (TS.notEmpty(rbps) && rbps == "on") {
-          resetByPin = true;
-        } else {
-          resetByPin = false;
-        }
-        ("resetByPin set " + resetByPin).print();
-        return(self);
-     }
-     if (needsBuildControls) {
-       needsBuildControls = false;
-       buildControls();
-       return(self);
-     }
-     if (needsInitControls) {
-       needsInitControls = false;
-       initControls();
-       return(self);
-     }
-     if (needsNetworkInit) {
-       needsNetworkInit = false;
-       networkInit();
-       return(self);
-     }
      if (needsGc) {
        needsGc = false;
        app.maybeGc();
        return(self);
      }
+     if (undef(resetByPow)) {
+       String rbps;
+       emit(cc) {
+          """
+          std::string rbps = BE_RESETBYPOW;
+          beq->bevl_rbps = new BEC_2_4_6_TextString(rbps);
+          """
+        }
+        if (TS.notEmpty(rbps) && rbps == "on") {
+          resetByPow = true;
+        } else {
+          resetByPow = false;
+        }
+        ("resetByPow set " + resetByPow).print();
+        initPow();
+        needsGc = true;
+        return(self);
+     }
+     if (needsBuildControls) {
+       needsBuildControls = false;
+       buildControls();
+       needsGc = true;
+       return(self);
+     }
+     if (needsInitControls) {
+       needsInitControls = false;
+       initControls();
+       needsGc = true;
+       return(self);
+     }
+     if (needsNetworkInit) {
+       needsNetworkInit = false;
+       networkInit();
+       needsGc = true;
+       return(self);
+     }
      if (nowup > nextMaybeSave) {
-      nextMaybeSave = nowup + 15000;//15 secs
+      nextMaybeSave = nowup + 10000;//10 secs
       if (config.changed) {
         "maybeSave config".print();
         config.maybeSave();
@@ -545,19 +576,13 @@ class Embedded:AppShell {
       needsGc = true;
       return(self);
      }
-     if (nowup > nextApCheck) {
-      nextApCheck = nowup + 180000;//3 mins
-      unless (readyForAp) {
-        readyForAp = true;
-        unless (Wifi.up) {
-          needsNetworkInit = true;
-        }
-      }
+     if (nowup > nextPow) {
+      nextPow = nowup + 30000;//30 secs
+      clearPow();
       return(self);
      }
      if (nowup > nextWifiCheck) {
-      //nextWifiCheck = nowup + 420000;//7 mins
-      nextWifiCheck = nowup + 25000;//25 secs
+      nextWifiCheck = nowup + 180000;//3 mins
       checkWifiUp();
       needsGc = true;
       return(self);
@@ -919,7 +944,9 @@ class Embedded:AppShell {
       }
 
       String newpass = cmdl[2];
-      if (TS.notEmpty(pass)) {
+      if (inResetByPow) {
+        "in resetByPow skip pass".print();
+      } elseIf (TS.notEmpty(pass)) {
         if (TS.isEmpty(newpass)) {
           return("Error, pass was not sent");
         } elseIf (pass != newpass) {
@@ -951,26 +978,7 @@ class Embedded:AppShell {
 
       return("allset done");
 
-      } elseIf (cmd == "resetbypin") {
-        unless (def(resetByPin) && resetByPin) {
-          return("Error, resetbypin not enabled, try physical reset");
-        }
-        inpin = cmdl[1];
-        if (TS.notEmpty(pin)) {
-          if (TS.isEmpty(inpin)) {
-            return("Error, pin was not sent");
-          } elseIf (pin != inpin) {
-            return("Error, pin is incorrect");
-          }
-        } else {
-          return("Error, pin must be set");
-        }
-        if (Wifi.isConnected) {
-          return("Error, resetbypin only available when not on wifi access point");
-        }
-        reset();
-        return("Device reset");
-     }
+      }
 
      //password check
      unless (channel == "serial") {

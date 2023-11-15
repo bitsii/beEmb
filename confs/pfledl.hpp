@@ -9,7 +9,7 @@
 // SW - name (type) and version of the device.  Typename 10 char max ssid rules (no spaces)
 // swconfver.DeviceTypeName.DeviceVersion
 //
-#define BESPEC_SW "1,q,p2.Rgbt.32"  //generic configurable controls
+#define BESPEC_SW "1,q,p2.Rgbt.33"  //generic configurable controls
 //
 // CON - definition of device's controls
 // ctlconfver.control.ctlconf,args.control.ctlconf,args
@@ -29,8 +29,8 @@
 // things like bulbs/less sensitive devices w/out another reasonable choice, it should be enabled.  device
 // waits a bit for the wifi to come up when configured  to avoid power losses leading to entering this mode
 //
-#define BE_RESETBYPIN "on" //enabled
-//#define BE_RESETBYPIN "off" //disabled
+#define BE_RESETBYPOW "on" //enabled
+//#define BE_RESETBYPOW "off" //disabled
 //
 // tcpconsole - if you want to enable a debugish tcp port on the device (all be prints will be echoed there)
 // turn BE_TCPCONSOLE on, otherwise leave off.  only for development, really only useful if serial connection

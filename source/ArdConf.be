@@ -53,6 +53,7 @@ class Embedded:Config {
   put(Int pos, String value) {
     values.put(pos, value);
     changed = true;
+    //("put pos " + pos + " value " + value + " " + names[pos]).print();
   }
 
   maybeSave() {
