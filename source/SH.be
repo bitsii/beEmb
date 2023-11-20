@@ -766,7 +766,7 @@ class Embedded:AppShell {
      //if (channel == "tcp" && cmdl.size > 0) {
      //  cmdl.put(cmdl.size - 1, cmdl.get(cmdl.size - 1).swap("\r\n", ""));
      //}
-     if (cmdl.size > 0 && cmdl[0] == "sp2" || cmdl[0] == "ap2") {
+     if (cmdl.size > 0 && cmdl[0].ends("p2") || cmdl[0].ends("p3")) {
        return(doCmdlSec(channel, origin, cmdl));
      }
      return(doCmdl(channel, origin, cmdl));
@@ -779,12 +779,17 @@ class Embedded:AppShell {
        //sporap1 iv
        "doing cmdlsec".print();
        String spw = "";
-       if (cmdl[0] == "sp2") {
+       if (cmdl[0].begins("s")) {
          spw = spass;
-       } elseIf (cmdl[0] == "ap2") {
+       } elseIf (cmdl[0].begins("a")) {
          spw = pass;
        } else {
          ("unknown secsceme " + cmdl[0]).print();
+       }
+       if (cmdl[0].ends("3") && cmdl.size > 5) {
+         Int abeg = 4;
+       } else {
+         abeg = 3;
        }
        if (TS.notEmpty(origin)) {
          //("got origin " + origin).print();
@@ -807,10 +812,13 @@ class Embedded:AppShell {
        }
        if (TS.notEmpty(hdone)) {
          //("hdone " + hdone).print();
+         if (abeg == 4) {
+           hdone = secTime(hdone, cmdl[3]);
+         }
          if (TS.notEmpty(cmdl[2]) && hdone == cmdl[2]) {
            ("hsec passed").print();
-           cmdl[4] = spw;
-           for (Int i = 3;i < cmdl.size;i++=) {
+           cmdl.put(abeg + 1, spw);
+           for (Int i = abeg.copy();i < cmdl.size;i++=) {
              cmdn += cmdl[i];
            }
          } else {
@@ -820,6 +828,10 @@ class Embedded:AppShell {
        return(doCmdl(channel, origin, cmdn));
      }
      return("nodice");
+   }
+
+   secTime(String hdone, String tesh) String {
+     return(hdone);
    }
 
    getvisnets(List cmdl) String {
