@@ -62,6 +62,7 @@ class Embedded:AppShell {
        Bool needsInitControls = true;
        Bool needsGc = false;
        Int looperI = Int.new();
+       Int drift = 7;
      }
      app.plugin = self;
 
@@ -797,9 +798,12 @@ class Embedded:AppShell {
          origin = "";
        }
        String tohash = cmdl[1] + "," + origin + "," + spw + ",";
+       if (abeg == 4) {
+         tohash += cmdl[3] += ",";
+       }
        Int toc = cmdl.size - 1;
         String sp = " ";
-        for (Int j = 3;j < toc;j++=) {
+        for (Int j = abeg.copy();j < toc;j++=) {
           tohash += cmdl[j] += sp;
         }
        //("tohash |" + tohash + "|").print();
@@ -831,7 +835,33 @@ class Embedded:AppShell {
    }
 
    secTime(String hdone, String tesh) String {
-     return(hdone);
+     slots {
+       Int lsec; //lsec last sent seconds since epoch
+       Int lanu; //lanu last authed now up
+     }
+     //tesh seconds since epoch passed in
+     //drift seconds back that's ok
+     Int teshi = app.strToInt(tesh);
+     if (undef(lanu)) {
+       //"first go passed secTime".print();
+       lsec = teshi;
+       lanu = nowup / 1000;
+       return(hdone);
+     }
+     //new sent value must be > (last sent value + (nowup - lastauthnowup)) - Xtolerance (5secs? 10?)
+     Int nws = nowup / 1000;
+     Int totest = nws - lanu;
+     totest += lsec;
+     totest -= drift;
+     if (teshi > totest) {
+       //"passed secTime gt".print();
+       lanu = nws;
+       lsec = teshi;
+       return(hdone);
+     } else {
+       //"failed secTime lt".print();
+     }
+     return("f");
    }
 
    getvisnets(List cmdl) String {
