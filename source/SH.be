@@ -62,7 +62,7 @@ class Embedded:AppShell {
        Bool needsInitControls = true;
        Bool needsGc = false;
        Int looperI = Int.new();
-       Int drift = 7;
+       Int drift = 75;
      }
      app.plugin = self;
 
@@ -780,9 +780,9 @@ class Embedded:AppShell {
        //sporap1 iv
        "doing cmdlsec".print();
        String spw = "";
-       if (cmdl[0].begins("s")) {
+       if (cmdl[0].begins("sp")) {
          spw = spass;
-       } elseIf (cmdl[0].begins("a")) {
+       } elseIf (cmdl[0].begins("ap")) {
          spw = pass;
        } else {
          ("unknown secsceme " + cmdl[0]).print();
