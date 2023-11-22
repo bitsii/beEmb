@@ -837,25 +837,19 @@ class Embedded:AppShell {
    secTime(String hdone, String tesh) String {
      slots {
        Int lsec; //lsec last sent seconds since epoch
-       Int lanu; //lanu last authed now up
      }
      //tesh seconds since epoch passed in
      //drift seconds back that's ok
      Int teshi = app.strToInt(tesh);
-     if (undef(lanu)) {
-       //"first go passed secTime".print();
+     if (undef(lsec)) {
+       teshi -= drift;
        lsec = teshi;
-       lanu = nowup / 1000;
        return(hdone);
      }
-     //new sent value must be > (last sent value + (nowup - lastauthnowup)) - Xtolerance (5secs? 10?)
-     Int nws = nowup / 1000;
-     Int totest = nws - lanu;
-     totest += lsec;
-     totest -= drift;
-     if (teshi > totest) {
+     //new sent value must be > (last sent value - Xtolerance) (5secs? 10?)
+     if (teshi > lsec) {
        //"passed secTime gt".print();
-       lanu = nws;
+       teshi -= drift;
        lsec = teshi;
        return(hdone);
      } else {
