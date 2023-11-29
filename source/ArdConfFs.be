@@ -113,6 +113,26 @@ class Embedded:Config {
         } else {
           //"name or value too empty to write".print();
           //delete
+          fn.clear();
+          fn += bedn += lpos.toString();
+          emit(cc) {
+            """
+            const char* fnn = bevp_fn->bems_toCcString().c_str();
+            if (LittleFS.exists(fnn)) {
+               LittleFS.remove(fnn);
+            }
+            """
+          }
+          fn.clear();
+          fn += bedv += lpos.toString();
+          emit(cc) {
+            """
+            const char* fnv = bevp_fn->bems_toCcString().c_str();
+            if (LittleFS.exists(fnv)) {
+               LittleFS.remove(fnv);
+            }
+            """
+          }
         }
       }
     }
