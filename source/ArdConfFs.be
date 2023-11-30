@@ -66,7 +66,71 @@ class Embedded:Config {
 
   //for read use the file sizes
   load() {
-
+    //begin
+    emit(cc) {
+      """
+    LittleFS.begin();
+      """
+    }
+    Int fsz = Int.new();
+    emit(cc) {
+      """
+      const char* fnx = bevp_bedmax->bems_toCcString().c_str();
+      if (LittleFS.exists(fnx)) {
+        File fhx = LittleFS.open(fnx, "r");
+        if (!fhx) {
+            Serial.println("file open failed");
+        } else {
+          beq->bevl_fsz->bevi_int = fhx.size();
+          """
+        }
+        String bmxs = String.new(fsz);
+        bmxs.size.setValue(fsz);
+    emit(cc) {
+      """
+          uint8_t* dataPointerx = beq->bevl_bmxs->bevi_bytes.data();
+          fhx.read(dataPointerx, beq->bevl_bmxs->bevp_size->bevi_int);
+          fhx.close();
+        }
+      }
+      """
+    }
+    if (TS.isEmpty(bmxs)) {
+      return(self);
+    }
+    Int bmx = Int.new(bmxs);
+    for (Int i = 0;i < bmx;i++=) {
+      fsz = Int.new();
+      fn.clear();
+      fn += bedn += i.toString();
+      emit(cc) {
+        """
+        const char* fnn = bevp_fn->bems_toCcString().c_str();
+        if (LittleFS.exists(fnn)) {
+          File fhn = LittleFS.open(fnn, "r");
+          if (!fhn) {
+              Serial.println("file open failed");
+          } else {
+            beq->bevl_fsz->bevi_int = fhn.size();
+            """
+          }
+          String bns = String.new(fsz);
+          bns.size.setValue(fsz);
+      emit(cc) {
+        """
+            uint8_t* dataPointern = beq->bevl_bns->bevi_bytes.data();
+            fhn.read(dataPointern, beq->bevl_bns->bevp_size->bevi_int);
+            fhn.close();
+          }
+        }
+        """
+      }
+    }
+    emit(cc) {
+      """
+    LittleFS.end();
+      """
+    }
   }
 
   save() {
