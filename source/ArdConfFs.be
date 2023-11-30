@@ -23,12 +23,21 @@ class Embedded:Config {
       List changes = List.new();
       String bedn = "/bedn/";
       String bedv = "/bedv/";
+      String bedmax = "/bedmax";
       String fn = String.new();
     }
   }
 
   getPos(String name) {
      Int pos = names.find(name);
+     if (undef(pos)) {
+      for (Int i = 0;i < names.length;i++=) {
+        if (undef(names.get(i))) {
+          pos = i;
+          break;
+        }
+      }
+     }
      if (undef(pos)) {
        pos = names.size.copy();
        names += name;
@@ -52,7 +61,6 @@ class Embedded:Config {
   maybeSave() {
     if (changed) {
       save();
-      changed = false;
     }
   }
 
@@ -65,7 +73,6 @@ class Embedded:Config {
     //write while iterating, no copy
     //sep file for n and v
     //max actually written
-    //compact/reindex on read
     //no need to scan dirs, just index and exists
 
     //begin
@@ -134,8 +141,24 @@ class Embedded:Config {
             """
           }
         }
+        changes.put(lpos, false);
       }
     }
+    //save lpos as bedmax
+    String bmxs = lpos.toString();
+    emit(cc) {
+      """
+      File fhn = LittleFS.open(bevp_bedmax->bems_toCcString().c_str(), "w");
+      if (!fhn) {
+          Serial.println("file open failed");
+      } else {
+        const uint8_t* dataPointern = beq->bevl_bmxs->bevi_bytes.data();
+        fhn.write(dataPointern, beq->bevl_bmxs->bevp_size->bevi_int);
+        fhn.close();
+      }
+      """
+    }
+    changed = false;
     emit(cc) {
       """
     LittleFS.end();
