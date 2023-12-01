@@ -927,15 +927,17 @@ class Embedded:AppShell {
      if (cmd.begins("do") || cmd == "getcontroldef") {
         //"got dostate".print();
         //state password check
-        if (TS.isEmpty(spass)) {
-          return("State Password Must Be Set");
-        }
-        String inpass = cmdl[1];
-        if (TS.isEmpty(inpass)) {
-          return("State password must be provided");
-        }
-        if (inpass != spass) {
-          return("State Password Incorrect");
+        unless (channel == "serial") {
+          if (TS.isEmpty(spass)) {
+            return("State Password Must Be Set");
+          }
+          String inpass = cmdl[1];
+          if (TS.isEmpty(inpass)) {
+            return("State password must be provided");
+          }
+          if (inpass != spass) {
+            return("State Password Incorrect");
+          }
         }
         if (cmd == "dostate") {
           String stateres = doState(cmdl);
