@@ -20,11 +20,11 @@
 //
 //#define BESPEC_CON "" //supergeneric
 //
-#define BESPEC_CON "0.dim.2" //nodemcu just dim
+//#define BESPEC_CON "0.dim.2" //nodemcu just dim
 //#define BESPEC_CON "0.sw.16" //nodemcu just sw
 //#define BESPEC_CON "0.rgb.4,2,16" //nodemcu wonky rgb
 //
-//#define BESPEC_CON "0.sw.16.dim.2" //nodemcu
+#define BESPEC_CON "0.sw.16.dim.2" //nodemcu
 //#define BESPEC_CON "0.sw.16.dim.2.rgb.4,12,14" //nodemcu GRANDE
 //#define BESPEC_CON "0.sw.16"  //dollatek - one sw on 16
 //#define BESPEC_CON "0.dim.16"  //dollatek - one dim on 16
