@@ -44,18 +44,20 @@ class Embedded:Config {
        values += null;
        changes += null;
      }
+     //("pos " + pos + " for name " + name).print();
      return(pos);
   }
 
   get(Int pos) String {
+    //("get pos " + pos).print();
     return(values.get(pos));
   }
 
   put(Int pos, String value) {
+    //("put pos " + pos + " value " + value + " " + names[pos]).print();
     values.put(pos, value);
     changes.put(pos, true);
     changed = true;
-    //("put pos " + pos + " value " + value + " " + names[pos]).print();
   }
 
   maybeSave() {
@@ -86,6 +88,7 @@ class Embedded:Config {
         }
         String bmxs = String.new(fsz);
         bmxs.size.setValue(fsz);
+        //("bmxs size " + bmxs.size).print();
     emit(cc) {
       """
           uint8_t* dataPointerx = beq->bevl_bmxs->bevi_bytes.data();
@@ -96,11 +99,13 @@ class Embedded:Config {
       """
     }
     if (TS.isEmpty(bmxs)) {
+      //"bmxs empty".print();
       return(self);
     }
+    //("bmxs " + bmxs).print();
     Int bmx = Int.new(bmxs);
     for (Int i = 0;i < bmx;i++=) {
-      fsz = Int.new();
+
       fn.clear();
       fn += bedn += i.toString();
       emit(cc) {
@@ -125,6 +130,37 @@ class Embedded:Config {
         }
         """
       }
+
+      fn.clear();
+      fn += bedv += i.toString();
+      emit(cc) {
+        """
+        const char* fnv = bevp_fn->bems_toCcString().c_str();
+        if (LittleFS.exists(fnv)) {
+          File fhv = LittleFS.open(fnv, "r");
+          if (!fhv) {
+              Serial.println("file open failed");
+          } else {
+            beq->bevl_fsz->bevi_int = fhv.size();
+            """
+          }
+          String bvs = String.new(fsz);
+          bvs.size.setValue(fsz);
+      emit(cc) {
+        """
+            uint8_t* dataPointerv = beq->bevl_bvs->bevi_bytes.data();
+            fhv.read(dataPointerv, beq->bevl_bvs->bevp_size->bevi_int);
+            fhv.close();
+          }
+        }
+        """
+      }
+      if (TS.notEmpty(bns) && TS.notEmpty(bvs)) {
+        names.put(i, bns);
+        values.put(i, bvs);
+        changes.put(i, false);
+        //("loaded " + i + " " + bns + " " + bvs).print();
+      }
     }
     emit(cc) {
       """
@@ -138,20 +174,21 @@ class Embedded:Config {
     //sep file for n and v
     //max actually written
     //no need to scan dirs, just index and exists
-
+    //"saving".print();
     //begin
     emit(cc) {
       """
     LittleFS.begin();
       """
     }
+    //"save looping".print();
     for (Int lpos = 0;lpos < names.size;lpos++=) {
       String name = names.get(lpos);
       String value = values.get(lpos);
       Bool change = changes.get(lpos);
       if (def(change) && change) {
         if (TS.notEmpty(name) && TS.notEmpty(value)) {
-            //epwrite(name, css, ps, pe, code, false);
+            //("save " + name + " " + value).print();
             fn.clear();
             fn += bedn += lpos.toString();
             emit(cc) {
@@ -222,12 +259,14 @@ class Embedded:Config {
       }
       """
     }
+    //("save bmxs " + bmxs).print();
     changed = false;
     emit(cc) {
       """
     LittleFS.end();
       """
     }
+    //("save done").print();
   }
 
 }

@@ -339,6 +339,9 @@ class Embedded:AppShell {
      pin.print();
      swSpec.print();
 
+     //Config c2 = Config.new();
+     //c2.load();
+
      ifNotEmit(noSer) {
       serserver = Embedded:SerServer.new();
       serserver.start();
