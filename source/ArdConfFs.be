@@ -69,6 +69,7 @@ class Embedded:Config {
   //for read use the file sizes
   load() {
     //begin
+    //"loading".print();
     emit(cc) {
       """
     LittleFS.begin();
@@ -105,14 +106,16 @@ class Embedded:Config {
     //("bmxs " + bmxs).print();
     Int bmx = Int.new(bmxs);
     for (Int i = 0;i < bmx;i++=) {
-
+      //("try load " + i).print();
       fn.clear();
       fn += bedn += i.toString();
+      //("fn " + fn).print();
       emit(cc) {
         """
-        const char* fnn = bevp_fn->bems_toCcString().c_str();
-        if (LittleFS.exists(fnn)) {
-          File fhn = LittleFS.open(fnn, "r");
+        //const char* fnn = bevp_fn->bems_toCcString().c_str();
+        //Serial.println(bevp_fn->bems_toCcString().c_str());
+        if (LittleFS.exists(bevp_fn->bems_toCcString().c_str())) {
+          File fhn = LittleFS.open(bevp_fn->bems_toCcString().c_str(), "r");
           if (!fhn) {
               Serial.println("file open failed");
           } else {
@@ -127,17 +130,21 @@ class Embedded:Config {
             fhn.read(dataPointern, beq->bevl_bns->bevp_size->bevi_int);
             fhn.close();
           }
+        } else {
+          //Serial.println("file no exists n");
         }
         """
       }
 
       fn.clear();
       fn += bedv += i.toString();
+      //("fn " + fn).print();
       emit(cc) {
         """
-        const char* fnv = bevp_fn->bems_toCcString().c_str();
-        if (LittleFS.exists(fnv)) {
-          File fhv = LittleFS.open(fnv, "r");
+        //const char* fnv = bevp_fn->bems_toCcString().c_str();
+        //Serial.println(bevp_fn->bems_toCcString().c_str());
+        if (LittleFS.exists(bevp_fn->bems_toCcString().c_str())) {
+          File fhv = LittleFS.open(bevp_fn->bems_toCcString().c_str(), "r");
           if (!fhv) {
               Serial.println("file open failed");
           } else {
@@ -152,6 +159,8 @@ class Embedded:Config {
             fhv.read(dataPointerv, beq->bevl_bvs->bevp_size->bevi_int);
             fhv.close();
           }
+        } else {
+          //Serial.println("file no exists v");
         }
         """
       }
@@ -160,6 +169,9 @@ class Embedded:Config {
         values.put(i, bvs);
         changes.put(i, false);
         //("loaded " + i + " " + bns + " " + bvs).print();
+      } else {
+        //if (TS.isEmpty(bns)) { "bns empty".print(); }
+        //if (TS.isEmpty(bvs)) { "bvs empty".print(); }
       }
     }
     emit(cc) {
@@ -167,6 +179,7 @@ class Embedded:Config {
     LittleFS.end();
       """
     }
+    //"load done".print();
   }
 
   save() {
@@ -188,33 +201,38 @@ class Embedded:Config {
       Bool change = changes.get(lpos);
       if (def(change) && change) {
         if (TS.notEmpty(name) && TS.notEmpty(value)) {
-            //("save " + name + " " + value).print();
+            //("save " + lpos + " " + name + " " + value).print();
             fn.clear();
             fn += bedn += lpos.toString();
+            //("fn " + fn).print();
             emit(cc) {
               """
+              //Serial.println(bevp_fn->bems_toCcString().c_str());
               File fhn = LittleFS.open(bevp_fn->bems_toCcString().c_str(), "w");
               if (!fhn) {
                   Serial.println("file open failed");
               } else {
                 const uint8_t* dataPointern = beq->bevl_name->bevi_bytes.data();
-                fhn.write(dataPointern, beq->bevl_name->bevp_size->bevi_int);
+                size_t wrn = fhn.write(dataPointern, beq->bevl_name->bevp_size->bevi_int);
                 fhn.close();
+                //Serial.println(wrn);
               }
               """
             }
-            //epwrite(value, css, ps, pe, code, false);
             fn.clear();
             fn += bedv += lpos.toString();
+            //("fn " + fn).print();
             emit(cc) {
               """
+              //Serial.println(bevp_fn->bems_toCcString().c_str());
               File fhv = LittleFS.open(bevp_fn->bems_toCcString().c_str(), "w");
               if (!fhv) {
                   Serial.println("file open failed");
               } else {
                 const uint8_t* dataPointerv = beq->bevl_value->bevi_bytes.data();
-                fhv.write(dataPointerv, beq->bevl_value->bevp_size->bevi_int);
+                size_t wrv = fhv.write(dataPointerv, beq->bevl_value->bevp_size->bevi_int);
                 fhv.close();
+                //Serial.println(wrv);
               }
               """
             }
@@ -225,9 +243,9 @@ class Embedded:Config {
           fn += bedn += lpos.toString();
           emit(cc) {
             """
-            const char* fnn = bevp_fn->bems_toCcString().c_str();
-            if (LittleFS.exists(fnn)) {
-               LittleFS.remove(fnn);
+            //const char* fnn = bevp_fn->bems_toCcString().c_str();
+            if (LittleFS.exists(bevp_fn->bems_toCcString().c_str())) {
+               LittleFS.remove(bevp_fn->bems_toCcString().c_str());
             }
             """
           }
@@ -235,9 +253,9 @@ class Embedded:Config {
           fn += bedv += lpos.toString();
           emit(cc) {
             """
-            const char* fnv = bevp_fn->bems_toCcString().c_str();
-            if (LittleFS.exists(fnv)) {
-               LittleFS.remove(fnv);
+            //const char* fnv = bevp_fn->bems_toCcString().c_str();
+            if (LittleFS.exists(bevp_fn->bems_toCcString().c_str())) {
+               LittleFS.remove(bevp_fn->bems_toCcString().c_str());
             }
             """
           }
@@ -267,6 +285,7 @@ class Embedded:Config {
       """
     }
     //("save done").print();
+    //load();
   }
 
 }
