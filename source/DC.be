@@ -19,7 +19,6 @@ class Embedded:DimmerControl {
    new(_ash, Int _conPos, String _conName, String _conArgs) {
      slots {
        Embedded:AppShell ash = _ash;
-       Int pini;
        Config config = ash.config;
        Embedded:App app = ash.app;
      }
@@ -27,6 +26,7 @@ class Embedded:DimmerControl {
        Int conPos = _conPos;
        Int lastEvent = Int.new();
        String conName = _conName;
+       Int pini;
      }
      //pini = Int.new(_conArgs);
      if (_conArgs.has(",")) {
