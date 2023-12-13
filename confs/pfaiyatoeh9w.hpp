@@ -9,17 +9,16 @@
 // SW - name (type) and version of the device.  Typename 10 char max ssid rules (no spaces)
 // swconfver.DeviceTypeName.DeviceVersion
 //
-#define BESPEC_SW "1,q,p3,p2.WNABLB01.52"  //generic configurable controls Athlb017w LB01-7W-B22
+#define BESPEC_SW "1,q,p3,p2.AIYATOEH9W.50"  //generic configurable controls Athlb017w LB01-7W-B22
 //
 // CON - definition of device's controls
 // ctlconfver.control.ctlconf,args.control.ctlconf,args
 //
 //#define BESPEC_CON "" //supergeneric
 //next really rgbcct, rgbcw red green blue cold warm
-//R W G T B || R C G W B pin order 4,5,12,13,14
-//#define BESPEC_CON "0.pwmh.4.pwmh.5.pwmh.12.pwmh.13.pwmh.14.rgbcw.0,2,4,1,3" //Athom 7W 600lm RGBCCT Bulb (LB01-7W-B22)
+//W B R T G || C B R W G pin order (LB01-7W-B22) pins 4,5,12,13,14
 //Just the R G B part now
-#define BESPEC_CON "0.rgb.4,12,14" //Athom 7W 600lm RGBCCT Bulb (LB01-7W-B22)
+#define BESPEC_CON "0.rgb.12,14,5" //
 //putconfigs pass raw fc.conspec 0.dim.2,0 e
 //
 //pinposes //16, 2 nodemcu - Athom 16A US 13 LED 14 RELAY, SONOFF BASIC R2 13 LED 12 RELAY, 16 for dollatek 8285

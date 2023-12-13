@@ -9,13 +9,13 @@
 // SW - name (type) and version of the device.  Typename 10 char max ssid rules (no spaces)
 // swconfver.DeviceTypeName.DeviceVersion
 //
-#define BESPEC_SW "1,q,p3,p2.AthLB15Str.50"  //
+#define BESPEC_SW "1,q,p3,p2.AthLB15Str.51"  //
 //
 // CON - definition of device's controls
 // ctlconfver.control.ctlconf,args.control.ctlconf,args
 //
 //FOR THE LB01-15W 4,5,12,13i,14 looks like 4,12,14 are r,g,b 5 is white level 13 is temp
-#define BESPEC_CON "0.dim.5.strd.0" //the real one
+#define BESPEC_CON "0.dim.14.strd.0" //the real one
 //#define BESPEC_CON "0.dim.2.strd.0" //the nmcu test
 //#define BESPEC_CON "" //supergeneric
 //next really rgbcct, rgbcw red green blue cold warm
