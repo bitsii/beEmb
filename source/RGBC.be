@@ -46,6 +46,10 @@ class Embedded:RGBControl {
 
    }
 
+   conTypeGet() String {
+     return(conName);
+   }
+
    initControl() {
      slots {
        String brightness = "brightness";

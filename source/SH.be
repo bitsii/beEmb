@@ -151,11 +151,11 @@ class Embedded:AppShell {
       String d = ",";
       String cd = ";";
       for (any control in controls) {
-        String conName = control.conName;
+        String conType = control.conType;
         Int le = control.lastEvent;
         Int conPos = control.conPos;
         if (def(le) && def(conPos)) {
-          les += conName += d += conPos += d += le += cd;
+          les += conType += d += conPos += d += le += cd;
         }
       }
      }
@@ -251,10 +251,10 @@ class Embedded:AppShell {
          controlDef += ",";
        }
        String conName = conl[i];
-       controlDef += conName;
        i++=;
        String conArgs = conl[i];
        controls.put(conPos, buildControl(conPos, conName, conArgs));
+       controlDef += controls.get(conPos).conType;
        conPos = conPos++;
        i++=;
      }

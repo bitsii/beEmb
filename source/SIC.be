@@ -44,6 +44,10 @@ class Embedded:SwitchIndicatorControl {
      pini = app.strToInt(spin);
    }
 
+   conTypeGet() String {
+     return(conName);
+   }
+
    initControl() {
      slots {
        String on = "on";

@@ -42,6 +42,10 @@ class Embedded:SwitchControl {
      pini = app.strToInt(spin);
    }
 
+   conTypeGet() String {
+     return(conName);
+   }
+
    initControl() {
      slots {
        Int scswi;

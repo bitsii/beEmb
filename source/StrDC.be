@@ -50,6 +50,10 @@ class Embedded:StrDC {
      }
    }
 
+   conTypeGet() String {
+     return(conName);
+   }
+
    initControl() {
      slots {
        String on = "on";

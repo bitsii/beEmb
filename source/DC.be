@@ -40,6 +40,10 @@ class Embedded:DimmerControl {
      pini = app.strToInt(spin);
    }
 
+   conTypeGet() String {
+     return(conName);
+   }
+
    initControl() {
      slots {
        String setlvll = "setlvl";

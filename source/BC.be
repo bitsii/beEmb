@@ -57,6 +57,10 @@ class Embedded:ButtonControl {
      onStart--=;
    }
 
+   conTypeGet() String {
+     return(conName);
+   }
+
    initControl() {
      app.pinModeInputPullup(pini);
      ash.loopers += self;

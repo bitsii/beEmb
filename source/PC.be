@@ -40,6 +40,10 @@ class Embedded:PWMControl {
      pini = app.strToInt(spin);
    }
 
+   conTypeGet() String {
+     return(conName);
+   }
+
    initControl() {
      slots {
        String setlvll = "setlvl";
