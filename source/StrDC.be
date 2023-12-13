@@ -36,6 +36,7 @@ class Embedded:StrDC {
        Int dclvl = 0;
        Bool dimison = false;
        Int tff = 255;
+       String conType = "sw";
      }
      fields {
        Int conPos = _conPos;
@@ -51,25 +52,72 @@ class Embedded:StrDC {
    }
 
    conTypeGet() String {
-     return(conName);
+     return(conType);
    }
 
    initControl() {
      slots {
+       Embedded:DimmerControl dc;
+       Int scswi;
+       String getsw = "getsw";
+       Bool swon = false;
+     }
+     fields {
        String on = "on";
        String off = "off";
-       Embedded:DimmerControl dc;
+       String setsw = "setsw";
+       String sw;
      }
      dc = ash.controls.get(dcp);
      ash.loopers += self;
+
+     scswi = config.getPos("sc.sw." + conPos);
+
+     String insw = config.get(scswi);
+     if (TS.notEmpty(insw)) {
+       sw = insw;
+       doState(List.new().addValue("dostate").addValue("notpw").addValue(conPos.toString()).addValue(setsw).addValue(sw));
+     }
    }
 
    doState(List cmdl) String {
-     return("na");
+     "in dostate".print();
+     String scm = cmdl[3];
+     if (scm == getsw) {
+      if (TS.notEmpty(sw)) {
+        return(sw);
+        } else {
+        return("undefined");
+        }
+     } elseIf (scm == setsw) {
+        String insw = cmdl[4];
+        if (insw == on) {
+          sw = insw;
+          config.put(scswi, on);
+          swon = true;
+        } elseIf (insw == off) {
+          sw = insw;
+          config.put(scswi, off);
+          swon = false;
+          if (def(dcle) && def(dc) && def(dc.pini)) {
+            Int pini = dc.pini;
+            if (dimison) {
+              app.pinModeOutput(pini);
+              app.analogWrite(pini, dclvl);
+            } else {
+              app.pinModeOutput(pini);
+              app.analogWrite(pini, tff);
+            }
+          }
+        }
+        lastEvent.setValue(ash.nowup);
+        ash.lastEventsRes = null;
+     }
+     return("ok");
    }
 
    clearStates() {
-
+     config.put(scswi, off);
    }
 
    handleLoop() {
@@ -90,26 +138,28 @@ class Embedded:StrDC {
        }
        dcle.setValue(dc.lastEvent);
      }
-     Int nowup = ash.nowup;
-     if (nowup > togglePause) {
-       togglePause.setValue(nowup);
-       togglePause += pauseWin;
-       outPause = outPause.not();
-     }
-     if (nowup > toggleOn) {
-       toggleOn.setValue(nowup);
-       toggleOn += onWin;
-       inOn = inOn.not();
-       Int pini = dc.pini;
-       if (dimison && outPause && inOn) {
-         //turn it on
-         app.pinModeOutput(pini);
-         app.analogWrite(pini, dclvl);
-       } else {
-         //turn it off
-         app.pinModeOutput(pini);
-         app.analogWrite(pini, tff);
-       }
+     if (swon) {
+      Int nowup = ash.nowup;
+      if (nowup > togglePause) {
+        togglePause.setValue(nowup);
+        togglePause += pauseWin;
+        outPause = outPause.not();
+      }
+      if (nowup > toggleOn) {
+        toggleOn.setValue(nowup);
+        toggleOn += onWin;
+        inOn = inOn.not();
+        Int pini = dc.pini;
+        if (dimison && outPause && inOn) {
+          //turn it on
+          app.pinModeOutput(pini);
+          app.analogWrite(pini, dclvl);
+        } else {
+          //turn it off
+          app.pinModeOutput(pini);
+          app.analogWrite(pini, tff);
+        }
+      }
      }
    }
    
