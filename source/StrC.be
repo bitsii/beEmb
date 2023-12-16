@@ -24,7 +24,7 @@ class Embedded:StrC {
        Embedded:AppShell ash = _ash;
        Config config = ash.config;
        Embedded:App app = ash.app;
-       Int dcp;
+       Int rgbp;
        Int togglePause = 0;
        Int toggleOn = 0;
        Bool outPause = false;
@@ -32,10 +32,8 @@ class Embedded:StrC {
        Int zero = 0;
        Int pauseWin = 1000;
        Int onWin = 100;
-       Int dcle;
-       Int dclvl = 0;
-       Bool dimison = false;
-       Int tff = 255;
+       Int rgble;
+       Bool rgbison = false;
        String conType = "sw";
      }
      fields {
@@ -45,9 +43,9 @@ class Embedded:StrC {
      }
      if (_conArgs.has(",")) {
         auto cal = _conArgs.split(",");
-        dcp = app.strToInt(cal[0]);
+        rgbp = app.strToInt(cal[0]);
      } else {
-        dcp = app.strToInt(_conArgs);
+        rgbp = app.strToInt(_conArgs);
      }
    }
 
@@ -57,7 +55,7 @@ class Embedded:StrC {
 
    initControl() {
      slots {
-       Embedded:DimmerControl dc;
+       Embedded:RGBControl rgb;
        Int scswi;
        String getsw = "getsw";
        Bool swon = false;
@@ -68,7 +66,7 @@ class Embedded:StrC {
        String setsw = "setsw";
        String sw;
      }
-     dc = ash.controls.get(dcp);
+     rgb = ash.controls.get(rgbp);
      ash.loopers += self;
 
      scswi = config.getPos("sc.sw." + conPos);
@@ -99,14 +97,11 @@ class Embedded:StrC {
           sw = insw;
           config.put(scswi, off);
           swon = false;
-          if (def(dcle) && def(dc) && def(dc.pini)) {
-            Int pini = dc.pini;
-            if (dimison) {
-              app.pinModeOutput(pini);
-              app.analogWrite(pini, dclvl);
+          if (def(rgble) && def(rgb)) {
+            if (rgbison) {
+              rgbOn();
             } else {
-              app.pinModeOutput(pini);
-              app.analogWrite(pini, tff);
+              rgbOff();
             }
           }
         }
@@ -116,6 +111,29 @@ class Embedded:StrC {
      return("ok");
    }
 
+   rgbOn() {
+     Int rp = rgb.rp;
+     Int gp = rgb.gp;
+     Int bp = rgb.bp;
+     Int ri = rgb.ri;
+     Int gi = rgb.gi;
+     Int bi = rgb.bi;
+     if (def(ri) && def(gi) && def(bi)) {
+       app.analogWrite(rp, ri);
+       app.analogWrite(gp, gi);
+       app.analogWrite(bp, bi);
+     }
+   }
+
+   rgbOff() {
+     Int rp = rgb.rp;
+     Int gp = rgb.gp;
+     Int bp = rgb.bp;
+     app.analogWrite(rp, zero);
+     app.analogWrite(gp, zero);
+     app.analogWrite(bp, zero);
+   }
+
    clearStates() {
      config.put(scswi, off);
    }
@@ -123,20 +141,17 @@ class Embedded:StrC {
    handleLoop() {
      //in pause every other second
      //when not in pause on/off every 250ms
-     if (undef(dc) || undef(dc.sw)) { return(self); }
-     if (undef(dcle) || dcle != dc.lastEvent) {
-       if (dc.sw == on) {
-         dimison = true;
+     if (undef(rgb) || undef(rgb.sw)) { return(self); }
+     if (undef(rgble) || rgble != rgb.lastEvent) {
+       if (rgb.sw == on) {
+         rgbison = true;
        } else {
-         dimison = false;
+         rgbison = false;
        }
-       if (def(dc.lvl)) {
-         dclvl.setValue(app.strToInt(dc.lvl));
+       if (undef(rgble)) {
+         rgble = Int.new();
        }
-       if (undef(dcle)) {
-         dcle = Int.new();
-       }
-       dcle.setValue(dc.lastEvent);
+       rgble.setValue(rgb.lastEvent);
      }
      if (swon) {
       Int nowup = ash.nowup;
@@ -149,15 +164,12 @@ class Embedded:StrC {
         toggleOn.setValue(nowup);
         toggleOn += onWin;
         inOn = inOn.not();
-        Int pini = dc.pini;
-        if (dimison && outPause && inOn) {
+        if (rgbison && outPause && inOn) {
           //turn it on
-          app.pinModeOutput(pini);
-          app.analogWrite(pini, dclvl);
+          rgbOn();
         } else {
           //turn it off
-          app.pinModeOutput(pini);
-          app.analogWrite(pini, tff);
+          rgbOff();
         }
       }
      }

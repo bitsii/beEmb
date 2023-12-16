@@ -60,11 +60,16 @@ class Embedded:RGBControl {
        String setrgb = "setrgb";
        String setsw = "setsw";
        String getsw = "getsw";
+       Int rgbrgbi;
+       Int rgbswi;
+     }
+     fields {
        Int rp;
        Int gp;
        Int bp;
-       Int rgbrgbi;
-       Int rgbswi;
+       Int ri;
+       Int gi;
+       Int bi;
      }
 
      rgbrgbi = config.getPos("rgb.rgb." + conPos);
@@ -129,9 +134,9 @@ class Embedded:RGBControl {
      }
       ("rgb " + rgb).print();
       List rgbl = rgb.split(",");
-      Int ri = app.strToInt(rgbl[0]);
-      Int gi = app.strToInt(rgbl[1]);
-      Int bi = app.strToInt(rgbl[2]);
+      ri = app.strToInt(rgbl[0]);
+      gi = app.strToInt(rgbl[1]);
+      bi = app.strToInt(rgbl[2]);
       if (ri < zero || ri > twofity) {
         ri = zero;
       }
