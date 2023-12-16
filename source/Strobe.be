@@ -19,12 +19,12 @@ use Embedded:AppShell;
 class Embedded:Strobe(Embedded:AppShell) {
 
    buildControl(Int conPos, String conName, String conArgs) {
-     if (conName == "dim") {
-       auto dimc = Embedded:DimmerControl.new(self, conPos, conName, conArgs);
-       return(dimc);
-     } elseIf (conName == "strd") {
-       auto buc = Embedded:StrDC.new(self, conPos, conName, conArgs);
-       return(buc);
+     if (conName == "rgb") {
+       auto rgb = Embedded:RGBControl.new(self, conPos, conName, conArgs);
+       return(rgb);
+     } elseIf (conName == "str") {
+       auto str = Embedded:StrC.new(self, conPos, conName, conArgs);
+       return(str);
      } else {
        "Unknown control conName in Switch".print();
      }

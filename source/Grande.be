@@ -31,6 +31,9 @@ class Embedded:Grande(Embedded:AppShell) {
      } elseIf (conName == "rgb") {
        auto rgb = Embedded:RGBControl.new(self, conPos, conName, conArgs);
        return(rgb);
+     } elseIf (conName == "str") {
+       auto str = Embedded:StrC.new(self, conPos, conName, conArgs);
+       return(str);
      } else {
        "Unknown control conName in Switch".print();
      }

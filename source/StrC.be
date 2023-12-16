@@ -17,7 +17,7 @@ use Embedded:Config;
 
 //strobe controller
 //checks sw for "on" or "off"
-class Embedded:StrDC {
+class Embedded:StrC {
 
    new(_ash, Int _conPos, String _conName, String _conArgs) {
      slots {

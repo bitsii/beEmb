@@ -9,7 +9,7 @@
 // SW - name (type) and version of the device.  Typename 10 char max ssid rules (no spaces)
 // swconfver.DeviceTypeName.DeviceVersion
 //
-#define BESPEC_SW "1,q,p3,p2.WNAP2.51" //Athom Plug V2 US THE REAL ONE
+#define BESPEC_SW "1,q,p3,p2.WNAP2.52" //Athom Plug V2 US THE REAL ONE
 //
 // CON - definition of device's controls
 // ctlconfver.control.ctlconf,args.control.ctlconf,args
@@ -29,7 +29,7 @@
 // turn BE_TCPCONSOLE on, otherwise leave off.  only for development, really only useful if serial connection
 // not available.  You can telnet to the device's ip port 32259 to see the messages.  output only, no input
 //
-#define BE_TCPCONSOLE "on"
+#define BE_TCPCONSOLE "off" //on at last release 51
 //
 //
 // csconf - if you want to enable a the cf.conspec (same as BESPEC_CON) to be set via putconfig (and honored)
