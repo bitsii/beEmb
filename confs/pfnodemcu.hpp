@@ -11,7 +11,7 @@
 //
 //#define BESPEC_SW "1,p2.Generic.22"  //supergeneric
 //#define BESPEC_SW "1,p2.WNN.31"  //nodemcu
-#define BESPEC_SW "1,q,p3,p2.Nmcu.55"  //nodemcu q = quickstate, p2 auth type 2 (hash), p2 always last
+#define BESPEC_SW "1,q,p3,p2.Nmcu.56"  //nodemcu q = quickstate, p2 auth type 2 (hash), p2 always last
 //#define BESPEC_SW  "0.DollaTek.20" //dollatek 2mb 1led
 //#define BESPEC_SW "1,p2.WNAP2.29" //Athom Plug V2 US THE REAL ONE
 //
@@ -28,10 +28,11 @@
 //
 //#define BESPEC_CON "0.sw.2.bu.14,0,30,0,10000" //nodemcu like athsw
 //
-//#define BESPEC_CON "0.dim.2" //nodemcu just dim
+#define BESPEC_CON "0.rdim.2" //nodemcu just dim local led
 //#define BESPEC_CON "0.sw.16" //nodemcu just sw
 //#define BESPEC_CON "0.rgb.4,12,14" //nodemcu rgb
-#define BESPEC_CON "0.rgb.4,12,14.str.0" //nodemcu rgb strobe
+//#define BESPEC_CON "0.dim.14" //nodemcu rgb testing rgbdim on blue
+//#define BESPEC_CON "0.rgb.4,12,14.str.0" //nodemcu rgb strobe
 //
 //#define BESPEC_CON "0.sw.16.dim.2.rgb.4,12,14" //nodemcu GRANDE
 //#define BESPEC_CON "0.sw.16"  //dollatek - one sw on 16
