@@ -18,8 +18,8 @@ use Embedded:Config;
 class Embedded:RGBGamDimCon(Embedded:RGBControl) {
 
    new(_ash, Int _conPos, String _conName, String _conArgs) {
-     super.new();
-     contType = "rgbdim";
+     super.new(_ash, _conPos, _conName, _conArgs);
+     conType = "rgbdim";
    }
 
    initControl() {
@@ -27,7 +27,7 @@ class Embedded:RGBGamDimCon(Embedded:RGBControl) {
    }
 
    doState(List cmdl) String {
-     return(super.doState(cmdl);
+     return(super.doState(cmdl));
    }
 
    clearStates() {
