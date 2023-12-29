@@ -14,7 +14,24 @@ use Text:Strings as TS;
 use Embedded:AppShell;
 use Embedded:Config;
 
-class Embedded:ReverseDimmerControl(Embedded:DimmerControl) {
+class Embedded:ReverseGammaDimmerControl(Embedded:DimmerControl) {
+
+   gamma(Int start) Int {
+     //start^2/255
+     //if (true) { return(start); }
+     Int res = start.squared;
+     res = res / 255;
+     if (res < 1) {
+       res = 1;
+       //log.log("upped gamma to 1");
+     }
+     if (res > 255) {
+       res = 255;
+       //log.log("downed gamma to 255");
+     }
+     //log.log("gamma got " + res + " for " + start);
+     return(res);
+   }
 
    doWrite(String wsw, String wlvl) {
      //from app 1 is min 255 is max
@@ -30,6 +47,7 @@ class Embedded:ReverseDimmerControl(Embedded:DimmerControl) {
         Int wlvli = app.strToInt(wlvl);
         if (wlvli < 1) { wlvli = 1; }
         if (wlvli > 255) { wlvli = 255; }
+        wlvli = gamma(wlvli);
       }
      }
      wlvli = 255 - wlvli; //255-255 = 0, most bright, 255-1=254 least bright

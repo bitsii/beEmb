@@ -87,7 +87,8 @@ class Embedded:DimmerControl {
         wlvli = 255;
       } else {
         Int wlvli = app.strToInt(wlvl);
-        if (wlvli < 0 || wlvli > 255) { wlvli = 255; }
+        if (wlvli < 1) { wlvli = 1; }
+        if (wlvli > 255) { wlvli = 255; }
       }
      }
      lastWlvli = wlvli; //avoid gc issues

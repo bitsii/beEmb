@@ -31,10 +31,7 @@ class Embedded:RGBControl {
        String ok = "ok";
        String on = "on";
        String off = "off";
-       /*Int rmq = twofity;
-       Int gmq = twofity;
-       Int bmq = twofity;
-       Int lvlmq = twofity;*/
+       String conType = "rgb";
      }
      fields {
        Int conPos = _conPos;
@@ -47,15 +44,11 @@ class Embedded:RGBControl {
    }
 
    conTypeGet() String {
-     return(conName);
+     return(conType);
    }
 
    initControl() {
      slots {
-       String brightness = "brightness";
-       String color = "color";
-       String ON = "ON";
-       String OFF = "OFF";
        String getrgb = "getrgb";
        String setrgb = "setrgb";
        String setsw = "setsw";
