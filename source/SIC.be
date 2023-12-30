@@ -26,11 +26,11 @@ class Embedded:SwitchIndicatorControl {
        Embedded:App app = ash.app;
        Int ic;
        Int lastSwEvent = Int.new();
+       Int conPos = _conPos;
+       String conType = "sic";
      }
      fields {
-       Int conPos = _conPos;
        Int lastEvent = Int.new();
-       String conName = _conName;
      }
      //pini = Int.new(_conArgs);
      if (_conArgs.has(",")) {
@@ -45,14 +45,14 @@ class Embedded:SwitchIndicatorControl {
    }
 
    conTypeGet() String {
-     return(conName);
+     return(conType);
    }
 
    initControl() {
      slots {
        String on = "on";
        String off = "off";
-       Embedded:SwitchControl sc;
+       any sc;
      }
      fields {
        String sw;

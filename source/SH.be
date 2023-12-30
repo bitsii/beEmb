@@ -45,7 +45,6 @@ class Embedded:AppShell {
        String slashn = "\n";
        String slashr = "\r";
        String fcdot = "fc.";
-       String htmlHead;
        Bool needsFsRestart = false;
        Bool needsRestart = false;
        String did;
@@ -63,6 +62,11 @@ class Embedded:AppShell {
        Bool needsGc = false;
        Int looperI = Int.new();
        Int drift = 75;
+     }
+     ifNotEmit(noWeb) {
+      slots {
+        String htmlHead;
+      }
      }
      app.plugin = self;
 
@@ -150,13 +154,14 @@ class Embedded:AppShell {
      if (TS.notEmpty(did)) {
       String d = ",";
       String cd = ";";
+      Int conPos = 0;
       for (any control in controls) {
         String conType = control.conType;
         Int le = control.lastEvent;
-        Int conPos = control.conPos;
-        if (def(le) && def(conPos)) {
+        if (def(le)) {
           les += conType += d += conPos += d += le += cd;
         }
+        conPos++=;
       }
      }
      lastEventsRes = les;

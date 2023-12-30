@@ -24,6 +24,15 @@ class Embedded:RGBGamDimCon(Embedded:RGBControl) {
 
    initControl() {
      super.initControl();
+     slots {
+       String setlvll = "setlvl";
+       String getlvl = "getlvl";
+       Int dclvli;
+       Int lastWlvli;
+     }
+     fields {
+       String lvl;
+     }
    }
 
    doState(List cmdl) String {

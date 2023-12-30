@@ -35,11 +35,10 @@ class Embedded:StrC {
        Int rgble;
        Bool rgbison = false;
        String conType = "sw";
+       Int conPos = _conPos;
      }
      fields {
-       Int conPos = _conPos;
        Int lastEvent = Int.new();
-       String conName = _conName;
      }
      if (_conArgs.has(",")) {
         auto cal = _conArgs.split(",");

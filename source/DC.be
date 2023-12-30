@@ -22,11 +22,10 @@ class Embedded:DimmerControl {
        Config config = ash.config;
        Embedded:App app = ash.app;
        String conType = "dim";
+       Int conPos = _conPos;
      }
      fields {
-       Int conPos = _conPos;
        Int lastEvent = Int.new();
-       String conName = _conName;
        Int pini;
      }
      //pini = Int.new(_conArgs);

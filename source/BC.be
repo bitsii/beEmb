@@ -32,11 +32,14 @@ class Embedded:ButtonControl {
        Int lastButVal;
        Int lastTrans;
        Int nextPushTime;
+       Int conPos = _conPos;
+       String conType = "bu";
+       String on = "on";
+       String off = "off";
+       String setsw = "setsw";
      }
      fields {
-       Int conPos = _conPos;
        Int lastEvent = Int.new();
-       String conName = _conName;
      }
      if (_conArgs.has(",")) {
        //all ints comma sep, fields are:
@@ -59,7 +62,7 @@ class Embedded:ButtonControl {
    }
 
    conTypeGet() String {
-     return(conName);
+     return(conType);
    }
 
    initControl() {
@@ -121,11 +124,11 @@ class Embedded:ButtonControl {
                   "swPos == conPos, nothing to do".print();
                   return(self);
                 }
-                Embedded:SwitchControl swc = ash.controls.get(swPos);
-                  if (TS.isEmpty(swc.sw) || swc.sw == swc.off) {
-                    swc.doState(List.new().addValue("dostate").addValue("notpw").addValue(swc.conPos.toString()).addValue(swc.setsw).addValue(swc.on));
-                  } elseIf (swc.sw == swc.on) {
-                    swc.doState(List.new().addValue("dostate").addValue("notpw").addValue(swc.conPos.toString()).addValue(swc.setsw).addValue(swc.off));
+                any swc = ash.controls.get(swPos);
+                  if (TS.isEmpty(swc.sw) || swc.sw == off) {
+                    swc.doState(List.new().addValue("dostate").addValue("notpw").addValue(swPos.toString()).addValue(setsw).addValue(on));
+                  } elseIf (swc.sw == on) {
+                    swc.doState(List.new().addValue("dostate").addValue("notpw").addValue(swPos.toString()).addValue(setsw).addValue(off));
                   }
               }
             }

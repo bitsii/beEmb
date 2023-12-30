@@ -24,11 +24,11 @@ class Embedded:SwitchControl {
        Int diri = 0;
        Config config = ash.config;
        Embedded:App app = ash.app;
+       Int conPos = _conPos;
+       String conType = "sw";
      }
      fields {
-       Int conPos = _conPos;
        Int lastEvent = Int.new();
-       String conName = _conName;
      }
      //pini = Int.new(_conArgs);
      if (_conArgs.has(",")) {
@@ -43,7 +43,7 @@ class Embedded:SwitchControl {
    }
 
    conTypeGet() String {
-     return(conName);
+     return(conType);
    }
 
    initControl() {
@@ -51,11 +51,11 @@ class Embedded:SwitchControl {
        Int scswi;
        //on = 0, off = 255
        String getsw = "getsw";
-     }
-     fields {
        String on = "on";
        String off = "off";
        String setsw = "setsw";
+     }
+     fields {
        String sw;
      }
      scswi = config.getPos("sc.sw." + conPos);
