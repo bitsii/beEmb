@@ -13,12 +13,12 @@ use System:Exception;
 
 class Embedded:Mdns {
 
-  new() self {
-    fields {
-      String name;
-      String service;
-      Int port;
-      String protocol;
+  new(String _name, String _service, Int _port, String _protocol) self {
+    slots {
+      String name =  _name;
+      String service = _service;
+      Int port = _port;
+      String protocol = _protocol;
     }
   }
   

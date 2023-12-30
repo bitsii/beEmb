@@ -175,7 +175,7 @@ class Embedded:AppShell {
    }
 
    checkMakeIds() {
-      fields {
+      slots {
         String pin;
       }
 
@@ -309,21 +309,21 @@ class Embedded:AppShell {
    startLoop() {
 
      ifNotEmit(noWeb) {
-       fields {
+       slots {
          Embedded:TinyWeb tweb;
        }
      }
      ifNotEmit(noSer) {
-       fields {
+       slots {
         Embedded:SerServer serserver;
        }
      }
      ifNotEmit(noMdns) {
-       fields {
+       slots {
         Embedded:Mdns mdserver;
        }
      }
-     fields {
+     slots {
        Embedded:TCPServer tcpserver;
        Embedded:TCPServer conserver;
      }
@@ -385,11 +385,7 @@ class Embedded:AppShell {
 
         if (Wifi.isConnected) {
           ifNotEmit(noMdns) {
-            mdserver = Embedded:Mdns.new();
-            mdserver.name = "CasNic" + did;
-            mdserver.service = "http";
-            mdserver.port = 80;
-            mdserver.protocol = "tcp";
+            mdserver = Embedded:Mdns.new("CasNic" + did, "http", 80, "tcp");
             mdserver.start();
           }
 

@@ -16,10 +16,12 @@ class Embedded:Wifi {
   default() self {
     fields {
       String mode;
-      String ssid;
-      String password;
       Bool up = false;
       String localIP;
+    }
+    slots {
+      String ssid;
+      String password;
     }
   }
 

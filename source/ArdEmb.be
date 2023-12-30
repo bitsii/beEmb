@@ -16,6 +16,8 @@ class Embedded:App {
    default() self { 
      fields {
        any plugin;
+     }
+     slots {
        Int hlCount = 0;
        Int zero = 0;
      }
