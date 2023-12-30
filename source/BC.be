@@ -114,7 +114,7 @@ class Embedded:ButtonControl {
               onStart.setValue(nowup);
             } elseIf (onStart >= 0) {
               Int ontime = nowup - onStart;
-              ("ontime " + ontime).print();
+              //("ontime " + ontime).print();
               if (resetPushTime > 0 && ontime > resetPushTime) {
                 "reset triggered, resetting".print();
                 ash.reset();

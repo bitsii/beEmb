@@ -91,7 +91,7 @@ class Embedded:RGBControl {
    }
 
    doState(List cmdl) String {
-     "in dostate rgb".print();
+     //"in dostate rgb".print();
      String scm = cmdl[3];
      if (scm == getsw) {
        return(sw);

@@ -879,8 +879,8 @@ class Embedded:AppShell {
       if (undef(sti)) {
         sti = 0;
       }
-      "sti".print();
-      sti.print();
+      //"sti".print();
+      //sti.print();
 
       Int i = 0;
       Int j = 0;

@@ -36,6 +36,8 @@ class Embedded:StrC {
        Bool rgbison = false;
        String conType = "sw";
        Int conPos = _conPos;
+       String ok = "ok";
+       String ud = "undefined";
      }
      fields {
        Int lastEvent = Int.new();
@@ -78,13 +80,13 @@ class Embedded:StrC {
    }
 
    doState(List cmdl) String {
-     "in dostate".print();
+     //"in dostate".print();
      String scm = cmdl[3];
      if (scm == getsw) {
       if (TS.notEmpty(sw)) {
         return(sw);
         } else {
-        return("undefined");
+        return(ud);
         }
      } elseIf (scm == setsw) {
         String insw = cmdl[4];
@@ -107,7 +109,7 @@ class Embedded:StrC {
         lastEvent.setValue(ash.nowup);
         ash.lastEventsRes = null;
      }
-     return("ok");
+     return(ok);
    }
 
    rgbOn() {

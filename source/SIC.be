@@ -83,7 +83,7 @@ class Embedded:SwitchIndicatorControl {
    }
 
    doSwitch(String insw) {
-     "in doSwitch".print();
+     //"in doSwitch".print();
      if (insw == on) {
       on.print(); //write crashes without
       app.pinModeOutput(pini);

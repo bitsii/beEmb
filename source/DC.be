@@ -23,6 +23,8 @@ class Embedded:DimmerControl {
        Embedded:App app = ash.app;
        String conType = "dim";
        Int conPos = _conPos;
+       String ok = "ok";
+       String ud = "undefined";
      }
      fields {
        Int lastEvent = Int.new();
@@ -96,19 +98,19 @@ class Embedded:DimmerControl {
    }
 
    doState(List cmdl) String {
-     "in dostate".print();
+     //"in dostate".print();
      String scm = cmdl[3];
      if (scm == getsw) {
        if (TS.notEmpty(sw)) {
          return(sw);
        } else {
-        return("undefined");
+        return(ud);
        }
       } elseIf (scm == getlvl) {
         if (TS.notEmpty(lvl)) {
           return(lvl);
         } else {
-          return("undefined");
+          return(ud);
         }
       } elseIf (scm == setlvll) {
         String inlvl = cmdl[4];
@@ -133,7 +135,7 @@ class Embedded:DimmerControl {
         lastEvent.setValue(ash.nowup);
         ash.lastEventsRes = null;
      }
-     return("ok");
+     return(ok);
    }
    
    clearStates() {
