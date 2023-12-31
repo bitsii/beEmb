@@ -28,15 +28,13 @@
 //
 //#define BESPEC_CON "0.sw.2.bu.14,0,30,0,10000" //nodemcu like athsw
 //
-//#define BESPEC_CON "0.rdim.2" //nodemcu just dim local led
-//#define BESPEC_CON "0.rgdim.2" //nodemcu just dim local led w gamma
+#define BESPEC_CON "0.dim.2,1" //nodemcu just dim local led (reversed)
+//#define BESPEC_CON "0.dim,gdim.2,1" //nodemcu just dim local led w gamma (reversed)
 //#define BESPEC_CON "0.sw.16" //nodemcu just sw
-#define BESPEC_CON "0.rgb.4,12,14" //nodemcu rgb
-//#define BESPEC_CON "0.rgbgdim.4,12,14" //nodemcu rgb w gamma dimming
+//#define BESPEC_CON "0.rgb.4,12,14" //nodemcu rgb
 //#define BESPEC_CON "0.dim.14" //nodemcu rgb testing rgbdim on blue
 //#define BESPEC_CON "0.rgb.4,12,14.str.0" //nodemcu rgb strobe
 //
-//#define BESPEC_CON "0.sw.16.dim.2.rgb.4,12,14" //nodemcu GRANDE
 //#define BESPEC_CON "0.sw.16"  //dollatek - one sw on 16
 //#define BESPEC_CON "0.dim.16"  //dollatek - one dim on 16
 //#define BESPEC_CON "0.sw.12,1.bu.5,0,30,0,30000"  //12 is switch, 13 is led, 5 button - athom plug v2 us - esp8266ex 2mb THE REAL ONE sic look unnecessary led does on it's own

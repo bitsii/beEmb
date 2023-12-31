@@ -25,15 +25,6 @@ class Embedded:Grande(Embedded:AppShell) {
      } elseIf (conName == "dim") {
        auto dimc = Embedded:DimmerControl.new(self, conPos, conName, conArgs);
        return(dimc);
-     } elseIf (conName == "rdim") {
-       auto rdimc = Embedded:ReverseDimmerControl.new(self, conPos, conName, conArgs);
-       return(rdimc);
-     } elseIf (conName == "rgdim") {
-       auto rgdimc = Embedded:ReverseGammaDimmerControl.new(self, conPos, conName, conArgs);
-       return(rgdimc);
-     } elseIf (conName == "rgbgdim") {
-       auto rgbgdim = Embedded:RGBGamDimCon.new(self, conPos, conName, conArgs);
-       return(rgbgdim);
      } elseIf (conName == "bu") {
        auto buc = Embedded:ButtonControl.new(self, conPos, conName, conArgs);
        return(buc);

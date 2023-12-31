@@ -29,6 +29,9 @@ class Embedded:RGBGamDimCon(Embedded:RGBControl) {
        Int dclvli;
        Int lastWlvli;
        String ud = "undefined";
+       Int tff = twofity;
+       Int one = 1;
+       Int hunk = 100000;
      }
      fields {
        String lvl;
@@ -42,6 +45,40 @@ class Embedded:RGBGamDimCon(Embedded:RGBControl) {
      }
 
      super.initControl();
+   }
+
+   doWrite() {
+     if (sw == off) {
+      app.analogWrite(rp, zero);
+      app.analogWrite(gp, zero);
+      app.analogWrite(bp, zero);
+      "offed wrote zeros".print();
+     } else {
+      ("rgb " + rgb).print();
+      List rgbl = rgb.split(",");
+      ri = app.strToInt(rgbl[0]);
+      gi = app.strToInt(rgbl[1]);
+      bi = app.strToInt(rgbl[2]);
+      if (ri < zero || ri > twofity) {
+        ri = zero;
+      }
+      if (gi < zero || gi > twofity) {
+        gi = zero;
+      }
+      if (bi < zero || bi > twofity) {
+        bi = zero;
+      }
+
+
+
+
+      app.analogWrite(rp, ri);
+      //("rp ri " + rp + " " + ri).print();
+      app.analogWrite(gp, gi);
+      //("gp gi " + gp + " " + gi).print();
+      app.analogWrite(bp, bi);
+      //("bp bi " + bp + " " + bi).print();
+     }
    }
 
    doState(List cmdl) String {

@@ -8,6 +8,7 @@
 ../beBase/source/base/Uses.be
 ../beBase/source/base/Object.be
 ../beBase/source/base/Int.be
+#../beBase/source/base/Float.be
 ../beBase/source/base/String.be
 ../beBase/source/base/Logic.be
 ../beBase/source/base/EncodeHex.be

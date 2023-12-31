@@ -25,6 +25,7 @@ class Embedded:DimmerControl {
        Int conPos = _conPos;
        String ok = "ok";
        String ud = "undefined";
+       Int diri = 0;
      }
      fields {
        Int lastEvent = Int.new();
@@ -34,6 +35,8 @@ class Embedded:DimmerControl {
      if (_conArgs.has(",")) {
         auto cal = _conArgs.split(",");
         spin = cal[0];
+        String sdir = cal[1];
+        diri = app.strToInt(sdir);
      } else {
       String spin = _conArgs;
      }
@@ -94,6 +97,9 @@ class Embedded:DimmerControl {
         if (wlvli < 1) { wlvli = 1; }
         if (wlvli > 255) { wlvli = 255; }
       }
+     }
+     if (diri != 0) {
+       wlvli = 255 - wlvli; //255-255 = 0, most bright, 255-1=254 least bright
      }
      lastWlvli = wlvli; //avoid gc issues
      app.pinModeOutput(pini);
