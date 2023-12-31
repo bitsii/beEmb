@@ -16,10 +16,13 @@ use Embedded:Config;
 
 class Embedded:ReverseDimmerControl(Embedded:DimmerControl) {
 
-   doWrite(String wsw, String wlvl) {
+   doWrite() {
      //from app 1 is min 255 is max
      //large numbers less bright, small number more bright, 0 most bright
      //255-1=254, low bright
+
+     String wsw = sw;
+     String wlvl = lvl;
 
      if (wsw == off) {
        wlvli = 0;

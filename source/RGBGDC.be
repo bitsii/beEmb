@@ -59,7 +59,7 @@ class Embedded:RGBGamDimCon(Embedded:RGBControl) {
        lvl = inlvl;
        config.put(rgbswi, sw);
        config.put(dclvli, lvl);
-       //doWrite(sw, lvl);
+       //doWrite();
        lastEvent.setValue(ash.nowup);
        ash.lastEventsRes = null;
        return(ok);

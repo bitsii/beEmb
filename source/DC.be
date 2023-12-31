@@ -77,9 +77,12 @@ class Embedded:DimmerControl {
 
    }
 
-   doWrite(String wsw, String wlvl) {
+   doWrite() {
      //from app 1 is min 255 is max
      //large numbers bright, small number less bright, 255 most bright
+
+     String wsw = sw;
+     String wlvl = lvl;
 
      if (wsw == off) {
        wlvli = 0;
@@ -118,7 +121,7 @@ class Embedded:DimmerControl {
         lvl = inlvl;
         config.put(dcswi, sw);
         config.put(dclvli, lvl);
-        doWrite(sw, lvl);
+        doWrite();
         lastEvent.setValue(ash.nowup);
         ash.lastEventsRes = null;
      } elseIf (scm == setsw) {
@@ -126,11 +129,11 @@ class Embedded:DimmerControl {
         if (insw == on) {
           sw = on;
           config.put(dcswi, sw);
-          doWrite(sw, lvl);
+          doWrite();
         } elseIf (insw == off) {
           sw = off;
           config.put(dcswi, sw);
-          doWrite(sw, lvl);
+          doWrite();
         }
         lastEvent.setValue(ash.nowup);
         ash.lastEventsRes = null;
