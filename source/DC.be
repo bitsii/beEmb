@@ -49,7 +49,7 @@ class Embedded:DimmerControl {
 
    initControl() {
      slots {
-       String setlvll = "setlvl";
+       String setlvl = "setlvl";
        String getlvl = "getlvl";
        String on = "on";
        String off = "off";
@@ -121,7 +121,7 @@ class Embedded:DimmerControl {
         } else {
           return(ud);
         }
-      } elseIf (scm == setlvll) {
+      } elseIf (scm == setlvl) {
         String inlvl = cmdl[4];
         sw = on;
         lvl = inlvl;

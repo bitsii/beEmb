@@ -24,7 +24,7 @@ class Embedded:RGBGamDimCon(Embedded:RGBControl) {
 
    initControl() {
      slots {
-       String setlvll = "setlvl";
+       String setlvl = "setlvl";
        String getlvl = "getlvl";
        Int dclvli;
        Int lastWlvli;
@@ -90,7 +90,7 @@ class Embedded:RGBGamDimCon(Embedded:RGBControl) {
        } else {
          return(ud);
        }
-     } elseIf (scm == setlvll) {
+     } elseIf (scm == setlvl) {
        String inlvl = cmdl[4];
        sw = on;
        lvl = inlvl;

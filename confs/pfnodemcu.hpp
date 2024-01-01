@@ -27,10 +27,10 @@
 //ends of those wires on each side of the button that closes them when pushed
 //
 //#define BESPEC_CON "0.sw.2.bu.14,0,30,0,10000" //nodemcu like athsw
-//#define BESPEC_CON "0.dim.2,1" //nodemcu just dim local led (reversed)
+#define BESPEC_CON "0.dim.2,1" //nodemcu just dim local led (reversed)
 //#define BESPEC_CON "0.gdim.2,1" //nodemcu just dim local led w gamma (reversed)
 //#define BESPEC_CON "0.sw.16" //nodemcu just sw
-#define BESPEC_CON "0.rgb.4,12,14" //nodemcu rgb
+//#define BESPEC_CON "0.rgb.4,12,14" //nodemcu rgb
 //#define BESPEC_CON "0.rgbgdim.4,12,14" //nodemcu rgb
 //#define BESPEC_CON "0.dim.14" //nodemcu rgb testing rgbdim on blue
 //#define BESPEC_CON "0.rgb.4,12,14.str.0" //nodemcu rgb strobe
