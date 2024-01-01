@@ -19,7 +19,7 @@ use Embedded:AppShell;
 class Embedded:LedL(Embedded:AppShell) {
 
    buildControl(Int conPos, String conName, String conArgs) {
-     if (conName == "rgb") {
+     if (conName == "rgb" || conName == "rgbgdim") {
        auto rgb = Embedded:RGBControl.new(self, conPos, conName, conArgs);
        return(rgb);
      } else {

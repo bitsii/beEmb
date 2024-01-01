@@ -28,7 +28,7 @@ class Embedded:Grande(Embedded:AppShell) {
      } elseIf (conName == "bu") {
        auto buc = Embedded:ButtonControl.new(self, conPos, conName, conArgs);
        return(buc);
-     } elseIf (conName == "rgb") {
+     } elseIf (conName == "rgb" || conName == "rgbgdim") {
        auto rgb = Embedded:RGBControl.new(self, conPos, conName, conArgs);
        return(rgb);
      } elseIf (conName == "str") {
