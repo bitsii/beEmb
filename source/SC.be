@@ -25,7 +25,7 @@ class Embedded:SwitchControl {
        Config config = ash.config;
        Embedded:App app = ash.app;
        Int conPos = _conPos;
-       String conType = "sw";
+       String conType = _conName;
        String ok = "ok";
        String ud = "undefined";
      }

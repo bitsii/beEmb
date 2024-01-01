@@ -21,7 +21,7 @@ class Embedded:DimmerControl {
        Embedded:AppShell ash = _ash;
        Config config = ash.config;
        Embedded:App app = ash.app;
-       String conType = "dim";
+       String conType = _conName;
        Int conPos = _conPos;
        String ok = "ok";
        String ud = "undefined";

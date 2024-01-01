@@ -27,7 +27,7 @@ class Embedded:SwitchIndicatorControl {
        Int ic;
        Int lastSwEvent = Int.new();
        Int conPos = _conPos;
-       String conType = "sic";
+       String conType = _conName;
      }
      fields {
        Int lastEvent = Int.new();

@@ -33,7 +33,7 @@ class Embedded:ButtonControl {
        Int lastTrans;
        Int nextPushTime;
        Int conPos = _conPos;
-       String conType = "bu";
+       String conType = _conName;
        String on = "on";
        String off = "off";
        String setsw = "setsw";

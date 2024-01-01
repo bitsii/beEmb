@@ -31,7 +31,7 @@ class Embedded:RGBControl {
        String ok = "ok";
        String on = "on";
        String off = "off";
-       String conType = "rgb";
+       String conType = _conName;
        Int conPos = _conPos;
      }
      fields {

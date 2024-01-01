@@ -34,7 +34,7 @@ class Embedded:StrC {
        Int onWin = 100;
        Int rgble;
        Bool rgbison = false;
-       String conType = "sw";
+       String conType = _conName;
        Int conPos = _conPos;
        String ok = "ok";
        String ud = "undefined";

@@ -23,7 +23,7 @@ class Embedded:Strobe(Embedded:AppShell) {
        auto rgb = Embedded:RGBControl.new(self, conPos, conName, conArgs);
        return(rgb);
      } elseIf (conName == "str") {
-       auto str = Embedded:StrC.new(self, conPos, conName, conArgs);
+       auto str = Embedded:StrC.new(self, conPos, "sw", conArgs);
        return(str);
      } else {
        "Unknown control conName in Switch".print();
