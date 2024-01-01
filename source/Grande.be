@@ -22,7 +22,7 @@ class Embedded:Grande(Embedded:AppShell) {
      if (conName == "sw") {
        auto swc = Embedded:SwitchControl.new(self, conPos, conName, conArgs);
        return(swc);
-     } elseIf (conName == "dim") {
+     } elseIf (conName == "dim" || conName == "gdim") {
        auto dimc = Embedded:DimmerControl.new(self, conPos, conName, conArgs);
        return(dimc);
      } elseIf (conName == "bu") {

@@ -24,6 +24,8 @@ class Embedded:AppShell {
        String lastEventsRes;
        List controls = List.new();
        List loopers = List.new();
+       List sxd = List.new();
+       List sxdi = List.new();
        Embedded:TCPClient concon;
      }
      slots {
@@ -140,9 +142,7 @@ class Embedded:AppShell {
      }
    }
 
-   doState(List cmdl) String {
-     //Int ctlPos = Int.new(cmdl[2]);
-     Int ctlPos = app.strToInt(cmdl[2]);
+   doState(Int ctlPos, List cmdl) String {
      return(controls[ctlPos].doState(cmdl));
    }
 
@@ -922,8 +922,25 @@ class Embedded:AppShell {
          return("on network nope");
        }
      } elseIf (cmd == "dostate" && cmdl.size > 3 && cmdl[3].begins("get")) {
-       stateres = doState(cmdl);
+       Int ctlPos = app.strToInt(cmdl[2]);
+       stateres = doState(ctlPos, cmdl);
        return(stateres);
+     } elseIf (cmd == "getstatexd") {
+       ctlPos = app.strToInt(cmdl[2]);
+       xd = sxd[ctlPos];
+       if (TS.isEmpty(xd)) {
+          xdi = sxdi[ctlPos];
+          if (undef(xdi)) {
+            xdi = config.getPos("xd." + ctlPos);
+            sxdi[ctlPos] = xdi;
+          }
+          xd = config.get(xdi);
+          if (TS.isEmpty(xd)) {
+            xd = "undefined";
+          }
+          sxd[ctlPos] = xd;
+       }
+       return(xd);
      }
      if (cmd.begins("do") || cmd == "getcontroldef") {
         //"got dostate".print();
@@ -941,7 +958,20 @@ class Embedded:AppShell {
           }
         }
         if (cmd == "dostate") {
-          String stateres = doState(cmdl);
+          ctlPos = app.strToInt(cmdl[2]);
+          String stateres = doState(ctlPos, cmdl);
+          return(stateres);
+        } elseIf (cmd == "dostatexd") {
+          ctlPos = app.strToInt(cmdl[2]);
+          String xd = cmdl[5];
+          sxd[ctlPos] = xd;
+          Int xdi = sxdi[ctlPos];
+          if (undef(xdi)) {
+            xdi = config.getPos("xd." + ctlPos);
+            sxdi[ctlPos] = xdi;
+          }
+          config.put(xdi, xd);
+          stateres = doState(ctlPos, cmdl);
           return(stateres);
         } elseIf (cmd == "doswspec") {
           return(swSpec);
