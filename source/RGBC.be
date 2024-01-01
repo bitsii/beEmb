@@ -31,8 +31,8 @@ class Embedded:RGBControl {
        String ok = "ok";
        String on = "on";
        String off = "off";
-       String conType = _conName;
        Int conPos = _conPos;
+       String conName = _conName;
      }
      fields {
        Int lastEvent = Int.new();
@@ -43,7 +43,7 @@ class Embedded:RGBControl {
    }
 
    conTypeGet() String {
-     return(conType);
+     return(conName);
    }
 
    initControl() {
@@ -90,14 +90,41 @@ class Embedded:RGBControl {
 
    }
 
-   doWrite() {
-     if (sw == off) {
-      app.analogWrite(rp, zero);
-      app.analogWrite(gp, zero);
-      app.analogWrite(bp, zero);
-      "offed wrote zeros".print();
+   doState(List cmdl) String {
+     "in dostate rgb".print();
+     String scm = cmdl[3];
+     if (scm == getsw) {
+       return(sw);
+     } elseIf (scm == getrgb) {
+       return(rgb);
+     } elseIf (scm == setsw) {
+        String insw = cmdl[4];
+        if (insw == on) {
+          //check and off other control if present
+          sw = insw;
+          config.put(rgbswi, on);
+          //lastevent et all handled below in common with setrgb
+        } elseIf (insw == off) {
+          sw = insw;
+          config.put(rgbswi, off);
+          app.analogWrite(rp, zero);
+          app.analogWrite(gp, zero);
+          app.analogWrite(bp, zero);
+          "offed wrote zeros".print();
+          lastEvent.setValue(ash.nowup);
+          ash.lastEventsRes = null;
+          return(ok);
+        }
+     } elseIf (scm == setrgb) {
+        //check and off other control if present
+        sw = on;
+        rgb = cmdl[4];
+        config.put(rgbswi, on);
+        config.put(rgbrgbi, rgb);
      } else {
-       ("rgb " + rgb).print();
+       return(ok);
+     }
+      ("rgb " + rgb).print();
       List rgbl = rgb.split(",");
       ri = app.strToInt(rgbl[0]);
       gi = app.strToInt(rgbl[1]);
@@ -117,41 +144,6 @@ class Embedded:RGBControl {
       //("gp gi " + gp + " " + gi).print();
       app.analogWrite(bp, bi);
       //("bp bi " + bp + " " + bi).print();
-     }
-   }
-
-   doState(List cmdl) String {
-     //"in dostate rgb".print();
-     String scm = cmdl[3];
-     if (scm == getsw) {
-       return(sw);
-     } elseIf (scm == getrgb) {
-       return(rgb);
-     } elseIf (scm == setsw) {
-        String insw = cmdl[4];
-        if (insw == on) {
-          //check and off other control if present
-          sw = insw;
-          config.put(rgbswi, on);
-          //lastevent et all handled below in common with setrgb
-        } elseIf (insw == off) {
-          sw = insw;
-          config.put(rgbswi, off);
-          doWrite();
-          lastEvent.setValue(ash.nowup);
-          ash.lastEventsRes = null;
-          return(ok);
-        }
-     } elseIf (scm == setrgb) {
-        //check and off other control if present
-        sw = on;
-        rgb = cmdl[4];
-        config.put(rgbswi, on);
-        config.put(rgbrgbi, rgb);
-     } else {
-       return(ok);
-     }
-      doWrite();
       lastEvent.setValue(ash.nowup);
       ash.lastEventsRes = null;
       return(ok);
