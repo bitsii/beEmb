@@ -88,7 +88,8 @@ class Embedded:AppShell {
      nextSwSpec = nowup + 540000;
      nextMaybeSave = nowup + 10000;//10 secs
      nextPow = nowup + 30000;//30 secs
-     nextWifiCheck = nowup + 180000;//3 mins
+     //nextWifiCheck = nowup + 180000;//3 mins
+     nextWifiCheck = nowup + 45000;//45 secs
      
      //"making webPage".print();
      ifNotEmit(noWeb) {
@@ -478,10 +479,10 @@ class Embedded:AppShell {
        if (nets.has(ssid)) {
          "my ssid present".print();
          Wifi.new(ssid, sec).start();
-         unless (Wifi.isConnected) {
-           "no reconnect restarting".print();
-           needsFsRestart = true;
-         }
+         //unless (Wifi.isConnected) {
+         //  "no reconnect restarting".print();
+         //  needsFsRestart = true;
+         //}
        }
      }
      unless(needsFsRestart) {
@@ -513,15 +514,18 @@ class Embedded:AppShell {
        }
        if (powi == 4 && resetByPow) {
          inResetByPow = true;
+         "now inResetByPow".print();
        }
      } else {
        powi = 1;
      }
+     ("powi " + powi).print();
      config.put(shpowi, powi.toString());
    }
 
    clearPow() {
      if (TS.notEmpty(config.get(shpowi))) {
+      "clearing powi".print();
       config.put(shpowi, "");
      }
    }
@@ -587,10 +591,13 @@ class Embedded:AppShell {
       return(self);
      }
      if (nowup > nextWifiCheck) {
-      nextWifiCheck = nowup + 180000;//3 mins
-      checkWifiUp();
-      needsGc = true;
-      return(self);
+      //nextWifiCheck = nowup + 180000;//3 mins
+      nextWifiCheck = nowup + 45000;//45 secs
+      unless (inResetByPow) {
+        checkWifiUp();
+        needsGc = true;
+        return(self);
+      }
      }
      if (nowup > nextSwSpec) {
       nextSwSpec = nowup + 540000;
@@ -1067,15 +1074,12 @@ class Embedded:AppShell {
      }
 
      if (cmd == "setwifi") {
-        ssid = cmdl[3];
-        sec = cmdl[4];
         if (cmdl[2] == "hex") {
-          if (TS.notEmpty(ssid)) {
-            ssid = Encode:Hex.decode(ssid);
-          }
-          if (TS.notEmpty(sec)) {
-            sec = Encode:Hex.decode(sec);
-          }
+          ssid = Encode:Hex.decode(cmdl[3]);
+          sec = Encode:Hex.decode(cmdl[4]);
+        } else {
+          ssid = cmdl[3];
+          sec = cmdl[4];
         }
         if (TS.notEmpty(ssid)) {
           //("got ssid " + ssid).print();
@@ -1087,12 +1091,12 @@ class Embedded:AppShell {
             ("sec missing").print();
             config.put(shseci, "");
           }
-          return("Wifi Setup Written, restart to activate");
+          return("Wifi Setup Written");
         } else {
           ("ssid missing").print();
           config.put(shssidi, "");
           config.put(shseci, "");
-          return("Wifi Setup cleared, restart to activate");
+          return("Wifi Setup cleared");
         }
      } elseIf (cmd == "reset") {
       reset();
