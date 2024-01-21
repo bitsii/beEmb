@@ -11,7 +11,7 @@
 //
 //#define BESPEC_SW "1,p2.Generic.22"  //supergeneric
 //#define BESPEC_SW "1,p2.WNN.31"  //nodemcu
-#define BESPEC_SW "1,q,p3,p2.Nmcu.58"  //nodemcu q = quickstate, p2 auth type 2 (hash), p2 always last
+#define BESPEC_SW "1,q,p3,p2.Nmcu.59"  //nodemcu q = quickstate, p2 auth type 2 (hash), p2 always last
 //#define BESPEC_SW  "0.DollaTek.20" //dollatek 2mb 1led
 //#define BESPEC_SW "1,p2.WNAP2.29" //Athom Plug V2 US THE REAL ONE
 //

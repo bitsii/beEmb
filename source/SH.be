@@ -50,6 +50,7 @@ class Embedded:AppShell {
        String fcdot = "fc.";
        Bool needsFsRestart = false;
        Bool needsRestart = false;
+       Bool justSetWifi = false;
        String did;
        String swSpec;
        String devCode;
@@ -474,20 +475,16 @@ class Embedded:AppShell {
    
    checkWifiUp() {
     //"checking if wifi up".print();
-    unless (Wifi.isConnected || TS.isEmpty(ssid) || needsFsRestart || needsRestart) {
+    unless (Wifi.isConnected || TS.isEmpty(ssid) || justSetWifi) {
        "wifi configured but not up".print();
        auto wifi = Embedded:Wifi.new();
        auto nets = wifi.scanNetworks();
        if (nets.has(ssid)) {
          "my ssid present".print();
          Wifi.new(ssid, sec).start();
-         //unless (Wifi.isConnected) {
-         //  "no reconnect restarting".print();
-         //  needsFsRestart = true;
-         //}
        }
      }
-     unless(needsFsRestart || needsRestart) {
+     unless(needsFsRestart || needsRestart || justSetWifi) {
        if (Wifi.up && undef(tcpserver)) {
          needsNetworkInit = true;
        }
@@ -594,7 +591,11 @@ class Embedded:AppShell {
      }
      if (nowup > endResetByPow) {
        endResetByPow = nowup + 1800000; //30 mins
-       inResetByPow = false;
+       if (inResetByPow) {
+        inResetByPow = false;
+        needsFsRestart = true;
+        "endResetByPow".print();
+       }
        return(self);
      }
      if (nowup > nextWifiCheck) {
@@ -1061,7 +1062,7 @@ class Embedded:AppShell {
       } else {
         return("Error, newdid sized 16 required");
       }
-
+      config.put(shpowi, "");
       return("allset done");
 
       }
@@ -1098,11 +1099,13 @@ class Embedded:AppShell {
             ("sec missing").print();
             config.put(shseci, "");
           }
+          justSetWifi = true;
           return("Wifi Setup Written");
         } else {
           ("ssid missing").print();
           config.put(shssidi, "");
           config.put(shseci, "");
+          justSetWifi = true;
           return("Wifi Setup cleared");
         }
      } elseIf (cmd == "reset") {
