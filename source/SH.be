@@ -508,10 +508,10 @@ class Embedded:AppShell {
      if (TS.notEmpty(pow)) {
        Int powi = Int.new(pow);
        powi++=;
-       if (powi > 3) {
-         powi = 3;
+       if (powi > 4) {
+         powi = 4;
        }
-       if (powi == 3 && resetByPow) {
+       if (powi == 4 && resetByPow) {
          inResetByPow = true;
          "now inResetByPow".print();
        }
