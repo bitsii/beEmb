@@ -1,10 +1,10 @@
 #!/bin/bash
 
-export APPBLDNM=pfaiyatoeh9w
+export APPBLDNM=pfaiya9wrgbw
 
 mkdir -p $APPBLDNM
 
-echo "Profile for Aiyato esp home (tas) 9w " > $APPBLDNM/README.txt
+echo "Profile for Aiyato esp home (tas) 9w rgbw " > $APPBLDNM/README.txt
 
 export BEEMB_CONF=../beEmb/confs/${APPBLDNM}.hpp
 

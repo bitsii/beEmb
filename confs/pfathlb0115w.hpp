@@ -17,7 +17,8 @@
 //#define BESPEC_CON "" //supergeneric
 //Just the R G B part now
 //FOR THE LB01-15W 4,5,12,13i,14 looks like 4,12,14 are r,g,b 5 is white level 13 is temp
-#define BESPEC_CON "0.rgb.4,12,14"
+//#define BESPEC_CON "0.rgb.4,12,14"
+#define BESPEC_CON "0.rgbgdim.4,12,14"
 //putconfigs pass raw fc.conspec 0.dim.2,0 e
 //
 //pinposes //16, 2 nodemcu - Athom 16A US 13 LED 14 RELAY, SONOFF BASIC R2 13 LED 12 RELAY, 16 for dollatek 8285

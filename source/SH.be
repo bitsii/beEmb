@@ -87,7 +87,7 @@ class Embedded:AppShell {
      nextUpdateCheck = nowup + 60000;
      nextSwSpec = nowup + 540000;
      nextMaybeSave = nowup + 10000;//10 secs
-     nextPow = nowup + 30000;//30 secs
+     nextPow = nowup + 45000;//45 secs
      //nextWifiCheck = nowup + 180000;//3 mins
      nextWifiCheck = nowup + 45000;//45 secs
      
@@ -472,7 +472,7 @@ class Embedded:AppShell {
    
    checkWifiUp() {
     //"checking if wifi up".print();
-    unless (Wifi.isConnected || TS.isEmpty(ssid)) {
+    unless (Wifi.isConnected || TS.isEmpty(ssid) || needsFsRestart || needsRestart) {
        "wifi configured but not up".print();
        auto wifi = Embedded:Wifi.new();
        auto nets = wifi.scanNetworks();
@@ -509,10 +509,10 @@ class Embedded:AppShell {
      if (TS.notEmpty(pow)) {
        Int powi = Int.new(pow);
        powi++=;
-       if (powi > 4) {
-         powi = 4;
+       if (powi > 3) {
+         powi = 3;
        }
-       if (powi == 4 && resetByPow) {
+       if (powi == 3 && resetByPow) {
          inResetByPow = true;
          "now inResetByPow".print();
        }
@@ -586,7 +586,7 @@ class Embedded:AppShell {
       return(self);
      }
      if (nowup > nextPow) {
-      nextPow = nowup + 30000;//30 secs
+      nextPow = nowup + 45000;//45 secs
       clearPow();
       return(self);
      }

@@ -15,9 +15,7 @@
 // ctlconfver.control.ctlconf,args.control.ctlconf,args
 //
 //#define BESPEC_CON "" //supergeneric
-//next really rgbcct, rgbcw red green blue cold warm
-//W B R T G || C B R W G pins 4,5,12,13,14
-//Just the R G B part now
+//for aiyato rgbw pins - 12 r, 14 g, 5 b, 4 cold, 13 warm
 #define BESPEC_CON "0.rgbgdim.12,14,5" //
 //putconfigs pass raw fc.conspec 0.dim.2,0 e
 //
