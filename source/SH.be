@@ -43,6 +43,7 @@ class Embedded:AppShell {
        Int nextRestart = 0;
        Int nextMaybeSave = 0;
        Int nextPow = 0;
+       Int endResetByPow = 0;
        Int nextWifiCheck = 0;
        String slashn = "\n";
        String slashr = "\r";
@@ -88,6 +89,7 @@ class Embedded:AppShell {
      nextSwSpec = nowup + 540000;
      nextMaybeSave = nowup + 10000;//10 secs
      nextPow = nowup + 45000;//45 secs
+     endResetByPow = nowup + 1800000; //30 mins
      //nextWifiCheck = nowup + 180000;//3 mins
      nextWifiCheck = nowup + 45000;//45 secs
      
@@ -485,7 +487,7 @@ class Embedded:AppShell {
          //}
        }
      }
-     unless(needsFsRestart) {
+     unless(needsFsRestart || needsRestart) {
        if (Wifi.up && undef(tcpserver)) {
          needsNetworkInit = true;
        }
@@ -589,6 +591,11 @@ class Embedded:AppShell {
       nextPow = nowup + 45000;//45 secs
       clearPow();
       return(self);
+     }
+     if (nowup > endResetByPow) {
+       endResetByPow = nowup + 1800000; //30 mins
+       inResetByPow = false;
+       return(self);
      }
      if (nowup > nextWifiCheck) {
       //nextWifiCheck = nowup + 180000;//3 mins
