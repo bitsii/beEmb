@@ -16,7 +16,7 @@
 //
 //#define BESPEC_CON "" //supergeneric
 //next really rgbcct, rgbcw red green blue cold warm
-//R W G T B || R C G W B pin order 4,5,12,13,14
+//R W G T B || R C G W B pin order 4,5,12,13,14 - 5 cold, 13 warm
 //#define BESPEC_CON "0.pwmh.4.pwmh.5.pwmh.12.pwmh.13.pwmh.14.rgbcw.0,2,4,1,3" //Athom 7W 600lm RGBCCT Bulb (LB01-7W-B22)
 //Just the R G B part now
 //#define BESPEC_CON "0.rgb.4,12,14" //Athom 7W 600lm RGBCCT Bulb (LB01-7W-B22)
