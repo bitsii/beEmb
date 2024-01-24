@@ -32,8 +32,8 @@
 //#define BESPEC_CON "0.sw.16" //nodemcu just sw
 //#define BESPEC_CON "0.rgb.4,12,14" //nodemcu rgb
 //#define BESPEC_CON "0.rgbgdim.4,12,14" //nodemcu rgb
-//#define BESPEC_CON "0.cctsgdim.5,13"  //color temp only 2 leds, 5 cold, 13 warm
-#define BESPEC_CON "0.cctsgdim.14,4" //red warm, blue cold  first pin cold, second warm
+#define BESPEC_CON "0.cctsgdim.5,13"  //color temp only 2 leds, 5 cold, 13 warm
+//#define BESPEC_CON "0.cctsgdim.14,4" //red warm, blue cold  first pin cold, second warm
 //#define BESPEC_CON "0.gdim.5.gdim.13" //
 //#define BESPEC_CON "0.rgb.4,12,14.str.0" //nodemcu rgb strobe
 //

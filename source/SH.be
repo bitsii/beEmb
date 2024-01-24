@@ -387,13 +387,12 @@ class Embedded:AppShell {
          tweb.start();
         }
 
-        if (Wifi.isConnected) {
+        //if (Wifi.isConnected) {
           ifNotEmit(noMdns) {
             mdserver = Embedded:Mdns.new("CasNic" + did, "http", 80, "tcp");
             mdserver.start();
           }
-
-        }
+        //}
 
        }
       }
