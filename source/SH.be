@@ -24,7 +24,6 @@ class Embedded:AppShell {
        String lastEventsRes;
        List controls = List.new();
        List loopers = List.new();
-       List chkds = List.new();
        List sxd = List.new();
        List sxdi = List.new();
        Embedded:TCPClient concon;
@@ -148,13 +147,6 @@ class Embedded:AppShell {
    }
 
    doState(Int ctlPos, List cmdl) String {
-     looperI.setValue(zero);
-     while (looperI < chkds.size) {
-       unless (chkds.get(looperI).checkDoState(ctlPos, cmdl)) {
-          return("Failed, Invalid States");
-       }
-       looperI++=;
-     }
      return(controls[ctlPos].doState(cmdl));
    }
 

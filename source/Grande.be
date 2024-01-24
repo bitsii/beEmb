@@ -34,9 +34,6 @@ class Embedded:Grande(Embedded:AppShell) {
      } elseIf (conName == "cctsgdim") {
        auto cct = Embedded:CCTControl.new(self, conPos, conName, conArgs);
        return(cct);
-     } elseIf (conName == "esc") {
-       auto esc = Embedded:ExclusiveSwitchControl.new(self, conPos, conName, conArgs);
-       return(esc);
      } elseIf (conName == "str") {
        auto str = Embedded:StrC.new(self, conPos, "sw", conArgs);
        return(str);
