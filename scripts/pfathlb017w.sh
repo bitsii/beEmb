@@ -8,7 +8,7 @@ echo "Profile for Athom 7W 600lm RGBCCT Bulb (LB01-7W-B22) " > $APPBLDNM/README.
 
 export BEEMB_CONF=../beEmb/confs/${APPBLDNM}.hpp
 
-./scripts/bldesp8266noser.sh --mainClass Embedded:RGBSh source/RGBC.be source/RGBSh.be
+./scripts/bldesp8266noser.sh --mainClass Embedded:RGBCWSh source/RGBCWC.be source/RGBCWSh.be
 
 cp ard/* $APPBLDNM
 
