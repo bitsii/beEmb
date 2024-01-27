@@ -31,9 +31,12 @@ class Embedded:Grande(Embedded:AppShell) {
      } elseIf (conName == "rgb" || conName == "rgbgdim") {
        auto rgb = Embedded:RGBControl.new(self, conPos, conName, conArgs);
        return(rgb);
-     } elseIf (conName == "cctsgdim") {
-       auto cct = Embedded:CCTControl.new(self, conPos, conName, conArgs);
+     } elseIf (conName == "cwgd") {
+       auto cct = Embedded:CWCtl.new(self, conPos, conName, conArgs);
        return(cct);
+     } elseIf (conName == "rgbcwgd") {
+       auto rgbcw = Embedded:RGBCWCtl.new(self, conPos, conName, conArgs);
+       return(rgbcw);
      } elseIf (conName == "str") {
        auto str = Embedded:StrC.new(self, conPos, "sw", conArgs);
        return(str);

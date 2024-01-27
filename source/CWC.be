@@ -15,7 +15,7 @@ use Text:Strings as TS;
 use Embedded:AppShell;
 use Embedded:Config;
 
-class Embedded:CCTControl {
+class Embedded:CWCtl {
 
    new(_ash, Int _conPos, String _conName, String _conArgs) {
 
@@ -52,8 +52,8 @@ class Embedded:CCTControl {
        String setcw = "setcw";
        String setsw = "setsw";
        String getsw = "getsw";
-       Int cctcwi;
-       Int cctswi;
+       Int cwcwi;
+       Int cwswi;
      }
      fields {
        Int cp;
@@ -62,24 +62,24 @@ class Embedded:CCTControl {
        Int wi;
      }
 
-     cctcwi = config.getPos("ccts.cw." + conPos);
-     cctswi = config.getPos("ccts.sw." + conPos);
+     cwcwi = config.getPos("cws.cw." + conPos);
+     cwswi = config.getPos("cws.sw." + conPos);
 
      if (conArgs.has(",")) {
         auto cal = conArgs.split(",");
         if (cal.size < 2) {
-          "not enough pins for ccts".print();
+          "not enough pins for cws".print();
         }
         cp = app.strToInt(cal[0]);
         wp = app.strToInt(cal[1]);
      }
 
-    String incw = config.get(cctcwi);
+    String incw = config.get(cwcwi);
     if (TS.notEmpty(incw)) {
       cw = incw;
     }
 
-    String insw = config.get(cctswi);
+    String insw = config.get(cwswi);
     if (TS.notEmpty(insw)) {
       sw = insw;
       doState(List.new().addValue("dostate").addValue("notpw").addValue(conPos.toString()).addValue(setsw).addValue(sw));
@@ -99,11 +99,11 @@ class Embedded:CCTControl {
         if (insw == on) {
           //check and off other control if present
           sw = insw;
-          config.put(cctswi, on);
+          config.put(cwswi, on);
           //lastevent et all handled below in common with setrgb
         } elseIf (insw == off) {
           sw = insw;
-          config.put(cctswi, off);
+          config.put(cwswi, off);
           app.analogWrite(cp, zero);
           app.analogWrite(wp, zero);
           "offed wrote zeros".print();
@@ -115,8 +115,8 @@ class Embedded:CCTControl {
         //check and off other control if present
         sw = on;
         cw = cmdl[4];
-        config.put(cctswi, on);
-        config.put(cctcwi, cw);
+        config.put(cwswi, on);
+        config.put(cwcwi, cw);
      } else {
        return(ok);
      }
@@ -138,8 +138,8 @@ class Embedded:CCTControl {
    }
 
    clearStates() {
-     config.put(cctswi, off);
-     config.put(cctcwi, dfitys);
+     config.put(cwswi, off);
+     config.put(cwcwi, dfitys);
    }
    
 }

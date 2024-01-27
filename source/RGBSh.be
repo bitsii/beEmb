@@ -16,15 +16,12 @@ use Embedded:Aes as Crypt;
 use Encode:Url as EU;
 use Embedded:AppShell;
 
-class Embedded:LedL(Embedded:AppShell) {
+class Embedded:RGBSh(Embedded:AppShell) {
 
    buildControl(Int conPos, String conName, String conArgs) {
      if (conName == "rgb" || conName == "rgbgdim") {
        auto rgb = Embedded:RGBControl.new(self, conPos, conName, conArgs);
        return(rgb);
-     } elseIf (conName == "cctsgdim") {
-       auto cct = Embedded:CCTControl.new(self, conPos, conName, conArgs);
-       return(cct);
      } else {
        "Unknown control conName".print();
      }
