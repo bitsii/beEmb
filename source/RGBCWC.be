@@ -26,7 +26,6 @@ class Embedded:RGBCWCtl {
        Int lastSwEvent = Int.new();
        String conArgs = _conArgs;
        Int zero = 0;
-       Int twofidy = 250;
        Int twofidyfi = 255;
        String fifidy = "255,255,255,255,255"; //r,g,b,c,w
        String ok = "ok";
@@ -133,7 +132,7 @@ class Embedded:RGBCWCtl {
      } else {
        return(ok);
      }
-      ("rgb " + rgb).print();
+      ("rgbcw " + rgbcw).print();
       List rgbcwl = rgbcw.split(",");
       ri = app.strToInt(rgbcwl[0]);
       gi = app.strToInt(rgbcwl[1]);
@@ -155,7 +154,7 @@ class Embedded:RGBCWCtl {
       if (wi < zero || wi > twofidyfi) {
         wi = zero;
       }
-      if (ri > twofidy && gi > twofidy && bi > twofidy) {
+      if (ri == twofidyfi && gi == twofidyfi && bi == twofidyfi) {
          app.analogWrite(rp, zero);
          app.analogWrite(gp, zero);
          app.analogWrite(bp, zero);
