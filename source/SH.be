@@ -464,7 +464,8 @@ class Embedded:AppShell {
      //("shseci " + shseci).print();
 
      if (TS.notEmpty(ssid) && TS.notEmpty(sec)) {
-       ("ssid " + ssid + " sec " + sec).print();
+       //("ssid " + ssid + " sec " + sec).print();
+       ("ssid " + ssid).print();
        app.wdtFeed();
        app.yield();
        //app.wdtDisable();
