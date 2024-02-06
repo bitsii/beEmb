@@ -114,10 +114,10 @@ class Embedded:Config {
       //("fn " + fn).print();
       emit(cc) {
         """
-        //const char* fnn = bevp_fn->bems_toCcString().c_str();
-        //Serial.println(bevp_fn->bems_toCcString().c_str());
-        if (SPIFFS.exists(bevp_fn->bems_toCcString().c_str())) {
-          File fhn = SPIFFS.open(bevp_fn->bems_toCcString().c_str(), "r");
+        //const char* fnn = beq->bevl_fn->bems_toCcString().c_str();
+        //Serial.println(beq->bevl_fn->bems_toCcString().c_str());
+        if (SPIFFS.exists(beq->bevl_fn->bems_toCcString().c_str())) {
+          File fhn = SPIFFS.open(beq->bevl_fn->bems_toCcString().c_str(), "r");
           if (!fhn) {
               Serial.println("file open failed");
           } else {
@@ -143,10 +143,10 @@ class Embedded:Config {
       //("fn " + fn).print();
       emit(cc) {
         """
-        //const char* fnv = bevp_fn->bems_toCcString().c_str();
-        //Serial.println(bevp_fn->bems_toCcString().c_str());
-        if (SPIFFS.exists(bevp_fn->bems_toCcString().c_str())) {
-          File fhv = SPIFFS.open(bevp_fn->bems_toCcString().c_str(), "r");
+        //const char* fnv = beq->bevl_fn->bems_toCcString().c_str();
+        //Serial.println(beq->bevl_fn->bems_toCcString().c_str());
+        if (SPIFFS.exists(beq->bevl_fn->bems_toCcString().c_str())) {
+          File fhv = SPIFFS.open(beq->bevl_fn->bems_toCcString().c_str(), "r");
           if (!fhv) {
               Serial.println("file open failed");
           } else {
@@ -211,8 +211,8 @@ class Embedded:Config {
             //("fn " + fn).print();
             emit(cc) {
               """
-              //Serial.println(bevp_fn->bems_toCcString().c_str());
-              File fhn = SPIFFS.open(bevp_fn->bems_toCcString().c_str(), "w");
+              //Serial.println(beq->bevl_fn->bems_toCcString().c_str());
+              File fhn = SPIFFS.open(beq->bevl_fn->bems_toCcString().c_str(), "w");
               if (!fhn) {
                   Serial.println("file open failed");
               } else {
@@ -228,8 +228,8 @@ class Embedded:Config {
             //("fn " + fn).print();
             emit(cc) {
               """
-              //Serial.println(bevp_fn->bems_toCcString().c_str());
-              File fhv = SPIFFS.open(bevp_fn->bems_toCcString().c_str(), "w");
+              //Serial.println(beq->bevl_fn->bems_toCcString().c_str());
+              File fhv = SPIFFS.open(beq->bevl_fn->bems_toCcString().c_str(), "w");
               if (!fhv) {
                   Serial.println("file open failed");
               } else {
@@ -247,9 +247,9 @@ class Embedded:Config {
           fn += bedn += lpos.toString();
           emit(cc) {
             """
-            //const char* fnn = bevp_fn->bems_toCcString().c_str();
-            if (SPIFFS.exists(bevp_fn->bems_toCcString().c_str())) {
-               SPIFFS.remove(bevp_fn->bems_toCcString().c_str());
+            //const char* fnn = beq->bevl_fn->bems_toCcString().c_str();
+            if (SPIFFS.exists(beq->bevl_fn->bems_toCcString().c_str())) {
+               SPIFFS.remove(beq->bevl_fn->bems_toCcString().c_str());
             }
             """
           }
@@ -257,9 +257,9 @@ class Embedded:Config {
           fn += bedv += lpos.toString();
           emit(cc) {
             """
-            //const char* fnv = bevp_fn->bems_toCcString().c_str();
-            if (SPIFFS.exists(bevp_fn->bems_toCcString().c_str())) {
-               SPIFFS.remove(bevp_fn->bems_toCcString().c_str());
+            //const char* fnv = beq->bevl_fn->bems_toCcString().c_str();
+            if (SPIFFS.exists(beq->bevl_fn->bems_toCcString().c_str())) {
+               SPIFFS.remove(beq->bevl_fn->bems_toCcString().c_str());
             }
             """
           }
