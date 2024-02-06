@@ -88,7 +88,7 @@ class Embedded:AppShell {
      app.uptime(nowup);
      nextUpdateCheck = nowup + 60000;
      nextSwSpec = nowup + 540000;
-     nextMaybeSave = nowup + 10000;//10 secs
+     nextMaybeSave = nowup + 15000;//15 secs
      nextPow = nowup + 45000;//45 secs
      endResetByPow = nowup + 1800000; //30 mins
      //nextWifiCheck = nowup + 180000;//3 mins
@@ -576,7 +576,7 @@ class Embedded:AppShell {
        return(self);
      }
      if (nowup > nextMaybeSave) {
-      nextMaybeSave = nowup + 10000;//10 secs
+      nextMaybeSave = nowup + 15000;//15 secs
       if (config.changed) {
         "maybeSave config".print();
         config.maybeSave();

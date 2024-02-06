@@ -24,7 +24,7 @@ class Embedded:Config {
       String bedn = "/bedn/";
       String bedv = "/bedv/";
       String bedmax = "/bedmax";
-      String fn = String.new();
+      Int lastBmx = 0;
     }
   }
 
@@ -62,6 +62,7 @@ class Embedded:Config {
 
   maybeSave() {
     if (changed) {
+      changed = false;
       save();
     }
   }
@@ -72,15 +73,15 @@ class Embedded:Config {
     //"loading".print();
     emit(cc) {
       """
-    LittleFS.begin();
+    SPIFFS.begin();
       """
     }
     Int fsz = Int.new();
     emit(cc) {
       """
       const char* fnx = bevp_bedmax->bems_toCcString().c_str();
-      if (LittleFS.exists(fnx)) {
-        File fhx = LittleFS.open(fnx, "r");
+      if (SPIFFS.exists(fnx)) {
+        File fhx = SPIFFS.open(fnx, "r");
         if (!fhx) {
             Serial.println("file open failed");
         } else {
@@ -99,11 +100,12 @@ class Embedded:Config {
       }
       """
     }
-    if (TS.isEmpty(bmxs)) {
+    if (TS.isEmpty(bmxs) || bmxs.isInteger!) {
       //"bmxs empty".print();
       return(self);
     }
     //("bmxs " + bmxs).print();
+    String fn = String.new();
     Int bmx = Int.new(bmxs);
     for (Int i = 0;i < bmx;i++=) {
       //("try load " + i).print();
@@ -114,8 +116,8 @@ class Embedded:Config {
         """
         //const char* fnn = bevp_fn->bems_toCcString().c_str();
         //Serial.println(bevp_fn->bems_toCcString().c_str());
-        if (LittleFS.exists(bevp_fn->bems_toCcString().c_str())) {
-          File fhn = LittleFS.open(bevp_fn->bems_toCcString().c_str(), "r");
+        if (SPIFFS.exists(bevp_fn->bems_toCcString().c_str())) {
+          File fhn = SPIFFS.open(bevp_fn->bems_toCcString().c_str(), "r");
           if (!fhn) {
               Serial.println("file open failed");
           } else {
@@ -143,8 +145,8 @@ class Embedded:Config {
         """
         //const char* fnv = bevp_fn->bems_toCcString().c_str();
         //Serial.println(bevp_fn->bems_toCcString().c_str());
-        if (LittleFS.exists(bevp_fn->bems_toCcString().c_str())) {
-          File fhv = LittleFS.open(bevp_fn->bems_toCcString().c_str(), "r");
+        if (SPIFFS.exists(bevp_fn->bems_toCcString().c_str())) {
+          File fhv = SPIFFS.open(bevp_fn->bems_toCcString().c_str(), "r");
           if (!fhv) {
               Serial.println("file open failed");
           } else {
@@ -174,9 +176,10 @@ class Embedded:Config {
         //if (TS.isEmpty(bvs)) { "bvs empty".print(); }
       }
     }
+    lastBmx = bmx;
     emit(cc) {
       """
-    LittleFS.end();
+    SPIFFS.end();
       """
     }
     //"load done".print();
@@ -191,10 +194,11 @@ class Embedded:Config {
     //begin
     emit(cc) {
       """
-    LittleFS.begin();
+    SPIFFS.begin();
       """
     }
     //"save looping".print();
+    String fn = String.new();
     for (Int lpos = 0;lpos < names.size;lpos++=) {
       String name = names.get(lpos);
       String value = values.get(lpos);
@@ -208,7 +212,7 @@ class Embedded:Config {
             emit(cc) {
               """
               //Serial.println(bevp_fn->bems_toCcString().c_str());
-              File fhn = LittleFS.open(bevp_fn->bems_toCcString().c_str(), "w");
+              File fhn = SPIFFS.open(bevp_fn->bems_toCcString().c_str(), "w");
               if (!fhn) {
                   Serial.println("file open failed");
               } else {
@@ -225,7 +229,7 @@ class Embedded:Config {
             emit(cc) {
               """
               //Serial.println(bevp_fn->bems_toCcString().c_str());
-              File fhv = LittleFS.open(bevp_fn->bems_toCcString().c_str(), "w");
+              File fhv = SPIFFS.open(bevp_fn->bems_toCcString().c_str(), "w");
               if (!fhv) {
                   Serial.println("file open failed");
               } else {
@@ -244,8 +248,8 @@ class Embedded:Config {
           emit(cc) {
             """
             //const char* fnn = bevp_fn->bems_toCcString().c_str();
-            if (LittleFS.exists(bevp_fn->bems_toCcString().c_str())) {
-               LittleFS.remove(bevp_fn->bems_toCcString().c_str());
+            if (SPIFFS.exists(bevp_fn->bems_toCcString().c_str())) {
+               SPIFFS.remove(bevp_fn->bems_toCcString().c_str());
             }
             """
           }
@@ -254,8 +258,8 @@ class Embedded:Config {
           emit(cc) {
             """
             //const char* fnv = bevp_fn->bems_toCcString().c_str();
-            if (LittleFS.exists(bevp_fn->bems_toCcString().c_str())) {
-               LittleFS.remove(bevp_fn->bems_toCcString().c_str());
+            if (SPIFFS.exists(bevp_fn->bems_toCcString().c_str())) {
+               SPIFFS.remove(bevp_fn->bems_toCcString().c_str());
             }
             """
           }
@@ -264,24 +268,26 @@ class Embedded:Config {
       }
     }
     //save lpos as bedmax
-    String bmxs = lpos.toString();
-    emit(cc) {
-      """
-      File fhn = LittleFS.open(bevp_bedmax->bems_toCcString().c_str(), "w");
-      if (!fhn) {
-          Serial.println("file open failed");
-      } else {
-        const uint8_t* dataPointern = beq->bevl_bmxs->bevi_bytes.data();
-        fhn.write(dataPointern, beq->bevl_bmxs->bevp_size->bevi_int);
-        fhn.close();
+    if (lpos != lastBmx) {
+      lastBmx = lpos;
+      String bmxs = lpos.toString();
+      emit(cc) {
+        """
+        File fhn = SPIFFS.open(bevp_bedmax->bems_toCcString().c_str(), "w");
+        if (!fhn) {
+            Serial.println("file open failed");
+        } else {
+          const uint8_t* dataPointern = beq->bevl_bmxs->bevi_bytes.data();
+          fhn.write(dataPointern, beq->bevl_bmxs->bevp_size->bevi_int);
+          fhn.close();
+        }
+        """
       }
-      """
+      //("save bmxs " + bmxs).print();
     }
-    //("save bmxs " + bmxs).print();
-    changed = false;
     emit(cc) {
       """
-    LittleFS.end();
+    SPIFFS.end();
       """
     }
     //("save done").print();
