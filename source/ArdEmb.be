@@ -32,6 +32,13 @@ class Embedded:App {
      "IN STARTLOOP".print();
      plugin.startLoop();
      "FINISHING STARTLOOP".print();
+     emit(cc) {
+       """
+       Serial.println("SketchSize and FreeSketchSpace");
+       Serial.println(ESP.getSketchSize());
+       Serial.println(ESP.getFreeSketchSpace());
+       """
+     }
    }
    
    handleLoop() {

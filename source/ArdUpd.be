@@ -19,6 +19,9 @@ class Embedded:Update {
     emit(cc) {
      """
      Serial.println("gonna update");
+     Serial.println("SketchSize and FreeSketchSpace");
+     Serial.println(ESP.getSketchSize());
+     Serial.println(ESP.getFreeSketchSpace());
      WiFiClient client;
      t_httpUpdate_return ret = ESPhttpUpdate.update(client, beq->beva_url->bems_toCcString().c_str());
      Serial.println("return ret");
