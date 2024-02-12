@@ -19,7 +19,7 @@ use Embedded:AppShell;
 class Embedded:RGBCWSh(Embedded:AppShell) {
 
    buildControl(Int conPos, String conName, String conArgs) {
-     if (conName == "rgbcwgd") {
+     if (conName == "rgbcwgd" || conName == "rgbcwsgd") {
        auto rgbcw = Embedded:RGBCWCtl.new(self, conPos, conName, conArgs);
        return(rgbcw);
      } else {

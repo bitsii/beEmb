@@ -34,7 +34,7 @@ class Embedded:Grande(Embedded:AppShell) {
      } elseIf (conName == "cwgd") {
        auto cct = Embedded:CWCtl.new(self, conPos, conName, conArgs);
        return(cct);
-     } elseIf (conName == "rgbcwgd") {
+     } elseIf (conName == "rgbcwgd" || conName == "rgbcwsgd") {
        auto rgbcw = Embedded:RGBCWCtl.new(self, conPos, conName, conArgs);
        return(rgbcw);
      } elseIf (conName == "str") {
