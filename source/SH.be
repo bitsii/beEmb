@@ -47,7 +47,9 @@ class Embedded:AppShell {
        Int nextWifiCheck = 0;
        String slashn = "\n";
        String slashr = "\r";
-       String fcdot = "fc.";
+       ifEmit(dynConf) {
+         String fcdot = "fc.";
+       }
        Bool needsFsRestart = false;
        Bool needsRestart = false;
        Bool justSetWifi = false;
@@ -218,7 +220,7 @@ class Embedded:AppShell {
 
    buildSwInfoIn() {
      if (TS.isEmpty(swSpec)) {
-       swSpec = "1,p2.gsh.4";
+       swSpec = "1,q,p3,p2.Unspeced.5";
      }
      auto swl = swSpec.split(".");
      devCode = swl[1];
@@ -226,8 +228,10 @@ class Embedded:AppShell {
 
    buildSwInfo() {
      if (TS.isEmpty(swSpec)) {
-      swSpec = config.get(config.getPos("swspec"));
-      if (TS.isEmpty(swSpec)) {
+      ifEmit(dynConf) {
+        swSpec = config.get(config.getPos("fc.swspec"));
+      }
+      ifNotEmit(dynConf) {
         emit(cc) {
           """
           std::string swspec = BESPEC_SW;
@@ -272,18 +276,10 @@ class Embedded:AppShell {
 
    buildControls() {
      if (TS.isEmpty(controlSpec)) {
-        String csconf;
-        emit(cc) {
-          """
-          std::string csconf = BE_CSCONF;
-          beq->bevl_csconf = new BEC_2_4_6_TextString(csconf);
-          """
-        }
-        ("csconf " + csconf).print();
-      if (csconf == "on") {
-        controlSpec = config.get(config.getPos("fc.conspec"));
-      }
-       if (TS.isEmpty(controlSpec)) {
+       ifEmit(dynConf) {
+         controlSpec = config.get(config.getPos("fc.conspec"));
+       }
+       ifNotEmit(dynConf) {
         emit(cc) {
           """
           std::string conspec = BESPEC_CON;
@@ -999,25 +995,29 @@ class Embedded:AppShell {
         }
      }
 
-     if (cmd == "setpin") {
-      //"got setpin".print();
-      String newpin = cmdl[1];
-      unless (channel == "serial") {
-        return("Error, only supported over Serial");
-      }
-      if (TS.isEmpty(newpin)) {
-       return("Error, pin is required");
-      } elseIf (newpin.isAlphaNum!) {
-        return("Error, pin many only consist of letters and numbers");
-      } elseIf (newpin.size != 16) {
-        return("Error, pin must be 16 chars in length");
-      } else {
-       pin = newpin;
-       pin.print();
-       config.put(shpini, pin);
-       return("Pin set");
-      }
-    } elseIf (cmd == "allset") {
+     ifEmit(dynConf) {
+        if (cmd == "setpin") {
+          //"got setpin".print();
+          String newpin = cmdl[1];
+          unless (channel == "serial") {
+            return("Error, only supported over Serial");
+          }
+          if (TS.isEmpty(newpin)) {
+          return("Error, pin is required");
+          } elseIf (newpin.isAlphaNum!) {
+            return("Error, pin many only consist of letters and numbers");
+          } elseIf (newpin.size != 16) {
+            return("Error, pin must be 16 chars in length");
+          } else {
+          pin = newpin;
+          pin.print();
+          config.put(shpini, pin);
+          return("Pin set");
+          }
+        }
+     }
+
+    if (cmd == "allset") {
 
       String inpin = cmdl[1];
       if (TS.notEmpty(pin)) {
@@ -1112,6 +1112,7 @@ class Embedded:AppShell {
       reset();
       return("Device reset");//we look for this result, don't change
     } elseIf (cmd == "putconfigs") {
+      ifEmit(dynConf) {
         //String key = cmdl[3];
         //String value = cmdl[4];
         //if (TS.notEmpty(value)) {
@@ -1148,6 +1149,7 @@ class Embedded:AppShell {
           }
         }
         return("configs set");
+        }
      } elseIf (cmd == "maybesave") {
         config.maybeSave();
         needsGc = true;

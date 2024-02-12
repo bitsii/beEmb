@@ -32,12 +32,6 @@
 #define BE_TCPCONSOLE "off"
 //
 //
-// csconf - if you want to enable a the cf.conspec (same as BESPEC_CON) to be set via putconfig (and honored)
-// to enable post-compile-time configuration set BE_CSCONF to "on", otherwise to "off".
-//
-//#define BE_CSCONF "on" //enabled
-#define BE_CSCONF "off" //disabled
-//
 #define BE_APTYPE "O"
 //
 // Setup Code - if set to 8 character string of lower case letters this will be used as your setup code instead of

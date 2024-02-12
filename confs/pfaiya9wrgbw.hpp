@@ -37,13 +37,6 @@
 #define BE_TCPCONSOLE "off" //disabled
 //
 //
-// csconf - if you want to enable a the fc.conspec (same as BESPEC_CON) to be set via putconfig (and honored)
-// to enable post-compile-time configuration set BE_CSCONF to "on", otherwise to "off".
-//
-//#define BE_CSCONF "on" //enabled
-#define BE_CSCONF "off" //disabled
-//
-//
 // aptype - one of I included, U unincluded, O open, for wifi sec
 // the controls how the Access Point for (re) provisioning behaves
 // if set to O it is open and the setup code / pin is in the name (default, but for highly trusted environments and development only)
