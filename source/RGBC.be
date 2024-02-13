@@ -85,9 +85,10 @@ class Embedded:RGBControl {
     String insw = config.get(rgbswi);
     if (TS.notEmpty(insw)) {
       sw = insw;
-      doState(List.new().addValue("dostate").addValue("notpw").addValue(conPos.toString()).addValue(setsw).addValue(sw));
+    } else {
+      sw = on;
     }
-
+    doState(List.new().addValue("dostate").addValue("notpw").addValue(conPos.toString()).addValue(setsw).addValue(sw));
    }
 
    doState(List cmdl) String {
@@ -150,7 +151,7 @@ class Embedded:RGBControl {
    }
 
    clearStates() {
-     config.put(rgbswi, off);
+     config.put(rgbswi, on);
      config.put(rgbrgbi, twofitys);
    }
    

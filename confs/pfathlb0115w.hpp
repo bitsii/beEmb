@@ -9,7 +9,7 @@
 // SW - name (type) and version of the device.  Typename 10 char max ssid rules (no spaces)
 // swconfver.DeviceTypeName.DeviceVersion
 //
-#define BESPEC_SW "1,q,p3,p2.WNABLB15.54"  //generic configurable controls Athlb017w LB01-7W-B22
+#define BESPEC_SW "1,q,p3,p2.rAthBlb15w.55"  //generic configurable controls Athlb017w LB01-7W-B22
 //
 // CON - definition of device's controls
 // ctlconfver.control.ctlconf,args.control.ctlconf,args

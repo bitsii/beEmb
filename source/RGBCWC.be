@@ -92,8 +92,10 @@ class Embedded:RGBCWCtl {
     String insw = config.get(ctswi);
     if (TS.notEmpty(insw)) {
       sw = insw;
-      doState(List.new().addValue("dostate").addValue("notpw").addValue(conPos.toString()).addValue(setsw).addValue(sw));
+    } else {
+      sw = on;
     }
+    doState(List.new().addValue("dostate").addValue("notpw").addValue(conPos.toString()).addValue(setsw).addValue(sw));
 
    }
 
@@ -176,7 +178,7 @@ class Embedded:RGBCWCtl {
    }
 
    clearStates() {
-     config.put(ctswi, off);
+     config.put(ctswi, on);
      config.put(ctrgbcwi, fifidy);
    }
    

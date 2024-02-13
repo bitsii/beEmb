@@ -430,7 +430,7 @@ class Embedded:AppShell {
           String pinptp = pinpt;
         }
         String sec = pin.substring(8, 16);
-        String ssid = apType + "Casnic-";
+        String ssid = "Casnic" + apType + "-";
         auto wifi = Embedded:Wifi.new();
         auto nets = wifi.scanNetworks();
         auto rand = System:Random.new();
