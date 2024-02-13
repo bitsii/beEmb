@@ -24,13 +24,10 @@ Common profiles are ready to go and can be customized through header configurati
 
 ## Features
 
-* Device starts with access point for provisioning
-* Provisioning includes Wifi configuration, unique device identity and authentication tokens
+* Device and [the application](https://gitlab.com/bitsii/CasCon) support provisioning, network changes, the full connectivity lifecycle - see [device setup](https://gitlab.com/bitsii/CasCon/-/wikis/Casnic#setting-up-a-new-device-and-adding-it-to-the-network) for more.
 * Device announces itself over mDNS
-* Configuration and usage supported an open TCP based protocol with an open source mobile application - see [Casnic Control](https://gitlab.com/bitsii/CasCon)
-* MQTT is also supported and the device will announce it via [HomeAssistant MQTT Discovery](https://www.home-assistant.io/integrations/mqtt/#mqtt-discovery)
-* If a device loses it's Wifi for a period of time it can be reprovisioned to a new network.
-* Secure reset mechanisms available - via button long-push (on devices with buttons) or via its Access Point when removed from provisioned Wifi (configurable)
+* Configuration and usage supported an open TCP based protocol with an open source application - see [Casnic Control](https://gitlab.com/bitsii/CasCon)
+* Reset mechanisms available - via button long-push (on devices with buttons) or specific power cycling pattern. See [device reset](https://gitlab.com/bitsii/CasCon/-/wikis/Casnic#resetting-a-device) for more.
 * OTA updates from the web are supported
 * A telnet addressable debug port can be enabled for use during development or for support
 * Device profies can be configured for different control combinations and GPIO selection through configuration in a C++ header or via command over the network (if enabled)
@@ -41,9 +38,8 @@ Brace Embedded tries to strike a good balance in the security space by enforcing
 
 * Devices start with a unique configuration code - no default passwords.
 * Authentication tokens are only exchanged in the clear during provisioning on the devices AP using the configuration codes.  Optional WPA support for the AP mode can provide isolation and encryption during this process if required.
-* Secrets are not passed in the clear once provisioned and connected to the target wifi network.  Device commands are signed and validated with the shared secrets (the tokens) to protect against unauthorized use.  Signing includes the source network address to mitigate MITM attacks.
-* Separate Administrative and Usage tokens (created during provisioning) are required for device control and use.  Users with the administrative token can configure the device and users with the usage token can only use the configured features (turn on and off, etc) 
-* Provisioned devices do not immediately start their access point after a power cycle if they do not find their configured SSID, they will wait a while and check again.  This is to protect against power losses putting devices which can be reset over the network into a mode which enables it.
+* Secrets are not passed in the clear once provisioned and connected to the target wifi network.  Device commands are signed and validated with the shared secrets (the tokens) to protect against unauthorized use.  Signing includes the source network address to mitigate MITM attacks and time elements to resist replay attacks.
+* Separate Administrative and Usage tokens (created during provisioning) are required for device control and use.  Users with the administrative token can configure the device and users with the usage token can only use the configured features (turn on and off, etc)  The application supports [sharing](https://gitlab.com/bitsii/CasCon/-/wikis/Casnic#sharing-a-device) to grant new users and devices access.
 
 ### Get the Hardware
 
@@ -63,7 +59,9 @@ If you are working with the prebuilt hardware you'll need to switch out the tasm
 
 ### Provision and use the device
 
-Grab the CasCon App - [Casnic Control](https://gitlab.com/bitsii/CasCon) - in the Google Play Store [Casnic Android App](https://play.google.com/store/apps/details?id=casnic.control&gl=US) and the Apple App Store [Casnic IOS App](https://apps.apple.com/us/app/cascon/id6458984046) - and "Setup A Device" (the first time it will ask you to enter a Wifi network, this is the network the esp8266 will be configured to connect to, after entering and saving the ssid and wpa do Setup A Device again.)  On IOS, after entering setup mode, you'll need to go to Settings / Wifi and connect to the network with the name starting Casic.  CasnicO is open, you won't need a WPA to connect, CasnicI sets the wpa key to the same 8 characters following the "-" in the ssid name, for CasnicU- you've decided to use a secret key, so you'll need that.  Here's a video for using the more secure CasnicU mode [Setting up a beEmb device with an Unshared key](https://www.youtube.com/watch?v=Vu9xA3vmt7s), and here is a video for the simpler open mode with CasnicO [Setting up a beEmb device with Open Mode](https://www.youtube.com/watch?v=_SArX4tCcmw)
+[Grab the CasCon App](https://gitlab.com/bitsii/CasCon/-/wikis/Casnic#installing-the-app)
+[Use it to setup your device](https://gitlab.com/bitsii/CasCon/-/wikis/Casnic#setting-up-a-new-device-and-adding-it-to-the-network)
+Here's a video for using the more secure CasnicU mode [Setting up a beEmb device with an Unshared key](https://www.youtube.com/watch?v=Vu9xA3vmt7s), and here is a video for the simpler open mode with CasnicO [Setting up a beEmb device with Open Mode](https://www.youtube.com/watch?v=_SArX4tCcmw)
 
 ### Working with a development board or building your own binaries
 
@@ -85,6 +83,7 @@ Then configure for the build, in the IDE change the following settings under the
 
 * Set the Board to Generic ESP8266 Module
 * Set the Flash Size to 2MB (FS:64KB OTA:~992KB) (you can use 1MB FS:64KB if that's all your board has, but OTA won't work / it's a tight fit)
+* Set the Flash mode to DOUT (Compatible)
 * Set SSL Support to Basic SSL Ciphers
 * Set C++ Exceptions to Enabled
 * Set the Upload Speed to 460800
@@ -120,7 +119,6 @@ Consider starting with pfnodemcu, but you can pick any profile you like.
 
 #### Other Configuration elements
 
-* BE_RESETBYPIN can be set to "on" to enable resetbypin, or "off" to disable.  After a device is provisioned, if it is take away from it's wifi network and restarted, after 5 minutes it will start it's access point.  It can then be set to a new wifi network using the administrative credentials via commands to it on it's AP network.  That is all true regardless of this setting.  However, if this configuration is enabled, when the device is in this state (did not find provisioned network and started it's access point) it can also be reset using the pin which is part of the AP ssid it announces while in this mode.  This is for less security focused devices which do not have a physical reset option (button) built in (bulbs, etc).
 * BE_TCPCONSOLE can be set to "on" to enable the tcp console or "off" to disable.  If enabled the device will listen on port 32259 - you can telnet to this port to view most of the console output (everything from the Brace language "print" statements, lower level Arduino console messages are not presently sent there).  The session is read only / just for viewing debug information.
 
 ### If you want to make it your own
@@ -145,7 +143,7 @@ To clone one of the existing profiles into a new name you should find the script
 
 ## Be Careful
 
-Use of this information and the software is entirely at your own risk.  As with any interaction between software and something "acting in the real world" or "running electricity around", be sure system failure or unexpected behavior cannot result in harm or injury to anyone.
+Use of this information and the software is entirely at your own risk.  As with any interaction between software and something "acting in the real world" or "running electricity around", be sure system failure or unexpected behavior cannot result in harm or injury to anyone or anything.
 
 ## Credits
 
