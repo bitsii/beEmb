@@ -53,6 +53,7 @@ class Embedded:AppShell {
        Bool needsFsRestart = false;
        Bool needsRestart = false;
        Bool justSetWifi = false;
+       Bool pastSetupTime = false;
        String did;
        String swSpec;
        String devCode;
@@ -588,6 +589,7 @@ class Embedded:AppShell {
      }
      if (nowup > endResetByPow) {
        endResetByPow = nowup + 1800000; //30 mins
+       pastSetupTime = true;
        if (inResetByPow) {
         inResetByPow = false;
         needsFsRestart = true;
@@ -1019,6 +1021,10 @@ class Embedded:AppShell {
      }
 
     if (cmd == "allset") {
+
+      if (pastSetupTime) {
+        return("Error, must setup w/in 30 mins of power on.");
+      }
 
       String inpin = cmdl[1];
       if (TS.notEmpty(pin)) {
