@@ -37,11 +37,19 @@
 #define BE_APTYPE "O"
 //
 // Setup Code - if set to 8 character string of lower case letters this will be used as your setup code instead of
-// a randomly generated one.  This can be especially useful for a BE_APTYPE of U so you don't have to search the
+// a randomly generated one.  This can be especially useful for a BE_HIDECODE of "on" so you don't have to search the
 // console for it / so you can do headless setup if you are putting on a sealed device OTA.
 //
 #define BE_SCODE "na" //a non-empty value should be set, set to < 8 chars to ignore/generate random
 //#define BE_SCODE "abcdefgh" //right length for use, set to 8 char lower case letters
+//
+//
+//Hide the setup code - requireing the setup user to be given the setup code in some other way (packaging, etc)
+//great for more secure setup, code is not in the ssid and must be entered during setup.  little less convenient.
+//on to hide code, off to not hide code (show it in ssid, app will auto-populate it)
+//
+#define BE_HIDECODE "off"
+//#define BE_HIDECODE "on"
 //
 // END OF CONFIGURATION OPTIONS
 //

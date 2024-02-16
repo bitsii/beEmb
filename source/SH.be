@@ -47,9 +47,6 @@ class Embedded:AppShell {
        Int nextWifiCheck = 0;
        String slashn = "\n";
        String slashr = "\r";
-       ifEmit(dynConf) {
-         String fcdot = "fc.";
-       }
        Bool needsFsRestart = false;
        Bool needsRestart = false;
        Bool justSetWifi = false;
@@ -189,11 +186,16 @@ class Embedded:AppShell {
 
       pin = config.get(shpini);
       if (TS.isEmpty(pin) || pin.size != 16) {
-        emit(cc) {
-          """
-          std::string scode = BE_SCODE;
-          beq->bevl_pinpart = new BEC_2_4_6_TextString(scode);
-          """
+        ifEmit(dynConf) {
+          pinpart = config.get(config.getPos("fc.scode"));
+        }
+        ifNotEmit(dynConf) {
+          emit(cc) {
+            """
+            std::string pp = BE_SCODE;
+            beq->bevl_pinpart = new BEC_2_4_6_TextString(pp);
+            """
+          }
         }
         if (TS.isEmpty(pinpart) || pinpart.size != 8) {
           String pinpart = System:Random.getString(8).lowerValue();
@@ -367,14 +369,19 @@ class Embedded:AppShell {
         tcpserver.start();
 
         String tccon;
-        emit(cc) {
-          """
-          std::string tccon = BE_TCPCONSOLE;
-          beq->bevl_tccon = new BEC_2_4_6_TextString(tccon);
-          """
+        ifEmit(dynConf) {
+          tccon = config.get(config.getPos("fc.tccon"));
+        }
+        ifNotEmit(dynConf) {
+          emit(cc) {
+            """
+            std::string tccon = BE_TCPCONSOLE;
+            beq->bevl_tccon = new BEC_2_4_6_TextString(tccon);
+            """
+          }
         }
 
-        if (tccon == "on") {
+        if (TS.notEmpty(tccon) && tccon == "on") {
           conserver = Embedded:TCPServer.new(32259);
           conserver.start();
         }
@@ -413,35 +420,53 @@ class Embedded:AppShell {
    initAp() {
       slots {
         String apSsid;
-        String apType; //I included, U unincluded, O open, for wifi sec
+        String apType; //O open, S secure, for wifi sec
+        String hiddenCode; //include the pin part in the ssid or hide it, on is hide it
       }
       if (TS.isEmpty(apType)) {
-        emit(cc) {
-          """
-          std::string aptype = BE_APTYPE;
-          bevp_apType = new BEC_2_4_6_TextString(aptype);
-          """
+        ifEmit(dynConf) {
+          apType = config.get(config.getPos("fc.apType"));
+          if (TS.isEmpty(apType)) { apType = "O"; }
+        }
+        ifNotEmit(dynConf) {
+          emit(cc) {
+            """
+            std::string aptype = BE_APTYPE;
+            bevp_apType = new BEC_2_4_6_TextString(aptype);
+            """
+          }
+        }
+      }
+      if (TS.isEmpty(hiddenCode)) {
+        ifEmit(dynConf) {
+          hiddenCode = config.get(config.getPos("fc.hideCode"));
+          if (TS.isEmpty(hiddenCode)) { hiddenCode = "off"; }
+        }
+        ifNotEmit(dynConf) {
+          emit(cc) {
+            """
+            std::string hiddenCode = BE_HIDECODE;
+            bevp_hiddenCode = new BEC_2_4_6_TextString(hiddenCode);
+            """
+          }
         }
       }
       if (TS.notEmpty(pin) && pin.size == 16) {
-        if (apType == "U") {
-          pinpt = pin.substring(0, 8);
-          pinptp = "U";
-        } else {
-          String pinpt = pin.substring(0, 8);
-          String pinptp = pinpt;
-        }
+        String pinpt = pin.substring(0, 8);
         String sec = pin.substring(8, 16);
         String ssid = "Casnic" + apType + "-";
         auto wifi = Embedded:Wifi.new();
         auto nets = wifi.scanNetworks();
         auto rand = System:Random.new();
-        String finssidp = ssid + pinptp + "-" + devCode + "-" + rand.getIntMax(999);
+        if (hiddenCode == "on") {
+          pinpt = "U";
+        }
+        String finssidp = ssid + pinpt + "-" + devCode + "-" + rand.getIntMax(999);
         while (nets.has(finssidp)) {
-          finssidp = ssid + pinptp + "-" + devCode + "-" + rand.getIntMax(999);
+          finssidp = ssid + pinpt + "-" + devCode + "-" + rand.getIntMax(999);
         }
         apSsid = ssid + pinpt + "-" + devCode + "-42";
-        ("Device setup code " + pinpt).print();
+        ("Device setup code " + sec).print();
         if (apType == "O") {
           Wifi.new(finssidp, null).startAp();
         } else {
@@ -539,16 +564,21 @@ class Embedded:AppShell {
      }
      if (undef(resetByPow)) {
        String rbps;
-       emit(cc) {
-          """
-          std::string rbps = BE_RESETBYPOW;
-          beq->bevl_rbps = new BEC_2_4_6_TextString(rbps);
-          """
+       ifEmit(dynConf) {
+         rbps = config.get(config.getPos("fc.rbps"));
+       }
+       ifNotEmit(dynConf) {
+        emit(cc) {
+            """
+            std::string rbps = BE_RESETBYPOW;
+            beq->bevl_rbps = new BEC_2_4_6_TextString(rbps);
+            """
+          }
         }
-        if (TS.notEmpty(rbps) && rbps == "on") {
-          resetByPow = true;
-        } else {
+        if (TS.notEmpty(rbps) && rbps == "off") {
           resetByPow = false;
+        } else {
+          resetByPow = true;
         }
         ("resetByPow set " + resetByPow).print();
         initPow();
@@ -1162,7 +1192,7 @@ class Embedded:AppShell {
             value = null;
           }
           if (TS.notEmpty(key)) {
-            if (key.begins(fcdot)) {
+            if (key.begins("fc.")) {
               Int keyi = config.getPos(key);
               if (TS.isEmpty(value)) {
                 config.put(keyi, "");
