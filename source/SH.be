@@ -167,6 +167,7 @@ class Embedded:AppShell {
         conPos++=;
       }
      }
+     if (TS.isEmpty(les)) { les = "undefined"; }
      lastEventsRes = les;
      return(les);
    }
