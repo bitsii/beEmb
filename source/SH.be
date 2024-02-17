@@ -196,7 +196,7 @@ class Embedded:AppShell {
         Int shppi = config.getPos("sh.pinpart");
         String pinpart = config.get(shppi);
         if (TS.isEmpty(pinpart)) {
-          String pinpart = System:Random.getString(8).lowerValue();
+          pinpart = System:Random.getString(8).lowerValue();
           config.put(shppi, pinpart);
         }
       }
