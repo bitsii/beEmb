@@ -29,7 +29,6 @@ class Embedded:AppShell {
        Embedded:TCPClient concon;
      }
      slots {
-       Int shpini;
        Int shpassi;
        Int shspassi;
        Int shssidi;
@@ -78,7 +77,6 @@ class Embedded:AppShell {
      "loading config".print();
      config.load();
 
-     shpini = config.getPos("sh.pin");
      shpassi = config.getPos("sh.pass");
      shspassi = config.getPos("sh.spass");
      shssidi = config.getPos("sh.ssid");
@@ -183,26 +181,26 @@ class Embedded:AppShell {
       slots {
         String pin;
       }
-
-      pin = config.get(shpini);
-      if (TS.isEmpty(pin) || pin.size != 16) {
-        ifEmit(dynConf) {
-          pinpart = config.get(config.getPos("fc.scode"));
-        }
-        ifNotEmit(dynConf) {
-          emit(cc) {
-            """
-            std::string pp = BE_SCODE;
-            beq->bevl_pinpart = new BEC_2_4_6_TextString(pp);
-            """
-          }
-        }
-        if (TS.isEmpty(pinpart) || pinpart.size != 8) {
-          String pinpart = System:Random.getString(8).lowerValue();
-        }
-        pin = pinpart + pinpart;
-        config.put(shpini, pin);
+      ifEmit(dynConf) {
+        pinpart = config.get(config.getPos("fc.scode"));
       }
+      ifNotEmit(dynConf) {
+        emit(cc) {
+          """
+          std::string pp = BE_SCODE;
+          beq->bevl_pinpart = new BEC_2_4_6_TextString(pp);
+          """
+        }
+      }
+      if (TS.isEmpty(pinpart) || pinpart.size != 8) {
+        Int shppi = config.getPos("sh.pinpart");
+        String pinpart = config.get(shppi);
+        if (TS.isEmpty(pinpart)) {
+          String pinpart = System:Random.getString(8).lowerValue();
+          config.put(shppi, pinpart);
+        }
+      }
+      pin = pinpart + pinpart;
 
       did = config.get(shdidi);
       if (TS.isEmpty(did)) {
@@ -1026,28 +1024,6 @@ class Embedded:AppShell {
             return(controlDef);
           } else {
             return("controldef,");
-          }
-        }
-     }
-
-     ifEmit(dynConf) {
-        if (cmd == "setpin") {
-          //"got setpin".print();
-          String newpin = cmdl[1];
-          unless (channel == "serial") {
-            return("Error, only supported over Serial");
-          }
-          if (TS.isEmpty(newpin)) {
-          return("Error, pin is required");
-          } elseIf (newpin.isAlphaNum!) {
-            return("Error, pin many only consist of letters and numbers");
-          } elseIf (newpin.size != 16) {
-            return("Error, pin must be 16 chars in length");
-          } else {
-          pin = newpin;
-          pin.print();
-          config.put(shpini, pin);
-          return("Pin set");
           }
         }
      }
