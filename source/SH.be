@@ -97,6 +97,18 @@ class Embedded:AppShell {
      shdidi = config.getPos("sh.did");
      shpowi = config.getPos("sh.pow");
 
+     ifEmit(dynConf) {
+       slots {
+         Bool lockConf;
+       }
+       String lockup = config.get(config.getPos("fc.lockConf"));
+       if (TS.notEmpty(lockup) && lockup == CNS.on) {
+         lockConf = true;
+       } else {
+         lockConf = false;
+       }
+     }
+
      app.uptime(nowup);
      nextUpdateCheck = nowup + 60000;
      nextSwSpec = nowup + 540000;
@@ -1164,11 +1176,9 @@ class Embedded:AppShell {
       return("Device reset");//we look for this result, don't change
     } elseIf (cmd == "putconfigs") {
       ifEmit(dynConf) {
-        //String key = cmdl[3];
-        //String value = cmdl[4];
-        //if (TS.notEmpty(value)) {
-        //
-        //}
+        if (lockConf) {
+          return("lockConf on, no putconfig");
+        }
         if (cmdl[2] == "vhex") {
           Bool deHex = true;
         } else {

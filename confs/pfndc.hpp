@@ -59,5 +59,12 @@
 // if unset is off
 // putconfigs pass raw fc.hideCode on e
 //
+//Lock the config, after setting everything to avoid changes.
+//REQUIRES AN OTA/NEW FIRMWARE WITH A CODE CHANGE TO IGNORE THE SETTING TO UNDO
+//must restart device after setting to make active
+//
+//if unset, is off, config writing allowed
+//putconfigs pass raw fc.lockConf on e
+//
 // END OF CONFIGURATION OPTIONS
 //
