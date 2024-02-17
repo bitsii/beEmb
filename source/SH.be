@@ -71,6 +71,7 @@ class Embedded:AppShell {
        String readBuf = String.new();
        String supurl;
        String shcd;
+       String shnm;
        String controlSpec;
        String controlDef;
        Bool needsNetworkInit = true;
@@ -1132,7 +1133,7 @@ class Embedded:AppShell {
 
       } elseIf (cmd == "shdef") {
         String inshcd = cmdl[1];
-        if (TS.notEmpty(shcd)) {
+        if (TS.notEmpty(shcd) && TS.notEmpty(shnm)) {
           if (TS.isEmpty(inshcd)) {
             return("Error, shcd was not sent");
           } elseIf (shcd != inshcd) {
@@ -1147,9 +1148,11 @@ class Embedded:AppShell {
         //spass = newspass;
 
         if (TS.notEmpty(did) && TS.notEmpty(pass) && TS.notEmpty(spass) && TS.notEmpty(devCode)) {
-          String shdef = "shdef:" += devCode += ":" += did += ":" += pass += ":" += spass;
+          String shdef = "shdef:" += devCode += ":" += did += ":" += pass += ":" += spass += ":" += shnm;
+          shnm = null;
           return(shdef);
         }
+        shnm = null;
         return("undefshdef");
 
       }
@@ -1244,6 +1247,7 @@ class Embedded:AppShell {
         return("set supurl");
      } elseIf (cmd == "shcd") {
         shcd = cmdl[2];
+        shnm = cmdl[3];
         return("set shcd");
      } elseIf (cmd == "restart") {
        //"got restart".print();
