@@ -34,15 +34,18 @@ class Embedded:Config {
       for (Int i = 0;i < names.length;i++=) {
         if (undef(names.get(i))) {
           pos = i;
+          names.put(pos, name);
+          values.put(pos, null);
+          changes.put(pos, null);
           break;
         }
       }
      }
      if (undef(pos)) {
        pos = names.size.copy();
-       names += name;
-       values += null;
-       changes += null;
+       names.put(pos, name);
+       values.put(pos, null);
+       changes.put(pos, null);
      }
      //("pos " + pos + " for name " + name).print();
      return(pos);
@@ -109,6 +112,8 @@ class Embedded:Config {
     Int bmx = Int.new(bmxs);
     for (Int i = 0;i < bmx;i++=) {
       //("try load " + i).print();
+      bns = null;
+      bvs = null;
       fn.clear();
       fn += bedn += i.toString();
       //("fn " + fn).print();
