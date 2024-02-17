@@ -371,6 +371,7 @@ class Embedded:AppShell {
         String tccon;
         ifEmit(dynConf) {
           tccon = config.get(config.getPos("fc.tccon"));
+          if (TS.isEmpty(tccon)) { tccon = "off"; }
         }
         ifNotEmit(dynConf) {
           emit(cc) {
@@ -381,7 +382,7 @@ class Embedded:AppShell {
           }
         }
 
-        if (TS.notEmpty(tccon) && tccon == "on") {
+        if (tccon == "on") {
           conserver = Embedded:TCPServer.new(32259);
           conserver.start();
         }
@@ -566,6 +567,7 @@ class Embedded:AppShell {
        String rbps;
        ifEmit(dynConf) {
          rbps = config.get(config.getPos("fc.rbps"));
+         if (TS.isEmpty(rbps)) { rbps = "on"; }
        }
        ifNotEmit(dynConf) {
         emit(cc) {
@@ -575,7 +577,7 @@ class Embedded:AppShell {
             """
           }
         }
-        if (TS.notEmpty(rbps) && rbps == "off") {
+        if (rbps == "off") {
           resetByPow = false;
         } else {
           resetByPow = true;
