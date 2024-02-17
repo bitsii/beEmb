@@ -15,6 +15,8 @@ use Text:Strings as TS;
 use Embedded:AppShell;
 use Embedded:Config;
 
+use Embedded:CommonNames as CNS;
+
 class Embedded:RGBCWCtl {
 
    new(_ash, Int _conPos, String _conName, String _conArgs) {
@@ -28,9 +30,9 @@ class Embedded:RGBCWCtl {
        Int zero = 0;
        Int twofidyfi = 255;
        String fifidy = "255,255,255,255,255"; //r,g,b,c,w
-       String ok = "ok";
-       String on = "on";
-       String off = "off";
+       String ok = CNS.ok;
+       String on = CNS.on;
+       String off = CNS.off;
        Int conPos = _conPos;
        String conName = _conName;
      }

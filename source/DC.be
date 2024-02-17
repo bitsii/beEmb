@@ -14,6 +14,8 @@ use Text:Strings as TS;
 use Embedded:AppShell;
 use Embedded:Config;
 
+use Embedded:CommonNames as CNS;
+
 class Embedded:DimmerControl {
 
    new(_ash, Int _conPos, String _conName, String _conArgs) {
@@ -23,8 +25,8 @@ class Embedded:DimmerControl {
        Embedded:App app = ash.app;
        String conType = _conName;
        Int conPos = _conPos;
-       String ok = "ok";
-       String ud = "undefined";
+       String ok = CNS.ok;
+       String ud = CNS.undefined;
        Int diri = 0;
      }
      fields {
@@ -51,8 +53,8 @@ class Embedded:DimmerControl {
      slots {
        String setlvl = "setlvl";
        String getlvl = "getlvl";
-       String on = "on";
-       String off = "off";
+       String on = CNS.on;
+       String off = CNS.off;
        String setsw = "setsw";
        String getsw = "getsw";
        Int dclvli;

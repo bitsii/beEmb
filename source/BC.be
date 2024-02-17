@@ -15,6 +15,8 @@ use Text:Strings as TS;
 use Embedded:AppShell;
 use Embedded:Config;
 
+use Embedded:CommonNames as CNS;
+
 class Embedded:ButtonControl {
 
    new(_ash, Int _conPos, String _conName, String _conArgs) {
@@ -34,8 +36,8 @@ class Embedded:ButtonControl {
        Int nextPushTime;
        Int conPos = _conPos;
        String conType = _conName;
-       String on = "on";
-       String off = "off";
+       String on = CNS.on;
+       String off = CNS.off;
        String setsw = "setsw";
      }
      fields {

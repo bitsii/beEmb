@@ -15,6 +15,8 @@ use Text:Strings as TS;
 use Embedded:AppShell;
 use Embedded:Config;
 
+use Embedded:CommonNames as CNS;
+
 class Embedded:SwitchIndicatorControl {
 
    new(_ash, Int _conPos, String _conName, String _conArgs) {
@@ -50,8 +52,8 @@ class Embedded:SwitchIndicatorControl {
 
    initControl() {
      slots {
-       String on = "on";
-       String off = "off";
+       String on = CNS.on;
+       String off = CNS.off;
        any sc;
      }
      fields {

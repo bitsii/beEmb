@@ -15,6 +15,8 @@ use Text:Strings as TS;
 use Embedded:AppShell;
 use Embedded:Config;
 
+use Embedded:CommonNames as CNS;
+
 class Embedded:SwitchControl {
 
    new(_ash, Int _conPos, String _conName, String _conArgs) {
@@ -26,8 +28,8 @@ class Embedded:SwitchControl {
        Embedded:App app = ash.app;
        Int conPos = _conPos;
        String conType = _conName;
-       String ok = "ok";
-       String ud = "undefined";
+       String ok = CNS.ok;
+       String ud = CNS.undefined;
      }
      fields {
        Int lastEvent = Int.new();
@@ -53,8 +55,8 @@ class Embedded:SwitchControl {
        Int scswi;
        //on = 0, off = 255
        String getsw = "getsw";
-       String on = "on";
-       String off = "off";
+       String on = CNS.on;
+       String off = CNS.off;
        String setsw = "setsw";
      }
      fields {

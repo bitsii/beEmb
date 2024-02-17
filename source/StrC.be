@@ -15,6 +15,8 @@ use Text:Strings as TS;
 use Embedded:AppShell;
 use Embedded:Config;
 
+use Embedded:CommonNames as CNS;
+
 //strobe controller
 //checks sw for "on" or "off"
 class Embedded:StrC {
@@ -36,8 +38,8 @@ class Embedded:StrC {
        Bool rgbison = false;
        String conType = _conName;
        Int conPos = _conPos;
-       String ok = "ok";
-       String ud = "undefined";
+       String ok = CNS.ok;
+       String ud = CNS.undefined;
      }
      fields {
        Int lastEvent = Int.new();
@@ -62,8 +64,8 @@ class Embedded:StrC {
        Bool swon = false;
      }
      fields {
-       String on = "on";
-       String off = "off";
+       String on = CNS.on;
+       String off = CNS.off;
        String setsw = "setsw";
        String sw;
      }

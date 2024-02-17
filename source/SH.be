@@ -14,6 +14,19 @@ use Text:String;
 use Text:Strings as TS;
 use Embedded:Config;
 
+use Embedded:CommonNames as CNS;
+
+class CNS {
+   default() {
+     fields {
+       String on = "on";
+       String off = "off"
+       String ok = "ok";
+       String undefined = "undefined";
+     }
+   }
+}
+
 class Embedded:AppShell {
    
    main() {
@@ -167,7 +180,7 @@ class Embedded:AppShell {
         conPos++=;
       }
      }
-     if (TS.isEmpty(les)) { les = "undefined"; }
+     if (TS.isEmpty(les)) { les = CNS.undefined; }
      lastEventsRes = les;
      return(les);
    }
@@ -370,7 +383,7 @@ class Embedded:AppShell {
         String tccon;
         ifEmit(dynConf) {
           tccon = config.get(config.getPos("fc.tccon"));
-          if (TS.isEmpty(tccon)) { tccon = "off"; }
+          if (TS.isEmpty(tccon)) { tccon = CNS.off; }
         }
         ifNotEmit(dynConf) {
           emit(cc) {
@@ -381,7 +394,7 @@ class Embedded:AppShell {
           }
         }
 
-        if (tccon == "on") {
+        if (tccon == CNS.on) {
           conserver = Embedded:TCPServer.new(32259);
           conserver.start();
         }
@@ -440,7 +453,7 @@ class Embedded:AppShell {
       if (TS.isEmpty(hiddenCode)) {
         ifEmit(dynConf) {
           hiddenCode = config.get(config.getPos("fc.hideCode"));
-          if (TS.isEmpty(hiddenCode)) { hiddenCode = "off"; }
+          if (TS.isEmpty(hiddenCode)) { hiddenCode = CNS.off; }
         }
         ifNotEmit(dynConf) {
           emit(cc) {
@@ -458,7 +471,7 @@ class Embedded:AppShell {
         auto wifi = Embedded:Wifi.new();
         auto nets = wifi.scanNetworks();
         auto rand = System:Random.new();
-        if (hiddenCode == "on") {
+        if (hiddenCode == CNS.on) {
           pinpt = "U";
         }
         String finssidp = ssid + pinpt + "-" + devCode + "-" + rand.getIntMax(999);
@@ -566,7 +579,7 @@ class Embedded:AppShell {
        String rbps;
        ifEmit(dynConf) {
          rbps = config.get(config.getPos("fc.rbps"));
-         if (TS.isEmpty(rbps)) { rbps = "on"; }
+         if (TS.isEmpty(rbps)) { rbps = CNS.on; }
        }
        ifNotEmit(dynConf) {
         emit(cc) {
@@ -576,7 +589,7 @@ class Embedded:AppShell {
             """
           }
         }
-        if (rbps == "off") {
+        if (rbps == CNS.off) {
           resetByPow = false;
         } else {
           resetByPow = true;
@@ -981,7 +994,7 @@ class Embedded:AppShell {
           }
           xd = config.get(xdi);
           if (TS.isEmpty(xd)) {
-            xd = "undefined";
+            xd = CNS.undefined;
           }
           sxd[ctlPos] = xd;
        }
