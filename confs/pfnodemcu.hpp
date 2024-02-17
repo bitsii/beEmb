@@ -11,7 +11,8 @@
 //
 //#define BESPEC_SW "1,p2.Generic.22"  //supergeneric
 //#define BESPEC_SW "1,p2.WNN.31"  //nodemcu
-#define BESPEC_SW "1,q,p3,p2.rNodeMCU.68"  //nodemcu q = quickstate, p2 auth type 2 (hash), p2 always last
+//#define BESPEC_SW "1,q,p3,p2.Rando.69" //testing changes
+#define BESPEC_SW "1,q,p3,p2.rNodeMCU.70"  //nodemcu q = quickstate, p2 auth type 2 (hash), p2 always last
 //#define BESPEC_SW  "0.DollaTek.20" //dollatek 2mb 1led
 //#define BESPEC_SW "1,p2.WNAP2.29" //Athom Plug V2 US THE REAL ONE
 //
@@ -26,9 +27,9 @@
 //ends of those wires on each side of the button that closes them when pushed
 //
 #define BESPEC_CON "0.gdim.2,1" //nodemcu just dim local led w gamma (reversed)
+//#define BESPEC_CON "0.sw.2" //nodemcu just sw
 //#define BESPEC_CON "0.sw.2.bu.14,0,30,0,10000" //nodemcu like athsw
 //#define BESPEC_CON "0.dim.2,1" //nodemcu just dim local led (reversed)
-//#define BESPEC_CON "0.sw.2" //nodemcu just sw
 //#define BESPEC_CON "0.rgbcwgd.4,12,14,5,13" //all in one, pins cold, warm, red, green, blue, gammadim, exclusive cw or rgb
 //#define BESPEC_CON "0.rgbcwsgd.4,12,14,5,13" //all in one, pins cold, warm, red, green, blue, gammadim, exclusive cw or rgb. for cw not two pins mixing but one pin for lvl and one for temp
 //#define BESPEC_CON "0.rgb.4,12,14" //nodemcu rgb

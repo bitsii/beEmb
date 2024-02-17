@@ -246,6 +246,29 @@ class Embedded:AppShell {
 
    }
 
+   makeSecQ() {
+     slots {
+       String secQ;
+     }
+     if (TS.notEmpty(did) && TS.notEmpty(spass)) {
+       String tohash = spass.substring(0, 8) + did;
+       String hdone;
+       //return(prot.sha1hex(tosec).substring(0, 12));
+       emit(cc) {
+         """
+      String lip = sha1(beq->bevl_tohash->bems_toCcString().c_str());
+      std::string lips = std::string(lip.c_str());
+      beq->bevl_hdone = new BEC_2_4_6_TextString(lips);
+         """
+       }
+       secQ = hdone.substring(0, 12);
+     } else {
+       secQ = "Q";
+     }
+     //"secQ".print();
+     //secQ.print();
+   }
+
    buildSwInfoIn() {
      if (TS.isEmpty(swSpec)) {
        swSpec = "1,q,p3,p2.Unspeced.5";
@@ -364,6 +387,7 @@ class Embedded:AppShell {
      initRandom();
      checkMakeIds();
      loadPasses();
+     makeSecQ();
 
      swSpec.print();
      "Device Id".print();
@@ -982,7 +1006,7 @@ class Embedded:AppShell {
        } else {
          return("");
        }
-     } elseIf (cmd == "getlastevents") {
+     } elseIf (cmd == "getlastevents" && cmdl[1] == secQ) {
        stateres = getLastEvents(cmdl);
        return(stateres);
      } elseIf (cmd == "previsnets") {
@@ -991,11 +1015,11 @@ class Embedded:AppShell {
        } else {
          return("on network nope");
        }
-     } elseIf (cmd == "dostate" && cmdl.size > 3 && cmdl[3].begins("get")) {
+     } elseIf (cmd == "dostate" && cmdl.size > 3 && cmdl[3].begins("get") && cmdl[1] == secQ) {
        Int ctlPos = app.strToInt(cmdl[2]);
        stateres = doState(ctlPos, cmdl);
        return(stateres);
-     } elseIf (cmd == "getstatexd") {
+     } elseIf (cmd == "getstatexd" && cmdl[1] == secQ) {
        ctlPos = app.strToInt(cmdl[2]);
        xd = sxd[ctlPos];
        if (TS.isEmpty(xd)) {
