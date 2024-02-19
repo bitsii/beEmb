@@ -272,7 +272,7 @@ class Embedded:AppShell {
 
    buildSwInfoIn() {
      if (TS.isEmpty(swSpec)) {
-       swSpec = "1,q,p3,p2.Unspeced.6";
+       swSpec = "1,q,p3,p2.Unspeced.71";
      }
      auto swl = swSpec.split(".");
      devCode = swl[1];
