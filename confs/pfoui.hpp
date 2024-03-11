@@ -9,21 +9,42 @@
 // SW - name (type) and version of the device.  Typename 10 char max ssid rules (no spaces)
 // swconfver.DeviceTypeName.DeviceVersion
 //
-#define BESPEC_SW "1,q,p3,p2.AthLB15Str.54"  //
+//#define BESPEC_SW "1,p2.Generic.22"  //supergeneric
+//#define BESPEC_SW "1,p2.WNN.31"  //nodemcu
+//#define BESPEC_SW "1,q,p3,p2.Rando.69" //testing changes
+#define BESPEC_SW "1,q,p3,p2.OUI.71"  //nodemcu q = quickstate, p2 auth type 2 (hash), p2 always last
+//#define BESPEC_SW  "0.DollaTek.20" //dollatek 2mb 1led
+//#define BESPEC_SW "1,p2.WNAP2.29" //Athom Plug V2 US THE REAL ONE
 //
 // CON - definition of device's controls
 // ctlconfver.control.ctlconf,args.control.ctlconf,args
 //
-//FOR THE LB01-15W 4,5,12,13i,14 looks like 4,12,14 are r,g,b 5 is white level 13 is temp
-#define BESPEC_CON "0.rgb.4,12,14.str.0" //the real one
-//#define BESPEC_CON "0.dim.2.strd.0" //the nmcu test
 //#define BESPEC_CON "" //supergeneric
-//next really rgbcct, rgbcw red green blue cold warm
-//R W G T B || R C G W B pin order
-//#define BESPEC_CON "0.pwmh.4.pwmh.5.pwmh.12.pwmh.13.pwmh.14.rgbcw.0,2,4,1,3" //Athom 7W 600lm RGBCCT Bulb (LB01-7W-B22)
-//Just the R G B part now
-//#define BESPEC_CON "0.rgb.4,12,14" //Athom 7W 600lm RGBCCT Bulb (LB01-7W-B22)
-//putconfigs pass raw fc.conspec 0.dim.2,0 e
+//
+//FOR THE BELOW LINE THIS IS HOW TO SETUP THE BUTTON on a node mcu, follow
+//this site roughly https://miliohm.com/arduino-button-without-resistor-pull-up-or-pull-down/
+//one of the two wires (on my bboard the green one) goes on GND, the other on D5/GPIO 14, the other
+//ends of those wires on each side of the button that closes them when pushed
+//
+#define BESPEC_CON "0.gdim.2,1" //nodemcu just dim local led w gamma (reversed)
+//#define BESPEC_CON "0.sw.2" //nodemcu just sw
+//#define BESPEC_CON "0.sw.2.bu.14,0,30,0,10000" //nodemcu like athsw
+//#define BESPEC_CON "0.dim.2,1" //nodemcu just dim local led (reversed)
+//#define BESPEC_CON "0.rgbcwgd.4,12,14,5,13" //all in one, pins cold, warm, red, green, blue, gammadim, exclusive cw or rgb
+//#define BESPEC_CON "0.rgbcwsgd.4,12,14,5,13" //all in one, pins cold, warm, red, green, blue, gammadim, exclusive cw or rgb. for cw not two pins mixing but one pin for lvl and one for temp
+//#define BESPEC_CON "0.rgb.4,12,14" //nodemcu rgb
+//#define BESPEC_CON "0.rgbgdim.4,12,14" //nodemcu rgb
+//#define BESPEC_CON "0.cwgd.5,13"  //color temp only 2 leds, 5 cold, 13 warm
+//#define BESPEC_CON "0.cwgd.14,4" //red warm, blue cold  first pin cold, second warm
+//#define BESPEC_CON "0.gdim.5.gdim.13" //
+//#define BESPEC_CON "0.rgb.4,12,14.str.0" //nodemcu rgb strobe
+//
+//#define BESPEC_CON "0.sw.16"  //dollatek - one sw on 16
+//#define BESPEC_CON "0.dim.16"  //dollatek - one dim on 16
+//#define BESPEC_CON "0.sw.12,1.bu.5,0,30,0,30000"  //12 is switch, 13 is led, 5 button - athom plug v2 us - esp8266ex 2mb THE REAL ONE sic look unnecessary led does on it's own
+//#define BESPEC_CON "0.sw.12,1" //Athom Plug V2 US - sw on 12, 13 is led, default - same for martin jerry
+//#define BESPEC_CON "0.sw.12.sw.13"  //12 is switch, 13 is led - athom plug v2 us - esp8266ex 2mb
+//#define BESPEC_CON "0.sw.2.bu.5,0,0,0,0" //nodemcu like athsw
 //
 //pinposes //16, 2 nodemcu - Athom 16A US 13 LED 14 RELAY, SONOFF BASIC R2 13 LED 12 RELAY, 16 for dollatek 8285
 //
