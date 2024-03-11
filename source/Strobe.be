@@ -20,10 +20,10 @@ class Embedded:Strobe(Embedded:AppShell) {
 
    buildControl(Int conPos, String conName, String conArgs) {
      if (conName == "rgb") {
-       auto rgb = Embedded:RGBControl.new(self, conPos, conName, conArgs);
+       var rgb = Embedded:RGBControl.new(self, conPos, conName, conArgs);
        return(rgb);
      } elseIf (conName == "str") {
-       auto str = Embedded:StrC.new(self, conPos, "sw", conArgs);
+       var str = Embedded:StrC.new(self, conPos, "sw", conArgs);
        return(str);
      } else {
        "Unknown control conName in Switch".print();

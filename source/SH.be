@@ -31,7 +31,7 @@ class Embedded:AppShell {
    
    main() {
      fields {
-       auto app = Embedded:App.new();
+       var app = Embedded:App.new();
        Config config = Config.new();
        Int nowup = Int.new();
        String lastEventsRes;
@@ -274,7 +274,7 @@ class Embedded:AppShell {
      if (TS.isEmpty(swSpec)) {
        swSpec = "1,q,p3,p2.Unspeced.71";
      }
-     auto swl = swSpec.split(".");
+     var swl = swSpec.split(".");
      devCode = swl[1];
    }
 
@@ -308,7 +308,7 @@ class Embedded:AppShell {
        controlSpec = "";
      }
      controlDef = "controldef,"
-     auto conl = controlSpec.split(".");
+     var conl = controlSpec.split(".");
      Int i = 1;
      Int conPos = 0;
      while (i < conl.size) {
@@ -344,8 +344,8 @@ class Embedded:AppShell {
    }
 
    initRandom() {
-     auto wifi = Embedded:Wifi.new();
-     auto rhash = wifi.macAddress;
+     var wifi = Embedded:Wifi.new();
+     var rhash = wifi.macAddress;
 
      Int i = 0;
      for (String net in wifi.scanNetworks()) {
@@ -505,9 +505,9 @@ class Embedded:AppShell {
         String pinpt = pin.substring(0, 8);
         String sec = pin.substring(8, 16);
         String ssid = "Casnic" + apType + "-";
-        auto wifi = Embedded:Wifi.new();
-        auto nets = wifi.scanNetworks();
-        auto rand = System:Random.new();
+        var wifi = Embedded:Wifi.new();
+        var nets = wifi.scanNetworks();
+        var rand = System:Random.new();
         if (hiddenCode == CNS.on) {
           pinpt = "U";
         }
@@ -550,8 +550,8 @@ class Embedded:AppShell {
     //"checking if wifi up".print();
     unless (Wifi.isConnected || TS.isEmpty(ssid) || justSetWifi) {
        "wifi configured but not up".print();
-       auto wifi = Embedded:Wifi.new();
-       auto nets = wifi.scanNetworks();
+       var wifi = Embedded:Wifi.new();
+       var nets = wifi.scanNetworks();
        if (nets.has(ssid)) {
          "my ssid present".print();
          Wifi.new(ssid, sec).start();
@@ -569,7 +569,7 @@ class Embedded:AppShell {
       "in update".print();
       "upurl".print();
       upurl.print();
-      auto eupd = Embedded:Update.new();
+      var eupd = Embedded:Update.new();
       eupd.updateFromUrl(upurl);
       "update done".print();
      }
@@ -734,7 +734,7 @@ class Embedded:AppShell {
      }
      ifNotEmit(noWeb) {
       if (def(tweb)) {
-        auto treq = tweb.checkGetRequest();
+        var treq = tweb.checkGetRequest();
         if (def(treq)) {
           //"got treq".print();
           String qs = treq.checkGetQueryString(readBuf);
@@ -746,11 +746,11 @@ class Embedded:AppShell {
               sendWebPage(treq);
               needsGc = true;
             } elseIf (qs.begins("/?")) {
-              auto qspso = qs.split("&");
+              var qspso = qs.split("&");
               for (String qspsi in qspso) {
                 if (TS.notEmpty(qspsi)) {
                   //("got qspsi " + qspsi).print();
-                  auto qsps = qspsi.split("=");
+                  var qsps = qspsi.split("=");
                   //gocha = cmd cannnnot be the first param, is it will have a /?
                   if (qsps.size > 1 && def(qsps[0]) && TS.notEmpty(qsps[1])) {
                     if (qsps[0] == "cmd") {
@@ -787,7 +787,7 @@ class Embedded:AppShell {
       }
      }
      if (def(tcpserver)) {
-      auto preq = tcpserver.checkGetClient();
+      var preq = tcpserver.checkGetClient();
       if (def(preq)) {
         //"got preq".print();
         String ppay = preq.checkGetPayload(readBuf, slashn);
@@ -858,7 +858,7 @@ class Embedded:AppShell {
      channel.print();
      ("cmdline").print();
      cmdline.print();
-     auto cmdl = cmdline.split(" ");
+     var cmdl = cmdline.split(" ");
      //get rid of trailing newline NOW WE DOWN'T, ADD SOMETHING ON THE BACK
      //if (channel == "serial" && cmdl.size > 0) {
      //  cmdl.put(cmdl.size - 1, cmdl.get(cmdl.size - 1).swap("\n", ""));
@@ -962,7 +962,7 @@ class Embedded:AppShell {
        List visnets;
      }
      if (undef(visnets)) {
-       auto wifi = Embedded:Wifi.new();
+       var wifi = Embedded:Wifi.new();
        visnets = wifi.scanNetworks();
      }
       if (cmdl.size > 1) {

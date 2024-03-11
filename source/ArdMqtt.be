@@ -244,7 +244,7 @@ void messageReceived(String &topic, String &payload) {
     }
 
     if (def(mqrcm)) {
-      auto m = mqrcm;
+      var m = mqrcm;
       mqrcm = null;
       mqttHandler.handleMqtt(m.topic, m.payload);
       return(true);

@@ -37,7 +37,7 @@ class TinyWeb {
   checkGetRequest() TinyWebRequest {
     
     if (def(server)) {
-      auto client = server.checkGetClient();
+      var client = server.checkGetClient();
       
       if (def(client)) {
         //"got client".print();
@@ -67,7 +67,7 @@ class TinyWebRequest {
         //"got line".print();
         //line.print();
         if (line.begins("GET ")) {
-          auto ll = line.split(" ");
+          var ll = line.split(" ");
           String qs = ll[1];
         }
         if (line == "\r\n") {

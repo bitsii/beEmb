@@ -20,7 +20,7 @@ class Embedded:RGBSh(Embedded:AppShell) {
 
    buildControl(Int conPos, String conName, String conArgs) {
      if (conName == "rgb" || conName == "rgbgdim") {
-       auto rgb = Embedded:RGBControl.new(self, conPos, conName, conArgs);
+       var rgb = Embedded:RGBControl.new(self, conPos, conName, conArgs);
        return(rgb);
      } else {
        "Unknown control conName".print();

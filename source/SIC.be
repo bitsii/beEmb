@@ -36,7 +36,7 @@ class Embedded:SwitchIndicatorControl {
      }
      //pini = Int.new(_conArgs);
      if (_conArgs.has(",")) {
-        auto cal = _conArgs.split(",");
+        var cal = _conArgs.split(",");
         spin = cal[0];
         diri = app.strToInt(cal[1]);
         ic = app.strToInt(cal[2]);

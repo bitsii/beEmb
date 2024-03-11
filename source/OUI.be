@@ -20,7 +20,7 @@ class Embedded:Oui(Embedded:AppShell) {
 
    buildControl(Int conPos, String conName, String conArgs) {
      if (conName == "dim" || conName == "gdim") {
-       auto dimc = Embedded:DimmerControl.new(self, conPos, conName, conArgs);
+       var dimc = Embedded:DimmerControl.new(self, conPos, conName, conArgs);
        return(dimc);
      } else {
        "Unknown control conName in Switch".print();

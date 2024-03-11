@@ -21,7 +21,7 @@ class Embedded:Switch(Embedded:AppShell) {
 
    buildControl(Int conPos, String conName, String conArgs) {
      if (conName == "sw") {
-       auto swc = Embedded:SwitchControl.new(self, conPos, conName, conArgs);
+       var swc = Embedded:SwitchControl.new(self, conPos, conName, conArgs);
        return(swc);
      } else {
        "Unknown control conName in Switch".print();

@@ -20,25 +20,25 @@ class Embedded:Grande(Embedded:AppShell) {
 
    buildControl(Int conPos, String conName, String conArgs) {
      if (conName == "sw") {
-       auto swc = Embedded:SwitchControl.new(self, conPos, conName, conArgs);
+       var swc = Embedded:SwitchControl.new(self, conPos, conName, conArgs);
        return(swc);
      } elseIf (conName == "dim" || conName == "gdim") {
-       auto dimc = Embedded:DimmerControl.new(self, conPos, conName, conArgs);
+       var dimc = Embedded:DimmerControl.new(self, conPos, conName, conArgs);
        return(dimc);
      } elseIf (conName == "bu") {
-       auto buc = Embedded:ButtonControl.new(self, conPos, conName, conArgs);
+       var buc = Embedded:ButtonControl.new(self, conPos, conName, conArgs);
        return(buc);
      } elseIf (conName == "rgb" || conName == "rgbgdim") {
-       auto rgb = Embedded:RGBControl.new(self, conPos, conName, conArgs);
+       var rgb = Embedded:RGBControl.new(self, conPos, conName, conArgs);
        return(rgb);
      } elseIf (conName == "cwgd") {
-       auto cct = Embedded:CWCtl.new(self, conPos, conName, conArgs);
+       var cct = Embedded:CWCtl.new(self, conPos, conName, conArgs);
        return(cct);
      } elseIf (conName == "rgbcwgd" || conName == "rgbcwsgd") {
-       auto rgbcw = Embedded:RGBCWCtl.new(self, conPos, conName, conArgs);
+       var rgbcw = Embedded:RGBCWCtl.new(self, conPos, conName, conArgs);
        return(rgbcw);
      } elseIf (conName == "str") {
-       auto str = Embedded:StrC.new(self, conPos, "sw", conArgs);
+       var str = Embedded:StrC.new(self, conPos, "sw", conArgs);
        return(str);
      } else {
        "Unknown control conName in Switch".print();

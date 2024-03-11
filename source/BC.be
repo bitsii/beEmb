@@ -50,7 +50,7 @@ class Embedded:ButtonControl {
        //2 resolution of button (millisecs, only checks button state this often, 2 successive must agree for read)
        //3 switch control position (if is own conPos, ignored)
        //4 min push time to do a device reset, if 0 ignored (millisecs)
-        auto cal = _conArgs.split(",");
+        var cal = _conArgs.split(",");
         spin = cal[0];
         diri = app.strToInt(cal[1]);
         pushTime = app.strToInt(cal[2]);

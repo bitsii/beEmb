@@ -20,10 +20,10 @@ class Embedded:SwitchButton(Embedded:AppShell) {
 
    buildControl(Int conPos, String conName, String conArgs) {
      if (conName == "sw") {
-       auto swc = Embedded:SwitchControl.new(self, conPos, conName, conArgs);
+       var swc = Embedded:SwitchControl.new(self, conPos, conName, conArgs);
        return(swc);
      } elseIf (conName == "bu") {
-       auto buc = Embedded:ButtonControl.new(self, conPos, conName, conArgs);
+       var buc = Embedded:ButtonControl.new(self, conPos, conName, conArgs);
        return(buc);
      } else {
        "Unknown control conName in Switch".print();

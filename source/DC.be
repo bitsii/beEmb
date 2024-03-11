@@ -35,7 +35,7 @@ class Embedded:DimmerControl {
      }
      //pini = Int.new(_conArgs);
      if (_conArgs.has(",")) {
-        auto cal = _conArgs.split(",");
+        var cal = _conArgs.split(",");
         spin = cal[0];
         String sdir = cal[1];
         diri = app.strToInt(sdir);
