@@ -54,7 +54,7 @@ class Embedded:SwitchIndicatorControl {
      slots {
        String on = CNS.on;
        String off = CNS.off;
-       any sc;
+       dyn sc;
      }
      fields {
        String sw;

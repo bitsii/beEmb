@@ -15,7 +15,7 @@ class Embedded:App {
    
    default() self { 
      fields {
-       any plugin;
+       dyn plugin;
      }
      slots {
        Int hlCount = 0;

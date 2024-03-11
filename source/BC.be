@@ -126,7 +126,7 @@ class Embedded:ButtonControl {
                   "swPos == conPos, nothing to do".print();
                   return(self);
                 }
-                any swc = ash.controls.get(swPos);
+                dyn swc = ash.controls.get(swPos);
                   if (TS.isEmpty(swc.sw) || swc.sw == off) {
                     swc.doState(List.new().addValue("dostate").addValue("notpw").addValue(swPos.toString()).addValue(setsw).addValue(on));
                   } elseIf (swc.sw == on) {

@@ -194,7 +194,7 @@ void messageReceived(String &topic, String &payload) {
     return(publish(msg.topic, msg.payload));
   }
 
-  handleAsync(any mqttHandler) Bool {
+  handleAsync(dyn mqttHandler) Bool {
     //return is "did I do work"
     String gott;
     String gotp;

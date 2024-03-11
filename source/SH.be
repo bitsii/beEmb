@@ -166,7 +166,7 @@ class Embedded:AppShell {
    }
 
    initControls() {
-     for (any control in controls) {
+     for (dyn control in controls) {
        control.initControl();
      }
    }
@@ -184,7 +184,7 @@ class Embedded:AppShell {
       String d = ",";
       String cd = ";";
       Int conPos = 0;
-      for (any control in controls) {
+      for (dyn control in controls) {
         String conType = control.conType;
         Int le = control.lastEvent;
         if (def(le)) {
@@ -199,7 +199,7 @@ class Embedded:AppShell {
    }
    
    clearStates() {
-     for (any control in controls) {
+     for (dyn control in controls) {
        control.clearStates();
      }
    }
@@ -722,7 +722,7 @@ class Embedded:AppShell {
             } else {
               ("scmdres " + scmdres).print();
             }
-          } catch (any sdce) {
+          } catch (dyn sdce) {
             "error handling command".print();
             sdce.print();
           }
@@ -765,7 +765,7 @@ class Embedded:AppShell {
                           } else {
                             treq.client.write(wcmdres);
                           }
-                        } catch (any wdce) {
+                        } catch (dyn wdce) {
                           "error handling command".print();
                           wdce.print();
                         }
@@ -803,7 +803,7 @@ class Embedded:AppShell {
                   preq.write(slashn);
                   "pcmdres send done".print();
                 }
-              } catch (any pdce) {
+              } catch (dyn pdce) {
                 "error handling command".print();
                 pdce.print();
               }
