@@ -8,13 +8,13 @@
  *
  */
 
-use Math:Int;
-use Embedded:Wifi;
-use Text:String;
-use Text:Strings as TS;
-use Embedded:Aes as Crypt;
-use Encode:Url as EU;
-use Embedded:AppShell;
+import Math:Int;
+import Embedded:Wifi;
+import Text:String;
+import Text:Strings as TS;
+import Embedded:Aes as Crypt;
+import Encode:Url as EU;
+import Embedded:AppShell;
 
 class Embedded:RGBSh(Embedded:AppShell) {
 

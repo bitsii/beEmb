@@ -8,9 +8,9 @@
  *
  */
 
-use Text:Strings as TS;
-use System:Exception;
-use Encode:Url as EU;
+import Text:Strings as TS;
+import System:Exception;
+import Encode:Url as EU;
 
 class Embedded:SerServer {
   

@@ -8,9 +8,9 @@
  *
  */
 
-use Text:Strings as TS;
-use System:Exception;
-use Embedded:MqMessage;
+import Text:Strings as TS;
+import System:Exception;
+import Embedded:MqMessage;
 
 /*
 //for Mqtt.be

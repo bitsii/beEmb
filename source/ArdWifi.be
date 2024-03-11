@@ -8,8 +8,8 @@
  *
  */
 
-use Text:Strings as TS;
-use System:Exception;
+import Text:Strings as TS;
+import System:Exception;
 
 class Embedded:Wifi {
 

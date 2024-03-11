@@ -8,13 +8,13 @@
  *
  */
 
-use Text:Strings as TS;
-use System:Exception;
+import Text:Strings as TS;
+import System:Exception;
 
-use Embedded:TCPServer;
-use Embedded:TCPClient;
-use Embedded:TinyWeb;
-use Embedded:TinyWebRequest;
+import Embedded:TCPServer;
+import Embedded:TCPClient;
+import Embedded:TinyWeb;
+import Embedded:TinyWebRequest;
 
 class TinyWeb {
 
