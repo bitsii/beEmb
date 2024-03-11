@@ -44,7 +44,7 @@ class Embedded:StrC {
      fields {
        Int lastEvent = Int.new();
      }
-     if (_conArgs.has(",")) {
+     if (_conArgs.contains(",")) {
         var cal = _conArgs.split(",");
         rgbp = app.strToInt(cal[0]);
      } else {
