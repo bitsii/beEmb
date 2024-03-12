@@ -86,7 +86,7 @@ class Embedded:Config {
           //("eeprom read name " + lbuf).print();
         } elseIf (res == rs) {
           values.put(lpos, lbuf.copy());
-          lpos++=;
+          lpos++;
           //("eeprom read value " + lbuf).print();
         } elseIf (res == gs) {
           "read all done".print();
@@ -116,7 +116,7 @@ class Embedded:Config {
         """
       }
       if (pe < eelength) {
-          pe++=;
+          pe++;
       } else {
         "Out of eeprom space".print();
         return(gs);
@@ -135,7 +135,7 @@ class Embedded:Config {
           lbuf.capacitySet(nlength);
         }
         lbuf.setCodeUnchecked(ps, code);
-        ps++=;
+        ps++;
         lbuf.length.setValue(ps);
         if (ines) {
           ines = false;
@@ -169,7 +169,7 @@ class Embedded:Config {
     Int code = 0;
 
     epwrite(magic, css, ps, pe, code, false);
-    for (Int lpos = 0;lpos < names.length;lpos++=) {
+    for (Int lpos = 0;lpos < names.length;lpos++) {
       String name = names.get(lpos);
       String value = values.get(lpos);
       if (TS.notEmpty(name) && TS.notEmpty(value)) {
@@ -197,7 +197,7 @@ class Embedded:Config {
 
   epwrite(String ws, Int css, Int ps, Int pe, Int code, Bool noes) {
     css.setValue(ws.length);
-    for (ps.setValue(zero);ps < css;ps++=) {
+    for (ps.setValue(zero);ps < css;ps++) {
         if (pe < eelength) {
           ws.getCode(ps, code);
           if (code == es || code == gs || code == us || code == rs) {
@@ -207,7 +207,7 @@ class Embedded:Config {
                 EEPROM.write(beq->beva_pe->bevi_int, bevp_es->bevi_int);
                   """
               }
-              pe++=;
+              pe++;
               if (pe >= eelength) {
                 "Out of eeprom space".print();
                 return(self);
@@ -219,7 +219,7 @@ class Embedded:Config {
             EEPROM.write(beq->beva_pe->bevi_int, beq->beva_code->bevi_int);
               """
           }
-          pe++=;
+          pe++;
         } else {
           "Out of eeprom space".print();
           return(self);

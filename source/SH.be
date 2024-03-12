@@ -190,7 +190,7 @@ class Embedded:AppShell {
         if (def(le)) {
           les += conType += d += conPos += d += le += cd;
         }
-        conPos++=;
+        conPos++;
       }
      }
      if (TS.isEmpty(les)) { les = CNS.undefined; }
@@ -316,12 +316,12 @@ class Embedded:AppShell {
          controlDef += ",";
        }
        String conName = conl[i];
-       i++=;
+       i++;
        String conArgs = conl[i];
        controls.put(conPos, buildControl(conPos, conName, conArgs));
        controlDef += controls.get(conPos).conType;
-       conPos = conPos++;
-       i++=;
+       conPos = conPos + 1;
+       i++;
      }
      ("controlDef " + controlDef).print();
    }
@@ -350,7 +350,7 @@ class Embedded:AppShell {
      Int i = 0;
      for (String net in wifi.scanNetworks()) {
        rhash += net;
-       i++=;
+       i++;
        if (i > 7) { break; }
      }
 
@@ -580,7 +580,7 @@ class Embedded:AppShell {
      String pow = config.get(shpowi);
      if (TS.notEmpty(pow)) {
        Int powi = Int.new(pow);
-       powi++=;
+       powi++;
        if (powi > 4) {
          powi = 4;
        }
@@ -824,7 +824,7 @@ class Embedded:AppShell {
      looperI.setValue(zero);
      while (looperI < loopers.length) {
        loopers.get(looperI).handleLoop();
-       looperI++=;
+       looperI++;
      }
      ifNotEmit(noMdns) {
       if (def(mdserver)) {
@@ -902,7 +902,7 @@ class Embedded:AppShell {
        }
        Int toc = cmdl.length - 1;
         String sp = " ";
-        for (Int j = abeg.copy();j < toc;j++=) {
+        for (Int j = abeg.copy();j < toc;j++) {
           tohash += cmdl[j] += sp;
         }
        //("tohash |" + tohash + "|").print();
@@ -921,7 +921,7 @@ class Embedded:AppShell {
          if (TS.notEmpty(cmdl[2]) && hdone == cmdl[2]) {
            ("hsec passed").print();
            cmdl.put(abeg + 1, spw);
-           for (Int i = abeg.copy();i < cmdl.length;i++=) {
+           for (Int i = abeg.copy();i < cmdl.length;i++) {
              cmdn += cmdl[i];
            }
          } else {
@@ -981,9 +981,9 @@ class Embedded:AppShell {
       Int j = 0;
       String res = "ssids";
       for (String net in visnets) {
-        i++=;
+        i++;
         if (i > sti) {
-          j++=;
+          j++;
           res += ":" += Encode:Hex.encode(net);
           if (j > 3) { break; }
         }
@@ -1212,9 +1212,9 @@ class Embedded:AppShell {
           deHex = false;
         }
         Int cmdle = cmdl.length - 1;
-        for (Int k = 3;k < cmdle;k++=) {
+        for (Int k = 3;k < cmdle;k++) {
           String key = cmdl[k];
-          k++=;
+          k++;
           if (k < cmdle) {
             String value = cmdl[k];
           } else {

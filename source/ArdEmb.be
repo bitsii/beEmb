@@ -45,7 +45,7 @@ class Embedded:App {
      if (hlCount > zero) {
        "HLCOUNT ELEVATED".print();
      }
-     hlCount++=;
+     hlCount++;
      plugin.handleLoop();
      hlCount--=;
    }

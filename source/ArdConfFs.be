@@ -31,7 +31,7 @@ class Embedded:Config {
   getPos(String name) {
      Int pos = names.find(name);
      if (undef(pos)) {
-      for (Int i = 0;i < names.length;i++=) {
+      for (Int i = 0;i < names.length;i++) {
         if (undef(names.get(i))) {
           pos = i;
           names.put(pos, name);
@@ -110,7 +110,7 @@ class Embedded:Config {
     //("bmxs " + bmxs).print();
     String fn = String.new();
     Int bmx = Int.new(bmxs);
-    for (Int i = 0;i < bmx;i++=) {
+    for (Int i = 0;i < bmx;i++) {
       //("try load " + i).print();
       bns = null;
       bvs = null;
@@ -204,7 +204,7 @@ class Embedded:Config {
     }
     //"save looping".print();
     String fn = String.new();
-    for (Int lpos = 0;lpos < names.length;lpos++=) {
+    for (Int lpos = 0;lpos < names.length;lpos++) {
       String name = names.get(lpos);
       String value = values.get(lpos);
       Bool change = changes.get(lpos);

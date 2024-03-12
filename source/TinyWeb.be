@@ -61,7 +61,7 @@ class TinyWebRequest {
   }
   
   checkGetQueryString(String line) {
-    for (Int i = 0;i < 30;i++=) {
+    for (Int i = 0;i < 30;i++) {
     line = client.checkGetPayload(line, "\n");
       if (TS.notEmpty(line)) {
         //"got line".print();
