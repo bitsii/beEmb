@@ -60,7 +60,7 @@ class Embedded:ButtonControl {
       String spin = _conArgs;
      }
      pini = app.strToInt(spin);
-     onStart--=;
+     onStart--;
    }
 
    conTypeGet() String {

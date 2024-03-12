@@ -47,7 +47,7 @@ class Embedded:App {
      }
      hlCount++;
      plugin.handleLoop();
-     hlCount--=;
+     hlCount--;
    }
    
    delay(Int millis) {
