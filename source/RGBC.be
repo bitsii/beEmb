@@ -71,7 +71,7 @@ class Embedded:RGBControl {
 
      if (conArgs.contains(",")) {
         var cal = conArgs.split(",");
-        if (cal.size < 3) {
+        if (cal.length < 3) {
           "not enough pins for rgbc".print();
         }
         rp = app.strToInt(cal[0]);

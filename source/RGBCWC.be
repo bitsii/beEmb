@@ -76,7 +76,7 @@ class Embedded:RGBCWCtl {
 
      if (conArgs.contains(",")) {
         var cal = conArgs.split(",");
-        if (cal.size < 5) {
+        if (cal.length < 5) {
           "not enough pins for RGBCWCtl".print();
         }
         rp = app.strToInt(cal[0]);

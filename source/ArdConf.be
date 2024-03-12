@@ -15,7 +15,7 @@ class Embedded:Config {
 
   new() {
     fields {
-      Int eesize = 4096;//4096 8192 16384 - error suggests 4096 is the limit
+      Int eelength = 4096;//4096 8192 16384 - error suggests 4096 is the limit
       Int maxsz = 128;//how big we let a name or value be
       List names = List.new();
       List values = List.new();
@@ -39,7 +39,7 @@ class Embedded:Config {
   getPos(String name) {
      Int pos = names.find(name);
      if (undef(pos)) {
-       pos = names.size.copy();
+       pos = names.length.copy();
        names += name;
        values += null;
      }
@@ -67,7 +67,7 @@ class Embedded:Config {
     //begin
     emit(cc) {
       """
-    EEPROM.begin(bevp_eesize->bevi_int);
+    EEPROM.begin(bevp_eelength->bevi_int);
       """
     }
     String lbuf = String.new();
@@ -75,11 +75,11 @@ class Embedded:Config {
     Int ps = 0; //pos in string
     Int code = 0;
     Int lpos = 0;
-    epread(lbuf, ps, pe, code, magic.size);
+    epread(lbuf, ps, pe, code, magic.length);
     if (TS.notEmpty(lbuf) && lbuf == magic) {
       loop {
         ps.setValue(zero);
-        lbuf.size.setValue(zero);
+        lbuf.length.setValue(zero);
         Int res = epread(lbuf, ps, pe, code, zero);
         if (res == us) {
           names.put(lpos, lbuf.copy());
@@ -107,7 +107,7 @@ class Embedded:Config {
   }
 
   //res
-  epread(String lbuf, Int ps, Int pe, Int code, Int rsize) Int {
+  epread(String lbuf, Int ps, Int pe, Int code, Int rlength) Int {
     Bool ines = false;
     loop {
       emit(cc) {
@@ -115,7 +115,7 @@ class Embedded:Config {
       beq->beva_code->bevi_int = EEPROM.read(beq->beva_pe->bevi_int);
         """
       }
-      if (pe < eesize) {
+      if (pe < eelength) {
           pe++=;
       } else {
         "Out of eeprom space".print();
@@ -131,20 +131,20 @@ class Embedded:Config {
         }
         //add to string
         if (ps >= lbuf.capacity) {
-          Int nsize = ((ps + 16) * 3) / 2;
-          lbuf.capacitySet(nsize);
+          Int nlength = ((ps + 16) * 3) / 2;
+          lbuf.capacitySet(nlength);
         }
         lbuf.setCodeUnchecked(ps, code);
         ps++=;
-        lbuf.size.setValue(ps);
+        lbuf.length.setValue(ps);
         if (ines) {
           ines = false;
         }
-        //check size
-        if (rsize > zero && lbuf.size >= rsize) {
-          return(rsize);
+        //check length
+        if (rlength > zero && lbuf.length >= rlength) {
+          return(rlength);
         }
-        if (lbuf.size >= maxsz) {
+        if (lbuf.length >= maxsz) {
           return(gs);//should not happen, its broke
         }
       }
@@ -154,26 +154,26 @@ class Embedded:Config {
   save() {
     //write while iterating, no copy
     //cr for kv split nl for new pair term with empty pair
-    //just has to fit in the thing, never need to know size
+    //just has to fit in the thing, never need to know length
 
     //begin
     emit(cc) {
       """
-    EEPROM.begin(bevp_eesize->bevi_int);
+    EEPROM.begin(bevp_eelength->bevi_int);
       """
     }
     //global int for position
     Int pe = 0; //pos in eeprom
     Int ps = 0; //pos in string
-    Int css = 0; //current string size
+    Int css = 0; //current string length
     Int code = 0;
 
     epwrite(magic, css, ps, pe, code, false);
-    for (Int lpos = 0;lpos < names.size;lpos++=) {
+    for (Int lpos = 0;lpos < names.length;lpos++=) {
       String name = names.get(lpos);
       String value = values.get(lpos);
       if (TS.notEmpty(name) && TS.notEmpty(value)) {
-        if (name.size < maxsz && value.size < maxsz) {
+        if (name.length < maxsz && value.length < maxsz) {
           epwrite(name, css, ps, pe, code, false);
           //("wrote name " + name).print();
           epwrite(uss, css, ps, pe, code, true);
@@ -196,9 +196,9 @@ class Embedded:Config {
   }
 
   epwrite(String ws, Int css, Int ps, Int pe, Int code, Bool noes) {
-    css.setValue(ws.size);
+    css.setValue(ws.length);
     for (ps.setValue(zero);ps < css;ps++=) {
-        if (pe < eesize) {
+        if (pe < eelength) {
           ws.getCode(ps, code);
           if (code == es || code == gs || code == us || code == rs) {
             unless (noes) {
@@ -208,7 +208,7 @@ class Embedded:Config {
                   """
               }
               pe++=;
-              if (pe >= eesize) {
+              if (pe >= eelength) {
                 "Out of eeprom space".print();
                 return(self);
               }

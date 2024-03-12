@@ -82,14 +82,14 @@ void messageReceived(String &topic, String &payload) {
     new();
   }
 
-  minAsyncCapacitySet(Int size) {
-    if (mqpublmax < size) {
-      mqpublmax.setValue(size);
+  minAsyncCapacitySet(Int length) {
+    if (mqpublmax < length) {
+      mqpublmax.setValue(length);
     }
   }
 
   hasAsyncCapacity(Int amount) Bool {
-    if (mqpublmax >= mqpubl.size && mqpublmax - mqpubl.size >= amount) {
+    if (mqpublmax >= mqpubl.length && mqpublmax - mqpubl.length >= amount) {
       return(true);
     }
     return(false);
@@ -220,7 +220,7 @@ void messageReceived(String &topic, String &payload) {
     }
 
     if (TS.notEmpty(gott) && TS.notEmpty(gotp)) {
-      if (mqrcmax > mqrcl.size) {
+      if (mqrcmax > mqrcl.length) {
         mqrcl += Embedded:MqttMessage.new(gott, gotp);
       } else {
         "mqrcl full".print();
@@ -238,7 +238,7 @@ void messageReceived(String &topic, String &payload) {
         mqsubl.clear();
         return(false);
       }
-    } elseIf (mqsubl.size > zero) {
+    } elseIf (mqsubl.length > zero) {
       mqsubi = mqsubl.iterator;
       return(false);
     }
@@ -256,7 +256,7 @@ void messageReceived(String &topic, String &payload) {
         mqrci = null;
         return(false);
       }
-    } elseIf (mqrcl.size > zero) {
+    } elseIf (mqrcl.length > zero) {
       mqrci = mqrcl.iterator;
       mqrcl = Container:List.new();
       return(false);
@@ -276,7 +276,7 @@ void messageReceived(String &topic, String &payload) {
         mqpubl.clear();
         return(false);
       }
-    } elseIf (mqpubl.size > zero) {
+    } elseIf (mqpubl.length > zero) {
       mqpubi = mqpubl.iterator;
       return(false);
     }

@@ -128,9 +128,9 @@ WiFiClient client;
     Int chari = Int.new();
     String chars = String.new(1);
     chars.setCodeUnchecked(0, 32);
-    chars.size.setValue(1);
+    chars.length.setValue(1);
     Int zero = 0;
-    if (def(endmark) && endmark.size > 1) {
+    if (def(endmark) && endmark.length > 1) {
       "only one char endmarks supported".print();
       return(payload);
     }

@@ -69,7 +69,7 @@ class Embedded:CWCtl {
 
      if (conArgs.contains(",")) {
         var cal = conArgs.split(",");
-        if (cal.size < 2) {
+        if (cal.length < 2) {
           "not enough pins for cws".print();
         }
         cp = app.strToInt(cal[0]);

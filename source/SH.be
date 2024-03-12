@@ -219,7 +219,7 @@ class Embedded:AppShell {
           """
         }
       }
-      if (TS.isEmpty(pinpart) || pinpart.size != 8) {
+      if (TS.isEmpty(pinpart) || pinpart.length != 8) {
         Int shppi = config.getPos("sh.pinpart");
         String pinpart = config.get(shppi);
         if (TS.isEmpty(pinpart)) {
@@ -311,7 +311,7 @@ class Embedded:AppShell {
      var conl = controlSpec.split(".");
      Int i = 1;
      Int conPos = 0;
-     while (i < conl.size) {
+     while (i < conl.length) {
        if (conPos > 0) {
          controlDef += ",";
        }
@@ -501,7 +501,7 @@ class Embedded:AppShell {
           }
         }
       }
-      if (TS.notEmpty(pin) && pin.size == 16) {
+      if (TS.notEmpty(pin) && pin.length == 16) {
         String pinpt = pin.substring(0, 8);
         String sec = pin.substring(8, 16);
         String ssid = "Casnic" + apType + "-";
@@ -752,7 +752,7 @@ class Embedded:AppShell {
                   //("got qspsi " + qspsi).print();
                   var qsps = qspsi.split("=");
                   //gocha = cmd cannnnot be the first param, is it will have a /?
-                  if (qsps.size > 1 && def(qsps[0]) && TS.notEmpty(qsps[1])) {
+                  if (qsps.length > 1 && def(qsps[0]) && TS.notEmpty(qsps[1])) {
                     if (qsps[0] == "cmd") {
                       //("got cmd " + qsps[1]).print();
                       String cdec = Encode:Url.decode(qsps[1]);
@@ -822,7 +822,7 @@ class Embedded:AppShell {
        }
      }
      looperI.setValue(zero);
-     while (looperI < loopers.size) {
+     while (looperI < loopers.length) {
        loopers.get(looperI).handleLoop();
        looperI++=;
      }
@@ -860,20 +860,20 @@ class Embedded:AppShell {
      cmdline.print();
      var cmdl = cmdline.split(" ");
      //get rid of trailing newline NOW WE DOWN'T, ADD SOMETHING ON THE BACK
-     //if (channel == "serial" && cmdl.size > 0) {
-     //  cmdl.put(cmdl.size - 1, cmdl.get(cmdl.size - 1).swap("\n", ""));
+     //if (channel == "serial" && cmdl.length > 0) {
+     //  cmdl.put(cmdl.length - 1, cmdl.get(cmdl.length - 1).swap("\n", ""));
      //}
-     //if (channel == "tcp" && cmdl.size > 0) {
-     //  cmdl.put(cmdl.size - 1, cmdl.get(cmdl.size - 1).swap("\r\n", ""));
+     //if (channel == "tcp" && cmdl.length > 0) {
+     //  cmdl.put(cmdl.length - 1, cmdl.get(cmdl.length - 1).swap("\r\n", ""));
      //}
-     if (cmdl.size > 0 && cmdl[0].ends("p2") || cmdl[0].ends("p3")) {
+     if (cmdl.length > 0 && cmdl[0].ends("p2") || cmdl[0].ends("p3")) {
        return(doCmdlSec(channel, origin, cmdl));
      }
      return(doCmdl(channel, origin, cmdl));
    }
 
    doCmdlSec(String channel, String origin, List cmdl) String {
-     if (cmdl.size > 4) {
+     if (cmdl.length > 4) {
        List cmdn = List.new();
        String hdone;
        //sporap1 iv
@@ -886,7 +886,7 @@ class Embedded:AppShell {
        } else {
          ("unknown secsceme " + cmdl[0]).print();
        }
-       if (cmdl[0].ends("3") && cmdl.size > 5) {
+       if (cmdl[0].ends("3") && cmdl.length > 5) {
          Int abeg = 4;
        } else {
          abeg = 3;
@@ -900,7 +900,7 @@ class Embedded:AppShell {
        if (abeg == 4) {
          tohash += cmdl[3] += ",";
        }
-       Int toc = cmdl.size - 1;
+       Int toc = cmdl.length - 1;
         String sp = " ";
         for (Int j = abeg.copy();j < toc;j++=) {
           tohash += cmdl[j] += sp;
@@ -921,7 +921,7 @@ class Embedded:AppShell {
          if (TS.notEmpty(cmdl[2]) && hdone == cmdl[2]) {
            ("hsec passed").print();
            cmdl.put(abeg + 1, spw);
-           for (Int i = abeg.copy();i < cmdl.size;i++=) {
+           for (Int i = abeg.copy();i < cmdl.length;i++=) {
              cmdn += cmdl[i];
            }
          } else {
@@ -965,7 +965,7 @@ class Embedded:AppShell {
        var wifi = Embedded:Wifi.new();
        visnets = wifi.scanNetworks();
      }
-      if (cmdl.size > 1) {
+      if (cmdl.length > 1) {
         String st = cmdl[1];
         if (st.isInteger) {
           Int sti = Int.new(st);
@@ -996,7 +996,7 @@ class Embedded:AppShell {
      app.wdtFeed();
      app.yield();
      needsGc = true;
-     if (cmdl.size < 1) {
+     if (cmdl.length < 1) {
        return("no cmd specified");
      }
      String cmd = cmdl[0];
@@ -1016,7 +1016,7 @@ class Embedded:AppShell {
        } else {
          return("on network nope");
        }
-     } elseIf (cmd == "dostate" && cmdl.size > 3 && cmdl[3].begins("get") && cmdl[1] == secQ) {
+     } elseIf (cmd == "dostate" && cmdl.length > 3 && cmdl[3].begins("get") && cmdl[1] == secQ) {
        Int ctlPos = app.strToInt(cmdl[2]);
        stateres = doState(ctlPos, cmdl);
        return(stateres);
@@ -1122,7 +1122,7 @@ class Embedded:AppShell {
       config.put(shspassi, spass);
 
       String newdid = cmdl[4];
-      if (TS.notEmpty(did) && did.size == 16) {
+      if (TS.notEmpty(did) && did.length == 16) {
         did = newdid;
         config.put(shdidi, did);
       } else {
@@ -1211,7 +1211,7 @@ class Embedded:AppShell {
         } else {
           deHex = false;
         }
-        Int cmdle = cmdl.size - 1;
+        Int cmdle = cmdl.length - 1;
         for (Int k = 3;k < cmdle;k++=) {
           String key = cmdl[k];
           k++=;

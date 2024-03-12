@@ -38,9 +38,9 @@ class Embedded:Files {
         emit(cc) {
         """
     } else {
-      //size_t wsize = (size_t) beva_data->bevp_size->bevi_int;
+      //size_t wlength = (size_t) beva_data->bevp_length->bevi_int;
       //unsigned char* wbuf = &(beva_data->bevi_bytes[0]);
-      //if (f.write(wbuf, wsize) == wsize) { }
+      //if (f.write(wbuf, wlength) == wlength) { }
       if(f.print(beva_data->bems_toCcString().c_str())) {
           //Serial.println("File was written");
       } else {
@@ -68,7 +68,7 @@ class Embedded:Files {
       Int chari = Int.new();
       String chars = String.new(1);
       chars.setCodeUnchecked(0, 32);
-      chars.size.setValue(1);
+      chars.length.setValue(1);
       Int zero = 0;
       Int n1 = -1;
       Int n255 = 255;

@@ -42,7 +42,7 @@ class Embedded:Config {
       }
      }
      if (undef(pos)) {
-       pos = names.size.copy();
+       pos = names.length.copy();
        names.put(pos, name);
        values.put(pos, null);
        changes.put(pos, null);
@@ -70,7 +70,7 @@ class Embedded:Config {
     }
   }
 
-  //for read use the file sizes
+  //for read use the file lengths
   load() {
     //begin
     //"loading".print();
@@ -92,12 +92,12 @@ class Embedded:Config {
           """
         }
         String bmxs = String.new(fsz);
-        bmxs.size.setValue(fsz);
-        //("bmxs size " + bmxs.size).print();
+        bmxs.length.setValue(fsz);
+        //("bmxs length " + bmxs.length).print();
     emit(cc) {
       """
           uint8_t* dataPointerx = beq->bevl_bmxs->bevi_bytes.data();
-          fhx.read(dataPointerx, beq->bevl_bmxs->bevp_size->bevi_int);
+          fhx.read(dataPointerx, beq->bevl_bmxs->bevp_length->bevi_int);
           fhx.close();
         }
       }
@@ -130,11 +130,11 @@ class Embedded:Config {
             """
           }
           String bns = String.new(fsz);
-          bns.size.setValue(fsz);
+          bns.length.setValue(fsz);
       emit(cc) {
         """
             uint8_t* dataPointern = beq->bevl_bns->bevi_bytes.data();
-            fhn.read(dataPointern, beq->bevl_bns->bevp_size->bevi_int);
+            fhn.read(dataPointern, beq->bevl_bns->bevp_length->bevi_int);
             fhn.close();
           }
         } else {
@@ -159,11 +159,11 @@ class Embedded:Config {
             """
           }
           String bvs = String.new(fsz);
-          bvs.size.setValue(fsz);
+          bvs.length.setValue(fsz);
       emit(cc) {
         """
             uint8_t* dataPointerv = beq->bevl_bvs->bevi_bytes.data();
-            fhv.read(dataPointerv, beq->bevl_bvs->bevp_size->bevi_int);
+            fhv.read(dataPointerv, beq->bevl_bvs->bevp_length->bevi_int);
             fhv.close();
           }
         } else {
@@ -204,7 +204,7 @@ class Embedded:Config {
     }
     //"save looping".print();
     String fn = String.new();
-    for (Int lpos = 0;lpos < names.size;lpos++=) {
+    for (Int lpos = 0;lpos < names.length;lpos++=) {
       String name = names.get(lpos);
       String value = values.get(lpos);
       Bool change = changes.get(lpos);
@@ -222,7 +222,7 @@ class Embedded:Config {
                   Serial.println("file open failed");
               } else {
                 const uint8_t* dataPointern = beq->bevl_name->bevi_bytes.data();
-                size_t wrn = fhn.write(dataPointern, beq->bevl_name->bevp_size->bevi_int);
+                size_t wrn = fhn.write(dataPointern, beq->bevl_name->bevp_length->bevi_int);
                 fhn.close();
                 //Serial.println(wrn);
               }
@@ -239,7 +239,7 @@ class Embedded:Config {
                   Serial.println("file open failed");
               } else {
                 const uint8_t* dataPointerv = beq->bevl_value->bevi_bytes.data();
-                size_t wrv = fhv.write(dataPointerv, beq->bevl_value->bevp_size->bevi_int);
+                size_t wrv = fhv.write(dataPointerv, beq->bevl_value->bevp_length->bevi_int);
                 fhv.close();
                 //Serial.println(wrv);
               }
@@ -283,7 +283,7 @@ class Embedded:Config {
             Serial.println("file open failed");
         } else {
           const uint8_t* dataPointern = beq->bevl_bmxs->bevi_bytes.data();
-          fhn.write(dataPointern, beq->bevl_bmxs->bevp_size->bevi_int);
+          fhn.write(dataPointern, beq->bevl_bmxs->bevp_length->bevi_int);
           fhn.close();
         }
         """
