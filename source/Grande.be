@@ -25,6 +25,9 @@ class Embedded:Grande(Embedded:AppShell) {
      } elseIf (conName == "dim" || conName == "gdim") {
        var dimc = Embedded:DimmerControl.new(self, conPos, conName, conArgs);
        return(dimc);
+     } elseIf (conName == "pwm") {
+       var pwm = Embedded:PWMControl.new(self, conPos, conName, conArgs);
+       return(pwm);
      } elseIf (conName == "bu") {
        var buc = Embedded:ButtonControl.new(self, conPos, conName, conArgs);
        return(buc);
