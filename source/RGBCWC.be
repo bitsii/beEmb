@@ -74,7 +74,7 @@ class Embedded:RGBCWCtl {
 
      ctrgbcwi = config.getPos("ct.rgbcwi." + conPos);
 
-     if (conArgs.contains(",")) {
+     if (conArgs.has(",")) {
         var cal = conArgs.split(",");
         if (cal.length < 5) {
           "not enough pins for RGBCWCtl".print();

@@ -512,7 +512,7 @@ class Embedded:AppShell {
           pinpt = "U";
         }
         String finssidp = ssid + pinpt + "-" + devCode + "-" + rand.getIntMax(999);
-        while (nets.contains(finssidp)) {
+        while (nets.has(finssidp)) {
           finssidp = ssid + pinpt + "-" + devCode + "-" + rand.getIntMax(999);
         }
         apSsid = ssid + pinpt + "-" + devCode + "-42";
@@ -552,7 +552,7 @@ class Embedded:AppShell {
        "wifi configured but not up".print();
        var wifi = Embedded:Wifi.new();
        var nets = wifi.scanNetworks();
-       if (nets.contains(ssid)) {
+       if (nets.has(ssid)) {
          "my ssid present".print();
          Wifi.new(ssid, sec).start();
        }

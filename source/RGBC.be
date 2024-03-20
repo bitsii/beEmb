@@ -69,7 +69,7 @@ class Embedded:RGBControl {
      rgbrgbi = config.getPos("rgb.rgb." + conPos);
      rgbswi = config.getPos("rgb.sw." + conPos);
 
-     if (conArgs.contains(",")) {
+     if (conArgs.has(",")) {
         var cal = conArgs.split(",");
         if (cal.length < 3) {
           "not enough pins for rgbc".print();

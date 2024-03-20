@@ -34,7 +34,7 @@ class Embedded:CustomControl {
        String uiConf; //conftype:jsurl:https://theurl could be "na" for not one
        Bool custUi;
      }
-     if (_conArgs.contains(",")) {
+     if (_conArgs.has(",")) {
         var cal = _conArgs.split(",");
         uiconf = cal[0];
      } else {

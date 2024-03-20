@@ -43,7 +43,7 @@ class Embedded:ButtonControl {
      fields {
        Int lastEvent = Int.new();
      }
-     if (_conArgs.contains(",")) {
+     if (_conArgs.has(",")) {
        //all ints comma sep, fields are:
        //0 pin of button
        //1 direction (0, on is 0, 1, off is 0)

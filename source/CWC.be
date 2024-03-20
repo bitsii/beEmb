@@ -67,7 +67,7 @@ class Embedded:CWCtl {
      cwcwi = config.getPos("cws.cw." + conPos);
      cwswi = config.getPos("cws.sw." + conPos);
 
-     if (conArgs.contains(",")) {
+     if (conArgs.has(",")) {
         var cal = conArgs.split(",");
         if (cal.length < 2) {
           "not enough pins for cws".print();
