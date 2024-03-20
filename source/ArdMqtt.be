@@ -8,9 +8,9 @@
  *
  */
 
-import Text:Strings as TS;
-import System:Exception;
-import Embedded:MqMessage;
+use Text:Strings as TS;
+use System:Exception;
+use Embedded:MqMessage;
 
 /*
 //for Mqtt.be
@@ -194,7 +194,7 @@ void messageReceived(String &topic, String &payload) {
     return(publish(msg.topic, msg.payload));
   }
 
-  handleAsync(dyn mqttHandler) Bool {
+  handleAsync(any mqttHandler) Bool {
     //return is "did I do work"
     String gott;
     String gotp;

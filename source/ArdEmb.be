@@ -8,14 +8,14 @@
  *
  */
 
-import Text:Strings as TS;
-import System:Exception;
+use Text:Strings as TS;
+use System:Exception;
 
 class Embedded:App {
    
    default() self { 
      fields {
-       dyn plugin;
+       any plugin;
      }
      slots {
        Int hlCount = 0;

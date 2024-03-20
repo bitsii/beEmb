@@ -8,13 +8,13 @@
  *
  */
 
-import Math:Int;
-import Embedded:Wifi;
-import Text:String;
-import Text:Strings as TS;
-import Embedded:Config;
+use Math:Int;
+use Embedded:Wifi;
+use Text:String;
+use Text:Strings as TS;
+use Embedded:Config;
 
-import Embedded:CommonNames as CNS;
+use Embedded:CommonNames as CNS;
 
 class CNS {
    default() {
@@ -166,7 +166,7 @@ class Embedded:AppShell {
    }
 
    initControls() {
-     for (dyn control in controls) {
+     for (any control in controls) {
        control.initControl();
      }
    }
@@ -184,7 +184,7 @@ class Embedded:AppShell {
       String d = ",";
       String cd = ";";
       Int conPos = 0;
-      for (dyn control in controls) {
+      for (any control in controls) {
         String conType = control.conType;
         Int le = control.lastEvent;
         if (def(le)) {
@@ -199,7 +199,7 @@ class Embedded:AppShell {
    }
    
    clearStates() {
-     for (dyn control in controls) {
+     for (any control in controls) {
        control.clearStates();
      }
    }
@@ -722,7 +722,7 @@ class Embedded:AppShell {
             } else {
               ("scmdres " + scmdres).print();
             }
-          } catch (dyn sdce) {
+          } catch (any sdce) {
             "error handling command".print();
             sdce.print();
           }
@@ -765,7 +765,7 @@ class Embedded:AppShell {
                           } else {
                             treq.client.write(wcmdres);
                           }
-                        } catch (dyn wdce) {
+                        } catch (any wdce) {
                           "error handling command".print();
                           wdce.print();
                         }
@@ -803,7 +803,7 @@ class Embedded:AppShell {
                   preq.write(slashn);
                   "pcmdres send done".print();
                 }
-              } catch (dyn pdce) {
+              } catch (any pdce) {
                 "error handling command".print();
                 pdce.print();
               }

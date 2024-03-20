@@ -8,14 +8,14 @@
  *
  */
 
-import Math:Int;
-import Embedded:Wifi;
-import Text:String;
-import Text:Strings as TS;
-import Embedded:AppShell;
-import Embedded:Config;
+use Math:Int;
+use Embedded:Wifi;
+use Text:String;
+use Text:Strings as TS;
+use Embedded:AppShell;
+use Embedded:Config;
 
-import Embedded:CommonNames as CNS;
+use Embedded:CommonNames as CNS;
 
 class Embedded:SwitchIndicatorControl {
 
@@ -54,7 +54,7 @@ class Embedded:SwitchIndicatorControl {
      slots {
        String on = CNS.on;
        String off = CNS.off;
-       dyn sc;
+       any sc;
      }
      fields {
        String sw;

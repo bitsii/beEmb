@@ -8,13 +8,13 @@
  *
  */
 
-import Math:Int;
-import Text:String;
-import Text:Strings as TS;
-import Embedded:AppShell;
-import Embedded:Config;
+use Math:Int;
+use Text:String;
+use Text:Strings as TS;
+use Embedded:AppShell;
+use Embedded:Config;
 
-import Embedded:CommonNames as CNS;
+use Embedded:CommonNames as CNS;
 
 class Embedded:PWMControl {
 

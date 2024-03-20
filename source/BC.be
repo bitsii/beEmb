@@ -8,14 +8,14 @@
  *
  */
 
-import Math:Int;
-import Embedded:Wifi;
-import Text:String;
-import Text:Strings as TS;
-import Embedded:AppShell;
-import Embedded:Config;
+use Math:Int;
+use Embedded:Wifi;
+use Text:String;
+use Text:Strings as TS;
+use Embedded:AppShell;
+use Embedded:Config;
 
-import Embedded:CommonNames as CNS;
+use Embedded:CommonNames as CNS;
 
 class Embedded:ButtonControl {
 
@@ -126,7 +126,7 @@ class Embedded:ButtonControl {
                   "swPos == conPos, nothing to do".print();
                   return(self);
                 }
-                dyn swc = ash.controls.get(swPos);
+                any swc = ash.controls.get(swPos);
                   if (TS.isEmpty(swc.sw) || swc.sw == off) {
                     swc.doState(List.new().addValue("dostate").addValue("notpw").addValue(swPos.toString()).addValue(setsw).addValue(on));
                   } elseIf (swc.sw == on) {

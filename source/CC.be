@@ -8,14 +8,15 @@
  *
  */
 
-import Math:Int;
-import Text:String;
-import Text:Strings as TS;
-import Embedded:AppShell;
-import Embedded:Config;
+use Math:Int;
+use Text:String;
+use Text:Strings as TS;
+use Embedded:AppShell;
+use Embedded:Config;
 
-import Embedded:CommonNames as CNS;
+use Embedded:CommonNames as CNS;
 
+//copy pfnmsw to pfnmcuex, have a basic pwm led example first, later servo et all
 class Embedded:CustomControl {
 
    new(_ash, Int _conPos, String _conName, String _conArgs) {
