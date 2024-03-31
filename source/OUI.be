@@ -19,11 +19,14 @@ use Embedded:AppShell;
 class Embedded:Oui(Embedded:AppShell) {
 
    buildControl(Int conPos, String conName, String conArgs) {
-     if (conName == "dim" || conName == "gdim") {
+     if (conName == "odim" || conName == "ogdim") {
        var dimc = Embedded:DimmerControl.new(self, conPos, conName, conArgs);
        return(dimc);
+     } elseIf (conName == "opwm") {
+       var pwm = Embedded:PWMControl.new(self, conPos, conName, conArgs);
+       return(pwm);
      } else {
-       "Unknown control conName in Switch".print();
+       "Unknown control conName in Oui".print();
      }
      return(null);
    }
