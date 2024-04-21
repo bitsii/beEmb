@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023, the Brace Embedded Authors.
+ * Copyright (c) 2021-2023, the Beysant Embedded Authors.
  *
  * SPDX-License-Identifier: BSD-2-Clause
  *
@@ -46,7 +46,7 @@ class Embedded:Twcc {
      fields {
        String oif;
      }
-     oif = "f7i,move,pup,twccui";
+     oif = "1,move,pup,http://192.168.1.184:8080/twc/carcon.html";
    }
 
    doState(List cmdl) String {
