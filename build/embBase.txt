@@ -1,7 +1,6 @@
 -libraryName=Base
 -cchImport=system/cc/be/BEH_Imports.hpp
 -cchImport=system/cc/be/BEH_GCConf.hpp
--ccImport=../beBase/system/cc/be/BECS_Imports.cpp
 -ccdInclude=../beBase/system/cc/be/BED_Object.hpp
 -cchInclude=../beBase/system/cc/be/BEH_Object.hpp
 -ccInclude=../beBase/system/cc/be/BECS_Object.cpp

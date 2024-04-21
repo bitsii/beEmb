@@ -1,4 +1,3 @@
-#define BEDCC_SGC
 #define BEDCC_NORTTI
 #ifdef BEAR_ESP8266
 #include <ESP8266WiFi.h>
