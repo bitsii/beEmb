@@ -79,7 +79,7 @@ class Embedded:AppShell {
        Bool needsInitControls = true;
        Bool needsGc = false;
        Int looperI = Int.new();
-       Int drift = 75;
+       Int drift = 20;
      }
      ifNotEmit(noWeb) {
       slots {
@@ -916,7 +916,7 @@ class Embedded:AppShell {
        if (TS.notEmpty(hdone)) {
          //("hdone " + hdone).print();
          if (abeg == 4) {
-           hdone = secTime(hdone, cmdl[3]);
+           hdone = secTime(cmdl[1], hdone, cmdl[3]);
          }
          if (TS.notEmpty(cmdl[2]) && hdone == cmdl[2]) {
            ("hsec passed").print();
@@ -933,16 +933,27 @@ class Embedded:AppShell {
      return("nodice");
    }
 
-   secTime(String hdone, String tesh) String {
+   secTime(String iv, String hdone, String tesh) String {
      slots {
        Int lsec; //lsec last sent seconds since epoch
+       List ivs;
+       Int ivpt;
      }
+     if (undef(ivs)) { ivs = List.new(10); }
+     for (var ti in ivs) {
+       if (iv == ti) {
+         return("f");
+       }
+     }
+     if (undef(ivpt) || ivpt > 9) { ivpt = 0; }
+     else { ivpt++; }
      //tesh seconds since epoch passed in
      //drift seconds back that's ok
      Int teshi = app.strToInt(tesh);
      if (undef(lsec)) {
        teshi -= drift;
        lsec = teshi;
+       ivs[ivpt] = iv;
        return(hdone);
      }
      //new sent value must be > (last sent value - Xtolerance) (5secs? 10?)
@@ -950,6 +961,7 @@ class Embedded:AppShell {
        //"passed secTime gt".print();
        teshi -= drift;
        lsec = teshi;
+       ivs[ivpt] = iv;
        return(hdone);
      } else {
        //"failed secTime lt".print();
