@@ -272,7 +272,7 @@ class Embedded:AppShell {
 
    buildSwInfoIn() {
      if (TS.isEmpty(swSpec)) {
-       swSpec = "1,q,p3,p2.Unspeced.71";
+       swSpec = "1,q,p4,p2.Unspeced.71";
      }
      var swl = swSpec.split(".");
      devCode = swl[1];
@@ -716,7 +716,7 @@ class Embedded:AppShell {
       if (TS.notEmpty(serpay)) {
         try {
             //"doing serpay".print();
-            String scmdres = doCmd("serial", "", serpay);
+            String scmdres = doCmd("serial", serpay);
             if (TS.isEmpty(scmdres)) {
               "scmdres empty".print();
             } else {
@@ -758,7 +758,7 @@ class Embedded:AppShell {
                       String cdec = Encode:Url.decode(qsps[1]);
                       //("cdec " + cdec).print();
                       try {
-                          String wcmdres = doCmd("web", "", cdec);
+                          String wcmdres = doCmd("web", cdec);
                           treq.client.write(htmlHead); //ok headers
                           if (TS.isEmpty(wcmdres)) {
                             treq.client.write("wcmdres empty");
@@ -793,7 +793,7 @@ class Embedded:AppShell {
         String ppay = preq.checkGetPayload(readBuf, slashn);
         if (TS.notEmpty(ppay)) {
             try {
-                String pcmdres = doCmd("tcp", preq.remoteIp, ppay);
+                String pcmdres = doCmd("tcp", ppay);
                 if (TS.isEmpty(pcmdres)) {
                   "pcmdres empty".print();
                 } else {
@@ -844,7 +844,7 @@ class Embedded:AppShell {
      }
    }
 
-   doCmd(String channel, String origin, String cmdline) String {
+   doCmd(String channel, String cmdline) String {
      app.wdtFeed();
      app.yield();
      if (TS.isEmpty(cmdline)) {
@@ -866,13 +866,13 @@ class Embedded:AppShell {
      //if (channel == "tcp" && cmdl.length > 0) {
      //  cmdl.put(cmdl.length - 1, cmdl.get(cmdl.length - 1).swap("\r\n", ""));
      //}
-     if (cmdl.length > 0 && cmdl[0].ends("p2") || cmdl[0].ends("p3")) {
-       return(doCmdlSec(channel, origin, cmdl));
+     if (cmdl.length > 0 && cmdl[0].ends("p4")) {
+       return(doCmdlSec(channel, cmdl));
      }
-     return(doCmdl(channel, origin, cmdl));
+     return(doCmdl(channel, cmdl));
    }
 
-   doCmdlSec(String channel, String origin, List cmdl) String {
+   doCmdlSec(String channel, List cmdl) String {
      if (cmdl.length > 4) {
        List cmdn = List.new();
        String hdone;
@@ -886,20 +886,8 @@ class Embedded:AppShell {
        } else {
          ("unknown secsceme " + cmdl[0]).print();
        }
-       if (cmdl[0].ends("3") && cmdl.length > 5) {
-         Int abeg = 4;
-       } else {
-         abeg = 3;
-       }
-       if (TS.notEmpty(origin)) {
-         //("got origin " + origin).print();
-       } else {
-         origin = "";
-       }
-       String tohash = cmdl[1] + "," + origin + "," + spw + ",";
-       if (abeg == 4) {
-         tohash += cmdl[3] += ",";
-       }
+       Int abeg = 4;
+       String tohash = cmdl[1] + "," + spw + "," + cmdl[3] + ",";
        Int toc = cmdl.length - 1;
         String sp = " ";
         for (Int j = abeg.copy();j < toc;j++) {
@@ -915,9 +903,7 @@ class Embedded:AppShell {
        }
        if (TS.notEmpty(hdone)) {
          //("hdone " + hdone).print();
-         if (abeg == 4) {
-           hdone = secTime(cmdl[1], hdone, cmdl[3]);
-         }
+         hdone = secTime(cmdl[1], hdone, cmdl[3]);
          if (TS.notEmpty(cmdl[2]) && hdone == cmdl[2]) {
            ("hsec passed").print();
            cmdl.put(abeg + 1, spw);
@@ -928,7 +914,7 @@ class Embedded:AppShell {
            ("hsec failed").print();
          }
        }
-       return(doCmdl(channel, origin, cmdn));
+       return(doCmdl(channel, cmdn));
      }
      return("nodice");
    }
@@ -1003,7 +989,7 @@ class Embedded:AppShell {
       return(res);
    }
    
-   doCmdl(String channel, String origin, List cmdl) String {
+   doCmdl(String channel, List cmdl) String {
      app.maybeGc();
      app.wdtFeed();
      app.yield();
@@ -1141,7 +1127,8 @@ class Embedded:AppShell {
         return("Error, newdid sized 16 required");
       }
       config.put(shpowi, "");
-      return("allset done");
+      return("allset done p4");
+      //return("allset done");
 
       } elseIf (cmd == "shdef") {
         String inshcd = cmdl[1];
