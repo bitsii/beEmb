@@ -925,7 +925,13 @@ class Embedded:AppShell {
            ("hsec failed").print();
          }
        }
-       return(doCmdl(channel, cmdn));
+       String cdres = doCmdl(channel, cmdn);
+       if (cmdl[0].ends("p5") && TS.notEmpty(cdres)) {
+        "encrypting".print();
+        String ecryp = Embedded:Aes.encrypt(cmdl[1], spw, cdres);
+        cdres = Encode:Hex.encode(ecryp);
+       }
+       return(cdres);
      }
      return("nodice");
    }
