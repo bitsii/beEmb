@@ -866,7 +866,7 @@ class Embedded:AppShell {
      //if (channel == "tcp" && cmdl.length > 0) {
      //  cmdl.put(cmdl.length - 1, cmdl.get(cmdl.length - 1).swap("\r\n", ""));
      //}
-     if (cmdl.length > 0 && cmdl[0].ends("p4")) {
+     if (cmdl.length > 0 && (cmdl[0].ends("p4") || cmdl[0].ends("p5"))) {
        return(doCmdlSec(channel, cmdl));
      }
      return(doCmdl(channel, cmdl));
@@ -885,6 +885,17 @@ class Embedded:AppShell {
          spw = pass;
        } else {
          ("unknown secsceme " + cmdl[0]).print();
+       }
+       if (cmdl[0].ends("p5")) {
+        "decrypting".print();
+        String dhex = Encode:Hex.decode(cmdl[4]);
+        String dcryp = Embedded:Aes.decrypt(cmdl[1], spw, dhex);
+        "dcryp".print();
+        dcryp.print();
+        var cadd = dcryp.split(" ");
+        for (Int k = 0;k < cadd.length;k++) {
+          cmdl[k + 4] = cadd[k];
+        }
        }
        Int abeg = 4;
        String tohash = cmdl[1] + "," + spw + "," + cmdl[3] + ",";
