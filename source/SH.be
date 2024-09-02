@@ -886,15 +886,17 @@ class Embedded:AppShell {
        } else {
          ("unknown secsceme " + cmdl[0]).print();
        }
-       if (cmdl[0].ends("p5")) {
-        "decrypting".print();
-        String dhex = Encode:Hex.decode(cmdl[4]);
-        String dcryp = Embedded:Aes.decrypt(cmdl[1], spw, dhex);
-        "dcryp".print();
-        dcryp.print();
-        var cadd = dcryp.split(" ");
-        for (Int k = 0;k < cadd.length;k++) {
-          cmdl[k + 4] = cadd[k];
+       ifNotEmit(noAes) {
+        if (cmdl[0].ends("p5")) {
+          "decrypting".print();
+          String dhex = Encode:Hex.decode(cmdl[4]);
+          String dcryp = Embedded:Aes.decrypt(cmdl[1], spw, dhex);
+          "dcryp".print();
+          dcryp.print();
+          var cadd = dcryp.split(" ");
+          for (Int k = 0;k < cadd.length;k++) {
+            cmdl[k + 4] = cadd[k];
+          }
         }
        }
        Int abeg = 4;
@@ -926,10 +928,12 @@ class Embedded:AppShell {
          }
        }
        String cdres = doCmdl(channel, cmdn);
-       if (cmdl[0].ends("p5") && TS.notEmpty(cdres)) {
-        "encrypting".print();
-        String ecryp = Embedded:Aes.encrypt(cmdl[1], spw, cdres);
-        cdres = Encode:Hex.encode(ecryp);
+       ifNotEmit(noAes) {
+        if (cmdl[0].ends("p5") && TS.notEmpty(cdres)) {
+          "encrypting".print();
+          String ecryp = Embedded:Aes.encrypt(cmdl[1], spw, cdres);
+          cdres = Encode:Hex.encode(ecryp);
+        }
        }
        return(cdres);
      }
