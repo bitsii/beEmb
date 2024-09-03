@@ -109,6 +109,7 @@ class Embedded:Wifi {
     ("Connecting to " + ssid).print();
     emit(cc) {
     """
+    //WiFi.softAPdisconnect(true);
     WiFi.setAutoReconnect(false);
     WiFi.persistent(false);
     WiFi.begin(bevp_ssid->bems_toCcString().c_str(), bevp_password->bems_toCcString().c_str());
