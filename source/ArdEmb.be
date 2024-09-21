@@ -82,8 +82,10 @@ class Embedded:App {
    wdtEnable(Int timeout) {
      emit(cc) {
       """
+#ifdef BEAR_ESP8266
       //*((volatile uint32_t*) 0x60000900) |= 1; // Hardware WDT ON
       ESP.wdtEnable(beq->beva_timeout->bevi_int);
+#endif
       """
      }
    }

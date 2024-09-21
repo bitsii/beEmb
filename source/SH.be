@@ -257,9 +257,11 @@ class Embedded:AppShell {
        //return(prot.sha1hex(tosec).substring(0, 12));
        emit(cc) {
          """
+#ifdef BEAR_ESP8266
       String lip = sha1(beq->bevl_tohash->bems_toCcString().c_str());
       std::string lips = std::string(lip.c_str());
       beq->bevl_hdone = new BEC_2_4_6_TextString(lips);
+#endif
          """
        }
        secQ = hdone.substring(0, 12);
@@ -909,9 +911,11 @@ class Embedded:AppShell {
        //("tohash |" + tohash + "|").print();
        emit(cc) {
          """
+#ifdef BEAR_ESP8266
       String lip = sha1(beq->bevl_tohash->bems_toCcString().c_str());
       std::string lips = std::string(lip.c_str());
       beq->bevl_hdone = new BEC_2_4_6_TextString(lips);
+#endif
          """
        }
        if (TS.notEmpty(hdone)) {
