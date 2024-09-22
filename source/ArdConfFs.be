@@ -76,7 +76,12 @@ class Embedded:Config {
     //"loading".print();
     emit(cc) {
       """
+#ifdef BEAR_ESP8266
     SPIFFS.begin();
+#endif
+#ifdef BEAR_ESP32
+    SPIFFS.begin(true);
+#endif
       """
     }
     Int fsz = Int.new();
@@ -199,7 +204,12 @@ class Embedded:Config {
     //begin
     emit(cc) {
       """
+#ifdef BEAR_ESP8266
     SPIFFS.begin();
+#endif
+#ifdef BEAR_ESP32
+    SPIFFS.begin(true);
+#endif
       """
     }
     //"save looping".print();
