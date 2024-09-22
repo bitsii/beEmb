@@ -262,6 +262,30 @@ class Embedded:AppShell {
       std::string lips = std::string(lip.c_str());
       beq->bevl_hdone = new BEC_2_4_6_TextString(lips);
 #endif
+#ifdef BEAR_ESP32
+      const char *payload = beq->bevl_tohash->bems_toCcString().c_str();
+      int size = 20;
+      byte shaResult[size];
+      mbedtls_md_context_t ctx;
+      mbedtls_md_type_t md_type = MBEDTLS_MD_SHA1;
+      const size_t payloadLength = strlen(payload);
+      mbedtls_md_init(&ctx);
+      mbedtls_md_setup(&ctx, mbedtls_md_info_from_type(md_type), 0);
+      mbedtls_md_starts(&ctx);
+      mbedtls_md_update(&ctx, (const unsigned char *) payload, payloadLength);
+      mbedtls_md_finish(&ctx, shaResult);
+      mbedtls_md_free(&ctx);
+      String hashStr = "";
+      for (uint16_t i = 0; i < size; i++) {
+        String hex = String(shaResult[i], HEX);
+        if (hex.length() < 2) {
+          hex = "0" + hex;
+        }
+        hashStr += hex;
+      }
+      std::string lips = hashStr.c_str();
+      beq->bevl_hdone = new BEC_2_4_6_TextString(lips);
+#endif
          """
        }
        secQ = hdone.substring(0, 12);
@@ -914,6 +938,30 @@ class Embedded:AppShell {
 #ifdef BEAR_ESP8266
       String lip = sha1(beq->bevl_tohash->bems_toCcString().c_str());
       std::string lips = std::string(lip.c_str());
+      beq->bevl_hdone = new BEC_2_4_6_TextString(lips);
+#endif
+#ifdef BEAR_ESP32
+      const char *payload = beq->bevl_tohash->bems_toCcString().c_str();
+      int size = 20;
+      byte shaResult[size];
+      mbedtls_md_context_t ctx;
+      mbedtls_md_type_t md_type = MBEDTLS_MD_SHA1;
+      const size_t payloadLength = strlen(payload);
+      mbedtls_md_init(&ctx);
+      mbedtls_md_setup(&ctx, mbedtls_md_info_from_type(md_type), 0);
+      mbedtls_md_starts(&ctx);
+      mbedtls_md_update(&ctx, (const unsigned char *) payload, payloadLength);
+      mbedtls_md_finish(&ctx, shaResult);
+      mbedtls_md_free(&ctx);
+      String hashStr = "";
+      for (uint16_t i = 0; i < size; i++) {
+        String hex = String(shaResult[i], HEX);
+        if (hex.length() < 2) {
+          hex = "0" + hex;
+        }
+        hashStr += hex;
+      }
+      std::string lips = hashStr.c_str();
       beq->bevl_hdone = new BEC_2_4_6_TextString(lips);
 #endif
          """

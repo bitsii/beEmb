@@ -27,9 +27,9 @@
 //ends of those wires on each side of the button that closes them when pushed
 //
 //#define BESPEC_CON "0.sw.2.dim.13.sw.12.sw.14" //motor test, sw is just led to see if powered, 13 enable/speed, 12 input 1 direction 14 input 2 direction (should be one off one on) 13 is to ena of l298n, 12 to in1, 14 to in2
-#define BESPEC_CON "0.gdim.2,1" //nodemcu just dim local led w gamma (reversed)
+//#define BESPEC_CON "0.gdim.2,1" //nodemcu just dim local led w gamma (reversed)
 //#define BESPEC_CON "0.pwm.2,1" //nodemcu just pwm local led
-//#define BESPEC_CON "0.sw.8" //DevKitC-02 ESP32-C3-WROOM-02
+#define BESPEC_CON "0.sw.8" //DevKitC-02 ESP32-C3-WROOM-02
 //#define BESPEC_CON "0.sw.2" //nodemcu just sw
 //#define BESPEC_CON "0.sw.2.bu.14,0,30,0,10000" //nodemcu like athsw
 //#define BESPEC_CON "0.dim.2,1" //nodemcu just dim local led (reversed)

@@ -9,6 +9,7 @@
 #include <WiFi.h>
 #include <ESPmDNS.h>
 #include "SPIFFS.h"
+#include "mbedtls/md.h"
 #endif
 //#include <EEPROM.h>
 #include <FS.h>
