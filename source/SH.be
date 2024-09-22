@@ -263,28 +263,34 @@ class Embedded:AppShell {
       beq->bevl_hdone = new BEC_2_4_6_TextString(lips);
 #endif
 #ifdef BEAR_ESP32
-      const char *payload = beq->bevl_tohash->bems_toCcString().c_str();
-      int size = 20;
-      byte shaResult[size];
-      mbedtls_md_context_t ctx;
-      mbedtls_md_type_t md_type = MBEDTLS_MD_SHA1;
-      const size_t payloadLength = strlen(payload);
-      mbedtls_md_init(&ctx);
-      mbedtls_md_setup(&ctx, mbedtls_md_info_from_type(md_type), 0);
-      mbedtls_md_starts(&ctx);
-      mbedtls_md_update(&ctx, (const unsigned char *) payload, payloadLength);
-      mbedtls_md_finish(&ctx, shaResult);
-      mbedtls_md_free(&ctx);
-      String hashStr = "";
-      for (uint16_t i = 0; i < size; i++) {
-        String hex = String(shaResult[i], HEX);
-        if (hex.length() < 2) {
-          hex = "0" + hex;
-        }
-        hashStr += hex;
+  String msg = beq->bevl_tohash->bems_toCcString().c_str();
+  // convert to char Array
+  int ml = msg.length(); // number of BYTES of the message
+  // +1, because of the 0-Terminator of Strings
+  char msgArray[ml+1];
+  msg.toCharArray(msgArray, ml+1);
+  // Multiply the number of BYTES of the message by 8,
+  // so we get the number of BITS of the message
+  ml *= 8;
+  uint32_t hash[5] = {}; // This will contain the 160-bit Hash
+  SimpleSHA1::generateSHA((unsigned char*) msgArray, ml, hash);
+  // output every element of the hash as the hexadecimal
+  /*for (int i = 0; i < 5; i++) {
+    Serial.print(hash[i], HEX);
+  }*/
+  char hexString[5 * 8 + 1]; // 5 hashes, each 8 hex digits, plus null terminator
+  // Convert each uint32_t to hex
+  for (size_t i = 0; i < 5; ++i) {
+      for (int j = 7; j >= 0; --j) {
+          hexString[i * 8 + j] = "0123456789abcdef"[hash[i] & 0xF];
+          hash[i] >>= 4;
       }
-      std::string lips = hashStr.c_str();
-      beq->bevl_hdone = new BEC_2_4_6_TextString(lips);
+  }
+  hexString[40] = '\0'; // Null-terminate the string
+  //Serial.println("hex string");
+  //Serial.println(hexString);
+  std::string lips = std::string(hexString);
+  beq->bevl_hdone = new BEC_2_4_6_TextString(lips);
 #endif
          """
        }
@@ -941,28 +947,34 @@ class Embedded:AppShell {
       beq->bevl_hdone = new BEC_2_4_6_TextString(lips);
 #endif
 #ifdef BEAR_ESP32
-      const char *payload = beq->bevl_tohash->bems_toCcString().c_str();
-      int size = 20;
-      byte shaResult[size];
-      mbedtls_md_context_t ctx;
-      mbedtls_md_type_t md_type = MBEDTLS_MD_SHA1;
-      const size_t payloadLength = strlen(payload);
-      mbedtls_md_init(&ctx);
-      mbedtls_md_setup(&ctx, mbedtls_md_info_from_type(md_type), 0);
-      mbedtls_md_starts(&ctx);
-      mbedtls_md_update(&ctx, (const unsigned char *) payload, payloadLength);
-      mbedtls_md_finish(&ctx, shaResult);
-      mbedtls_md_free(&ctx);
-      String hashStr = "";
-      for (uint16_t i = 0; i < size; i++) {
-        String hex = String(shaResult[i], HEX);
-        if (hex.length() < 2) {
-          hex = "0" + hex;
-        }
-        hashStr += hex;
+  String msg = beq->bevl_tohash->bems_toCcString().c_str();
+  // convert to char Array
+  int ml = msg.length(); // number of BYTES of the message
+  // +1, because of the 0-Terminator of Strings
+  char msgArray[ml+1];
+  msg.toCharArray(msgArray, ml+1);
+  // Multiply the number of BYTES of the message by 8,
+  // so we get the number of BITS of the message
+  ml *= 8;
+  uint32_t hash[5] = {}; // This will contain the 160-bit Hash
+  SimpleSHA1::generateSHA((unsigned char*) msgArray, ml, hash);
+  // output every element of the hash as the hexadecimal
+  /*for (int i = 0; i < 5; i++) {
+    Serial.print(hash[i], HEX);
+  }*/
+  char hexString[5 * 8 + 1]; // 5 hashes, each 8 hex digits, plus null terminator
+  // Convert each uint32_t to hex
+  for (size_t i = 0; i < 5; ++i) {
+      for (int j = 7; j >= 0; --j) {
+          hexString[i * 8 + j] = "0123456789abcdef"[hash[i] & 0xF];
+          hash[i] >>= 4;
       }
-      std::string lips = hashStr.c_str();
-      beq->bevl_hdone = new BEC_2_4_6_TextString(lips);
+  }
+  hexString[40] = '\0'; // Null-terminate the string
+  //Serial.println("hex string");
+  //Serial.println(hexString);
+  std::string lips = std::string(hexString);
+  beq->bevl_hdone = new BEC_2_4_6_TextString(lips);
 #endif
          """
        }
@@ -1009,13 +1021,16 @@ class Embedded:AppShell {
      //tesh seconds since epoch passed in
      //drift seconds back that's ok
      Int teshi = app.strToInt(tesh);
+     //("techi is " + teshi).print();
      if (undef(lsec)) {
+      //"undef lsec".print();
        teshi -= drift;
        lsec = teshi;
        ivs[ivpt] = iv;
        return(hdone);
      }
      //new sent value must be > (last sent value - Xtolerance) (5secs? 10?)
+     //("lsec is " + lsec).print();
      if (teshi > lsec) {
        //"passed secTime gt".print();
        teshi -= drift;
