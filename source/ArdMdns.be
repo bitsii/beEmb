@@ -51,7 +51,9 @@ class Embedded:Mdns {
   update() self {
   emit(cc) {
   """
-  MDNS.update();
+  #ifdef BEAR_ESP8266
+    MDNS.update();
+  #endif
   """
   }
   }
