@@ -70,8 +70,6 @@ class Embedded:AppShell {
        Bool inResetByPow = false;
        String readBuf = String.new();
        String supurl;
-       String shcd;
-       String shnm;
        String controlSpec;
        String controlDef;
        Bool needsNetworkInit = true;
@@ -1218,30 +1216,6 @@ class Embedded:AppShell {
       return("allset done p4");
       //return("allset done");
 
-      } elseIf (cmd == "shdef") {
-        String inshcd = cmdl[1];
-        if (TS.notEmpty(shcd) && TS.notEmpty(shnm)) {
-          if (TS.isEmpty(inshcd)) {
-            return("Error, shcd was not sent");
-          } elseIf (shcd != inshcd) {
-            return("Error, shcd is incorrect");
-          }
-        } else {
-          return("Error, shcd must be set");
-        }
-        shcd = null;
-        //did = newdid;
-        //pass = newpass;
-        //spass = newspass;
-
-        if (TS.notEmpty(did) && TS.notEmpty(pass) && TS.notEmpty(spass) && TS.notEmpty(devCode)) {
-          String shdef = "shdef:" += devCode += ":" += did += ":" += pass += ":" += spass += ":" += shnm;
-          shnm = null;
-          return(shdef);
-        }
-        shnm = null;
-        return("undefshdef");
-
       }
 
      //password check
@@ -1332,10 +1306,6 @@ class Embedded:AppShell {
      } elseIf (cmd == "sysupdate") {
         supurl = cmdl[2];
         return("set supurl");
-     } elseIf (cmd == "shcd") {
-        shcd = cmdl[2];
-        shnm = cmdl[3];
-        return("set shcd");
      } elseIf (cmd == "restart") {
        //"got restart".print();
        needsFsRestart = true;
