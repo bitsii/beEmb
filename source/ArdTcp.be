@@ -56,6 +56,7 @@ class Embedded:TCPServer {
   
 }
 
+//also tcpclientsecure, just copy it
 class Embedded:TCPClient {
 
 emit(cc_classHead) {
