@@ -1001,6 +1001,9 @@ class Embedded:AppShell {
           cdres = Encode:Hex.encode(ecryp);
         }
        }
+       if (cmdl[0].ends("p6") && TS.notEmpty(cdres)) {
+        cdres = cmdl[1] + "," + cmdl[4] + " " + cdres;
+       }
        return(cdres);
      }
      return("nodice");
