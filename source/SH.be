@@ -896,7 +896,7 @@ class Embedded:AppShell {
      //if (channel == "tcp" && cmdl.length > 0) {
      //  cmdl.put(cmdl.length - 1, cmdl.get(cmdl.length - 1).swap("\r\n", ""));
      //}
-     if (cmdl.length > 0 && (cmdl[0].ends("p4") || cmdl[0].ends("p5"))) {
+     if (cmdl.length > 0 && (cmdl[0].ends("p4") || cmdl[0].ends("p5") || cmdl[0].ends("p6"))) {
        return(doCmdlSec(channel, cmdl));
      }
      return(doCmdl(channel, cmdl));
@@ -931,6 +931,10 @@ class Embedded:AppShell {
        }
        Int abeg = 4;
        String tohash = cmdl[1] + "," + spw + "," + cmdl[3] + ",";
+       if (cmdl[0].ends("p6")) {
+         abeg = 5;
+         tohash = tohash + cmdl[4] + ",";
+       }
        Int toc = cmdl.length - 1;
         String sp = " ";
         for (Int j = abeg.copy();j < toc;j++) {
