@@ -192,6 +192,10 @@ class Embedded:AppShell {
       }
      }
      if (TS.isEmpty(les)) { les = CNS.undefined; }
+     //("gle cmdl len " + cmdl.length).print();
+     if (cmdl.length > 3) {
+       les = cmdl[2] + " " + les;
+     }
      lastEventsRes = les;
      return(les);
    }
