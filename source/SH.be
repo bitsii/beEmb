@@ -1114,6 +1114,10 @@ class Embedded:AppShell {
      } elseIf (cmd == "dostate" && cmdl.length > 3 && cmdl[3].begins("get") && cmdl[1] == secQ) {
        Int ctlPos = app.strToInt(cmdl[2]);
        stateres = doState(ctlPos, cmdl);
+       //("dosl cmdl len " + cmdl.length).print();
+       if (cmdl.length > 5) {
+         stateres = cmdl[4] + " " + stateres;
+       }
        return(stateres);
      } elseIf (cmd == "getstatexd" && cmdl[1] == secQ) {
        ctlPos = app.strToInt(cmdl[2]);
