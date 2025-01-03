@@ -1134,6 +1134,9 @@ class Embedded:AppShell {
           }
           sxd[ctlPos] = xd;
        }
+       if (TS.notEmpty(xd) && cmdl.length > 4) {
+          xd = cmdl[3] + " " + xd;
+       }
        return(xd);
      }
      if (cmd.begins("do") || cmd == "getcontroldef") {
