@@ -724,6 +724,7 @@ class Embedded:AppShell {
      if (nowup > nextSwSpec) {
       nextSwSpec = nowup + 540000;
       swSpec.print();
+      nowup.print();
       return(self);
      }
      if (nextRestart > zero && nowup > nextRestart) {
