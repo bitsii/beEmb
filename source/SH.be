@@ -174,29 +174,30 @@ class Embedded:AppShell {
    }
 
    getLastEvents(List cmdl) String {
-     if (def(lastEventsRes)) {
-       return(lastEventsRes);
-     }
-     String les = String.new();
-     if (TS.notEmpty(did)) {
-      String d = ",";
-      String cd = ";";
-      Int conPos = 0;
-      for (any control in controls) {
-        String conType = control.conType;
-        Int le = control.lastEvent;
-        if (def(le)) {
-          les += conType += d += conPos += d += le += cd;
+     if (undef(lastEventsRes)) {
+      String les = String.new();
+      if (TS.notEmpty(did)) {
+        String d = ",";
+        String cd = ";";
+        Int conPos = 0;
+        for (any control in controls) {
+          String conType = control.conType;
+          Int le = control.lastEvent;
+          if (def(le)) {
+            les += conType += d += conPos += d += le += cd;
+          }
+          conPos++;
         }
-        conPos++;
       }
+      if (TS.isEmpty(les)) { les = CNS.undefined; }
+      //("gle cmdl len " + cmdl.length).print();
+      lastEventsRes = les;
+     } else {
+      les = lastEventsRes;
      }
-     if (TS.isEmpty(les)) { les = CNS.undefined; }
-     //("gle cmdl len " + cmdl.length).print();
      if (cmdl.length > 3) {
        les = cmdl[2] + " " + les;
      }
-     lastEventsRes = les;
      return(les);
    }
    
