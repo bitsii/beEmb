@@ -193,9 +193,9 @@ class Embedded:AppShell {
      }
      if (TS.isEmpty(les)) { les = CNS.undefined; }
      //("gle cmdl len " + cmdl.length).print();
-     if (cmdl.length > 3) {
-       les = cmdl[2] + " " + les;
-     }
+     //if (cmdl.length > 3) {
+     //  les = cmdl[2] + " " + les;
+     //}
      lastEventsRes = les;
      return(les);
    }
@@ -1006,9 +1006,9 @@ class Embedded:AppShell {
           cdres = Encode:Hex.encode(ecryp);
         }
        }
-       if (cmdl[0].ends("p6") && TS.notEmpty(cdres)) {
-        cdres = cmdl[1] + "," + cmdl[4] + " " + cdres;
-       }
+       //if (cmdl[0].ends("p6") && TS.notEmpty(cdres)) {
+       // cdres = cmdl[1] + "," + cmdl[4] + " " + cdres;
+       //}
        return(cdres);
      }
      return("nodice");
@@ -1116,9 +1116,9 @@ class Embedded:AppShell {
        Int ctlPos = app.strToInt(cmdl[2]);
        stateres = doState(ctlPos, cmdl);
        //("dosl cmdl len " + cmdl.length).print();
-       if (cmdl.length > 5) {
-         stateres = cmdl[4] + " " + stateres;
-       }
+       //if (cmdl.length > 5) {
+       //  stateres = cmdl[4] + " " + stateres;
+       //}
        return(stateres);
      } elseIf (cmd == "getstatexd" && cmdl[1] == secQ) {
        ctlPos = app.strToInt(cmdl[2]);
@@ -1135,9 +1135,9 @@ class Embedded:AppShell {
           }
           sxd[ctlPos] = xd;
        }
-       if (TS.notEmpty(xd) && cmdl.length > 4) {
-          xd = cmdl[3] + " " + xd;
-       }
+       //if (TS.notEmpty(xd) && cmdl.length > 4) {
+       //   xd = cmdl[3] + " " + xd;
+       //}
        return(xd);
      }
      if (cmd.begins("do") || cmd == "getcontroldef") {
