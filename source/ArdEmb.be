@@ -138,6 +138,24 @@ class Embedded:App {
      }
    }
 
+   digitalWriteHigh(Int pin) {
+     emit(cc) {
+     """
+     uint8_t pin = (uint8_t) beq->beva_pin->bevi_int;
+     digitalWrite(pin, HIGH);
+     """
+     }
+   }
+
+   digitalWriteLow(Int pin) {
+     emit(cc) {
+     """
+     uint8_t pin = (uint8_t) beq->beva_pin->bevi_int;
+     digitalWrite(pin, LOW);
+     """
+     }
+   }
+
    pinModeInputPullup(Int pin) {
      emit(cc) {
      """

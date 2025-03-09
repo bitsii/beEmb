@@ -85,7 +85,9 @@ class Embedded:SwitchControl {
         if (insw == on) {
           on.print(); //write crashes without
           app.pinModeOutput(pini);
-          if (diri == 0) {
+          if (diri == 2) {
+            app.digitalWriteHigh(pini);
+          } elseIf (diri == 0) {
             app.analogWrite(pini, 0);
           } else {
             app.analogWrite(pini, 255);
@@ -95,7 +97,9 @@ class Embedded:SwitchControl {
         } elseIf (insw == off) {
           off.print(); //write crashes without
           app.pinModeOutput(pini);
-          if (diri == 0) {
+          if (diri == 2) {
+            app.digitalWriteLow(pini);
+          } elseIf (diri == 0) {
             app.analogWrite(pini, 255);
           } else {
             app.analogWrite(pini, 0);
