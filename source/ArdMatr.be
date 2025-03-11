@@ -47,4 +47,28 @@ std::unique_ptr<MatterOnOffLight> bevi_mool;
     }
   }
 
+  checkGetCommission() {
+    emit(cc) {
+      """
+      if (!Matter.isDeviceCommissioned()) {
+        Serial.println("");
+        Serial.println("Matter Node is not commissioned yet.");
+        Serial.println("Initiate the device discovery in your Matter environment.");
+        Serial.println("Commission it to your Matter hub with the manual pairing code or QR code");
+        Serial.printf("Manual pairing code: %s\r\n", Matter.getManualPairingCode().c_str());
+        Serial.printf("QR code URL: %s\r\n", Matter.getOnboardingQRCodeUrl().c_str());
+        // waits for Matter Light Commissioning.
+        uint32_t timeCount = 0;
+        while (!Matter.isDeviceCommissioned()) {
+          delay(100);
+          if ((timeCount++ % 50) == 0) {  // 50*100ms = 5 sec
+            Serial.println("Matter Node not commissioned yet. Waiting for commissioning.");
+          }
+        }
+        Serial.println("Matter Node is commissioned and connected to Wi-Fi. Ready for use.");
+      }
+      """
+    }
+  }
+
 }

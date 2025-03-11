@@ -860,6 +860,11 @@ class Embedded:AppShell {
         return(self);
       }
      }
+     ifNotEmit(noMatr) {
+       if (def(matrserver)) {
+        matrserver.checkGetCommission();
+       }
+     }
      if (def(conserver)) {
        if (undef(concon)) {
         concon = conserver.checkGetClient();
