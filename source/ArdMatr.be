@@ -23,6 +23,15 @@ use Embedded:Config;
 
 use Embedded:CommonNames as CNS;
 
+emit(cc) {
+  """
+  bool setLightOnOff1(bool state) {
+    Serial.printf("Light1 changed state to: %s\r\n", state ? "ON" : "OFF");
+    return true;
+  }
+  """
+}
+
 class Embedded:MatrServer {
 
 emit(cc_classHead) {
@@ -42,6 +51,7 @@ std::unique_ptr<MatterOnOffLight> bevi_mool;
       """
       bevi_mool = std::make_unique<MatterOnOffLight>();
       bevi_mool->begin();
+      bevi_mool->onChangeOnOff(setLightOnOff1);
       Matter.begin();
       """
     }
@@ -50,6 +60,7 @@ std::unique_ptr<MatterOnOffLight> bevi_mool;
   checkGetCommission() {
     emit(cc) {
       """
+      //Matter.decommission();
       if (!Matter.isDeviceCommissioned()) {
         Serial.println("");
         Serial.println("Matter Node is not commissioned yet.");
@@ -66,6 +77,8 @@ std::unique_ptr<MatterOnOffLight> bevi_mool;
           }
         }
         Serial.println("Matter Node is commissioned and connected to Wi-Fi. Ready for use.");
+      } else {
+        //Serial.println("Matter Node already provisioned");
       }
       """
     }
