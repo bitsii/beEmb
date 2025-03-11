@@ -410,6 +410,11 @@ class Embedded:AppShell {
         Embedded:Mdns mdserver;
        }
      }
+     ifNotEmit(noMatr) {
+       slots {
+        Embedded:MatrServer matrserver;
+       }
+     }
      slots {
        Embedded:TCPServer tcpserver;
        Embedded:TCPServer conserver;
@@ -483,6 +488,13 @@ class Embedded:AppShell {
             mdserver.start();
           }
         //}
+
+        ifNotEmit(noMatr) {
+          if (Wifi.isConnected) {
+            matrserver = Embedded:MatrServer.new(self);
+            matrserver.start();
+          }
+        }
 
        }
       }

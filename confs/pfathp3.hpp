@@ -9,12 +9,12 @@
 // SW - name (type) and version of the device.  Typename 10 char max ssid rules (no spaces)
 // swconfver.DeviceTypeName.DeviceVersion
 //
-#define BESPEC_SW "1,q,p6,p2.rAthPlugV2.59" //Athom Plug V2 US THE REAL ONE
+#define BESPEC_SW "1,q,p6,p2.rAthPlugV3.59" //Athom Plug V3 US THE REAL ONE
 //
 // CON - definition of device's controls
 // ctlconfver.control.ctlconf,args.control.ctlconf,args
 //
-#define BESPEC_CON "0.sw.12,1.bu.5,0,30,0,30000"  //12 is switch, 13 is led, 5 button - athom plug v2 us - esp8266ex 2mb THE REAL ONE sic look unnecessary led does on it's own
+#define BESPEC_CON "0.sw.5,1.bu.3,0,30,0,30000"  //5 is switch, 6 is led, 3 button - athom plug v3 us - esp32c3 4mb THE REAL ONE sic look unnecessary led does on it's own NOT TESTED BUT LOOKS RIGHT FROM SPECS
 //
 //pinposes //16, 2 nodemcu - Athom 16A US 13 LED 14 RELAY, SONOFF BASIC R2 13 LED 12 RELAY, 16 for dollatek 8285
 //

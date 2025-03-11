@@ -23,24 +23,26 @@ use Embedded:Config;
 
 use Embedded:CommonNames as CNS;
 
-class Embedded:MatterOnOffLight {
+class Embedded:MatrServer {
 
 emit(cc_classHead) {
 """
-std::unique_ptr<MatterOnOffLight> bevi_matr;
+std::unique_ptr<MatterOnOffLight> bevi_mool;
 """
 }
 
-  new(Bool _state) self {
+  new(_ash) self {
     slots {
-      Bool state = _state;
+      Embedded:AppShell ash = _ash;
     }
   }
 
   start() {
     emit(cc) {
       """
-      bevi_matr = std::make_unique<MatterOnOffLight>();
+      bevi_mool = std::make_unique<MatterOnOffLight>();
+      bevi_mool->begin();
+      Matter.begin();
       """
     }
   }
