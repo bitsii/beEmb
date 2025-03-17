@@ -20,6 +20,7 @@ use Embedded:Config;
 //put in BEAR_Imports.hpp for esp32
 //#include <Matter.h>
 //
+//looks like max 15 devices/endpoints supported at present
 
 use Embedded:CommonNames as CNS;
 
@@ -79,6 +80,8 @@ std::unique_ptr<MatterOnOffLight> bevi_mool;
         Serial.println("Matter Node is commissioned and connected to Wi-Fi. Ready for use.");
       } else {
         //Serial.println("Matter Node already provisioned");
+        //int n = MDNS.queryService("http", "tcp");
+        //Serial.printf("Found %d services:\n", n);
       }
       """
     }

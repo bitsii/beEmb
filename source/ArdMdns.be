@@ -27,6 +27,7 @@ class Embedded:Mdns {
       "mdns needs a name".print();
       return(self);
     }
+    ifEmit(noMatr) {
     emit(cc) {
     """
     int tries = 100;
@@ -36,6 +37,7 @@ class Embedded:Mdns {
     }
     Serial.println("mDNS responder started");
     """
+    }
     }
     if (def(port) && TS.notEmpty(service) && TS.notEmpty(protocol)) {
       emit(cc) {
