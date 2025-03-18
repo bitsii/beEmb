@@ -26,10 +26,13 @@ use Embedded:CommonNames as CNS;
 
 emit(cc) {
   """
-  bool setLightOnOff1(bool state) {
-    Serial.printf("Light1 changed state to: %s\r\n", state ? "ON" : "OFF");
+  //have mutex, deque for positions, deque for bools, lock before changing or iterating for changes
+  bool setLightOnOff(size_t idx, bool state) {
+    Serial.printf("Light %zu changed state to: %d\r\n", idx, state);
     return true;
   }
+  bool sloo0(bool state) { return setLightOnOff(0, state); }
+  bool sloo1(bool state) { return setLightOnOff(1, state); }
   """
 }
 
@@ -37,7 +40,7 @@ class Embedded:MatrServer {
 
 emit(cc_classHead) {
 """
-std::unique_ptr<MatterOnOffLight> bevi_mool;
+std::vector<std::shared_ptr<MatterOnOffLight>> bevi_mools;
 """
 }
 
@@ -50,9 +53,18 @@ std::unique_ptr<MatterOnOffLight> bevi_mool;
   start() {
     emit(cc) {
       """
-      bevi_mool = std::make_unique<MatterOnOffLight>();
+      std::shared_ptr<MatterOnOffLight> bevi_mool;
+
+      bevi_mool = std::make_shared<MatterOnOffLight>();
       bevi_mool->begin();
-      bevi_mool->onChangeOnOff(setLightOnOff1);
+      bevi_mool->onChangeOnOff(sloo0);
+      bevi_mools.push_back(bevi_mool);
+
+      bevi_mool = std::make_shared<MatterOnOffLight>();
+      bevi_mool->begin();
+      bevi_mool->onChangeOnOff(sloo1);
+      bevi_mools.push_back(bevi_mool);
+
       Matter.begin();
       """
     }
@@ -83,6 +95,14 @@ std::unique_ptr<MatterOnOffLight> bevi_mool;
         //int n = MDNS.queryService("http", "tcp");
         //Serial.printf("Found %d services:\n", n);
       }
+      """
+    }
+  }
+
+  decommission() {
+    emit(cc) {
+      """
+      Matter.decommission();
       """
     }
   }

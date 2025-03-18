@@ -1360,6 +1360,11 @@ class Embedded:AppShell {
     config.put(shspassi, "");
     config.put(shdidi, "");
     clearStates();
+    ifNotEmit(noMatr) {
+      if (def(matrserver)) {
+        matrserver.decommission();
+      }
+    }
     needsFsRestart = true;
    }
    
