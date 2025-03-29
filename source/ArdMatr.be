@@ -92,8 +92,6 @@ std::vector<std::shared_ptr<MatterOnOffLight>> bevi_mools;
         Serial.println("Matter Node is commissioned and connected to Wi-Fi. Ready for use.");
       } else {
         //Serial.println("Matter Node already provisioned");
-        //int n = MDNS.queryService("http", "tcp");
-        //Serial.printf("Found %d services:\n", n);
       }
       """
     }

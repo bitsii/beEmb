@@ -410,6 +410,11 @@ class Embedded:AppShell {
         Embedded:Mdns mdserver;
        }
      }
+     ifNotEmit(noTds) {
+       slots {
+        Embedded:Tds tdserver;
+       }
+     }
      ifNotEmit(noMatr) {
        slots {
         Embedded:MatrServer matrserver;
@@ -486,6 +491,10 @@ class Embedded:AppShell {
           ifNotEmit(noMdns) {
             mdserver = Embedded:Mdns.new("CasNic" + did, "http", 80, "tcp");
             mdserver.start();
+          }
+          ifNotEmit(noTds) {
+            tdserver = Embedded:Tds.new("CasNic" + did);
+            tdserver.start();
           }
         //}
 
@@ -882,6 +891,11 @@ class Embedded:AppShell {
      ifNotEmit(noMdns) {
       if (def(mdserver)) {
         mdserver.update();
+      }
+     }
+     ifNotEmit(noTds) {
+      if (def(tdserver)) {
+        tdserver.update();
       }
      }
      if (needsRestart) {
