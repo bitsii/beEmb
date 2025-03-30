@@ -47,7 +47,9 @@ const int port = 3121;
   new(String _myName) self {
     slots {
       String amc = "am:";
+      String wac = "want:";
       String mySay = amc + _myName;
+      String myWants = wac + _myName;
       //w - wanted (requested names)
       //h - happened - some we got, wanted or not
       //N - names
@@ -60,6 +62,7 @@ const int port = 3121;
       List hA = List.new();
       Int oW = 0;
       Int oH = 0;
+      String wants;
     }
     fields {
       Int mW = 5;
@@ -67,17 +70,17 @@ const int port = 3121;
     }
   }
 
-  sayMyName() {
+  say(String toSay) {
     //want and am
-    if (TS.notEmpty(mySay)) {
-    ("TDS Saying: " + mySay).print();
+    if (TS.notEmpty(toSay)) {
+    ("TDS Saying: " + toSay).print();
     emit(cc) {
       """
     // convert string to char array
     //const char* msg = bevp_mySay->bems_toCcString().c_str();
 
     //String string = "hello world 86 5";
-    String string = bevp_mySay->bems_toCcString().c_str();
+    String string = beq->beva_toSay->bems_toCcString().c_str();
     // convert string to char array
     char msg[255];
     string.toCharArray(msg,255);
@@ -110,7 +113,7 @@ const int port = 3121;
   
   start() self {
     startListen();
-    sayMyName();
+    say(mySay);
   }
 
   update() self {
@@ -138,7 +141,7 @@ const int port = 3121;
     beq->bevl_rip = new BEC_2_4_6_TextString(rips);
     std::string msgs = std::string(msg);
     beq->bevl_msg = new BEC_2_4_6_TextString(msgs);
-    delay(10);
+    delay(20);
   }
   """
   }
@@ -162,7 +165,12 @@ const int port = 3121;
             }
           }
         }
+      } elseIf (msg == myWants) {
+        say(mySay);
       }
+    } elseIf (TS.notEmpty(wants)) {
+      say(wac + wants);
+      wants = null;
     }
   }
 
@@ -187,6 +195,7 @@ const int port = 3121;
     }
     if (TS.isEmpty(res)) {
       res = CNS.undefined;
+      wants = name;
     }
     return(res);
   }
