@@ -11,6 +11,8 @@
 use Text:Strings as TS;
 use System:Exception;
 
+use Embedded:CommonNames as CNS;
+
 /*
 Will be needed in BEAR_Imports.hpp
 
@@ -43,14 +45,25 @@ const int port = 3121;
   }
 
   new(String _myName) self {
+    slots {
+      String amc = "am:";
+      String mySay = amc + _myName;
+      //w - wanted (requested names)
+      //h - happened - some we got, wanted or not
+      //N - names
+      //A - addrs
+      //m - max we'll hold
+      //o - spot we're on for new ones
+      List wN = List.new();
+      List wA = List.new();
+      List hN = List.new();
+      List hA = List.new();
+      Int oW = 0;
+      Int oH = 0;
+    }
     fields {
-      String mySay = "am:" + _myName;
-      List wantedNames = List.new();
-      List wantedAddrs = List.new();
-      List happenedNames = List.new();
-      List happenedAddrs = List.new();
-      Int maxWanted = 5;
-      Int maxHappened = 5;
+      Int mW = 5;
+      Int mH = 5;
     }
   }
 
@@ -108,18 +121,18 @@ const int port = 3121;
   int sz = udp.parsePacket();
   if (sz > 0 && sz < 250) {
     String rip = udp.remoteIP().toString();
-    Serial.print("rcv from: ");
-    Serial.println(rip);
+    //Serial.print("rcv from: ");
+    //Serial.println(rip);
 
-    Serial.print("rcv haz: ");
-    Serial.println(sz);
+    //Serial.print("rcv haz: ");
+    //Serial.println(sz);
 
     char msg[255];
     const uint8_t *msg8 = (const uint8_t *)msg;
     udp.read(msg, sz);
     msg[sz] = '\0';
-    Serial.print("rcv got: ");
-    Serial.println(msg);
+    //Serial.print("rcv got: ");
+    //Serial.println(msg);
 
     std::string rips = std::string(rip.c_str());
     beq->bevl_rip = new BEC_2_4_6_TextString(rips);
@@ -132,11 +145,50 @@ const int port = 3121;
     if (def(rip) && def(msg)) {
       ("be rip|" + rip + "|").print();
       ("be msg|" + msg + "|").print();
+      if (msg.begins(amc)) {
+        Int p = wN.find(msg);
+        if (def(p)) {
+          wA.put(p, rip);
+        } else {
+          p = hN.find(msg);
+          if (def(p)) {
+            hA.put(p, rip);
+          } else {
+            hN.put(oH, msg);
+            hA.put(oH, rip);
+            oH++;
+            if (oH >= mH) {
+              oH = 0;
+            }
+          }
+        }
+      }
     }
   }
 
-  getAddress(String name) String {
-    return(null);
+  getAddr(String name) String {
+    String msg = amc + name;
+    String res;
+    Int p = wN.find(msg);
+    if (def(p)) {
+      res = wA.get(p);
+    } else {
+      p = hN.find(msg);
+      if (def(p)) {
+       res = hA.get(p);
+      } else {
+        wN.put(oW, msg);
+        wA.put(oW, null);
+        oW++;
+        if (oW >= mW) {
+          oW = 0;
+        }
+      }
+    }
+    if (TS.isEmpty(res)) {
+      res = CNS.undefined;
+    }
+    return(res);
   }
 
 }

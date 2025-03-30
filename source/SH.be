@@ -1172,7 +1172,7 @@ class Embedded:AppShell {
        }
        return(xd);
      }
-     if (cmd.begins("do") || cmd == "getcontroldef") {
+     if (cmd.begins("do") || cmd == "getcontroldef" || cmd == "gettda") {
         //"got dostate".print();
         //state password check
         unless (channel == "serial") {
@@ -1205,6 +1205,13 @@ class Embedded:AppShell {
           return(stateres);
         } elseIf (cmd == "doswspec") {
           return(swSpec);
+        } elseIf (cmd == "gettda") {
+          ifNotEmit(noTds) {
+            if (def(tdserver)) {
+              return(tdserver.getAddr(cmdl[2]));
+            }
+          }
+          return(CNS.ok);
         } else {
           if (def(controlDef)) {
             return(controlDef);
