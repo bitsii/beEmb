@@ -725,7 +725,7 @@ class Embedded:AppShell {
       return(self);
      }
      if (nowup > endResetByPow) {
-       endResetByPow = nowup + 1800000; //30 mins
+       endResetByPow = nowup + 900000; //15 mins
        pastSetupTime = true;
        if (inResetByPow) {
         inResetByPow = false;
@@ -1224,7 +1224,7 @@ class Embedded:AppShell {
     if (cmd == "allset") {
 
       if (pastSetupTime) {
-        return("Error, must setup w/in 30 mins of power on.");
+        return("Error, must setup w/in 15 mins of power on.");
       }
 
       String inpin = cmdl[1];
