@@ -567,7 +567,7 @@ class Embedded:AppShell {
         if (hiddenCode == CNS.on) {
           pinpt = "U";
         }
-        String finssidp = ssid + pinpt + "-" + devCode + "-" + rand.getIntMax(999);
+        String finssidp = ssid + pinpt + "-" + devCode + "-" + 6;
         while (nets.has(finssidp)) {
           finssidp = ssid + pinpt + "-" + devCode + "-" + rand.getIntMax(999);
         }
