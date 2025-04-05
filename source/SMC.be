@@ -197,4 +197,20 @@ emit(cc) {
     return(payload);
   }
 
+  publish(String topic, String payload) {
+    if (TS.isEmpty(topic) || TS.isEmpty(payload)) {
+      "can't publish, missing topic or payload".print();
+    }
+    emit(cc) {
+      //("publishing |" + payload + "| to |" + topic + "|").print();
+     """
+     if (mqclient->connected()) {
+      mqclient->beginMessage(beq->beva_topic->bems_toCcString().c_str());
+      mqclient->print(beq->beva_payload->bems_toCcString().c_str());
+      mqclient->endMessage();
+     }
+     """
+    }
+  }
+
 }

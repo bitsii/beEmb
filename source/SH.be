@@ -521,7 +521,6 @@ class Embedded:AppShell {
         if (Wifi.isConnected) {
           if (undef(smcserver)) {
             smcserver = Embedded:Smc.new("127.0.0.1", 1883, false, "na", "na");
-
           }
           if (smcserver.connected == 1) {
             //"smcserver connected already".print();
@@ -822,14 +821,22 @@ class Embedded:AppShell {
       if (TS.notEmpty(smcpay)) {
         try {
             "doing smcpay".print();
-            smcpay.print();
-            /*String mcmdres = doCmd("mq", smcpay);
+            //smcpay.print();
+            String mcmdres = doCmd("mq", smcpay);
             if (TS.isEmpty(mcmdres)) {
               "mcmdres empty".print();
             } else {
               ("mcmdres " + mcmdres).print();
               //send back res to mq here
-            }*/
+              //iv,reid( )
+              Int mfc = mcmdres.find(",");
+              Int mfs = mcmdres.find(" ");
+              if (def(mfc) && def(mfs)) {
+                String reid = mcmdres.substring(mfc + 1, mfs);
+                //("mq reid " + reid).print();
+                smcserver.publish("casnic/res/" + reid, mcmdres);
+              }
+            }
           } catch (any mdce) {
             "error handling command".print();
             mdce.print();
