@@ -6,6 +6,8 @@
 #include <Hash.h>
 //for TDS
 #include <WiFiUdp.h>
+//for SMC.be
+#include <ArduinoMqttClient.h>
 #endif
 #ifdef BEAR_ESP32
 #include <WiFi.h>
@@ -14,6 +16,9 @@
 #include <SimpleHOTP.h>
 //for TDS
 #include <NetworkUdp.h>
+//for SMC.be
+#include <NetworkClientSecure.h>
+#include <ArduinoMqttClient.h>
 #endif
 //#include <EEPROM.h>
 #include <FS.h>
