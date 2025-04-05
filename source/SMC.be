@@ -42,13 +42,17 @@ std::unique_ptr<MqttClient> mqclient;
 }
 
   new() self {
-    fields {
+    slots {
       String mqttServer;
       String user;
       String pass;
       Bool ssl;
       Int mqttPort;
-      String id = System:Random.getString(16);
+    }
+    fields {
+      String fixedId;
+      String id;
+      Int connectRes = 200;
     }
     if (undef(ssl)) {
       ssl = false;
@@ -56,6 +60,7 @@ std::unique_ptr<MqttClient> mqclient;
     if (ssl) {
       emit(cc) {
         """
+        clientSec.setInsecure();
         mqclient = std::make_unique<MqttClient>(clientSec);
         """
       }
@@ -75,6 +80,121 @@ std::unique_ptr<MqttClient> mqclient;
     user = _user;
     pass = _pass;
     new();
+  }
+
+  connect() Int {
+    if (TS.isEmpty(mqttServer) || undef(mqttPort) || undef(ssl) || TS.isEmpty(user) || TS.isEmpty(pass)) {
+      "Unable to connect mqtt, some configuration is missing".print();
+      connectRes.setValue(100);
+    } else {
+      if (TS.notEmpty(fixedId)) {
+        id = fixedId;
+      } else {
+        id = System:Random.getString(16);
+      }
+      emit(cc) {
+        """
+        mqclient->setId(bevp_id->bems_toCcString().c_str());
+        mqclient->setUsernamePassword(bevp_user->bems_toCcString().c_str(), bevp_pass->bems_toCcString().c_str());
+        if (!mqclient->connect(bevp_mqttServer->bems_toCcString().c_str(), bevp_mqttPort->bevi_int)) {
+          bevp_connectRes->bevi_int = mqclient->connectError();
+        } else {
+          bevp_connectRes->bevi_int = 0;
+        }
+        """
+      }
+    }
+    ("mq connect result code " + connectRes).print();
+    return(connectRes);
+  }
+
+  subscribe(String toq) Int {
+   Int subRes = 0;
+   if (TS.isEmpty(toq)) {
+      "Unable to subscribe bad toq".print();
+      subRes.setValue(100);
+   } else {
+     ("subscribing to " + toq).print();
+      emit(cc) {
+        """
+        beq->bevl_subRes->bevi_int = mqclient->subscribe(beq->beva_toq->bems_toCcString().c_str());
+        """
+      }
+   }
+   ("mq subscribe result code " + subRes).print();
+   return(subRes);
+  }
+
+  connectedGet() Int {
+    Int cgres = 0;
+    emit(cc) {
+      """
+      beq->bevl_cgres->bevi_int = mqclient->connected();
+      """
+    }
+    //("cgres " + cgres).print();
+    return(cgres);
+  }
+
+  checkGetPayload(String payload) String {
+    payload.clear();
+    emit(cc) {
+    """
+    unsigned long currentTime = millis();
+    unsigned long previousTime = 0;
+    long timeoutTime = 2000;
+    if (mqclient->connected()) {
+    if (mqclient->parseMessage()) {
+    """
+    }
+    Int chari = Int.new();
+    String chars = String.new(1);
+    chars.setCodeUnchecked(0, 32);
+    chars.length.setValue(1);
+    Int zero = 0;
+    emit(cc) {
+    """
+      currentTime = millis();
+      previousTime = currentTime;
+      while (mqclient->connected() && currentTime - previousTime <= timeoutTime) {
+        previousTime = currentTime;
+        currentTime = millis();
+        if (mqclient->available()) {
+          char c = mqclient->read();
+          //Serial.write(c);
+          beq->bevl_chari->bevi_int = c;
+          """
+          }
+          //("got int " + chari).print();
+          //? check for -1 and 255 here too?
+          chars.setCodeUnchecked(zero, chari);
+          //("got char").print();
+          //chars.print();
+          payload += chars;
+emit(cc) {
+"""
+        } else {
+          //Serial.println("not available");
+          """
+          }
+          return(payload);
+          emit(cc) {
+            """
+        }
+      }
+    } else {
+      //Serial.println("parseMessage 0");
+    }
+    } else {
+      //Serial.println("no client");
+    }
+    """
+    }
+    //if (TS.notEmpty(payload)) {
+    //"got request, payload".print();
+    //payload.print();
+    //}
+    return(payload);
   }
 
 }

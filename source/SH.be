@@ -415,6 +415,11 @@ class Embedded:AppShell {
         Embedded:Tds tdserver;
        }
      }
+     ifNotEmit(noSmc) {
+       slots {
+        Embedded:Smc smcserver;
+       }
+     }
      ifNotEmit(noMatr) {
        slots {
         Embedded:MatrServer matrserver;
@@ -498,6 +503,8 @@ class Embedded:AppShell {
           }
         //}
 
+        checkStartSmcServer();
+
         ifNotEmit(noMatr) {
           if (Wifi.isConnected) {
             matrserver = Embedded:MatrServer.new(self);
@@ -506,6 +513,24 @@ class Embedded:AppShell {
         }
 
        }
+      }
+   }
+
+   checkStartSmcServer() {
+      ifNotEmit(noSmc) {
+        if (Wifi.isConnected) {
+          if (undef(smcserver)) {
+            smcserver = Embedded:Smc.new("127.0.0.1", 1883, false, "na", "na");
+
+          }
+          if (smcserver.connected == 1) {
+            //"smcserver connected already".print();
+          } else {
+            if (smcserver.connect() == 0) {
+              smcserver.subscribe("casnic/cmd/" + did);
+            }
+          }
+        }
       }
    }
    
@@ -617,6 +642,7 @@ class Embedded:AppShell {
        if (Wifi.up && undef(tcpserver)) {
          needsNetworkInit = true;
        }
+       checkStartSmcServer();
      }
    }
 
@@ -786,6 +812,28 @@ class Embedded:AppShell {
           "serpay returning now".print();
           //app.yield();
           //"now".print();
+          return(self);
+      }
+     }
+     ifNotEmit(noSmc) {
+      if (def(smcserver)) {
+        String smcpay = smcserver.checkGetPayload(readBuf);
+      }
+      if (TS.notEmpty(smcpay)) {
+        try {
+            "doing smcpay".print();
+            smcpay.print();
+            /*String mcmdres = doCmd("mq", smcpay);
+            if (TS.isEmpty(mcmdres)) {
+              "mcmdres empty".print();
+            } else {
+              ("mcmdres " + mcmdres).print();
+              //send back res to mq here
+            }*/
+          } catch (any mdce) {
+            "error handling command".print();
+            mdce.print();
+          }
           return(self);
       }
      }
