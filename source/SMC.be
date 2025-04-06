@@ -27,6 +27,7 @@ ESP8266 section
 
 class Embedded:Smc {
 
+  //despite the below, only works for esp32 at present
 emit(cc_classHead) {
 """
 #ifdef BEAR_ESP8266

@@ -526,7 +526,9 @@ class Embedded:AppShell {
             //"smcserver connected already".print();
           } else {
             if (smcserver.connect() == 0) {
-              smcserver.subscribe("casnic/cmd/" + did);
+              ifEmit(smcDm) {
+                smcserver.subscribe("casnic/cmd/" + did);
+              }
             }
           }
         }
@@ -821,20 +823,22 @@ class Embedded:AppShell {
       if (TS.notEmpty(smcpay)) {
         try {
             "doing smcpay".print();
-            //smcpay.print();
-            String mcmdres = doCmd("mq", smcpay);
-            if (TS.isEmpty(mcmdres)) {
-              "mcmdres empty".print();
-            } else {
-              ("mcmdres " + mcmdres).print();
-              //send back res to mq here
-              //iv,reid( )
-              Int mfc = mcmdres.find(",");
-              Int mfs = mcmdres.find(" ");
-              if (def(mfc) && def(mfs)) {
-                String reid = mcmdres.substring(mfc + 1, mfs);
-                //("mq reid " + reid).print();
-                smcserver.publish("casnic/res/" + reid, mcmdres);
+            ifEmit(smcDm) {
+              //smcpay.print();
+              String mcmdres = doCmd("mq", smcpay);
+              if (TS.isEmpty(mcmdres)) {
+                "mcmdres empty".print();
+              } else {
+                ("mcmdres " + mcmdres).print();
+                //send back res to mq here
+                //iv,reid( )
+                Int mfc = mcmdres.find(",");
+                Int mfs = mcmdres.find(" ");
+                if (def(mfc) && def(mfs)) {
+                  String reid = mcmdres.substring(mfc + 1, mfs);
+                  //("mq reid " + reid).print();
+                  smcserver.publish("casnic/res/" + reid, mcmdres);
+                }
               }
             }
           } catch (any mdce) {
