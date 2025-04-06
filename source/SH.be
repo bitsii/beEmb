@@ -48,6 +48,11 @@ class Embedded:AppShell {
        Int shseci;
        Int shdidi;
        Int shpowi;
+       ifNotEmit(noSmc) {
+         Int smcconi;
+         Int smcui;
+         Int smcpi;
+       }
 
        Int zero = 0;
        Int nextUpdateCheck = 0;
@@ -95,6 +100,11 @@ class Embedded:AppShell {
      shseci = config.getPos("sh.sec");
      shdidi = config.getPos("sh.did");
      shpowi = config.getPos("sh.pow");
+     ifNotEmit(noSmc) {
+       smcconi = config.getPos("smc.con");
+       smcui = config.getPos("smc.u");
+       smcpi = config.getPos("smc.p");
+     }
 
      ifEmit(dynConf) {
        slots {
@@ -503,6 +513,16 @@ class Embedded:AppShell {
           }
         //}
 
+        ifNotEmit(noSmc) {
+          slots {
+            String smccon;
+            String smcu;
+            String smcp;
+          }
+          smccon = config.get(smcconi);
+          smcu = config.get(smcui);
+          smcp = config.get(smcpi);
+        }
         checkStartSmcServer();
 
         ifNotEmit(noMatr) {
@@ -520,14 +540,35 @@ class Embedded:AppShell {
       ifNotEmit(noSmc) {
         if (Wifi.isConnected) {
           if (undef(smcserver)) {
-            smcserver = Embedded:Smc.new("127.0.0.1", 1883, false, "na", "na");
+            if (TS.notEmpty(smccon) && TS.notEmpty(smcu) && TS.notEmpty(smcp)) {
+              try {
+                ("smccon " + smccon + " smcu " + smcu + " smcp " + smcp).print();
+                var smccl = smccon.split(":");
+                if (smccl[0] == "ssl") {
+                  Bool qssl = true;
+                } else {
+                  qssl = false;
+                }
+                Int qpt = Int.new(smccl[2]);
+                smcserver = Embedded:Smc.new(smccl[1], qpt, qssl, smcu, smcp);
+              } catch (any smerr) {
+                "got smerr".print();
+                if (def(smerr)) {
+                  smerr.print();
+                }
+              }
+            } else {
+              "smc not configed".print();
+            }
           }
-          if (smcserver.connected == 1) {
-            //"smcserver connected already".print();
-          } else {
-            if (smcserver.connect() == 0) {
-              ifEmit(smcDm) {
-                smcserver.subscribe("casnic/cmd/" + did);
+          if (def(smcserver)) {
+            if (smcserver.connected == 1) {
+              //"smcserver connected already".print();
+            } else {
+              if (smcserver.connect() == 0) {
+                ifEmit(smcDm) {
+                  smcserver.subscribe("casnic/cmd/" + did);
+                }
               }
             }
           }
@@ -1376,6 +1417,28 @@ class Embedded:AppShell {
           justSetWifi = true;
           return("Wifi Setup cleared");
         }
+     } elseIf (cmd == "setsmc") {
+       ifNotEmit(noSmc) {
+         //cmds = "setsmc " + devPass + " nohex " + smch + " " + bkrs[2] + " " + bkrs[0] + " " + mqr["mqttUser"] + " " + mqr["mqttPass"] + " e";
+        if (cmdl.length > 5) {
+        if (cmdl[2] == "hex") {
+          smccon = Encode:Hex.decode(cmdl[3]);
+          smcu = Encode:Hex.decode(cmdl[4]);
+          smcp = Encode:Hex.decode(cmdl[5]);
+        } else {
+          smccon = cmdl[3];
+          smcu = cmdl[4];
+          smcp = cmdl[5];
+        }
+          "setting smc".print();
+          config.put(smcconi, smccon);
+          config.put(smcui, smcu);
+          config.put(smcpi, smcp);
+        } else {
+          "clearing smc".print();
+        }
+        }
+        return("smcok");
      } elseIf (cmd == "reset") {
       reset();
       return("Device reset");//we look for this result, don't change
