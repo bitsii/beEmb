@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export APPBLDNM=pfn32matr
+export APPBLDNM=pfn32pm
 
 mkdir -p $APPBLDNM
 
@@ -8,7 +8,7 @@ echo "Profile for a Esp32 NodeMCU composed Matter switch/light proxy.  Serial in
 
 export BEEMB_CONF=../beEmb/confs/${APPBLDNM}.hpp
 
-./scripts/blde32matr.sh --mainClass Embedded:Nada source/Nada.be
+./scripts/blde32pm.sh --mainClass Embedded:Nada source/Nada.be
 
 cp ard/* $APPBLDNM
 

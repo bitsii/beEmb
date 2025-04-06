@@ -8,7 +8,7 @@ echo "Profile for a Esp32 NodeMCU with a switch control on built in LED pin 16 a
 
 export BEEMB_CONF=../beEmb/confs/${APPBLDNM}.hpp
 
-./scripts/bldesp32.sh --emitFlag smcDm --mainClass Embedded:Grande source/SC.be source/DC.be source/PC.be source/BC.be source/RGBC.be source/CWC.be source/RGBCWC.be source/StrC.be source/Grande.be
+./scripts/bldesp32.sh --mainClass Embedded:Grande source/SC.be source/DC.be source/PC.be source/BC.be source/RGBC.be source/CWC.be source/RGBCWC.be source/StrC.be source/Grande.be
 
 cp ard/* $APPBLDNM
 
