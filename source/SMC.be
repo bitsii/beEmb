@@ -143,7 +143,7 @@ std::unique_ptr<MqttClient> mqclient;
     """
     unsigned long currentTime = millis();
     unsigned long previousTime = 0;
-    long timeoutTime = 2000;
+    long timeoutTime = 4000;//was 2000
     if (mqclient->connected()) {
     if (mqclient->parseMessage()) {
     """
@@ -158,7 +158,7 @@ std::unique_ptr<MqttClient> mqclient;
       currentTime = millis();
       previousTime = currentTime;
       while (mqclient->connected() && currentTime - previousTime <= timeoutTime) {
-        previousTime = currentTime;
+        //previousTime = currentTime;  //abs timeoutTime from start of checkGet, or must be under available()
         currentTime = millis();
         if (mqclient->available()) {
           char c = mqclient->read();

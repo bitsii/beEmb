@@ -50,7 +50,7 @@ class Embedded:SerServer {
     """
     unsigned long currentTime = millis();
     unsigned long previousTime = 0; 
-    long timeoutTime = 2000;
+    long timeoutTime = 4000;//was 2000
     """
     }
     payload.clear();
@@ -72,7 +72,7 @@ class Embedded:SerServer {
       currentTime = millis();
       previousTime = currentTime;
       while (currentTime - previousTime <= timeoutTime) {
-        previousTime = currentTime;
+        //previousTime = currentTime;  //abs timeoutTime from start of checkGet, or must be under available()
         currentTime = millis();         
         if (Serial.available()) {      
           char c = Serial.read(); 

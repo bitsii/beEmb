@@ -121,8 +121,8 @@ WiFiClient client;
     """
     unsigned long currentTime = millis();
     unsigned long previousTime = 0; 
-    long timeoutTime = 2000;
-    if (client) {
+    long timeoutTime = 4000;//was 2000;
+    if (client && client.connected()) {
     """
     }
     payload.clear();
@@ -140,7 +140,7 @@ WiFiClient client;
       currentTime = millis();
       previousTime = currentTime;
       while (client.connected() && currentTime - previousTime <= timeoutTime) {
-        previousTime = currentTime;
+        //previousTime = currentTime;  //abs timeoutTime from start of checkGet, or must be under available()
         currentTime = millis();
         if (client.available()) {
           char c = client.read(); 

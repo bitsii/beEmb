@@ -62,11 +62,12 @@ const int port = 3121;
       List hA = List.new();
       Int oW = 0;
       Int oH = 0;
-      String wants;
     }
     fields {
       Int mW = 5;
       Int mH = 5;
+      String myName = _myName;
+      String wants;
     }
   }
 

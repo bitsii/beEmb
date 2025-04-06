@@ -569,6 +569,9 @@ class Embedded:AppShell {
                 ifEmit(smcDm) {
                   smcserver.subscribe("casnic/cmd/" + did);
                 }
+                ifEmit(smcGm) {
+                  smcserver.subscribe("casnic/cmds");
+                }
               }
             }
           }
@@ -864,22 +867,73 @@ class Embedded:AppShell {
       if (TS.notEmpty(smcpay)) {
         try {
             "doing smcpay".print();
+            String mcmdres;
+            ifEmit(smcGm) {
+              "in smcGm".print();
+              smcpay.print();
+              //rel1:CasNicQDHCWAEVPRRPYGTN;getlastevents c30e787d40fd RQKGXNKWTNCKICDK,GLXMUARONSPY e
+              if (TS.notEmpty(smcpay) && smcpay.begins("rel1:")) {
+                String kdn = smcpay.substring(smcpay.find(":") + 1, smcpay.find(";"));
+                String scmds = smcpay.substring(smcpay.find(";") + 1, smcpay.length);
+                ("smbGm kdn scmds |" + kdn + "| |" + scmds + "|").print();
+                ifNotEmit(noTds) {
+                  if (def(tdserver)) {
+                    if (kdn == tdserver.myName) {
+                      //"call is coming from inside house".print();
+                      "selfgate".print();
+                      mcmdres = doCmd("mq", scmds);
+                    } else {
+                      String rip = tdserver.getAddr(kdn);
+                      if (rip == CNS.undefined) {
+                        "no rip".print();
+                      } else {
+                        ("rip " + rip).print();
+                        //look for r and n, send back r n (it's already there) FALSE NOT FROM MQ IT ISN'T
+                        //String ppay = preq.checkGetPayload(readBuf, slashn);
+                        var tcpc = Embedded:TCPClient.new(rip, 6420);
+                        //"open".print();
+                        tcpc.open();
+                        //"write".print();
+                        if (tcpc.connected) {
+                          tcpc.write(scmds);
+                          tcpc.write(slashr);
+                          tcpc.write(slashn);
+                          //"get tcpcres".print();
+                          String tcpcres = tcpc.checkGetPayload(readBuf, slashn);
+                          //"got res".print();
+                        }
+                        if (TS.isEmpty(tcpcres)) {
+                          //"tcpcres empty".print();
+                          //in case ip changed rewantit
+                          tdserver.wants = kdn;
+                        } else {
+                          //("tcpcres " + tcpcres).print();
+                          mcmdres = tcpcres;
+                        }
+                      }
+                    }
+                  }
+                }
+              } else {
+                "smcGm smcpay malformed".print();
+              }
+            }
             ifEmit(smcDm) {
               //smcpay.print();
-              String mcmdres = doCmd("mq", smcpay);
-              if (TS.isEmpty(mcmdres)) {
-                "mcmdres empty".print();
-              } else {
-                ("mcmdres " + mcmdres).print();
-                //send back res to mq here
-                //iv,reid( )
-                Int mfc = mcmdres.find(",");
-                Int mfs = mcmdres.find(" ");
-                if (def(mfc) && def(mfs)) {
-                  String reid = mcmdres.substring(mfc + 1, mfs);
-                  //("mq reid " + reid).print();
-                  smcserver.publish("casnic/res/" + reid, mcmdres);
-                }
+              mcmdres = doCmd("mq", smcpay);
+            }
+            if (TS.isEmpty(mcmdres)) {
+              "mcmdres empty".print();
+            } else {
+              ("mcmdres " + mcmdres).print();
+              //send back res to mq here
+              //iv,reid( )
+              Int mfc = mcmdres.find(",");
+              Int mfs = mcmdres.find(" ");
+              if (def(mfc) && def(mfs)) {
+                String reid = mcmdres.substring(mfc + 1, mfs);
+                //("mq reid " + reid).print();
+                smcserver.publish("casnic/res/" + reid, mcmdres);
               }
             }
           } catch (any mdce) {
@@ -1507,6 +1561,11 @@ class Embedded:AppShell {
       if (def(matrserver)) {
         matrserver.decommission();
       }
+    }
+    ifNotEmit(noSmc) {
+      config.put(smcconi, "");
+      config.put(smcui, "");
+      config.put(smcpi, "");
     }
     needsFsRestart = true;
    }
