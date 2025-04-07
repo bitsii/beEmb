@@ -64,8 +64,8 @@ const int port = 3121;
       Int oH = 0;
     }
     fields {
-      Int mW = 5;
-      Int mH = 5;
+      Int mW = 3;
+      Int mH = 3;
       String myName = _myName;
       String wants;
     }

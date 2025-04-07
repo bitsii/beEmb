@@ -513,6 +513,12 @@ class Embedded:AppShell {
           }
         //}
 
+        ifEmit(smcGm) {
+          //increase tdserver so I have addrs when I need them, I need moar than the uge
+          tdserver.mW = 9;
+          tdserver.mH = 6;
+        }
+
         ifNotEmit(noSmc) {
           slots {
             String smccon;
