@@ -12,7 +12,7 @@
 //#define BESPEC_SW "1,p2.Generic.22"  //supergeneric
 //#define BESPEC_SW "1,p2.WNN.31"  //nodemcu
 //#define BESPEC_SW "1,q,p3,p2.Rando.69" //testing changes
-#define BESPEC_SW "1,q,t1,p6,p2.rNodeMCU.83"  //nodemcu q = quickstate, p2 auth type 2 (hash), p2 always last
+#define BESPEC_SW "1,q,t1,p6,p2.rNodeMCU.84"  //nodemcu q = quickstate, p2 auth type 2 (hash), p2 always last
 //#define BESPEC_SW  "0.DollaTek.20" //dollatek 2mb 1led
 //#define BESPEC_SW "1,p2.WNAP2.29" //Athom Plug V2 US THE REAL ONE
 //
@@ -26,8 +26,10 @@
 //one of the two wires (on my bboard the green one) goes on GND, the other on D5/GPIO 14, the other
 //ends of those wires on each side of the button that closes them when pushed
 //
+//#define BESPEC_CON "0.sw.16"  //dollatek - one sw on 16
+#define BESPEC_CON "0.gdim.2,1" //nodemcu just dim local led w gamma (reversed)
+//
 //#define BESPEC_CON "0.sw.2.dim.13.sw.12.sw.14" //motor test, sw is just led to see if powered, 13 enable/speed, 12 input 1 direction 14 input 2 direction (should be one off one on) 13 is to ena of l298n, 12 to in1, 14 to in2
-//#define BESPEC_CON "0.gdim.2,1" //nodemcu just dim local led w gamma (reversed)
 //#define BESPEC_CON "0.rgbcwgd.4,12,14,5,13" //all in one, pins cold, warm, red, green, blue, gammadim, exclusive cw or rgb LIKE AthLb017w
 //#define BESPEC_CON "0.pwm.2,1" //nodemcu just pwm local led
 //#define BESPEC_CON "0.sw.8" //DevKitC-02 ESP32-C3-WROOM-02
@@ -42,7 +44,6 @@
 //#define BESPEC_CON "0.gdim.5.gdim.13" //
 //#define BESPEC_CON "0.rgb.4,12,14.str.0" //nodemcu rgb strobe
 //
-#define BESPEC_CON "0.sw.16"  //dollatek - one sw on 16
 //#define BESPEC_CON "0.dim.16"  //dollatek - one dim on 16
 //#define BESPEC_CON "0.sw.12,1.bu.5,0,30,0,30000"  //12 is switch, 13 is led, 5 button - athom plug v2 us - esp8266ex 2mb THE REAL ONE sic look unnecessary led does on it's own
 //#define BESPEC_CON "0.sw.12,1" //Athom Plug V2 US - sw on 12, 13 is led, default - same for martin jerry

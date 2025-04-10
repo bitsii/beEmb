@@ -504,7 +504,7 @@ class Embedded:AppShell {
 
         //if (Wifi.isConnected) {
           ifNotEmit(noMdns) {
-            mdserver = Embedded:Mdns.new("CasNic" + did, "http", 80, "tcp");
+            mdserver = Embedded:Mdns.new("CasNic" + did, "casnic", 6420, "tcp");
             mdserver.start();
           }
           ifNotEmit(noTds) {
