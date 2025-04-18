@@ -40,6 +40,7 @@ class Embedded:AppShell {
        List sxd = List.new();
        List sxdi = List.new();
        Embedded:TCPClient concon;
+       Bool needsFsRestart = false;
      }
      slots {
        Int shpassi;
@@ -64,7 +65,6 @@ class Embedded:AppShell {
        Int nextWifiCheck = 0;
        String slashn = "\n";
        String slashr = "\r";
-       Bool needsFsRestart = false;
        Bool needsRestart = false;
        Bool justSetWifi = false;
        Bool pastSetupTime = false;
@@ -421,7 +421,7 @@ class Embedded:AppShell {
        }
      }
      ifNotEmit(noTds) {
-       slots {
+       fields {
         Embedded:Tds tdserver;
        }
      }
@@ -1031,7 +1031,7 @@ class Embedded:AppShell {
      }
      ifNotEmit(noMatr) {
        if (def(matrserver)) {
-        matrserver.checkGetCommission();
+        matrserver.handleLoop();
        }
      }
      if (def(conserver)) {
@@ -1499,6 +1499,13 @@ class Embedded:AppShell {
         }
         }
         return("smcok");
+     } elseIf (cmd == "matrep") {
+       ifNotEmit(noMatr) {
+         if (def(matrserver)) {
+           return(matrserver.handleCmdl(cmdl));
+         }
+        }
+        return("unsupported");
      } elseIf (cmd == "reset") {
       reset();
       return("Device reset");//we look for this result, don't change
@@ -1565,6 +1572,7 @@ class Embedded:AppShell {
     clearStates();
     ifNotEmit(noMatr) {
       if (def(matrserver)) {
+        matrserver.clearMmeps();
         matrserver.decommission();
       }
     }
