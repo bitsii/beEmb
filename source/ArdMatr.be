@@ -176,12 +176,12 @@ std::vector<std::shared_ptr<MatterOnOffLight>> bevi_mools;
 
       std::shared_ptr<MatterOnOffLight> bevi_mool;
 
-      if (ol > 0) {
+      //if (ol > 0) {
       bevi_mool = std::make_shared<MatterOnOffLight>();
       bevi_mool->begin();
       bevi_mool->onChangeOnOff(sloo0);
       bevi_mools.push_back(bevi_mool);
-      }
+      //}
       if (ol > 1) {
       bevi_mool = std::make_shared<MatterOnOffLight>();
       bevi_mool->begin();
