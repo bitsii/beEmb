@@ -300,24 +300,12 @@ std::vector<std::shared_ptr<MatterOnOffLight>> bevi_mools;
          ifNotEmit(noTds) {
           Embedded:Tds tdserver = ash.tdserver;
           if (def(tdserver)) {
-            if (kdn == tdserver.myName) {
+            if (kdn == ash.myName) {
               //"call is coming from inside house".print();
               "selfgate".print();
               //mcmdres = doCmd("matr", scmds);
             } else {
-              String rip = tdserver.getAddr(kdn);
-              if (rip == CNS.undefined) {
-                for (Int i = 0;i < 5;i++) {
-                  ("no rip " + i).print();
-                  tdserver.update();
-                  ash.app.delay(25);
-                  tdserver.update();
-                  rip = tdserver.getAddr(kdn);
-                  if (rip != CNS.undefined) {
-                    break;
-                  }
-                }
-              }
+              String rip = tdserver.reallyGetAddr(kdn);
               if (rip != CNS.undefined) {
                 ("rip " + rip).print();
                 //look for r and n, send back r n (it's already there) FALSE NOT FROM MQ IT ISN'T

@@ -44,7 +44,7 @@ const int port = 3121;
   """
   }
 
-  new(String _myName) self {
+  new(String _myName, _ash) self {
     slots {
       String amc = "am:";
       String wac = "want:";
@@ -62,11 +62,12 @@ const int port = 3121;
       List hA = List.new();
       Int oW = 0;
       Int oH = 0;
+      String myName = _myName;
+      Embedded:AppShell ash = _ash;
     }
     fields {
       Int mW = 3;
       Int mH = 3;
-      String myName = _myName;
       String wants;
     }
   }
@@ -199,6 +200,23 @@ const int port = 3121;
       wants = name;
     }
     return(res);
+  }
+
+  reallyGetAddr(String kdn) String {
+    String rip = getAddr(kdn);
+    if (rip == CNS.undefined) {
+      for (Int i = 0;i < 5;i++) {
+        ("no rip " + i).print();
+        update();
+        ash.app.delay(25);
+        update();
+        rip = getAddr(kdn);
+        if (rip != CNS.undefined) {
+          break;
+        }
+      }
+    }
+    return(rip);
   }
 
 }

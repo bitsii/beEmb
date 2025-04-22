@@ -26,8 +26,8 @@
 //one of the two wires (on my bboard the green one) goes on GND, the other on D5/GPIO 14, the other
 //ends of those wires on each side of the button that closes them when pushed
 //
-//#define BESPEC_CON "0.sw.16"  //dollatek - one sw on 16
-#define BESPEC_CON "0.gdim.2,1" //nodemcu just dim local led w gamma (reversed)
+#define BESPEC_CON "0.sw.16"  //dollatek - one sw on 16
+//#define BESPEC_CON "0.gdim.2,1" //nodemcu just dim local led w gamma (reversed)
 //
 //#define BESPEC_CON "0.sw.2.dim.13.sw.12.sw.14" //motor test, sw is just led to see if powered, 13 enable/speed, 12 input 1 direction 14 input 2 direction (should be one off one on) 13 is to ena of l298n, 12 to in1, 14 to in2
 //#define BESPEC_CON "0.rgbcwgd.4,12,14,5,13" //all in one, pins cold, warm, red, green, blue, gammadim, exclusive cw or rgb LIKE AthLb017w

@@ -221,6 +221,9 @@ class Embedded:AppShell {
       slots {
         String pin;
       }
+      fields {
+        String myName;
+      }
       ifEmit(dynConf) {
         pinpart = config.get(config.getPos("fc.scode"));
       }
@@ -247,6 +250,7 @@ class Embedded:AppShell {
         did = System:Random.getString(16).lowerValue();
         config.put(shdidi, did);
       }
+      myName = "CasNic" + did;
    }
 
    loadPasses() {
@@ -504,11 +508,11 @@ class Embedded:AppShell {
 
         //if (Wifi.isConnected) {
           ifNotEmit(noMdns) {
-            mdserver = Embedded:Mdns.new("CasNic" + did, "casnic", 6420, "tcp");
+            mdserver = Embedded:Mdns.new(myName, "casnic", 6420, "tcp");
             mdserver.start();
           }
           ifNotEmit(noTds) {
-            tdserver = Embedded:Tds.new("CasNic" + did);
+            tdserver = Embedded:Tds.new(myName, self);
             tdserver.start();
           }
         //}
@@ -882,41 +886,41 @@ class Embedded:AppShell {
                 String kdn = smcpay.substring(smcpay.find(":") + 1, smcpay.find(";"));
                 String scmds = smcpay.substring(smcpay.find(";") + 1, smcpay.length);
                 ("smbGm kdn scmds |" + kdn + "| |" + scmds + "|").print();
-                ifNotEmit(noTds) {
-                  if (def(tdserver)) {
-                    if (kdn == tdserver.myName) {
-                      //"call is coming from inside house".print();
-                      "selfgate".print();
-                      mcmdres = doCmd("mq", scmds);
-                    } else {
-                      String rip = tdserver.getAddr(kdn);
-                      if (rip == CNS.undefined) {
-                        "no rip".print();
-                      } else {
-                        ("rip " + rip).print();
-                        //look for r and n, send back r n (it's already there) FALSE NOT FROM MQ IT ISN'T
-                        //String ppay = preq.checkGetPayload(readBuf, slashn);
-                        var tcpc = Embedded:TCPClient.new(rip, 6420);
-                        //"open".print();
-                        tcpc.open();
-                        //"write".print();
-                        if (tcpc.connected) {
-                          tcpc.write(scmds);
-                          tcpc.write(slashr);
-                          tcpc.write(slashn);
-                          //"get tcpcres".print();
-                          String tcpcres = tcpc.checkGetPayload(readBuf, slashn);
-                          //"got res".print();
-                        }
-                        if (TS.isEmpty(tcpcres)) {
-                          //"tcpcres empty".print();
-                          //in case ip changed rewantit
-                          tdserver.wants = kdn;
+                if (kdn == myName) {
+                  //"call is coming from inside house".print();
+                  "selfgate".print();
+                  mcmdres = doCmd("mq", scmds);
+                } else {
+                  ifNotEmit(noTds) {
+                    if (def(tdserver)) {
+                        String rip = tdserver.reallyGetAddr(kdn);
+                        if (rip == CNS.undefined) {
+                          "no rip".print();
                         } else {
-                          //("tcpcres " + tcpcres).print();
-                          mcmdres = tcpcres;
+                          ("rip " + rip).print();
+                          //look for r and n, send back r n (it's already there) FALSE NOT FROM MQ IT ISN'T
+                          //String ppay = preq.checkGetPayload(readBuf, slashn);
+                          var tcpc = Embedded:TCPClient.new(rip, 6420);
+                          //"open".print();
+                          tcpc.open();
+                          //"write".print();
+                          if (tcpc.connected) {
+                            tcpc.write(scmds);
+                            tcpc.write(slashr);
+                            tcpc.write(slashn);
+                            //"get tcpcres".print();
+                            String tcpcres = tcpc.checkGetPayload(readBuf, slashn);
+                            //"got res".print();
+                          }
+                          if (TS.isEmpty(tcpcres)) {
+                            //"tcpcres empty".print();
+                            //in case ip changed rewantit
+                            tdserver.wants = kdn;
+                          } else {
+                            //("tcpcres " + tcpcres).print();
+                            mcmdres = tcpcres;
+                          }
                         }
-                      }
                     }
                   }
                 }
