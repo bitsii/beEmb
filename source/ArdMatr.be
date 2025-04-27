@@ -27,6 +27,10 @@ use Embedded:Mmep;
 
 emit(cc) {
   """
+
+  using sloocb = std::function<bool(bool)>;
+  using slbcb = std::function<bool(uint8_t)>;
+
   //have mutex, deque for positions, deque for bools, lock before changing or iterating for changes
   int oolChIdx = -1;
   int oolChSt = -1;
@@ -56,12 +60,30 @@ emit(cc) {
   bool sloo13(bool state) { return setLightOnOff(13, state); }
   bool sloo14(bool state) { return setLightOnOff(14, state); }
 
-  bool setDimLightState(size_t idx, bool state, uint8_t brightness) {
-    Serial.printf("DimLight %zu changed state to: %d %u\r\n", idx, state, brightness);
+  std::vector<sloocb> sloocbs = { sloo0, sloo1, sloo2, sloo3, sloo4, sloo5, sloo6, sloo7, sloo8, sloo9, sloo10, sloo11, sloo12, sloo13, sloo14 };
+
+  bool setLightBrightness(size_t idx, uint8_t brightness) {
+    Serial.printf("Light %zu changed brightness to: %u\r\n", idx, brightness);
     return true;
   }
 
-  bool dlo0(bool state, uint8_t brightness) { return setDimLightState(0, state, brightness); }
+  bool slb0(uint8_t brightness) { return setLightBrightness(0, brightness); }
+  bool slb1(uint8_t brightness) { return setLightBrightness(1, brightness); }
+  bool slb2(uint8_t brightness) { return setLightBrightness(2, brightness); }
+  bool slb3(uint8_t brightness) { return setLightBrightness(3, brightness); }
+  bool slb4(uint8_t brightness) { return setLightBrightness(4, brightness); }
+  bool slb5(uint8_t brightness) { return setLightBrightness(5, brightness); }
+  bool slb6(uint8_t brightness) { return setLightBrightness(6, brightness); }
+  bool slb7(uint8_t brightness) { return setLightBrightness(7, brightness); }
+  bool slb8(uint8_t brightness) { return setLightBrightness(8, brightness); }
+  bool slb9(uint8_t brightness) { return setLightBrightness(9, brightness); }
+  bool slb10(uint8_t brightness) { return setLightBrightness(10, brightness); }
+  bool slb11(uint8_t brightness) { return setLightBrightness(11, brightness); }
+  bool slb12(uint8_t brightness) { return setLightBrightness(12, brightness); }
+  bool slb13(uint8_t brightness) { return setLightBrightness(13, brightness); }
+  bool slb14(uint8_t brightness) { return setLightBrightness(14, brightness); }
+
+  std::vector<slbcb> slbcbs = { slb0, slb1, slb2, slb3, slb4, slb5, slb6, slb7, slb8, slb9, slb10, slb11, slb12, slb13, slb14 };
   """
 }
 
@@ -69,8 +91,7 @@ class Embedded:MatrServer {
 
 emit(cc_classHead) {
 """
-std::vector<std::shared_ptr<MatterOnOffLight>> bevi_mools;
-std::vector<std::shared_ptr<MatterDimmableLight>> bevi_mdls;
+std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
 """
 }
 
@@ -78,10 +99,8 @@ std::vector<std::shared_ptr<MatterDimmableLight>> bevi_mdls;
     slots {
       Embedded:AppShell ash = _ash;
       Config config = ash.config;
-      Int ooli;
-      List ools = List.new();
-      Int dli;
-      List dls = List.new();
+      Int mepi;
+      List meps = List.new();
       String slashn = "\n";
       String slashr = "\r";
       String readBuf = String.new();
@@ -98,35 +117,22 @@ std::vector<std::shared_ptr<MatterDimmableLight>> bevi_mdls;
           ash.needsFsRestart = true;
         } elseIf (cmdl.length > 3) {
           String act = cmdl[2];
-          String ept = cmdl[3];
           if (act == "add" && cmdl.length > 6) {
-            if (ept == "ool") {
-              ools += Mmep.new(cmdl[4], cmdl[5], cmdl[6]);
-              saveMeps(ooli, ools);
-            } elseIf (ept == "dl") {
-              dls += Mmep.new(cmdl[4], cmdl[5], cmdl[6]);
-              saveMeps(dli, dls);
+            if (meps.length >= 15) {
+              return("matreptoomany");
             }
+            meps += Mmep.new(cmdl[3], cmdl[4], cmdl[5], cmdl[6]);
+            saveMeps();
             ash.needsFsRestart = true;
           } elseIf (act == "rm" && cmdl.length > 5) {
-            if (ept == "ool") {
-              List ms = ools;
-            } elseIf (ept == "dl") {
-              ms = dls;
-            }
             List nx = List.new();
-            for (Mmep mmep in ms) {
+            for (Mmep mmep in meps) {
               unless (mmep.ondid == cmdl[4] && mmep.ipos == cmdl[5]) {
                 nx += mmep;
               }
             }
-            if (ept == "ool") {
-              ools = nx;
-              saveMeps(ooli, ools);
-            } elseIf (ept == "dl") {
-              dls = nx;
-              saveMeps(dli, dls);
-            }
+            meps = nx;
+            saveMeps();
             ash.needsFsRestart = true;
           } else {
             ("unknown matr act " + act).print();
@@ -139,30 +145,30 @@ std::vector<std::shared_ptr<MatterDimmableLight>> bevi_mdls;
         return("matrepok");
   }
 
-  saveMeps(Int mei, List mes) {
-    if (mes.isEmpty) {
-      "empty mes".print();
-      config.put(mei, "");
+  saveMeps() {
+    if (meps.isEmpty) {
+      "empty meps".print();
+      config.put(mepi, "");
     } else {
       String mc = String.new();
-      for (Mmep mmep in mes) {
+      for (Mmep mmep in meps) {
         if (TS.notEmpty(mc)) {
           mc += ".";
         }
-        mc += mmep.ondid += "," += mmep.ipos += "," += mmep.spass;
+        mc += mmep.met += "," += mmep.ondid += "," += mmep.ipos += "," += mmep.spass;
       }
       ("conf putting mc " + mc).print();
-      config.put(mei, mc);
+      config.put(mepi, mc);
     }
   }
 
-  loadMeps(Int mei, List mes) {
-    String mcs = config.get(mei);
+  loadMeps() {
+    String mcs = config.get(mepi);
     if (TS.notEmpty(mcs)) {
       var mce = mcs.split(".");
       for (String mc in mce) {
         var mcl = mc.split(",");
-        mes += Mmep.new(mcl[0], mcl[1], mcl[2]);
+        meps += Mmep.new(mcl[0], mcl[1], mcl[2], mcl[3]);
         ("added Mmep " + mc).print();
       }
     }
@@ -175,8 +181,7 @@ std::vector<std::shared_ptr<MatterDimmableLight>> bevi_mdls;
   //also, is it add, remove, or clear
 
   clearMeps() {
-    config.put(ooli, "");
-    config.put(dli, "");
+    config.put(mepi, "");
   }
 
   start() {
@@ -194,130 +199,61 @@ std::vector<std::shared_ptr<MatterDimmableLight>> bevi_mdls;
       }
     }
 
-    ooli = config.getPos("matr.ool");
-    "loading ools".print();
-    loadMeps(ooli, ools);
+    mepi = config.getPos("matr.meps");
+    "loading meps".print();
+    loadMeps();
 
-    dli = config.getPos("matr.dl");
-    "loading dls".print();
-    loadMeps(dli, dls);
+    Int mepslen = meps.length;
 
-    Int oolslen = ools.length;
-    Int dlslen = dls.length;
-    if (dlslen < 1 && oolslen < 1) {
-      Int nome = 1;
-    } else {
-      nome = 0;
+    for (Int i = 0;i < mepslen;i++) {
+      if (i >= 15) {
+        break;
+      }
+      Mmep mmep = meps[i];
+      if (def(mmep)) {
+        Int meti;
+        if (mmep.met == "ool") {
+          meti = 0;
+        } elseIf (mmep.met == "dl") {
+          meti = 1;
+        }
+        if (def(meti)) {
+          emit(cc) {
+            """
+            int meti = beq->bevl_meti->bevi_int;
+            int mepi = beq->bevl_i->bevi_int;
+            if (meti == 0) {
+              std::shared_ptr<MatterOnOffLight> bevi_mool;
+              bevi_mool = std::make_shared<MatterOnOffLight>();
+              bevi_mool->begin();
+              bevi_mool->onChangeOnOff(sloocbs[mepi]);
+              bevi_meps.push_back(bevi_mool);
+            }
+            if (meti == 1) {
+              std::shared_ptr<MatterDimmableLight> bevi_mdl;
+              bevi_mdl = std::make_shared<MatterDimmableLight>();
+              bevi_mdl->begin();
+              bevi_mdl->onChangeOnOff(sloocbs[mepi]);
+              bevi_mdl->onChangeBrightness(slbcbs[mepi]);
+              bevi_meps.push_back(bevi_mdl);
+            }
+            """
+          }
+        }
+      }
     }
+
     emit(cc) {
       """
-
-      int nome = beq->bevl_nome->bevi_int;
-
-      int ol = beq->bevl_oolslen->bevi_int;
-      std::shared_ptr<MatterOnOffLight> bevi_mool;
-
-      if (ol > 0 || nome > 0) {
-      bevi_mool = std::make_shared<MatterOnOffLight>();
-      bevi_mool->begin();
-      bevi_mool->onChangeOnOff(sloo0);
-      bevi_mools.push_back(bevi_mool);
+      int ml = beq->bevl_mepslen->bevi_int;
+      if (ml < 1) {
+        //must have one to avoid decommissioning
+        std::shared_ptr<MatterOnOffLight> bevi_mool;
+        bevi_mool = std::make_shared<MatterOnOffLight>();
+        bevi_mool->begin();
+        bevi_mool->onChangeOnOff(sloocbs[0]);
+        bevi_meps.push_back(bevi_mool);
       }
-      if (ol > 1) {
-      bevi_mool = std::make_shared<MatterOnOffLight>();
-      bevi_mool->begin();
-      bevi_mool->onChangeOnOff(sloo1);
-      bevi_mools.push_back(bevi_mool);
-      }
-      if (ol > 2) {
-      bevi_mool = std::make_shared<MatterOnOffLight>();
-      bevi_mool->begin();
-      bevi_mool->onChangeOnOff(sloo2);
-      bevi_mools.push_back(bevi_mool);
-      }
-      if (ol > 3) {
-      bevi_mool = std::make_shared<MatterOnOffLight>();
-      bevi_mool->begin();
-      bevi_mool->onChangeOnOff(sloo3);
-      bevi_mools.push_back(bevi_mool);
-      }
-      if (ol > 4) {
-      bevi_mool = std::make_shared<MatterOnOffLight>();
-      bevi_mool->begin();
-      bevi_mool->onChangeOnOff(sloo4);
-      bevi_mools.push_back(bevi_mool);
-      }
-      if (ol > 5) {
-      bevi_mool = std::make_shared<MatterOnOffLight>();
-      bevi_mool->begin();
-      bevi_mool->onChangeOnOff(sloo5);
-      bevi_mools.push_back(bevi_mool);
-      }
-      if (ol > 6) {
-      bevi_mool = std::make_shared<MatterOnOffLight>();
-      bevi_mool->begin();
-      bevi_mool->onChangeOnOff(sloo6);
-      bevi_mools.push_back(bevi_mool);
-      }
-      if (ol > 7) {
-      bevi_mool = std::make_shared<MatterOnOffLight>();
-      bevi_mool->begin();
-      bevi_mool->onChangeOnOff(sloo7);
-      bevi_mools.push_back(bevi_mool);
-      }
-      if (ol > 8) {
-      bevi_mool = std::make_shared<MatterOnOffLight>();
-      bevi_mool->begin();
-      bevi_mool->onChangeOnOff(sloo8);
-      bevi_mools.push_back(bevi_mool);
-      }
-      if (ol > 9) {
-      bevi_mool = std::make_shared<MatterOnOffLight>();
-      bevi_mool->begin();
-      bevi_mool->onChangeOnOff(sloo9);
-      bevi_mools.push_back(bevi_mool);
-      }
-      if (ol > 10) {
-      bevi_mool = std::make_shared<MatterOnOffLight>();
-      bevi_mool->begin();
-      bevi_mool->onChangeOnOff(sloo10);
-      bevi_mools.push_back(bevi_mool);
-      }
-      if (ol > 11) {
-      bevi_mool = std::make_shared<MatterOnOffLight>();
-      bevi_mool->begin();
-      bevi_mool->onChangeOnOff(sloo11);
-      bevi_mools.push_back(bevi_mool);
-      }
-      if (ol > 12) {
-      bevi_mool = std::make_shared<MatterOnOffLight>();
-      bevi_mool->begin();
-      bevi_mool->onChangeOnOff(sloo12);
-      bevi_mools.push_back(bevi_mool);
-      }
-      if (ol > 13) {
-      bevi_mool = std::make_shared<MatterOnOffLight>();
-      bevi_mool->begin();
-      bevi_mool->onChangeOnOff(sloo13);
-      bevi_mools.push_back(bevi_mool);
-      }
-      if (ol > 14) {
-      bevi_mool = std::make_shared<MatterOnOffLight>();
-      bevi_mool->begin();
-      bevi_mool->onChangeOnOff(sloo14);
-      bevi_mools.push_back(bevi_mool);
-      }
-
-      int dl = beq->bevl_dlslen->bevi_int;
-      std::shared_ptr<MatterDimmableLight> bevi_mdl;
-
-      if (dl > 0) {
-      bevi_mdl = std::make_shared<MatterDimmableLight>();
-      bevi_mdl->begin();
-      bevi_mdl->onChange(dlo0);
-      bevi_mdls.push_back(bevi_mdl);
-      }
-
       Matter.begin();
       """
     }
@@ -338,7 +274,7 @@ std::vector<std::shared_ptr<MatterDimmableLight>> bevi_mdls;
     }
     if (def(idx) && def(st)) {
       ("idx " + idx + " st " + st).print();
-      Mmep mmep = ools.get(idx);
+      Mmep mmep = meps.get(idx);
       if (st == 1) {
         String sts = "on";
       } else {
