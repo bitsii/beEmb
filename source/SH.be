@@ -1576,7 +1576,7 @@ class Embedded:AppShell {
     clearStates();
     ifNotEmit(noMatr) {
       if (def(matrserver)) {
-        matrserver.clearMmeps();
+        matrserver.clearMeps();
         matrserver.decommission();
       }
     }

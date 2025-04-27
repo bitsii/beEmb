@@ -55,6 +55,13 @@ emit(cc) {
   bool sloo12(bool state) { return setLightOnOff(12, state); }
   bool sloo13(bool state) { return setLightOnOff(13, state); }
   bool sloo14(bool state) { return setLightOnOff(14, state); }
+
+  bool setDimLightState(size_t idx, bool state, uint8_t brightness) {
+    Serial.printf("DimLight %zu changed state to: %d %u\r\n", idx, state, brightness);
+    return true;
+  }
+
+  bool dlo0(bool state, uint8_t brightness) { return setDimLightState(0, state, brightness); }
   """
 }
 
@@ -63,6 +70,7 @@ class Embedded:MatrServer {
 emit(cc_classHead) {
 """
 std::vector<std::shared_ptr<MatterOnOffLight>> bevi_mools;
+std::vector<std::shared_ptr<MatterDimmableLight>> bevi_mdls;
 """
 }
 
@@ -72,6 +80,8 @@ std::vector<std::shared_ptr<MatterOnOffLight>> bevi_mools;
       Config config = ash.config;
       Int ooli;
       List ools = List.new();
+      Int dli;
+      List dls = List.new();
       String slashn = "\n";
       String slashr = "\r";
       String readBuf = String.new();
@@ -84,24 +94,39 @@ std::vector<std::shared_ptr<MatterOnOffLight>> bevi_mools;
          //add ool id ipos spass
          //rm ool id
         if (cmdl.length > 2 && cmdl[2] == "clear") {
-          clearMmeps();
+          clearMeps();
           ash.needsFsRestart = true;
         } elseIf (cmdl.length > 3) {
           String act = cmdl[2];
           String ept = cmdl[3];
-          if (act == "add" && ept == "ool" && cmdl.length > 6) {
-            ools += Mmep.new(cmdl[4], cmdl[5], cmdl[6]);
-            saveOols();
+          if (act == "add" && cmdl.length > 6) {
+            if (ept == "ool") {
+              ools += Mmep.new(cmdl[4], cmdl[5], cmdl[6]);
+              saveMeps(ooli, ools);
+            } elseIf (ept == "dl") {
+              dls += Mmep.new(cmdl[4], cmdl[5], cmdl[6]);
+              saveMeps(dli, dls);
+            }
             ash.needsFsRestart = true;
-          } elseIf (act == "rm" && ept == "ool" && cmdl.length > 5) {
-            List nxools = List.new();
-            for (Mmep mmep in ools) {
+          } elseIf (act == "rm" && cmdl.length > 5) {
+            if (ept == "ool") {
+              List ms = ools;
+            } elseIf (ept == "dl") {
+              ms = dls;
+            }
+            List nx = List.new();
+            for (Mmep mmep in ms) {
               unless (mmep.ondid == cmdl[4] && mmep.ipos == cmdl[5]) {
-                nxools += mmep;
+                nx += mmep;
               }
             }
-            ools = nxools;
-            saveOols();
+            if (ept == "ool") {
+              ools = nx;
+              saveMeps(ooli, ools);
+            } elseIf (ept == "dl") {
+              dls = nx;
+              saveMeps(dli, dls);
+            }
             ash.needsFsRestart = true;
           } else {
             ("unknown matr act " + act).print();
@@ -114,31 +139,31 @@ std::vector<std::shared_ptr<MatterOnOffLight>> bevi_mools;
         return("matrepok");
   }
 
-  saveOols() {
-    if (ools.isEmpty) {
-      "empty ools".print();
-      config.put(ooli, "");
+  saveMeps(Int mei, List mes) {
+    if (mes.isEmpty) {
+      "empty mes".print();
+      config.put(mei, "");
     } else {
-      String oolc = String.new();
-      for (Mmep mmep in ools) {
-        if (TS.notEmpty(oolc)) {
-          oolc += ".";
+      String mc = String.new();
+      for (Mmep mmep in mes) {
+        if (TS.notEmpty(mc)) {
+          mc += ".";
         }
-        oolc += mmep.ondid += "," += mmep.ipos += "," += mmep.spass;
+        mc += mmep.ondid += "," += mmep.ipos += "," += mmep.spass;
       }
-      ("conf putting oolc " + oolc).print();
-      config.put(ooli, oolc);
+      ("conf putting mc " + mc).print();
+      config.put(mei, mc);
     }
   }
 
-  loadOols() {
-    String oolcs = config.get(ooli);
-    if (TS.notEmpty(oolcs)) {
-      var oolce = oolcs.split(".");
-      for (String oolc in oolce) {
-        var oolcl = oolc.split(",");
-        ools += Mmep.new(oolcl[0], oolcl[1], oolcl[2]);
-        ("added ool " + oolc).print();
+  loadMeps(Int mei, List mes) {
+    String mcs = config.get(mei);
+    if (TS.notEmpty(mcs)) {
+      var mce = mcs.split(".");
+      for (String mc in mce) {
+        var mcl = mc.split(",");
+        mes += Mmep.new(mcl[0], mcl[1], mcl[2]);
+        ("added Mmep " + mc).print();
       }
     }
   }
@@ -149,13 +174,13 @@ std::vector<std::shared_ptr<MatterOnOffLight>> bevi_mools;
   //matrtype,ondid,spass,ipos
   //also, is it add, remove, or clear
 
-  clearMmeps() {
+  clearMeps() {
     config.put(ooli, "");
+    config.put(dli, "");
   }
 
   start() {
-    ooli = config.getPos("matr.ool");
-    loadOols();
+
     ifNotEmit(noTds) {
       Embedded:Tds tdserver = ash.tdserver;
       if (def(tdserver)) {
@@ -169,19 +194,35 @@ std::vector<std::shared_ptr<MatterOnOffLight>> bevi_mools;
       }
     }
 
+    ooli = config.getPos("matr.ool");
+    "loading ools".print();
+    loadMeps(ooli, ools);
+
+    dli = config.getPos("matr.dl");
+    "loading dls".print();
+    loadMeps(dli, dls);
+
     Int oolslen = ools.length;
+    Int dlslen = dls.length;
+    if (dlslen < 1 && oolslen < 1) {
+      Int nome = 1;
+    } else {
+      nome = 0;
+    }
     emit(cc) {
       """
-      int ol = beq->bevl_oolslen->bevi_int;
 
+      int nome = beq->bevl_nome->bevi_int;
+
+      int ol = beq->bevl_oolslen->bevi_int;
       std::shared_ptr<MatterOnOffLight> bevi_mool;
 
-      //if (ol > 0) {
+      if (ol > 0 || nome > 0) {
       bevi_mool = std::make_shared<MatterOnOffLight>();
       bevi_mool->begin();
       bevi_mool->onChangeOnOff(sloo0);
       bevi_mools.push_back(bevi_mool);
-      //}
+      }
       if (ol > 1) {
       bevi_mool = std::make_shared<MatterOnOffLight>();
       bevi_mool->begin();
@@ -266,12 +307,23 @@ std::vector<std::shared_ptr<MatterOnOffLight>> bevi_mools;
       bevi_mool->onChangeOnOff(sloo14);
       bevi_mools.push_back(bevi_mool);
       }
+
+      int dl = beq->bevl_dlslen->bevi_int;
+      std::shared_ptr<MatterDimmableLight> bevi_mdl;
+
+      if (dl > 0) {
+      bevi_mdl = std::make_shared<MatterDimmableLight>();
+      bevi_mdl->begin();
+      bevi_mdl->onChange(dlo0);
+      bevi_mdls.push_back(bevi_mdl);
+      }
+
       Matter.begin();
       """
     }
   }
 
-  checkDoOol() {
+  checkDoMes() {
     Int idx;
     Int st;
     emit(cc) {
@@ -296,7 +348,7 @@ std::vector<std::shared_ptr<MatterOnOffLight>> bevi_mools;
          String mcmdres;
          String kdn = "CasNic" + mmep.ondid;
          String scmds = "dostate " + mmep.spass + " " + mmep.ipos + " setsw " + sts + " e";
-         ("checkDoOol kdn scmds |" + kdn + "| |" + scmds + "|").print();
+         ("checkDoMes kdn scmds |" + kdn + "| |" + scmds + "|").print();
          ifNotEmit(noTds) {
           Embedded:Tds tdserver = ash.tdserver;
           if (def(tdserver)) {
@@ -341,7 +393,7 @@ std::vector<std::shared_ptr<MatterOnOffLight>> bevi_mools;
   }
 
   handleLoop() {
-   checkDoOol();
+   checkDoMes();
    checkGetCommission();
   }
 
