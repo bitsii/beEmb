@@ -62,8 +62,12 @@ emit(cc) {
 
   std::vector<sloocb> sloocbs = { sloo0, sloo1, sloo2, sloo3, sloo4, sloo5, sloo6, sloo7, sloo8, sloo9, sloo10, sloo11, sloo12, sloo13, sloo14 };
 
+  int lbChIdx = -1;
+  int lbChb = -1;
   bool setLightBrightness(size_t idx, uint8_t brightness) {
     Serial.printf("Light %zu changed brightness to: %u\r\n", idx, brightness);
+    lbChIdx = idx;
+    lbChb = brightness;
     return true;
   }
 
@@ -262,6 +266,8 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
   checkDoMes() {
     Int idx;
     Int st;
+    Int bidx;
+    Int bb;
     emit(cc) {
       """
       if (oolChIdx >= 0 && oolChSt >= 0) {
@@ -269,6 +275,12 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
         beq->bevl_st = new BEC_2_4_3_MathInt(oolChSt);
         oolChIdx = -1;
         oolChSt = -1;
+      }
+      if (lbChIdx >= 0 && lbChb >= 0) {
+        beq->bevl_bidx = new BEC_2_4_3_MathInt(lbChIdx);
+        beq->bevl_bb = new BEC_2_4_3_MathInt(lbChb);
+        lbChIdx = -1;
+        lbChb = -1;
       }
       """
     }
@@ -281,51 +293,65 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
         sts = "off";
       }
       if (def(mmep)) {
-         String mcmdres;
          String kdn = "CasNic" + mmep.ondid;
          String scmds = "dostate " + mmep.spass + " " + mmep.ipos + " setsw " + sts + " e";
-         ("checkDoMes kdn scmds |" + kdn + "| |" + scmds + "|").print();
-         ifNotEmit(noTds) {
-          Embedded:Tds tdserver = ash.tdserver;
-          if (def(tdserver)) {
-            if (kdn == ash.myName) {
-              //"call is coming from inside house".print();
-              "selfgate".print();
-              //mcmdres = doCmd("matr", scmds);
-            } else {
-              String rip = tdserver.reallyGetAddr(kdn);
-              if (rip != CNS.undefined) {
-                ("rip " + rip).print();
-                //look for r and n, send back r n (it's already there) FALSE NOT FROM MQ IT ISN'T
-                //String ppay = preq.checkGetPayload(readBuf, slashn);
-                var tcpc = Embedded:TCPClient.new(rip, 6420);
-                //"open".print();
-                tcpc.open();
-                //"write".print();
-                if (tcpc.connected) {
-                  tcpc.write(scmds);
-                  tcpc.write(slashr);
-                  tcpc.write(slashn);
-                  //"get tcpcres".print();
-                  String tcpcres = tcpc.checkGetPayload(readBuf, slashn);
-                  //"got res".print();
-                }
-                if (TS.isEmpty(tcpcres)) {
-                  //"tcpcres empty".print();
-                  //in case ip changed rewantit
-                  tdserver.wants = kdn;
-                } else {
-                  //("tcpcres " + tcpcres).print();
-                  mcmdres = tcpcres;
-                }
-              } else {
-                "still no rip".print();
-              }
+         sendCmd(kdn, scmds);
+      }
+    }
+    if (def(bidx) && def(bb)) {
+      ("bidx " + bidx + " bb " + bb).print();
+      mmep = meps.get(bidx);
+      if (def(mmep) && bb > 1) {  //seems to send 1 after turning off
+         kdn = "CasNic" + mmep.ondid;
+         scmds = "dostate " + mmep.spass + " " + mmep.ipos + " setlvl " + bb + " e";
+         sendCmd(kdn, scmds);
+      }
+    }
+  }
+
+  sendCmd(String kdn, String scmds) String {
+      String mcmdres;
+      ("checkDoMes kdn scmds |" + kdn + "| |" + scmds + "|").print();
+      ifNotEmit(noTds) {
+      Embedded:Tds tdserver = ash.tdserver;
+      if (def(tdserver)) {
+        if (kdn == ash.myName) {
+          //"call is coming from inside house".print();
+          "selfgate".print();
+          //mcmdres = doCmd("matr", scmds);
+        } else {
+          String rip = tdserver.reallyGetAddr(kdn);
+          if (rip != CNS.undefined) {
+            ("rip " + rip).print();
+            //look for r and n, send back r n (it's already there) FALSE NOT FROM MQ IT ISN'T
+            //String ppay = preq.checkGetPayload(readBuf, slashn);
+            var tcpc = Embedded:TCPClient.new(rip, 6420);
+            //"open".print();
+            tcpc.open();
+            //"write".print();
+            if (tcpc.connected) {
+              tcpc.write(scmds);
+              tcpc.write(slashr);
+              tcpc.write(slashn);
+              //"get tcpcres".print();
+              String tcpcres = tcpc.checkGetPayload(readBuf, slashn);
+              //"got res".print();
             }
+            if (TS.isEmpty(tcpcres)) {
+              //"tcpcres empty".print();
+              //in case ip changed rewantit
+              tdserver.wants = kdn;
+            } else {
+              //("tcpcres " + tcpcres).print();
+              mcmdres = tcpcres;
+            }
+          } else {
+            "still no rip".print();
           }
         }
       }
     }
+    return(mcmdres);
   }
 
   handleLoop() {
