@@ -31,18 +31,26 @@ emit(cc) {
   using sloocb = std::function<bool(bool)>;
   using sdlscb = std::function<bool(bool,uint8_t)>;
 
-  //have mutex, deque for positions, deque for bools, lock before changing or iterating for changes
-  int oolChIdx = -1;
-  int oolChSt = -1;
+  std::mutex cmdsLk;
+  std::deque<int> cmdsDq;
 
   bool setLightOnOff(size_t idx, bool state) {
     Serial.printf("setLightOnOff %zu changed state to: %d\r\n", idx, state);
-    oolChIdx = idx;
+    int sti;
     if (state) {
-     oolChSt = 1;
+     sti = 1;
     } else {
-     oolChSt = 0;
+     sti = 0;
     }
+    cmdsLk.lock();
+    try {
+      cmdsDq.push_back(0);
+      cmdsDq.push_back(idx);
+      cmdsDq.push_back(sti);
+    } catch (...) {
+      cmdsLk.unlock();
+    }
+    cmdsLk.unlock();
     return true;
   }
   bool sloo0(bool state) { return setLightOnOff(0, state); }
@@ -63,22 +71,26 @@ emit(cc) {
 
   std::vector<sloocb> sloocbs = { sloo0, sloo1, sloo2, sloo3, sloo4, sloo5, sloo6, sloo7, sloo8, sloo9, sloo10, sloo11, sloo12, sloo13, sloo14 };
 
-  int lbChIdx = -1;
-  int lbChb = -1;
-
   bool setDimLightState(size_t idx, bool state, uint8_t brightness) {
     Serial.printf("setDimLightState %zu changed state to: %d %u\r\n", idx, state, brightness);
+    int act;
+    int val;
     if (state) {
-     oolChIdx = -1;
-     oolChSt = -1;
-     lbChIdx = idx;
-     lbChb = brightness;
+     act = 1;
+     val = brightness;
     } else {
-     lbChIdx = -1;
-     lbChb = -1;
-     oolChIdx = idx;
-     oolChSt = 0;
+     act = 0;
+     val = 0;
     }
+    cmdsLk.lock();
+    try {
+      cmdsDq.push_back(act);
+      cmdsDq.push_back(idx);
+      cmdsDq.push_back(val);
+    } catch (...) {
+      cmdsLk.unlock();
+    }
+    cmdsLk.unlock();
     return true;
   }
 
@@ -281,17 +293,35 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
     Int bb;
     emit(cc) {
       """
-      if (oolChIdx >= 0 && oolChSt >= 0) {
-        beq->bevl_idx = new BEC_2_4_3_MathInt(oolChIdx);
-        beq->bevl_st = new BEC_2_4_3_MathInt(oolChSt);
-        oolChIdx = -1;
-        oolChSt = -1;
+      int act = -1;
+      int idx = -1;
+      int val = -1;
+
+      cmdsLk.lock();
+      try {
+        if (!cmdsDq.empty()) {
+          act = cmdsDq.front();
+          cmdsDq.pop_front();
+          if (act == 0 || act == 1) {
+            idx = cmdsDq.front();
+            cmdsDq.pop_front();
+            val = cmdsDq.front();
+            cmdsDq.pop_front();
+          }
+        }
+      } catch (...) {
+        cmdsLk.unlock();
       }
-      if (lbChIdx >= 0 && lbChb >= 0) {
-        beq->bevl_bidx = new BEC_2_4_3_MathInt(lbChIdx);
-        beq->bevl_bb = new BEC_2_4_3_MathInt(lbChb);
-        lbChIdx = -1;
-        lbChb = -1;
+      cmdsLk.unlock();
+
+      if (act == 0) {
+        beq->bevl_idx = new BEC_2_4_3_MathInt(idx);
+        beq->bevl_st = new BEC_2_4_3_MathInt(val);
+      }
+
+      if (act == 1) {
+        beq->bevl_bidx = new BEC_2_4_3_MathInt(idx);
+        beq->bevl_bb = new BEC_2_4_3_MathInt(val);
       }
       """
     }
