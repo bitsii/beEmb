@@ -29,13 +29,14 @@ emit(cc) {
   """
 
   using sloocb = std::function<bool(bool)>;
-  using slbcb = std::function<bool(uint8_t)>;
+  using sdlscb = std::function<bool(bool,uint8_t)>;
 
   //have mutex, deque for positions, deque for bools, lock before changing or iterating for changes
   int oolChIdx = -1;
   int oolChSt = -1;
+
   bool setLightOnOff(size_t idx, bool state) {
-    Serial.printf("Light %zu changed state to: %d\r\n", idx, state);
+    Serial.printf("setLightOnOff %zu changed state to: %d\r\n", idx, state);
     oolChIdx = idx;
     if (state) {
      oolChSt = 1;
@@ -64,30 +65,41 @@ emit(cc) {
 
   int lbChIdx = -1;
   int lbChb = -1;
-  bool setLightBrightness(size_t idx, uint8_t brightness) {
-    Serial.printf("Light %zu changed brightness to: %u\r\n", idx, brightness);
-    lbChIdx = idx;
-    lbChb = brightness;
+
+  bool setDimLightState(size_t idx, bool state, uint8_t brightness) {
+    Serial.printf("setDimLightState %zu changed state to: %d %u\r\n", idx, state, brightness);
+    if (state) {
+     oolChIdx = -1;
+     oolChSt = -1;
+     lbChIdx = idx;
+     lbChb = brightness;
+    } else {
+     lbChIdx = -1;
+     lbChb = -1;
+     oolChIdx = idx;
+     oolChSt = 0;
+    }
     return true;
   }
 
-  bool slb0(uint8_t brightness) { return setLightBrightness(0, brightness); }
-  bool slb1(uint8_t brightness) { return setLightBrightness(1, brightness); }
-  bool slb2(uint8_t brightness) { return setLightBrightness(2, brightness); }
-  bool slb3(uint8_t brightness) { return setLightBrightness(3, brightness); }
-  bool slb4(uint8_t brightness) { return setLightBrightness(4, brightness); }
-  bool slb5(uint8_t brightness) { return setLightBrightness(5, brightness); }
-  bool slb6(uint8_t brightness) { return setLightBrightness(6, brightness); }
-  bool slb7(uint8_t brightness) { return setLightBrightness(7, brightness); }
-  bool slb8(uint8_t brightness) { return setLightBrightness(8, brightness); }
-  bool slb9(uint8_t brightness) { return setLightBrightness(9, brightness); }
-  bool slb10(uint8_t brightness) { return setLightBrightness(10, brightness); }
-  bool slb11(uint8_t brightness) { return setLightBrightness(11, brightness); }
-  bool slb12(uint8_t brightness) { return setLightBrightness(12, brightness); }
-  bool slb13(uint8_t brightness) { return setLightBrightness(13, brightness); }
-  bool slb14(uint8_t brightness) { return setLightBrightness(14, brightness); }
+  bool sdls0(bool state, uint8_t brightness) { return setDimLightState(0, state, brightness); }
+  bool sdls1(bool state, uint8_t brightness) { return setDimLightState(1, state, brightness); }
+  bool sdls2(bool state, uint8_t brightness) { return setDimLightState(2, state, brightness); }
+  bool sdls3(bool state, uint8_t brightness) { return setDimLightState(3, state, brightness); }
+  bool sdls4(bool state, uint8_t brightness) { return setDimLightState(4, state, brightness); }
+  bool sdls5(bool state, uint8_t brightness) { return setDimLightState(5, state, brightness); }
+  bool sdls6(bool state, uint8_t brightness) { return setDimLightState(6, state, brightness); }
+  bool sdls7(bool state, uint8_t brightness) { return setDimLightState(7, state, brightness); }
+  bool sdls8(bool state, uint8_t brightness) { return setDimLightState(8, state, brightness); }
+  bool sdls9(bool state, uint8_t brightness) { return setDimLightState(9, state, brightness); }
+  bool sdls10(bool state, uint8_t brightness) { return setDimLightState(10, state, brightness); }
+  bool sdls11(bool state, uint8_t brightness) { return setDimLightState(11, state, brightness); }
+  bool sdls12(bool state, uint8_t brightness) { return setDimLightState(12, state, brightness); }
+  bool sdls13(bool state, uint8_t brightness) { return setDimLightState(13, state, brightness); }
+  bool sdls14(bool state, uint8_t brightness) { return setDimLightState(14, state, brightness); }
 
-  std::vector<slbcb> slbcbs = { slb0, slb1, slb2, slb3, slb4, slb5, slb6, slb7, slb8, slb9, slb10, slb11, slb12, slb13, slb14 };
+  std::vector<sdlscb> sdlscbs = { sdls0, sdls1, sdls2, sdls3, sdls4, sdls5, sdls6, sdls7, sdls8, sdls9, sdls10, sdls11, sdls12, sdls13, sdls14 };
+
   """
 }
 
@@ -237,8 +249,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
               std::shared_ptr<MatterDimmableLight> bevi_mdl;
               bevi_mdl = std::make_shared<MatterDimmableLight>();
               bevi_mdl->begin();
-              bevi_mdl->onChangeOnOff(sloocbs[mepi]);
-              bevi_mdl->onChangeBrightness(slbcbs[mepi]);
+              bevi_mdl->onChange(sdlscbs[mepi]);
               bevi_meps.push_back(bevi_mdl);
             }
             """
@@ -301,7 +312,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
     if (def(bidx) && def(bb)) {
       ("bidx " + bidx + " bb " + bb).print();
       mmep = meps.get(bidx);
-      if (def(mmep) && bb > 1) {  //seems to send 1 after turning off
+      if (def(mmep) && bb > 0) {
          kdn = "CasNic" + mmep.ondid;
          scmds = "dostate " + mmep.spass + " " + mmep.ipos + " setlvl " + bb + " e";
          sendCmd(kdn, scmds);
