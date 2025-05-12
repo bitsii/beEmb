@@ -13,6 +13,8 @@ use System:Exception;
 
 use Embedded:CommonNames as CNS;
 
+use Embedded:Wifi;
+
 /*
 Will be needed in BEAR_Imports.hpp
 
@@ -46,9 +48,9 @@ const int port = 3121;
 
   new(String _myName, _ash) self {
     slots {
-      String amc = "am:";
-      String wac = "want:";
-      String mySay = amc + _myName;
+      String amc = "am2:";
+      String wac = "want2:";
+      String mySay = amc + _myName + "#" + Wifi.localIP;
       String myWants = wac + _myName;
       //w - wanted (requested names)
       //h - happened - some we got, wanted or not
@@ -66,7 +68,7 @@ const int port = 3121;
       Embedded:AppShell ash = _ash;
     }
     fields {
-      Int mW = 3;
+      Int mW = 6;
       Int mH = 3;
       String wants;
     }
@@ -125,7 +127,7 @@ const int port = 3121;
   """
   int sz = udp.parsePacket();
   if (sz > 0 && sz < 250) {
-    String rip = udp.remoteIP().toString();
+    //String rip = udp.remoteIP().toString();
     //Serial.print("rcv from: ");
     //Serial.println(rip);
 
@@ -139,40 +141,70 @@ const int port = 3121;
     //Serial.print("rcv got: ");
     //Serial.println(msg);
 
-    std::string rips = std::string(rip.c_str());
-    beq->bevl_rip = new BEC_2_4_6_TextString(rips);
+    //std::string rips = std::string(rip.c_str());
+    //beq->bevl_rip = new BEC_2_4_6_TextString(rips);
     std::string msgs = std::string(msg);
     beq->bevl_msg = new BEC_2_4_6_TextString(msgs);
     delay(20);
   }
   """
   }
-    if (def(rip) && def(msg)) {
-      ("be rip|" + rip + "|").print();
+    if (def(msg)) {
       ("be msg|" + msg + "|").print();
       if (msg.begins(amc)) {
-        Int p = wN.find(msg);
-        if (def(p)) {
-          wA.put(p, rip);
-        } else {
-          p = hN.find(msg);
+        Int dx = msg.find("#");
+        if (def(dx)) {
+          rip = msg.substring(dx + 1, msg.length);
+          msg = msg.substring(0, dx);
+        }
+        if (TS.notEmpty(rip)) {
+          ("be rip|" + rip + "|").print();
+          Int p = wN.find(msg);
           if (def(p)) {
-            hA.put(p, rip);
+            wA.put(p, rip);
           } else {
-            hN.put(oH, msg);
-            hA.put(oH, rip);
-            oH++;
-            if (oH >= mH) {
-              oH = 0;
+            p = hN.find(msg);
+            if (def(p)) {
+              hA.put(p, rip);
+            } else {
+              hN.put(oH, msg);
+              hA.put(oH, rip);
+              oH++;
+              if (oH >= mH) {
+                oH = 0;
+              }
             }
           }
         }
       } elseIf (msg == myWants) {
         say(mySay);
+      } elseIf (msg.begins(wac)) {
+        String wnm = msg.substring(wac.length, msg.length);
+        mdnsGet(wnm);
       }
     } elseIf (TS.notEmpty(wants)) {
       say(wac + wants);
+      mdnsGet(wants);
       wants = null;
+    }
+  }
+
+  mdnsGet(wnm) {
+    ifNotEmit(noMdns) {
+    if (TS.notEmpty(wnm)) {
+      //("in mdnsGet |" + wnm + "|").print();
+      if (def(ash.mdserver)) {
+        String tqip = ash.mdserver.getAddr(wnm);
+        if (TS.notEmpty(tqip)) {
+          //("mdnsGet tqip |" + tqip + "|").print();
+          say(amc + wnm + "#" + tqip);
+        } else {
+          //"tqip empty".print();
+        }
+      }
+    } else {
+      //"got empty wnm in mdnsGet".print();
+    }
     }
   }
 

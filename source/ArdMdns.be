@@ -49,6 +49,25 @@ class Embedded:Mdns {
     }
     return(self);
   }
+
+  getAddr(String tqname) String {
+    String tqip;
+    if (TS.notEmpty(tqname)) {
+    emit(cc) {
+      """
+      #ifdef BEAR_ESP32
+      IPAddress tqip = MDNS.queryHost(beq->beva_tqname->bems_toCcString().c_str());
+      if (tqip != INADDR_NONE) {
+        String lip = tqip.toString();
+        std::string lips = std::string(lip.c_str());
+        beq->bevl_tqip = new BEC_2_4_6_TextString(lips);
+      }
+      #endif
+      """
+    }
+    }
+    return(tqip);
+  }
   
   update() self {
   emit(cc) {

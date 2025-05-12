@@ -420,7 +420,7 @@ class Embedded:AppShell {
        }
      }
      ifNotEmit(noMdns) {
-       slots {
+       fields {
         Embedded:Mdns mdserver;
        }
      }
@@ -1500,6 +1500,9 @@ class Embedded:AppShell {
           config.put(smcpi, smcp);
         } else {
           "clearing smc".print();
+          config.put(smcconi, "");
+          config.put(smcui, "");
+          config.put(smcpi, "");
         }
         }
         return("smcok");
