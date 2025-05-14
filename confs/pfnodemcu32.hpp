@@ -33,6 +33,7 @@
 //#define BESPEC_CON "0.pwm.2,1" //nodemcu just pwm local led
 //#define BESPEC_CON "0.sw.2,1" //nodemcu just sw. claimed for DOIT ESP32 DEVKIT V1 - WORKS
 #define BESPEC_CON "0.sw.30,2" //trying DevKitC-02 ESP32-C3-WROOM-02 - WORKS
+//#define BESPEC_CON "0.sw.4,2" //try for aithinker esp ce 12f 5b, 4g, 3r - WORKS
 //#define BESPEC_CON "0.sw.2.bu.14,0,30,0,10000" //nodemcu like athsw
 //#define BESPEC_CON "0.dim.2,1" //nodemcu just dim local led (reversed)
 //#define BESPEC_CON "0.rgbcwgd.4,12,14,5,13" //all in one, pins cold, warm, red, green, blue, gammadim, exclusive cw or rgb
