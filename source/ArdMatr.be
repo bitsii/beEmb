@@ -389,17 +389,35 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
               swto = false;
               lastSwcState = CNS.off;
             }
+            if (mmep.met == "ool") {
+              Int mmepmet = 0;
+            } elseIf (mmep.met == "dl") {
+              mmepmet = 1;
+            }
             if (def(swto)) {
               //"doing sloo".print();
               emit(cc) {
                 """
                 bool swtost = beq->bevl_swto->bevi_bool;
                 std::shared_ptr<MatterEndPoint> swmep = bevi_meps[bevp_nextSwCheckIdx->bevi_int];
+                bool didup = false;
+                if (beq->bevl_mmepmet->bevi_int == 0) {
                 std::shared_ptr<MatterOnOffLight> swool = std::static_pointer_cast<MatterOnOffLight>(swmep);
-                //Serial.println("might setonoff");
                 if (swool->getOnOff() != swtost) {
+                  didup = true;
                   Serial.println("will setonoff");
                   swool->setOnOff(swtost);
+                }
+                }
+                if (beq->bevl_mmepmet->bevi_int == 1) {
+                std::shared_ptr<MatterDimmableLight> swdl = std::static_pointer_cast<MatterDimmableLight>(swmep);
+                if (swdl->getOnOff() != swtost) {
+                  didup = true;
+                  Serial.println("will setonoff");
+                  swdl->setOnOff(swtost);
+                }
+                }
+                if (didup) {
                   """
                 }
                 lastSwcIdx = nextSwCheckIdx.copy();
