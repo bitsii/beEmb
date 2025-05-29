@@ -142,7 +142,7 @@ WiFiClient client;
       while (client.connected() && currentTime - previousTime <= timeoutTime) {
         //previousTime = currentTime;  //abs timeoutTime from start of checkGet, or must be under available()
         currentTime = millis();
-        if (client.available()) {
+        while (client.available()) {
           char c = client.read(); 
           //Serial.write(c);
           beq->bevl_chari->bevi_int = c;
@@ -162,9 +162,9 @@ WiFiClient client;
           }
 emit(cc) {
 """        
-        } else {
+        }// else {
           //Serial.println("not available");
-        }
+        //}
       }
     } else {
       //Serial.println("no client");

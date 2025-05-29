@@ -284,6 +284,14 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
       Matter.begin();
       """
     }
+
+    if (mepslen <= 0) { Int ivdiv = 1; } else { ivdiv = mepslen; }
+    slots {
+      Int swCheckIv = 36000 / ivdiv;//millis per each check on any given device
+      Int nextSwCheck = ash.nowup + swCheckIv;
+      Int nextSwCheckIdx = 0;
+    }
+
   }
 
   checkDoMes() {
@@ -291,6 +299,11 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
     Int st;
     Int bidx;
     Int bb;
+    Int didact;
+    slots {
+      Int lastSwcIdx;
+      String lastSwcState;
+    }
     emit(cc) {
       """
       int act = -1;
@@ -326,26 +339,81 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
       """
     }
     if (def(idx) && def(st)) {
+      didact = 0;
       ("idx " + idx + " st " + st).print();
       Mmep mmep = meps.get(idx);
       if (st == 1) {
-        String sts = "on";
+        String sts = CNS.on;
       } else {
-        sts = "off";
+        sts = CNS.off;
       }
-      if (def(mmep)) {
-         String kdn = "CasNic" + mmep.ondid;
-         String scmds = "dostate " + mmep.spass + " " + mmep.ipos + " setsw " + sts + " e";
-         sendCmd(kdn, scmds);
+      if (def(lastSwcIdx) && idx == lastSwcIdx && def(lastSwcState) && sts == lastSwcState) {
+        "not doing update is callthrough".print();
+        lastSwcIdx = null;
+      } else {
+        if (def(mmep)) {
+          String kdn = "CasNic" + mmep.ondid;
+          String scmds = "dostate " + mmep.spass + " " + mmep.ipos + " setsw " + sts + " e";
+          sendCmd(kdn, scmds);
+        }
       }
     }
     if (def(bidx) && def(bb)) {
+      didact = 1;
       ("bidx " + bidx + " bb " + bb).print();
       mmep = meps.get(bidx);
       if (def(mmep) && bb > 0) {
          kdn = "CasNic" + mmep.ondid;
          scmds = "dostate " + mmep.spass + " " + mmep.ipos + " setlvl " + bb + " e";
          sendCmd(kdn, scmds);
+      }
+    }
+    if (undef(didact)) {
+      if (ash.nowup > nextSwCheck) {
+        nextSwCheck = ash.nowup + swCheckIv;
+        if (nextSwCheckIdx >= meps.length) {
+          nextSwCheckIdx = 0;
+        }
+        //("doing getsw for mep " + nextSwCheckIdx).print();
+        mmep = meps.get(nextSwCheckIdx);
+        if (def(mmep)) {
+          kdn = "CasNic" + mmep.ondid;
+          scmds = "dostate " + mmep.spass + " " + mmep.ipos + " getsw e";
+          String res = sendCmd(kdn, scmds);
+          if (TS.notEmpty(res)) {
+            //("got res |" + res + "|").print();
+            if (res.has(CNS.on)) {
+              Bool swto = true;
+              lastSwcState = CNS.on;
+            } elseIf (res.has(CNS.off)) {
+              swto = false;
+              lastSwcState = CNS.off;
+            }
+            if (def(swto)) {
+              //"doing sloo".print();
+              emit(cc) {
+                """
+                bool swtost = beq->bevl_swto->bevi_bool;
+                std::shared_ptr<MatterEndPoint> swmep = bevi_meps[bevp_nextSwCheckIdx->bevi_int];
+                std::shared_ptr<MatterOnOffLight> swool = std::static_pointer_cast<MatterOnOffLight>(swmep);
+                //Serial.println("might setonoff");
+                if (swool->getOnOff() != swtost) {
+                  Serial.println("will setonoff");
+                  swool->setOnOff(swtost);
+                  """
+                }
+                lastSwcIdx = nextSwCheckIdx.copy();
+                emit(cc) {
+                  """
+                }
+                """
+              }
+            }
+          } else {
+            //"res was empty".print();
+          }
+        }
+        nextSwCheckIdx++;
       }
     }
   }
