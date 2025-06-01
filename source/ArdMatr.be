@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025, the Beysant Embedded Authors.
+ * Copyright (c) 2024-2025, the Brace Embedded Authors.
  *
  * SPDX-License-Identifier: BSD-2-Clause
  *

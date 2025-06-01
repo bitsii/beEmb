@@ -1,4 +1,4 @@
-# Beysant Embedded
+# Brace Embedded
 
 <br />
 <div align="center">
@@ -9,7 +9,7 @@
   
 Batteries-included firmware for the Esp8266 targeted for home automation use cases.  Applications for connecting devices running the firmware to your network and controlling them - including an Open Source desktop application  - [Casnic Control](https://gitlab.com/bitsii/CasCon) - and mobile apps in the Google Play Store [Casnic Android App](https://play.google.com/store/apps/details?id=casnic.control&gl=US) and the Apple App Store [Casnic IOS App](https://apps.apple.com/us/app/cascon/id6458984046)
 
-Built on the Arduino platform, written in [Beysant](https://github.com/bitsii/beBase) - an object oriented, garbage collected language that transpiles to C++.  Licensed under the [BSD-2-Clause](https://opensource.org/licenses/BSD-2-Clause) open source license.
+Built on the Arduino platform, written in [Brace](https://github.com/bitsii/beBase) - an object oriented, garbage collected language that transpiles to C++.  Licensed under the [BSD-2-Clause](https://opensource.org/licenses/BSD-2-Clause) open source license.
 
 ## Prebuilt solutions
 
@@ -34,7 +34,7 @@ Common profiles are ready to go and can be customized through header configurati
 
 ## Pragmatic Security
 
-Beysant Embedded tries to strike a good balance in the security space by enforcing only authorized use while remaining performant and reliable:
+Brace Embedded tries to strike a good balance in the security space by enforcing only authorized use while remaining performant and reliable:
 
 * Devices start with a unique configuration code - no default passwords.
 * Authentication tokens are only exchanged in the clear during provisioning on the devices AP using the configuration codes.  Optional WPA support for the AP mode can provide isolation and encryption during this process if required.
@@ -44,7 +44,7 @@ Beysant Embedded tries to strike a good balance in the security space by enforci
 ### Get the Hardware
 
 * Some pre-built devices are supported, including the [Athom Plug V2 US](https://www.athom.tech/blank-1/tasmota-us-plug-v2) and the [Athom 7w Color Bulb](https://www.athom.tech/blank-1/color-bulb)
-* Beysant Embedded should also work with most any Esp8266 development board.  2MB flash is recommended, though 1MB should work but will be unable to OTA.
+* Brace Embedded should also work with most any Esp8266 development board.  2MB flash is recommended, though 1MB should work but will be unable to OTA.
 * If your board has built in LED's you want to use make sure you know the GPIO/pin numbers for your configuration.
 * Of course, many folks will be wiring up their own solution for hobby use - pick good GPIOs for your board, connect things up, and make a note of the pin numbers.
 * If you are building a product and using the firmware on it, you should be able to follow the configuration spec below to prep your build for your product.
@@ -119,7 +119,7 @@ Consider starting with pfnodemcu, but you can pick any profile you like.
 
 #### Other Configuration elements
 
-* BE_TCPCONSOLE can be set to "on" to enable the tcp console or "off" to disable.  If enabled the device will listen on port 32259 - you can telnet to this port to view most of the console output (everything from the Beysant language "print" statements, lower level Arduino console messages are not presently sent there).  The session is read only / just for viewing debug information.
+* BE_TCPCONSOLE can be set to "on" to enable the tcp console or "off" to disable.  If enabled the device will listen on port 32259 - you can telnet to this port to view most of the console output (everything from the Brace language "print" statements, lower level Arduino console messages are not presently sent there).  The session is read only / just for viewing debug information.
 
 ### If you want to make it your own
 
@@ -129,11 +129,11 @@ cp -R pfnodemcu pfmyprofile;mv pfmyprofile/pfnodemcu.ino pfmyprofile/pfmyprofile
 
 ### Further Customization
 
-If you need your controls to behave differently than they do out of the box, or you want to create your own new controls, you'll also need to setup a Beysant development environment and checkout/modify/build the actual project (the downloaded sketches are pre-generated and only support configuration based customization - [you'll need to have the above Arduino environment setup and working](#getting-ready), and then you can go further with the instructions below)
+If you need your controls to behave differently than they do out of the box, or you want to create your own new controls, you'll also need to setup a Brace development environment and checkout/modify/build the actual project (the downloaded sketches are pre-generated and only support configuration based customization - [you'll need to have the above Arduino environment setup and working](#getting-ready), and then you can go further with the instructions below)
 
 For this approach you won't be using the downloaded .zip files but you will want to checkout the [beEmb git repo](https://github.com/bitsii/beEmb) into a working directory - you'll want a dedicated parent diretory as other directories will need to live alongside the beEmb one.
 
-Next you need to setup the Beysant language, see [The Beysant Project](https://github.com/bitsii/beBase) for that.  If must be a peer directory to where you checked out beEmb in [Check it out](#check-it-out) (e.g. both beEmb and beBase share the same parent directory) The java environment is sufficient (you will be generating C++ code, but the Beysant Build process will do so from it's self-hosted java edition).  There are some limitations on Beysant when running with beEmb due to the teeny tiny nature of microcontrollers - the base library is greatly cut down (only List containers, no Maps or LinkedLists/Stacks), exceptions are not translated back into Beysant line numbers (but you can find them from the stack trace lines by opening the generated code).  Invocation and introspection (invoke, "can") and variadic behavior is not available.  Both static and dynamic call dispatch and garbage collection are available, however.
+Next you need to setup the Brace language, see [The Brace Project](https://github.com/bitsii/beBase) for that.  If must be a peer directory to where you checked out beEmb in [Check it out](#check-it-out) (e.g. both beEmb and beBase share the same parent directory) The java environment is sufficient (you will be generating C++ code, but the Brace Build process will do so from it's self-hosted java edition).  There are some limitations on Brace when running with beEmb due to the teeny tiny nature of microcontrollers - the base library is greatly cut down (only List containers, no Maps or LinkedLists/Stacks), exceptions are not translated back into Brace line numbers (but you can find them from the stack trace lines by opening the generated code).  Invocation and introspection (invoke, "can") and variadic behavior is not available.  Both static and dynamic call dispatch and garbage collection are available, however.
 
 When working in this mode you should setup your configuration for BESPEC_SW and BESPEC_CON in the confs/profilename.hpp file BEFORE running the generator script instead of afterwards in the BEH_4_Base.hpp as the latter will be over written at every generation with the contents of the former. Run the appropriate script, it should generate the code.  Look at the BC.be, DC.be, SC.be, SIC.be files for the control code.  SH.be is the "main app code", other files are there for the Wifi, etc.  You may need to work with the code a bit to learn how it works, feel free to reach out with questions.  When you make changes re-run the appropriate generator script to regenerate the C++ for the Arduino IDE, it will generate into the ard subdirectory in the project.  When you are ready to build and upload open the Arduino IDE, open the sketch in the subdirectory of the project for the script that you ran (see above), and choose Sketch/Upload to upload the sketch to the board as you normally would.
 
@@ -147,6 +147,6 @@ Use of this information and the software is entirely at your own risk.  As with 
 
 ## Credits
 
-The official list of Beysant Embedded Authors:
+The official list of Brace Embedded Authors:
 
 Craig Welch <bitsiiway@gmail.com>
