@@ -132,6 +132,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
       String slashn = "\n";
       String slashr = "\r";
       String readBuf = String.new();
+      Bool triedCommission = false;
     }
   }
 
@@ -483,7 +484,10 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
 
   handleLoop() {
    checkDoMes();
-   checkGetCommission();
+   unless (triedCommission) {
+     triedCommission = true;
+     checkGetCommission();
+   }
   }
 
   checkGetCommission() {
@@ -503,6 +507,12 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
           delay(100);
           if ((timeCount++ % 50) == 0) {  // 50*100ms = 5 sec
             Serial.println("Matter Node not commissioned yet. Waiting for commissioning.");
+          }
+          if (timeCount > 3000) { //5 mins
+          //if (timeCount > 300) { //30s, for testing
+            Serial.println("Matter Node not commissioned after 5 mins.  Giving up, unplug and replug to get another 5 minute window for commissioning");
+            break;
+          //}
           }
         }
         Serial.println("Matter Node is commissioned and connected to Wi-Fi. Ready for use.");

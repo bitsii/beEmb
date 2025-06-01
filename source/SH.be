@@ -506,22 +506,11 @@ class Embedded:AppShell {
          tweb.start();
         }
 
-        //if (Wifi.isConnected) {
-          ifNotEmit(noMdns) {
-            mdserver = Embedded:Mdns.new(myName, "casnic", 6420, "tcp");
-            mdserver.start();
-          }
-          ifNotEmit(noTds) {
-            tdserver = Embedded:Tds.new(myName, self);
-            tdserver.start();
-          }
-        //}
-
-        ifEmit(smcGm) {
-          //increase tdserver so I have addrs when I need them, I need moar than the uge
-          tdserver.mW = 9;
-          tdserver.mH = 6;
+        ifNotEmit(noMdns) {
+          mdserver = Embedded:Mdns.new(myName, "casnic", 6420, "tcp");
+          mdserver.start();
         }
+        checkStartTdServer();
 
         ifNotEmit(noSmc) {
           slots {
@@ -535,15 +524,26 @@ class Embedded:AppShell {
         }
         checkStartSmcServer();
 
-        ifNotEmit(noMatr) {
-          if (Wifi.isConnected) {
-            matrserver = Embedded:MatrServer.new(self);
-            matrserver.start();
-          }
-        }
+        checkStartMatrServer();
 
        }
       }
+   }
+
+   checkStartTdServer() {
+    ifNotEmit(noTds) {
+      if (Wifi.isConnected) {
+        if (undef(tdserver)) {
+          tdserver = Embedded:Tds.new(myName, self);
+          tdserver.start();
+          ifEmit(smcGm) {
+            //increase tdserver so I have addrs when I need them, I need moar than the uge
+            tdserver.mW = 9;
+            tdserver.mH = 6;
+          }
+        }
+      }
+    }
    }
 
    checkStartSmcServer() {
@@ -587,6 +587,17 @@ class Embedded:AppShell {
           }
         }
       }
+   }
+
+   checkStartMatrServer() {
+     ifNotEmit(noMatr) {
+      if (Wifi.isConnected) {
+        if (undef(matrserver)) {
+          matrserver = Embedded:MatrServer.new(self);
+          matrserver.start();
+        }
+      }
+    }
    }
    
   checkWifiAp() {
@@ -697,7 +708,9 @@ class Embedded:AppShell {
        if (Wifi.up && undef(tcpserver)) {
          needsNetworkInit = true;
        }
+       checkStartTdServer();
        checkStartSmcServer();
+       checkStartMatrServer();
      }
    }
 
