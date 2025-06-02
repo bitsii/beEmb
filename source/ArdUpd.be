@@ -22,11 +22,18 @@ class Embedded:Update {
      Serial.println("SketchSize and FreeSketchSpace");
      Serial.println(ESP.getSketchSize());
      Serial.println(ESP.getFreeSketchSpace());
+#ifdef BEAR_ESP8266
      WiFiClient client;
      t_httpUpdate_return ret = ESPhttpUpdate.update(client, beq->beva_url->bems_toCcString().c_str());
-     Serial.println("return ret");
      Serial.println(ESPhttpUpdate.getLastError());
      Serial.println(ESPhttpUpdate.getLastErrorString());
+#endif
+#ifdef BEAR_ESP32
+     NetworkClient client;
+     t_httpUpdate_return ret = httpUpdate.update(client, beq->beva_url->bems_toCcString().c_str());
+     Serial.println(httpUpdate.getLastError());
+     Serial.println(httpUpdate.getLastErrorString());
+#endif
      """
     }
 

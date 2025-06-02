@@ -568,7 +568,7 @@ class Embedded:AppShell {
                 }
               }
             } else {
-              "smc not configed".print();
+              //"smc not configed".print();
             }
           }
           if (def(smcserver)) {

@@ -5,9 +5,9 @@
 #include <ESP8266httpUpdate.h>
 #include <Hash.h>
 //for TDS
-#include <WiFiUdp.h>
+//#include <WiFiUdp.h>
 //for SMC.be
-#include <ArduinoMqttClient.h>
+//#include <ArduinoMqttClient.h>
 #endif
 #ifdef BEAR_ESP32
 #include <WiFi.h>
@@ -19,6 +19,7 @@
 //for SMC.be
 #include <NetworkClientSecure.h>
 #include <ArduinoMqttClient.h>
+#include <HTTPUpdate.h>
 #endif
 //#include <EEPROM.h>
 #include <FS.h>
