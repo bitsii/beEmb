@@ -41,6 +41,7 @@ class Embedded:AppShell {
        List sxdi = List.new();
        Embedded:TCPClient concon;
        Bool needsFsRestart = false;
+       String swSpec;
      }
      slots {
        Int shpassi;
@@ -69,7 +70,6 @@ class Embedded:AppShell {
        Bool justSetWifi = false;
        Bool pastSetupTime = false;
        String did;
-       String swSpec;
        String devCode;
        Bool resetByPow; //4 times 20 secs
        Bool inResetByPow = false;
@@ -510,6 +510,7 @@ class Embedded:AppShell {
           mdserver = Embedded:Mdns.new(myName, "casnic", 6420, "tcp");
           mdserver.start();
         }
+        checkStartUpServer();
         checkStartTdServer();
 
         ifNotEmit(noSmc) {
@@ -528,6 +529,31 @@ class Embedded:AppShell {
 
        }
       }
+   }
+
+   sysupdate(String upurl) {
+     ifNotEmit(noUpd) {
+       if (def(eupd)) {
+         "in update".print();
+         "upurl".print();
+         upurl.print();
+         eupd.updateFromUrl(upurl);
+         "update done".print();
+       }
+     }
+   }
+
+   checkStartUpServer() {
+    ifNotEmit(noUpd) {
+      slots {
+        Embedded:Update eupd;
+      }
+      if (Wifi.isConnected) {
+        if (undef(eupd)) {
+          eupd = Embedded:Update.new(self);
+        }
+      }
+    }
    }
 
    checkStartTdServer() {
@@ -708,20 +734,10 @@ class Embedded:AppShell {
        if (Wifi.up && undef(tcpserver)) {
          needsNetworkInit = true;
        }
+       checkStartUpServer();
        checkStartTdServer();
        checkStartSmcServer();
        checkStartMatrServer();
-     }
-   }
-
-   sysupdate(String upurl) {
-     ifNotEmit(noUpd) {
-      "in update".print();
-      "upurl".print();
-      upurl.print();
-      var eupd = Embedded:Update.new();
-      eupd.updateFromUrl(upurl);
-      "update done".print();
      }
    }
 
@@ -1049,6 +1065,11 @@ class Embedded:AppShell {
      ifNotEmit(noMatr) {
        if (def(matrserver)) {
         matrserver.handleLoop();
+       }
+     }
+     ifNotEmit(noUpd) {
+       if (def(eupd)) {
+         eupd.handleLoop();
        }
      }
      if (def(conserver)) {
