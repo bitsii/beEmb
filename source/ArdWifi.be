@@ -109,7 +109,6 @@ class Embedded:Wifi {
     ("Connecting to " + ssid).print();
     emit(cc) {
     """
-    //WiFi.softAPdisconnect(true);
     WiFi.setAutoReconnect(false);
     WiFi.persistent(false);
     WiFi.begin(bevp_ssid->bems_toCcString().c_str(), bevp_password->bems_toCcString().c_str());
@@ -130,6 +129,7 @@ class Embedded:Wifi {
       bevp_localIP = new BEC_2_4_6_TextString(lips);
 
       bevp_up = BECS_Runtime::boolTrue;
+      //WiFi.softAPdisconnect(true); //shutoff the ap
     } else {
       //Serial.println("no luck connecting to wifi");
       bevp_up = BECS_Runtime::boolFalse;
