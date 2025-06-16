@@ -19,7 +19,11 @@ class Embedded:Update {
       //Int upCheckIv = 20000;//millis per each check, 43200000 is 12 hours, 86400000 one day
       Int upCheckIv = 43200000;//millis per each check, 43200000 is 12 hours, 86400000 one day
       Int nextUpCheck = ash.nowup + upCheckIv;
+      Int nextUfuCheck = ash.nowup + 60000;
       String updBase;
+    }
+    fields {
+      String supurl;
     }
     emit(cc) {
       """
@@ -33,9 +37,17 @@ class Embedded:Update {
   }
 
   handleLoop() {
-    if (ash.nowup > nextUpCheck) {
-      nextUpCheck = ash.nowup + upCheckIv;
+    Int nowup = ash.nowup;
+    if (nowup > nextUpCheck) {
+      nextUpCheck = nowup + upCheckIv;
       handleUpdate();
+    } elseIf (nowup > nextUfuCheck) {
+      nextUfuCheck = nowup + 60000;
+      if (def(supurl) && TS.notEmpty(supurl)) {
+        String upurl = supurl;
+        supurl = null;
+        updateFromUrl(upurl);
+      }
     }
   }
 
@@ -91,7 +103,7 @@ http.begin(client, beq->bevl_updVf->bems_toCcString().c_str());
             updUrl += ".gz";
           }
           ("updUrl " + updUrl).print();
-          updateFromUrl(updUrl);
+          supurl = updUrl;
         }
       }
     }

@@ -57,7 +57,6 @@ class Embedded:AppShell {
        }
 
        Int zero = 0;
-       Int nextUpdateCheck = 0;
        Int nextSwSpec = 0;
        Int nextRestart = 0;
        Int nextMaybeSave = 0;
@@ -74,7 +73,6 @@ class Embedded:AppShell {
        Bool resetByPow; //4 times 20 secs
        Bool inResetByPow = false;
        String readBuf = String.new();
-       String supurl;
        String controlSpec;
        String controlDef;
        Bool needsNetworkInit = true;
@@ -119,7 +117,6 @@ class Embedded:AppShell {
      }
 
      app.uptime(nowup);
-     nextUpdateCheck = nowup + 60000;
      nextSwSpec = nowup + 540000;
      nextMaybeSave = nowup + 15000;//15 secs
      nextPow = nowup + 45000;//45 secs
@@ -531,18 +528,6 @@ class Embedded:AppShell {
       }
    }
 
-   sysupdate(String upurl) {
-     ifNotEmit(noUpd) {
-       if (def(eupd)) {
-         "in update".print();
-         "upurl".print();
-         upurl.print();
-         eupd.updateFromUrl(upurl);
-         "update done".print();
-       }
-     }
-   }
-
    checkStartUpServer() {
     ifNotEmit(noUpd) {
       slots {
@@ -864,15 +849,6 @@ class Embedded:AppShell {
       Wifi.stop();
       Wifi.clearAll();
       app.restart();
-      return(self);
-     }
-     if (nowup > nextUpdateCheck) {
-      nextUpdateCheck = nowup + 60000;
-      if (def(supurl) && TS.notEmpty(supurl)) {
-        String upurl = supurl;
-        supurl = null;
-        sysupdate(upurl);
-      }
       return(self);
      }
      ifNotEmit(noSer) {
@@ -1604,7 +1580,11 @@ class Embedded:AppShell {
         needsGc = true;
         return("maybe saved");
      } elseIf (cmd == "sysupdate") {
-        supurl = cmdl[2];
+        ifNotEmit(noUpd) {
+          if (def(eupd)) {
+           eupd.supurl = cmdl[2];
+          }
+        }
         return("set supurl");
      } elseIf (cmd == "restart") {
        //"got restart".print();
