@@ -9,7 +9,11 @@
 // SW - name (type) and version of the device.  Typename 10 char max ssid rules (no spaces)
 // swconfver.DeviceTypeName.DeviceVersion
 //
-#define BESPEC_SW "1,q,p6,p2.rAthPlugV3.59" //Athom Plug V3 US THE REAL ONE
+#define BESPEC_SW "1,q,p6,p2.rAthPlugV3.131" //Athom Plug V3 US THE REAL ONE
+// Esp32 4mb minimal spiffs 1.9mb app with ota/190kb spiffs  esp32c3
+// UPD
+//#define BE_UPDBASE "na"  //if we don't have one.  otherwise, the url base for the update ver txt file and binfiles
+#define BE_UPDBASE "http://storage.googleapis.com/casnicdl.casnic.net/pfathp3.ino.esp32c3"
 //
 // CON - definition of device's controls
 // ctlconfver.control.ctlconf,args.control.ctlconf,args
