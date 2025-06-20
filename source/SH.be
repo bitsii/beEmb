@@ -104,18 +104,6 @@ class Embedded:AppShell {
        smcpi = config.getPos("smc.p");
      }
 
-     ifEmit(dynConf) {
-       slots {
-         Bool lockConf;
-       }
-       String lockup = config.get(config.getPos("fc.lockConf"));
-       if (TS.notEmpty(lockup) && lockup == CNS.on) {
-         lockConf = true;
-       } else {
-         lockConf = false;
-       }
-     }
-
      app.uptime(nowup);
      nextSwSpec = nowup + 540000;
      nextMaybeSave = nowup + 15000;//15 secs
@@ -221,16 +209,11 @@ class Embedded:AppShell {
       fields {
         String myName;
       }
-      ifEmit(dynConf) {
-        pinpart = config.get(config.getPos("fc.scode"));
-      }
-      ifNotEmit(dynConf) {
-        emit(cc) {
-          """
-          std::string pp = BE_SCODE;
-          beq->bevl_pinpart = new BEC_2_4_6_TextString(pp);
-          """
-        }
+      emit(cc) {
+        """
+        std::string pp = BE_SCODE;
+        beq->bevl_pinpart = new BEC_2_4_6_TextString(pp);
+        """
       }
       if (TS.isEmpty(pinpart) || pinpart.length != 8) {
         Int shppi = config.getPos("sh.pinpart");
@@ -326,16 +309,11 @@ class Embedded:AppShell {
 
    buildSwInfo() {
      if (TS.isEmpty(swSpec)) {
-      ifEmit(dynConf) {
-        swSpec = config.get(config.getPos("fc.swspec"));
-      }
-      ifNotEmit(dynConf) {
-        emit(cc) {
-          """
-          std::string swspec = BESPEC_SW;
-          bevp_swSpec = new BEC_2_4_6_TextString(swspec);
-          """
-        }
+      emit(cc) {
+        """
+        std::string swspec = BESPEC_SW;
+        bevp_swSpec = new BEC_2_4_6_TextString(swspec);
+        """
       }
      }
      buildSwInfoIn();
@@ -374,17 +352,12 @@ class Embedded:AppShell {
 
    buildControls() {
      if (TS.isEmpty(controlSpec)) {
-       ifEmit(dynConf) {
-         controlSpec = config.get(config.getPos("fc.conspec"));
-       }
-       ifNotEmit(dynConf) {
-        emit(cc) {
-          """
-          std::string conspec = BESPEC_CON;
-          bevp_controlSpec = new BEC_2_4_6_TextString(conspec);
-          """
-        }
-       }
+      emit(cc) {
+        """
+        std::string conspec = BESPEC_CON;
+        bevp_controlSpec = new BEC_2_4_6_TextString(conspec);
+        """
+      }
      }
      buildControlsIn();
    }
@@ -479,17 +452,11 @@ class Embedded:AppShell {
         tcpserver.start();
 
         String tccon;
-        ifEmit(dynConf) {
-          tccon = config.get(config.getPos("fc.tccon"));
-          if (TS.isEmpty(tccon)) { tccon = CNS.off; }
-        }
-        ifNotEmit(dynConf) {
-          emit(cc) {
-            """
-            std::string tccon = BE_TCPCONSOLE;
-            beq->bevl_tccon = new BEC_2_4_6_TextString(tccon);
-            """
-          }
+        emit(cc) {
+          """
+          std::string tccon = BE_TCPCONSOLE;
+          beq->bevl_tccon = new BEC_2_4_6_TextString(tccon);
+          """
         }
 
         if (tccon == CNS.on) {
@@ -632,31 +599,19 @@ class Embedded:AppShell {
         String hiddenCode; //include the pin part in the ssid or hide it, on is hide it
       }
       if (TS.isEmpty(apType)) {
-        ifEmit(dynConf) {
-          apType = config.get(config.getPos("fc.apType"));
-          if (TS.isEmpty(apType)) { apType = "O"; }
-        }
-        ifNotEmit(dynConf) {
-          emit(cc) {
-            """
-            std::string aptype = BE_APTYPE;
-            bevp_apType = new BEC_2_4_6_TextString(aptype);
-            """
-          }
+        emit(cc) {
+          """
+          std::string aptype = BE_APTYPE;
+          bevp_apType = new BEC_2_4_6_TextString(aptype);
+          """
         }
       }
       if (TS.isEmpty(hiddenCode)) {
-        ifEmit(dynConf) {
-          hiddenCode = config.get(config.getPos("fc.hideCode"));
-          if (TS.isEmpty(hiddenCode)) { hiddenCode = CNS.off; }
-        }
-        ifNotEmit(dynConf) {
-          emit(cc) {
-            """
-            std::string hiddenCode = BE_HIDECODE;
-            bevp_hiddenCode = new BEC_2_4_6_TextString(hiddenCode);
-            """
-          }
+        emit(cc) {
+          """
+          std::string hiddenCode = BE_HIDECODE;
+          bevp_hiddenCode = new BEC_2_4_6_TextString(hiddenCode);
+          """
         }
       }
       if (TS.notEmpty(pin) && pin.length == 16) {
@@ -765,17 +720,11 @@ class Embedded:AppShell {
      }
      if (undef(resetByPow)) {
        String rbps;
-       ifEmit(dynConf) {
-         rbps = config.get(config.getPos("fc.rbps"));
-         if (TS.isEmpty(rbps)) { rbps = CNS.on; }
-       }
-       ifNotEmit(dynConf) {
-        emit(cc) {
-            """
-            std::string rbps = BE_RESETBYPOW;
-            beq->bevl_rbps = new BEC_2_4_6_TextString(rbps);
-            """
-          }
+      emit(cc) {
+          """
+          std::string rbps = BE_RESETBYPOW;
+          beq->bevl_rbps = new BEC_2_4_6_TextString(rbps);
+          """
         }
         if (rbps == CNS.off) {
           resetByPow = false;
@@ -1538,43 +1487,6 @@ class Embedded:AppShell {
           return("updnow failed undef");
         }
       }
-    } elseIf (cmd == "putconfigs") {
-      ifEmit(dynConf) {
-        if (lockConf) {
-          return("lockConf on, no putconfig");
-        }
-        if (cmdl[2] == "vhex") {
-          Bool deHex = true;
-        } else {
-          deHex = false;
-        }
-        Int cmdle = cmdl.length - 1;
-        for (Int k = 3;k < cmdle;k++) {
-          String key = cmdl[k];
-          k++;
-          if (k < cmdle) {
-            String value = cmdl[k];
-          } else {
-            value = null;
-          }
-          if (TS.notEmpty(key)) {
-            if (key.begins("fc.")) {
-              Int keyi = config.getPos(key);
-              if (TS.isEmpty(value)) {
-                config.put(keyi, "");
-              } else {
-                if (deHex) {
-                  value = Encode:Hex.decode(value);
-                }
-                config.put(keyi, value);
-              }
-            } else {
-              return("configs failed bad key");
-            }
-          }
-        }
-        return("configs set");
-        }
      } elseIf (cmd == "maybesave") {
         config.maybeSave();
         needsGc = true;
