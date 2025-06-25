@@ -409,6 +409,11 @@ class Embedded:AppShell {
         Embedded:MatrServer matrserver;
        }
      }
+     ifEmit(ehSvr) {
+       slots {
+        Embedded:EHomeServer ehserver;
+       }
+     }
      slots {
        Embedded:TCPServer tcpserver;
        Embedded:TCPServer conserver;
@@ -490,6 +495,8 @@ class Embedded:AppShell {
         checkStartSmcServer();
 
         checkStartMatrServer();
+
+        checkStartEhServer();
 
        }
       }
@@ -573,6 +580,17 @@ class Embedded:AppShell {
         if (undef(matrserver)) {
           matrserver = Embedded:MatrServer.new(self);
           matrserver.start();
+        }
+      }
+    }
+   }
+
+   checkStartEhServer() {
+     ifEmit(ehSvr) {
+      if (Wifi.isConnected) {
+        if (undef(ehserver)) {
+          ehserver = Embedded:EHomeServer.new(self);
+          ehserver.start();
         }
       }
     }
@@ -678,6 +696,7 @@ class Embedded:AppShell {
        checkStartTdServer();
        checkStartSmcServer();
        checkStartMatrServer();
+       checkStartEhServer();
      }
    }
 
@@ -990,6 +1009,11 @@ class Embedded:AppShell {
      ifNotEmit(noMatr) {
        if (def(matrserver)) {
         matrserver.handleLoop();
+       }
+     }
+     ifEmit(ehSvr) {
+       if (def(ehserver)) {
+        ehserver.handleLoop();
        }
      }
      ifNotEmit(noUpd) {
@@ -1472,6 +1496,13 @@ class Embedded:AppShell {
          }
         }
         return("unsupported");
+     } elseIf (cmd == "ehcmd") {
+       ifEmit(ehSvr) {
+         if (def(ehserver)) {
+           return(ehserver.handleCmdl(cmdl));
+         }
+        }
+        return("unsupported");
      } elseIf (cmd == "reset") {
       reset();
       return("Device reset");//we look for this result, don't change
@@ -1519,6 +1550,11 @@ class Embedded:AppShell {
       if (def(matrserver)) {
         matrserver.clearMeps();
         matrserver.decommission();
+      }
+    }
+    ifEmit(ehSvr) {
+      if (def(ehserver)) {
+        ehserver.clearEhds();
       }
     }
     ifNotEmit(noSmc) {
