@@ -29,6 +29,9 @@ class Embedded:EHomeServer {
       String slashn = "\n";
       String slashr = "\r";
       String readBuf = String.new();
+      String htp = "http://"
+      Bool shouldSave = false;
+      String swt = "sw";
     }
   }
 
@@ -40,29 +43,6 @@ class Embedded:EHomeServer {
         if (cmdl.length > 2 && cmdl[2] == "clear") {
           clearEhds();
           //ash.needsFsRestart = true;
-        } elseIf (cmdl.length > 3) {
-          String act = cmdl[2];
-          if (act == "add" && cmdl.length > 6) {
-            if (ehds.length >= 15) {
-              return("ehdmtoomany");
-            }
-            ehds += Ehd.new(cmdl[3], cmdl[4], cmdl[5], cmdl[6]);
-            saveEhds();
-            //ash.needsFsRestart = true;
-          } elseIf (act == "rm" && cmdl.length > 5) {
-            List nx = List.new();
-            for (Ehd mmep in ehds) {
-              unless (mmep.ondid == cmdl[4] && mmep.ipos == cmdl[5]) {
-                nx += mmep;
-              }
-            }
-            ehds = nx;
-            saveEhds();
-            //ash.needsFsRestart = true;
-          } else {
-            ("unknown ehdm act " + act).print();
-            return("ehdmbadact");
-          }
         } else {
           "bad ehdm cmd".print();
           return("ehdmbadcmd");
@@ -71,7 +51,7 @@ class Embedded:EHomeServer {
   }
 
   saveEhds() {
-    if (ehds.isEmpty) {
+    if (ehds.isEmpty || true) {
       "empty ehds".print();
       config.put(ehdi, "");
     } else {
@@ -80,7 +60,7 @@ class Embedded:EHomeServer {
         if (TS.notEmpty(mc)) {
           mc += ".";
         }
-        mc += mmep.met += "," += mmep.ondid += "," += mmep.ipos += "," += mmep.spass;
+        mc += mmep.etp += "," += mmep.ina += "," += mmep.wada;
       }
       ("conf putting mc " + mc).print();
       config.put(ehdi, mc);
@@ -93,7 +73,7 @@ class Embedded:EHomeServer {
       var mce = mcs.split(".");
       for (String mc in mce) {
         var mcl = mc.split(",");
-        ehds += Ehd.new(mcl[0], mcl[1], mcl[2], mcl[3]);
+        ehds += Ehd.new(mcl[0], mcl[1], mcl[2]);
         ("added Ehd " + mc).print();
       }
     }
@@ -110,9 +90,9 @@ class Embedded:EHomeServer {
   }
 
   start() {
-    ehdi = config.getPos("eh.ehds");
-    "loading ehds".print();
-    loadEhds();
+    //ehdi = config.getPos("eh.ehds");
+    //"loading ehds".print();
+    //loadEhds();
 
     Int ehdslen = ehds.length;
 
@@ -122,12 +102,6 @@ class Embedded:EHomeServer {
       }
       Ehd mmep = ehds[i];
       if (def(mmep)) {
-        Int meti;
-        if (mmep.met == "ool") {
-          meti = 0;
-        } elseIf (mmep.met == "dl") {
-          meti = 1;
-        }
       }
     }
 
@@ -154,17 +128,85 @@ class Embedded:EHomeServer {
         }
       } elseIf (nowup > nextDisCheck) {
         nextDisCheck = nowup + disCheckIv;
-        "disCheck".print();
-        Int qsr = Int.new();
+        //"disCheck".print();
+        String ina;
+        String hna;
+        String ada;
         emit(cc) {
           """
       #ifdef BEAR_ESP32
-      int c = MDNS.queryService("esphomelib", "tcp");
-      beq->bevl_qsr->bevi_int = c;
+      int n = MDNS.queryService("esphomelib", "tcp");
+      if (n == 0) {
+        //Serial.println("no services found");
+      } else {
+        //Serial.print(n);
+        //Serial.println(" service(s) found");
+        for (int i = 0; i < n; ++i) {
+          // Print details for each service found
+          /*Serial.print("  ");
+          Serial.print(i + 1);
+          Serial.print(": ");
+          Serial.print(MDNS.instanceName(i));
+          Serial.print(" - ");
+          Serial.print(MDNS.hostname(i));
+          Serial.print(" (");
+          Serial.print(MDNS.address(i));
+          Serial.print(":");
+          Serial.print(MDNS.port(i));
+          Serial.println(")");*/
+          try {
+            //String lip = WiFi.softAPIP().toString();
+            String inaas = MDNS.instanceName(i);
+            std::string inaa = std::string(inaas.c_str());
+            beq->bevl_ina = new BEC_2_4_6_TextString(inaa);
+
+            String hnaas = MDNS.hostname(i);
+            std::string hnaa = std::string(hnaas.c_str());
+            beq->bevl_hna = new BEC_2_4_6_TextString(hnaa);
+
+            String adaas = MDNS.address(i).toString();
+            std::string adaa = std::string(adaas.c_str());
+            beq->bevl_ada = new BEC_2_4_6_TextString(adaa);
+          } catch (...) {
+            Serial.println("got exception doing queryservice");
+          }
+        }
+      }
+      //Serial.println();
       #endif
           """
         }
-        ("qsr " + qsr).print();
+        upsertEhd(ina, hna, ada);
+      }
+    }
+  }
+
+  upsertEhd(String ina, String hna, String ada) {
+    //("in upsertEhd " + ina + " " + hna + " " + ada).print();
+    if (TS.notEmpty(ina) && TS.notEmpty(hna) && TS.notEmpty(ada)) {
+      if (ina != hna) {
+        ina += ":" += hna;
+      }
+      String wada = htp + ada;
+      Bool found = false;
+      for (Ehd mmep in ehds) {
+        if (def(mmep)) {
+          if (mmep.ina == ina) {
+            found = true;
+            //"found checking wada".print();
+            if (mmep.wada != wada) {
+              mmep.wada = wada;
+              shouldSave = true;
+              "upd wada".print();
+            }
+          }
+        }
+      }
+      unless (found) {
+        mmep = Ehd.new(swt, ina, wada); //will have to check for types later, maybe unknown is a type then check
+        ehds += mmep;
+        shouldSave = true;
+        ("in upsertEhd adding " + ina + " " + wada).print();
       }
     }
   }

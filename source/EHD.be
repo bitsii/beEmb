@@ -12,12 +12,11 @@ use Text:String;
 use Text:Strings as TS;
 
 class Embedded:Ehd {  //EHomeDevice
-  new(String _met, String _ondid, String _ipos, String _spass) {
+  new(String _etp, String _ina, String _wada) {
     fields {
-      String met = _met; //ool or dl
-      String ondid = _ondid;
-      String ipos = _ipos;
-      String spass = _spass;
+      String etp = _etp; //sw
+      String ina = _ina; //unique instance name
+      String wada = _wada; //http url by ip (web address)
     }
   }
 }
