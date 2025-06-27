@@ -183,7 +183,7 @@ class Embedded:EHomeServer {
 
   upsertEhd(String ina, String hna, String ada) {
     //("in upsertEhd " + ina + " " + hna + " " + ada).print();
-    if (TS.notEmpty(ina) && TS.notEmpty(hna) && TS.notEmpty(ada)) {
+    if (TS.notEmpty(ina) && TS.notEmpty(hna) && TS.notEmpty(ada) && ina.has("plug")) {
       if (ina != hna) {
         ina += ":" += hna;
       }
@@ -207,6 +207,7 @@ class Embedded:EHomeServer {
         ehds += mmep;
         shouldSave = true;
         ("in upsertEhd adding " + ina + " " + wada).print();
+        regenControls();
       }
     }
   }
@@ -214,5 +215,79 @@ class Embedded:EHomeServer {
   handleLoop() {
    checkNDo();
   }
+
+  regenControls() {
+    Int conPos = 0;
+    for (Ehd ehd in ehds) {
+      var ehsc = Embedded:EhSc.new(ash, conPos, "sw", "");
+      ehsc.initControl();
+      ash.controls[conPos] = ehsc;
+      conPos = conPos + 1;
+    }
+    ash.genControlDef();
+  }
+
+}
+
+class Embedded:EhSc {
+
+   new(_ash, Int _conPos, String _conName, String _conArgs) {
+     slots {
+       Embedded:AppShell ash = _ash;
+       Config config = ash.config;
+       Embedded:App app = ash.app;
+       Int conPos = _conPos;
+       String conType = _conName;
+       String ok = CNS.ok;
+       String ud = CNS.undefined;
+     }
+     fields {
+       Int lastEvent = Int.new();
+     }
+   }
+
+   conTypeGet() String {
+     return(conType);
+   }
+
+
+   initControl() {
+     slots {
+       String getsw = "getsw";
+       String on = CNS.on;
+       String off = CNS.off;
+       String setsw = "setsw";
+     }
+     fields {
+       String sw;
+     }
+   }
+
+   doState(List cmdl) String {
+     "in dostate".print();
+     String scm = cmdl[3];
+     if (scm == getsw) {
+      if (TS.notEmpty(sw)) {
+        return(sw);
+        } else {
+        return(ud);
+        }
+     } elseIf (scm == setsw) {
+        String insw = cmdl[4];
+        if (insw == on) {
+          sw = insw;
+          "on".print();
+        } elseIf (insw == off) {
+          sw = insw;
+          "off".print();
+        }
+        lastEvent.setValue(ash.nowup);
+        ash.lastEventsRes = null;
+     }
+     return(ok);
+   }
+
+   clearStates() {
+   }
 
 }

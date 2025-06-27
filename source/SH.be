@@ -326,28 +326,36 @@ class Embedded:AppShell {
      return(null);
    }
 
+   genControlDef() {
+     controlDef = "controldef,"
+     Int conPos = 0;
+     while (conPos < controls.length) {
+       if (conPos > 0) {
+         controlDef += ",";
+       }
+       controlDef += controls.get(conPos).conType;
+       conPos = conPos + 1;
+     }
+     ("controlDef " + controlDef).print();
+   }
+
    buildControlsIn() {
      //config ctlconfver.control.ctlconf,args.control.ctlconf,args
      if (TS.isEmpty(controlSpec)) {
        controlSpec = "";
      }
-     controlDef = "controldef,"
      var conl = controlSpec.split(".");
      Int i = 1;
      Int conPos = 0;
      while (i < conl.length) {
-       if (conPos > 0) {
-         controlDef += ",";
-       }
        String conName = conl[i];
        i++;
        String conArgs = conl[i];
        controls.put(conPos, buildControl(conPos, conName, conArgs));
-       controlDef += controls.get(conPos).conType;
        conPos = conPos + 1;
        i++;
      }
-     ("controlDef " + controlDef).print();
+     genControlDef();
    }
 
    buildControls() {
