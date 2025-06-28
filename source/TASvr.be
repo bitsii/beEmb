@@ -16,16 +16,16 @@ use Embedded:AppShell;
 use Embedded:Config;
 
 use Embedded:CommonNames as CNS;
-use Embedded:Ehd;
+use Embedded:Tad;
 
-class Embedded:EHomeServer {
+class Embedded:TAServer {
 
   new(_ash) self {
     slots {
       Embedded:AppShell ash = _ash;
       Config config = ash.config;
-      Int ehdi;
-      List ehds = List.new();
+      Int tadi;
+      List tads = List.new();
       String slashn = "\n";
       String slashr = "\r";
       String readBuf = String.new();
@@ -41,7 +41,7 @@ class Embedded:EHomeServer {
          //add ool id ipos spass
          //rm ool id
         if (cmdl.length > 2 && cmdl[2] == "clear") {
-          clearEhds();
+          clearTads();
           //ash.needsFsRestart = true;
         } else {
           "bad ehdm cmd".print();
@@ -50,31 +50,31 @@ class Embedded:EHomeServer {
         return("ehdmok");
   }
 
-  saveEhds() {
-    if (ehds.isEmpty || true) {
-      "empty ehds".print();
-      config.put(ehdi, "");
+  saveTads() {
+    if (tads.isEmpty || true) {
+      "empty tads".print();
+      config.put(tadi, "");
     } else {
       String mc = String.new();
-      for (Ehd ehd in ehds) {
+      for (Tad tad in tads) {
         if (TS.notEmpty(mc)) {
           mc += ".";
         }
-        mc += ehd.etp += "," += ehd.ina += "," += ehd.wada;
+        mc += tad.etp += "," += tad.ina += "," += tad.wada;
       }
       ("conf putting mc " + mc).print();
-      config.put(ehdi, mc);
+      config.put(tadi, mc);
     }
   }
 
-  loadEhds() {
-    String mcs = config.get(ehdi);
+  loadTads() {
+    String mcs = config.get(tadi);
     if (TS.notEmpty(mcs)) {
       var mce = mcs.split(".");
       for (String mc in mce) {
         var mcl = mc.split(",");
-        ehds += Ehd.new(mcl[0], mcl[1], mcl[2]);
-        ("added Ehd " + mc).print();
+        tads += Tad.new(mcl[0], mcl[1], mcl[2]);
+        ("added Tad " + mc).print();
       }
     }
   }
@@ -85,27 +85,27 @@ class Embedded:EHomeServer {
   //matrtype,ondid,spass,ipos
   //also, is it add, remove, or clear
 
-  clearEhds() {
-    config.put(ehdi, "");
+  clearTads() {
+    config.put(tadi, "");
   }
 
   start() {
-    //ehdi = config.getPos("eh.ehds");
-    //"loading ehds".print();
-    //loadEhds();
+    //tadi = config.getPos("eh.tads");
+    //"loading tads".print();
+    //loadTads();
 
-    Int ehdslen = ehds.length;
+    Int tadslen = tads.length;
 
-    for (Int i = 0;i < ehdslen;i++) {
+    for (Int i = 0;i < tadslen;i++) {
       if (i >= 15) {
         break;
       }
-      Ehd ehd = ehds[i];
-      if (def(ehd)) {
+      Tad tad = tads[i];
+      if (def(tad)) {
       }
     }
 
-    if (ehdslen <= 0) { Int ivdiv = 1; } else { ivdiv = ehdslen; }
+    if (tadslen <= 0) { Int ivdiv = 1; } else { ivdiv = tadslen; }
     slots {
       Int swCheckIv = 36000 / ivdiv;//millis per each check on any given device
       Int nextSwCheck = ash.nowup + swCheckIv;
@@ -123,7 +123,7 @@ class Embedded:EHomeServer {
       Int nowup = ash.nowup;
       if (nowup > nextSwCheck) {
         nextSwCheck = nowup + swCheckIv;
-        if (nextSwCheckIdx >= ehds.length) {
+        if (nextSwCheckIdx >= tads.length) {
           nextSwCheckIdx = 0;
         }
       } elseIf (nowup > nextDisCheck) {
@@ -176,26 +176,26 @@ class Embedded:EHomeServer {
       #endif
           """
         }
-        upsertEhd(ina, hna, ada);
+        upsertTad(ina, hna, ada);
       }
     }
   }
 
-  upsertEhd(String ina, String hna, String ada) {
-    //("in upsertEhd " + ina + " " + hna + " " + ada).print();
+  upsertTad(String ina, String hna, String ada) {
+    //("in upsertTad " + ina + " " + hna + " " + ada).print();
     if (TS.notEmpty(ina) && TS.notEmpty(hna) && TS.notEmpty(ada) && ina.has("plug")) {
       if (ina != hna) {
         ina += ":" += hna;
       }
       String wada = htp + ada;
       Bool found = false;
-      for (Ehd ehd in ehds) {
-        if (def(ehd)) {
-          if (ehd.ina == ina) {
+      for (Tad tad in tads) {
+        if (def(tad)) {
+          if (tad.ina == ina) {
             found = true;
             //"found checking wada".print();
-            if (ehd.wada != wada) {
-              ehd.wada = wada;
+            if (tad.wada != wada) {
+              tad.wada = wada;
               shouldSave = true;
               "upd wada".print();
             }
@@ -203,10 +203,10 @@ class Embedded:EHomeServer {
         }
       }
       unless (found) {
-        ehd = Ehd.new(swt, ina, wada); //will have to check for types later, maybe unknown is a type then check
-        ehds += ehd;
+        tad = Tad.new(swt, ina, wada); //will have to check for types later, maybe unknown is a type then check
+        tads += tad;
         shouldSave = true;
-        ("in upsertEhd adding " + ina + " " + wada).print();
+        ("in upsertTad adding " + ina + " " + wada).print();
         regenControls();
       }
     }
@@ -218,7 +218,7 @@ class Embedded:EHomeServer {
 
   regenControls() {
     Int conPos = 0;
-    for (Ehd ehd in ehds) {
+    for (Tad ehd in tads) {
       var ehsc = Embedded:EhSc.new(ash, conPos, "sw", "", ehd);
       ehsc.initControl();
       ash.controls[conPos] = ehsc;
@@ -231,14 +231,14 @@ class Embedded:EHomeServer {
 
 class Embedded:EhSc {
 
-   new(_ash, Int _conPos, String _conName, String _conArgs, Ehd _ehd) {
+   new(_ash, Int _conPos, String _conName, String _conArgs, Tad _ehd) {
      slots {
        Embedded:AppShell ash = _ash;
        Config config = ash.config;
        Embedded:App app = ash.app;
        Int conPos = _conPos;
        String conType = _conName;
-       Ehd ehd = _ehd;
+       Tad ehd = _ehd;
        String ok = CNS.ok;
        String ud = CNS.undefined;
      }

@@ -422,6 +422,11 @@ class Embedded:AppShell {
         Embedded:EHomeServer ehserver;
        }
      }
+     ifEmit(taSvr) {
+       slots {
+        Embedded:TAServer taserver;
+       }
+     }
      slots {
        Embedded:TCPServer tcpserver;
        Embedded:TCPServer conserver;
@@ -501,11 +506,9 @@ class Embedded:AppShell {
           smcp = config.get(smcpi);
         }
         checkStartSmcServer();
-
         checkStartMatrServer();
-
         checkStartEhServer();
-
+        checkStartTaServer();
        }
       }
    }
@@ -599,6 +602,17 @@ class Embedded:AppShell {
         if (undef(ehserver)) {
           ehserver = Embedded:EHomeServer.new(self);
           ehserver.start();
+        }
+      }
+    }
+   }
+
+   checkStartTaServer() {
+     ifEmit(taSvr) {
+      if (Wifi.isConnected) {
+        if (undef(taserver)) {
+          taserver = Embedded:TAServer.new(self);
+          taserver.start();
         }
       }
     }
@@ -705,6 +719,7 @@ class Embedded:AppShell {
        checkStartSmcServer();
        checkStartMatrServer();
        checkStartEhServer();
+       checkStartTaServer();
      }
    }
 
@@ -1022,6 +1037,11 @@ class Embedded:AppShell {
      ifEmit(ehSvr) {
        if (def(ehserver)) {
         ehserver.handleLoop();
+       }
+     }
+     ifEmit(taSvr) {
+       if (def(taserver)) {
+        taserver.handleLoop();
        }
      }
      ifNotEmit(noUpd) {
@@ -1511,6 +1531,13 @@ class Embedded:AppShell {
          }
         }
         return("unsupported");
+     } elseIf (cmd == "tacmd") {
+       ifEmit(taSvr) {
+         if (def(taserver)) {
+           return(taserver.handleCmdl(cmdl));
+         }
+        }
+        return("unsupported");
      } elseIf (cmd == "reset") {
       reset();
       return("Device reset");//we look for this result, don't change
@@ -1563,6 +1590,11 @@ class Embedded:AppShell {
     ifEmit(ehSvr) {
       if (def(ehserver)) {
         ehserver.clearEhds();
+      }
+    }
+    ifEmit(taSvr) {
+      if (def(taserver)) {
+        taserver.clearTads();
       }
     }
     ifNotEmit(noSmc) {
