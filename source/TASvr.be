@@ -131,8 +131,10 @@ class Embedded:TAServer {
       Int disCheckIv = 250; //ms pause between checks when scanning for devices
       Int nextDisCheck = ash.nowup + disCheckIv;
       Int nextDisIp = 1;
-      Int maxDisIp = 255;
-      Int minDisIp = 1;
+      //Int maxDisIp = 255;
+      //Int minDisIp = 1;
+      Int maxDisIp = 199;
+      Int minDisIp = 147;
       String disNetBase;
       String templ = "/cm?cmnd=Template";
       String macgt = "/cm?cmnd=Status%205";
@@ -156,91 +158,24 @@ class Embedded:TAServer {
         //"disCheck".print();
         //scan addresses 1 through 254 inclusive
         String turl = htp + disNetBase + nextDisIp + templ;
-        ("turl " + turl).print();
-        String disRes;
-        emit(cc) {
-          """
-#ifdef BEAR_ESP8266
-WiFiClient client;
-HTTPClient http;
-http.begin(client, beq->bevl_turl->bems_toCcString().c_str());
-#endif
-#ifdef BEAR_ESP32
-  HTTPClient http;
-  http.setConnectTimeout(500);
-  //http.setConnectTimeout(750);
-  http.begin(beq->bevl_turl->bems_toCcString().c_str());
-  http.setTimeout(1000);
-  //http.setTimeout(1500);
-#endif
-  int httpCode = http.GET();
-  // httpCode will be negative on error
-  if (httpCode > 0) {
-    // HTTP header has been send and Server response header has been handled
-    Serial.printf("[HTTP] GET... code: %d\n", httpCode);
-    // file found at server
-    if (httpCode == HTTP_CODE_OK) {
-      String payload = http.getString();
-      if (payload.length() > 0) {
-        Serial.println(payload);
-        std::string lips = std::string(payload.c_str());
-        beq->bevl_disRes = new BEC_2_4_6_TextString(lips);
-      }
-    }
-  } else {
-    Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
-  }
-  http.end();
-          """
-        }
+        String disRes = httpGet(turl);
         if (TS.notEmpty(disRes)) {
           //("disRes " + disRes).print();
           String ft = detectType(disRes);
           disRes = null;
           if (TS.notEmpty(ft)) {
             turl = htp + disNetBase + nextDisIp + macgt;
-            ("turl2 " + turl).print();
-        emit(cc) {
-          """
-#ifdef BEAR_ESP8266
-http.begin(client, beq->bevl_turl->bems_toCcString().c_str());
-#endif
-#ifdef BEAR_ESP32
-  http.setConnectTimeout(500);
-  //http.setConnectTimeout(750);
-  http.begin(beq->bevl_turl->bems_toCcString().c_str());
-  http.setTimeout(1000);
-  //http.setTimeout(1500);
-#endif
-  int httpCode = http.GET();
-  // httpCode will be negative on error
-  if (httpCode > 0) {
-    // HTTP header has been send and Server response header has been handled
-    Serial.printf("[HTTP] GET... code: %d\n", httpCode);
-    // file found at server
-    if (httpCode == HTTP_CODE_OK) {
-      String payload = http.getString();
-      if (payload.length() > 0) {
-        Serial.println(payload);
-        std::string lips = std::string(payload.c_str());
-        beq->bevl_disRes = new BEC_2_4_6_TextString(lips);
-      }
-    }
-  } else {
-    Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
-  }
-  http.end();
-          """
-        }
-        if (TS.notEmpty(disRes)) {
-          //("disRes2 " + disRes).print();
-          String mac = getMac(disRes);
-          }
+            disRes = httpGet(turl);
+            if (TS.notEmpty(disRes)) {
+              //("disRes2 " + disRes).print();
+              String mac = getMac(disRes);
+            }
         }
         if (TS.notEmpty(ft) && TS.notEmpty(mac)) {
           ("got ft and mac " + ft + " " + mac).print();
+          turl = htp + disNetBase + nextDisIp;
+          upsertTad(ft, mac, turl);
         }
-        //upsertTad(ina, hna, ada);
         }
         ash.app.uptime(myup);
         nextDisCheck = myup + disCheckIv;
@@ -251,6 +186,47 @@ http.begin(client, beq->bevl_turl->bems_toCcString().c_str());
         }
       }
     }
+  }
+
+  httpGet(String turl) String {
+    ("turl " + turl).print();
+    String disRes;
+        emit(cc) {
+          """
+#ifdef BEAR_ESP8266
+WiFiClient client;
+HTTPClient http;
+http.begin(client, beq->beva_turl->bems_toCcString().c_str());
+#endif
+#ifdef BEAR_ESP32
+  HTTPClient http;
+  http.setConnectTimeout(500);
+  //http.setConnectTimeout(750);
+  http.begin(beq->beva_turl->bems_toCcString().c_str());
+  http.setTimeout(1000);
+  //http.setTimeout(1500);
+#endif
+  int httpCode = http.GET();
+  // httpCode will be negative on error
+  if (httpCode > 0) {
+    // HTTP header has been send and Server response header has been handled
+    Serial.printf("[HTTP] GET... code: %d\n", httpCode);
+    // file found at server
+    if (httpCode == HTTP_CODE_OK) {
+      String payload = http.getString();
+      if (payload.length() > 0) {
+        Serial.println(payload);
+        std::string lips = std::string(payload.c_str());
+        beq->bevl_disRes = new BEC_2_4_6_TextString(lips);
+      }
+    }
+  } else {
+    Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
+  }
+  http.end();
+          """
+        }
+    return(disRes);
   }
 
   testGetMac() {
@@ -351,10 +327,8 @@ http.begin(client, beq->bevl_turl->bems_toCcString().c_str());
     return(res);
   }
 
-  upsertTad(String ina, String hna, String ada) {
-    //("in upsertTad " + ina + " " + hna + " " + ada).print();
-    if (TS.notEmpty(ina) && TS.notEmpty(hna) && TS.notEmpty(ada)) {
-      String wada = htp + ada;
+  upsertTad(String etp, String ina, String wada) {
+    if (TS.notEmpty(etp) && TS.notEmpty(ina) && TS.notEmpty(wada)) {
       Bool found = false;
       for (Tad tad in tads) {
         if (def(tad)) {
@@ -370,7 +344,7 @@ http.begin(client, beq->bevl_turl->bems_toCcString().c_str());
         }
       }
       unless (found) {
-        tad = Tad.new(swt, ina, wada); //will have to check for types later, maybe unknown is a type then check
+        tad = Tad.new(etp, ina, wada);
         tads += tad;
         shouldSave = true;
         ("in upsertTad adding " + ina + " " + wada).print();
@@ -385,29 +359,34 @@ http.begin(client, beq->bevl_turl->bems_toCcString().c_str());
 
   regenControls() {
     Int conPos = 0;
-    for (Tad ehd in tads) {
-      var ehsc = Embedded:EhSc.new(ash, conPos, "sw", "", ehd);
-      ehsc.initControl();
-      ash.controls[conPos] = ehsc;
-      conPos = conPos + 1;
+    for (Tad tad in tads) {
+      if (tad.etp == swt) {
+        var tasc = Embedded:TaSc.new(ash, conPos, tad, self);
+        tasc.initControl();
+        ash.controls[conPos] = tasc;
+        conPos = conPos + 1;
+      }
     }
     ash.genControlDef();
   }
 
 }
 
-class Embedded:EhSc {
+class Embedded:TaSc {
 
-   new(_ash, Int _conPos, String _conName, String _conArgs, Tad _ehd) {
+   new(_ash, Int _conPos, Tad _tad, Embedded:TAServer _taserver) {
      slots {
        Embedded:AppShell ash = _ash;
        Config config = ash.config;
        Embedded:App app = ash.app;
        Int conPos = _conPos;
-       String conType = _conName;
-       Tad ehd = _ehd;
+       String conType = _tad.etp;
+       Tad tad = _tad;
+       Embedded:TAServer taserver = _taserver;
        String ok = CNS.ok;
        String ud = CNS.undefined;
+       String uon = "/cm?cmnd=Power%20On";
+       String uoff = "/cm?cmnd=Power%20Off";
      }
      fields {
        Int lastEvent = Int.new();
@@ -441,13 +420,22 @@ class Embedded:EhSc {
         return(ud);
         }
      } elseIf (scm == setsw) {
+       //curl http://192.168.4.7/cm?cmnd=Power%20On
+       //curl http://192.168.4.7/cm?cmnd=Power%20Off
         String insw = cmdl[4];
         if (insw == on) {
           sw = insw;
           "on".print();
+          String turl = tad.wada + uon;
+          String disRes = taserver.httpGet(turl);
         } elseIf (insw == off) {
           sw = insw;
           "off".print();
+          turl = tad.wada + uoff;
+          disRes = taserver.httpGet(turl);
+        }
+        if (TS.notEmpty(disRes)) {
+          ("setsw disRes " + disRes).print();
         }
         lastEvent.setValue(ash.nowup);
         ash.lastEventsRes = null;
