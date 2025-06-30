@@ -69,14 +69,14 @@ class Embedded:TAServer {
   }
 
   saveTads() {
-    if (tads.isEmpty || true) {
+    if (tads.isEmpty) {
       "empty tads".print();
       config.put(tadi, "");
     } else {
       String mc = String.new();
       for (Tad tad in tads) {
         if (TS.notEmpty(mc)) {
-          mc += ".";
+          mc += "?";
         }
         mc += tad.etp += "," += tad.ina += "," += tad.wada;
       }
@@ -88,12 +88,13 @@ class Embedded:TAServer {
   loadTads() {
     String mcs = config.get(tadi);
     if (TS.notEmpty(mcs)) {
-      var mce = mcs.split(".");
+      var mce = mcs.split("?");
       for (String mc in mce) {
         var mcl = mc.split(",");
         tads += Tad.new(mcl[0], mcl[1], mcl[2]);
         ("added Tad " + mc).print();
       }
+      regenControls();
     }
   }
 
@@ -108,9 +109,9 @@ class Embedded:TAServer {
   }
 
   start() {
-    //tadi = config.getPos("eh.tads");
-    //"loading tads".print();
-    //loadTads();
+    tadi = config.getPos("eh.tads");
+    "loading tads".print();
+    loadTads();
 
     Int tadslen = tads.length;
 
@@ -131,10 +132,10 @@ class Embedded:TAServer {
       Int disCheckIv = 250; //ms pause between checks when scanning for devices
       Int nextDisCheck = ash.nowup + disCheckIv;
       Int nextDisIp = 1;
-      //Int maxDisIp = 255;
-      //Int minDisIp = 1;
-      Int maxDisIp = 199;
-      Int minDisIp = 147;
+      Int maxDisIp = 255;
+      Int minDisIp = 1;
+      //Int maxDisIp = 199;
+      //Int minDisIp = 147;
       String disNetBase;
       String templ = "/cm?cmnd=Template";
       String macgt = "/cm?cmnd=Status%205";
@@ -145,6 +146,11 @@ class Embedded:TAServer {
   }
 
   checkNDo() {
+    if (shouldSave) {
+      shouldSave = false;
+      saveTads();
+      return(self);
+    }
     Int didact;
     if (undef(didact)) {
       Int nowup = ash.nowup;
