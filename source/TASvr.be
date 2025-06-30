@@ -49,7 +49,7 @@ class Embedded:TAServer {
           if (TS.notEmpty(ip)) {
             ("ip is " + ip).print();
             var ipl = ip.split(".");
-            ("ipl len " + ipl.length).print();
+            //("ipl len " + ipl.length).print();
             if (ipl.length == 4) {
               ip = ipl[0] + "." + ipl[1] + "." + ipl[2] + ".";
               disNetBase = ip;
@@ -57,6 +57,10 @@ class Embedded:TAServer {
           }
           nextDisIp = minDisIp.copy();
           inDis = true;
+        } elseIf (cmdl.length > 2 && cmdl[2] == "testdt") {
+          testDetectType();
+        } elseIf (cmdl.length > 2 && cmdl[2] == "testgm") {
+          testGetMac();
         } else {
           "bad tacmd".print();
           return("tacmdbad");
@@ -131,6 +135,7 @@ class Embedded:TAServer {
       Int minDisIp = 1;
       String disNetBase;
       String templ = "/cm?cmnd=Template";
+      String macgt = "/cm?cmnd=Status%205";
       String htp = "http://";
       Bool inDis = false;
     }
@@ -188,6 +193,55 @@ http.begin(client, beq->bevl_turl->bems_toCcString().c_str());
   http.end();
           """
         }
+        if (TS.notEmpty(disRes)) {
+          //("disRes " + disRes).print();
+          String ft = detectType(disRes);
+          disRes = null;
+          if (TS.notEmpty(ft)) {
+            turl = htp + disNetBase + nextDisIp + macgt;
+            ("turl2 " + turl).print();
+        emit(cc) {
+          """
+#ifdef BEAR_ESP8266
+http.begin(client, beq->bevl_turl->bems_toCcString().c_str());
+#endif
+#ifdef BEAR_ESP32
+  http.setConnectTimeout(500);
+  //http.setConnectTimeout(750);
+  http.begin(beq->bevl_turl->bems_toCcString().c_str());
+  http.setTimeout(1000);
+  //http.setTimeout(1500);
+#endif
+  int httpCode = http.GET();
+  // httpCode will be negative on error
+  if (httpCode > 0) {
+    // HTTP header has been send and Server response header has been handled
+    Serial.printf("[HTTP] GET... code: %d\n", httpCode);
+    // file found at server
+    if (httpCode == HTTP_CODE_OK) {
+      String payload = http.getString();
+      if (payload.length() > 0) {
+        Serial.println(payload);
+        std::string lips = std::string(payload.c_str());
+        beq->bevl_disRes = new BEC_2_4_6_TextString(lips);
+      }
+    }
+  } else {
+    Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
+  }
+  http.end();
+          """
+        }
+        if (TS.notEmpty(disRes)) {
+          //("disRes2 " + disRes).print();
+          String mac = getMac(disRes);
+          }
+        }
+        if (TS.notEmpty(ft) && TS.notEmpty(mac)) {
+          ("got ft and mac " + ft + " " + mac).print();
+        }
+        //upsertTad(ina, hna, ada);
+        }
         ash.app.uptime(myup);
         nextDisCheck = myup + disCheckIv;
         nextDisIp++;
@@ -195,12 +249,106 @@ http.begin(client, beq->bevl_turl->bems_toCcString().c_str());
           inDis = false;
           nextDisIp = minDisIp.copy();
         }
-        if (TS.notEmpty(disRes)) {
-          ("disRes " + disRes).print();
-        }
-        //upsertTad(ina, hna, ada);
       }
     }
+  }
+
+  testGetMac() {
+     String mac1 = getMac('{"StatusNET":{"Hostname":"tasmota","IPAddress":"192.168.4.48","Gateway":"192.168.4.1","Subnetmask":"255.255.255.0","DNSServer1":"0.0.0.0","DNSServer2":"0.0.0.0","Mac":"40:4C:30:31:32:33","Webserver":2,"HTTP_API":1,"WifiConfig":4,"WifiPower":19.0}}');
+     if (TS.notEmpty(mac1)) {
+       ("mac1 " + mac1).print();
+     }
+  }
+
+  getMac(String disRes) String {
+    String res;
+    if (TS.notEmpty(disRes)) {
+      ("getMac " + disRes).print();
+      var drl = disRes.split(":");
+      Int mcnt = 0;
+      for (String dr in drl) {
+        //("dr " + dr).print();
+        if (mcnt > 0) {
+          res+= dr;
+          mcnt--;
+        }
+        if (dr.has('"Mac"')) {
+          mcnt = 6;
+          res = String.new();
+        }
+      }
+    }
+    if (TS.notEmpty(res)) {
+      var resl = res.split('"');
+      //for (String r in resl) {
+      //  ("r " + r).print();
+      //}
+      if (resl.length > 1) {
+        res = resl[1];
+      }
+    }
+    return(res);
+  }
+
+  testDetectType() {
+    String r1 = detectType('{"NAME":"Athom Plug V3","GPIO":[0,0,0,32,0,224,576,0,0,0,0,0,0,0,0,0,0,0,0,0,3104,0],"FLAG":0,"BASE":1}');
+    String r2 = detectType('{"NAME":"Athom 15W Bulb","GPIO":[0,0,0,0,416,419,0,0,417,452,418,0,0,0],"FLAG":0,"BASE":18}');
+    if (TS.isEmpty(r1) || TS.isEmpty(r2)) {
+      ("tdt had empty").print();
+    } else {
+      ("r1 " + r1 + " r2 " + r2).print();
+    }
+  }
+
+  detectType(String disRes) String {
+    String res;
+    if (TS.notEmpty(disRes)) {
+      ("disRes " + disRes).print();
+      var drl = disRes.split(":");
+      Bool gpnext = false;
+      for (String dr in drl) {
+        //("dr " + dr).print();
+        if (gpnext) {
+          gpnext = false;
+          //"has gpio".print();
+          Int fb = dr.find("[");
+          Int lb = dr.find("]");
+          if (def(fb) && def(lb) && lb > fb) {
+            //"gping".print();
+            String gp = dr.substring(fb + 1, lb);
+            //("gp " + gp).print();
+            Int rlc = 0;//relay count, 200-300, 20-30
+            Int pwc = 0;//pwm count, 400-500
+            var gpl = gp.split(",");
+            for (String gpi in gpl) {
+              //("gpi " + gpi).print();
+              if (gpi.isInteger) {
+                Int gpii = Int.new(gpi);
+                if (gpii >= 200 && gpii < 300) {
+                 //"relay1".print();
+                 rlc++;
+                } elseIf (gpii >= 20 && gpii < 30) {
+                  //"relay2".print();
+                  rlc++;
+                } elseIf (gpii >= 400 && gpii < 500) {
+                  //"pwm1".print();
+                  pwc++;
+                }
+              }
+            }
+            if (pwc == 5) {
+              res = "rgbcwsgd";
+            } elseIf (rlc == 1) {
+              res = "sw";
+            }
+          }
+        }
+        if (dr.has('"GPIO"')) {
+          gpnext = true;
+        }
+      }
+    }
+    return(res);
   }
 
   upsertTad(String ina, String hna, String ada) {

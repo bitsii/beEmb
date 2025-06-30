@@ -11,10 +11,10 @@
 use Text:String;
 use Text:Strings as TS;
 
-class Embedded:Tad {  //EHomeDevice
+class Embedded:Tad {  //TADevice
   new(String _etp, String _ina, String _wada) {
     fields {
-      String etp = _etp; //sw
+      String etp = _etp; //sw rgbcwsgd ...
       String ina = _ina; //unique instance name
       String wada = _wada; //http url by ip (web address)
     }
