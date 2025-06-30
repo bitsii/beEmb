@@ -29,9 +29,9 @@ class Embedded:TAServer {
       String slashn = "\n";
       String slashr = "\r";
       String readBuf = String.new();
-      String htp = "http://"
       Bool shouldSave = false;
       String swt = "sw";
+      Int myup = Int.new();
     }
   }
 
@@ -43,11 +43,25 @@ class Embedded:TAServer {
         if (cmdl.length > 2 && cmdl[2] == "clear") {
           clearTads();
           //ash.needsFsRestart = true;
+        } elseIf (cmdl.length > 2 && cmdl[2] == "startdis") {
+          "startdis".print();
+          String ip = Wifi.localIP;
+          if (TS.notEmpty(ip)) {
+            ("ip is " + ip).print();
+            var ipl = ip.split(".");
+            ("ipl len " + ipl.length).print();
+            if (ipl.length == 4) {
+              ip = ipl[0] + "." + ipl[1] + "." + ipl[2] + ".";
+              disNetBase = ip;
+            }
+          }
+          nextDisIp = minDisIp.copy();
+          inDis = true;
         } else {
-          "bad ehdm cmd".print();
-          return("ehdmbadcmd");
+          "bad tacmd".print();
+          return("tacmdbad");
         }
-        return("ehdmok");
+        return("tacmdok");
   }
 
   saveTads() {
@@ -110,9 +124,15 @@ class Embedded:TAServer {
       Int swCheckIv = 36000 / ivdiv;//millis per each check on any given device
       Int nextSwCheck = ash.nowup + swCheckIv;
       Int nextSwCheckIdx = 0;
-      Int disCheckIv = 20000;
-      Int nextDisCheck = ash.nowup + 2000;
-      //Int nextDisCheck = ash.nowup + disCheckIv;
+      Int disCheckIv = 250; //ms pause between checks when scanning for devices
+      Int nextDisCheck = ash.nowup + disCheckIv;
+      Int nextDisIp = 1;
+      Int maxDisIp = 255;
+      Int minDisIp = 1;
+      String disNetBase;
+      String templ = "/cm?cmnd=Template";
+      String htp = "http://";
+      Bool inDis = false;
     }
 
   }
@@ -121,72 +141,71 @@ class Embedded:TAServer {
     Int didact;
     if (undef(didact)) {
       Int nowup = ash.nowup;
-      if (nowup > nextSwCheck) {
+      if (def(nextSwCheck) && nowup > nextSwCheck) {
         nextSwCheck = nowup + swCheckIv;
         if (nextSwCheckIdx >= tads.length) {
           nextSwCheckIdx = 0;
         }
-      } elseIf (nowup > nextDisCheck) {
+      } elseIf (def(inDis) && inDis && nowup > nextDisCheck && TS.notEmpty(disNetBase)) {
         nextDisCheck = nowup + disCheckIv;
         //"disCheck".print();
-        String ina;
-        String hna;
-        String ada;
+        //scan addresses 1 through 254 inclusive
+        String turl = htp + disNetBase + nextDisIp + templ;
+        ("turl " + turl).print();
+        String disRes;
         emit(cc) {
           """
-      #ifdef BEAR_ESP32
-      int n = MDNS.queryService("esphomelib", "tcp");
-      if (n == 0) {
-        //Serial.println("no services found");
-      } else {
-        //Serial.print(n);
-        //Serial.println(" service(s) found");
-        for (int i = 0; i < n; ++i) {
-          // Print details for each service found
-          /*Serial.print("  ");
-          Serial.print(i + 1);
-          Serial.print(": ");
-          Serial.print(MDNS.instanceName(i));
-          Serial.print(" - ");
-          Serial.print(MDNS.hostname(i));
-          Serial.print(" (");
-          Serial.print(MDNS.address(i));
-          Serial.print(":");
-          Serial.print(MDNS.port(i));
-          Serial.println(")");*/
-          try {
-            //String lip = WiFi.softAPIP().toString();
-            String inaas = MDNS.instanceName(i);
-            std::string inaa = std::string(inaas.c_str());
-            beq->bevl_ina = new BEC_2_4_6_TextString(inaa);
-
-            String hnaas = MDNS.hostname(i);
-            std::string hnaa = std::string(hnaas.c_str());
-            beq->bevl_hna = new BEC_2_4_6_TextString(hnaa);
-
-            String adaas = MDNS.address(i).toString();
-            std::string adaa = std::string(adaas.c_str());
-            beq->bevl_ada = new BEC_2_4_6_TextString(adaa);
-          } catch (...) {
-            Serial.println("got exception doing queryservice");
-          }
-        }
+#ifdef BEAR_ESP8266
+WiFiClient client;
+HTTPClient http;
+http.begin(client, beq->bevl_turl->bems_toCcString().c_str());
+#endif
+#ifdef BEAR_ESP32
+  HTTPClient http;
+  http.setConnectTimeout(500);
+  //http.setConnectTimeout(750);
+  http.begin(beq->bevl_turl->bems_toCcString().c_str());
+  http.setTimeout(1000);
+  //http.setTimeout(1500);
+#endif
+  int httpCode = http.GET();
+  // httpCode will be negative on error
+  if (httpCode > 0) {
+    // HTTP header has been send and Server response header has been handled
+    Serial.printf("[HTTP] GET... code: %d\n", httpCode);
+    // file found at server
+    if (httpCode == HTTP_CODE_OK) {
+      String payload = http.getString();
+      if (payload.length() > 0) {
+        Serial.println(payload);
+        std::string lips = std::string(payload.c_str());
+        beq->bevl_disRes = new BEC_2_4_6_TextString(lips);
       }
-      //Serial.println();
-      #endif
+    }
+  } else {
+    Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
+  }
+  http.end();
           """
         }
-        upsertTad(ina, hna, ada);
+        ash.app.uptime(myup);
+        nextDisCheck = myup + disCheckIv;
+        nextDisIp++;
+        if (nextDisIp >= maxDisIp) {
+          inDis = false;
+          nextDisIp = minDisIp.copy();
+        }
+        if (TS.notEmpty(disRes)) {
+          ("disRes " + disRes).print();
+        }
+        //upsertTad(ina, hna, ada);
       }
     }
   }
 
   upsertTad(String ina, String hna, String ada) {
     //("in upsertTad " + ina + " " + hna + " " + ada).print();
-    if (TS.notEmpty(ina) && TS.notEmpty(hna) && TS.notEmpty(ada) && ina.has("plug")) {
-      if (ina != hna) {
-        ina += ":" += hna;
-      }
+    if (TS.notEmpty(ina) && TS.notEmpty(hna) && TS.notEmpty(ada)) {
       String wada = htp + ada;
       Bool found = false;
       for (Tad tad in tads) {
