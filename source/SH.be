@@ -1265,15 +1265,15 @@ class Embedded:AppShell {
      slots {
        List visnets;
      }
-     if (undef(visnets)) {
-       var wifi = Embedded:Wifi.new();
-       visnets = wifi.scanNetworks();
-     }
       if (cmdl.length > 1) {
         String st = cmdl[1];
         if (st.isInteger) {
           Int sti = Int.new(st);
         }
+      }
+      if (undef(visnets) || undef(sti)) {
+       var wifi = Embedded:Wifi.new();
+       visnets = wifi.scanNetworks();
       }
       if (undef(sti)) {
         sti = 0;
