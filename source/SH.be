@@ -22,6 +22,7 @@ class CNS {
        String on = "on";
        String off = "off"
        String ok = "ok";
+       String fail = "fail";
        String undefined = "undefined";
      }
    }

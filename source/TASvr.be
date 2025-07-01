@@ -33,6 +33,9 @@ class Embedded:TAServer {
       String swt = "sw";
       Int myup = Int.new();
     }
+    fields {
+      Bool didFail = false;
+    }
   }
 
   handleCmdl(List cmdl) String {
@@ -44,19 +47,7 @@ class Embedded:TAServer {
           clearTads();
           //ash.needsFsRestart = true;
         } elseIf (cmdl.length > 2 && cmdl[2] == "startdis") {
-          "startdis".print();
-          String ip = Wifi.localIP;
-          if (TS.notEmpty(ip)) {
-            ("ip is " + ip).print();
-            var ipl = ip.split(".");
-            //("ipl len " + ipl.length).print();
-            if (ipl.length == 4) {
-              ip = ipl[0] + "." + ipl[1] + "." + ipl[2] + ".";
-              disNetBase = ip;
-            }
-          }
-          nextDisIp = minDisIp.copy();
-          inDis = true;
+          startDis();
         } elseIf (cmdl.length > 2 && cmdl[2] == "testdt") {
           testDetectType();
         } elseIf (cmdl.length > 2 && cmdl[2] == "testgm") {
@@ -66,6 +57,22 @@ class Embedded:TAServer {
           return("tacmdbad");
         }
         return("tacmdok");
+  }
+
+  startDis() {
+    "startdis".print();
+    String ip = Wifi.localIP;
+    if (TS.notEmpty(ip)) {
+      ("ip is " + ip).print();
+      var ipl = ip.split(".");
+      //("ipl len " + ipl.length).print();
+      if (ipl.length == 4) {
+        ip = ipl[0] + "." + ipl[1] + "." + ipl[2] + ".";
+        disNetBase = ip;
+      }
+    }
+    nextDisIp = minDisIp.copy();
+    inDis = true;
   }
 
   saveTads() {
@@ -126,9 +133,9 @@ class Embedded:TAServer {
 
     if (tadslen <= 0) { Int ivdiv = 1; } else { ivdiv = tadslen; }
     slots {
-      Int swCheckIv = 36000 / ivdiv;//millis per each check on any given device
-      Int nextSwCheck = ash.nowup + swCheckIv;
-      Int nextSwCheckIdx = 0;
+      Int failCheckIv = 600000; //millis per fail check and rescan
+      //Int failCheckIv = 30000;
+      Int nextFailCheck = ash.nowup + failCheckIv;
       Int disCheckIv = 250; //ms pause between checks when scanning for devices
       Int nextDisCheck = ash.nowup + disCheckIv;
       Int nextDisIp = 1;
@@ -154,10 +161,11 @@ class Embedded:TAServer {
     Int didact;
     if (undef(didact)) {
       Int nowup = ash.nowup;
-      if (def(nextSwCheck) && nowup > nextSwCheck) {
-        nextSwCheck = nowup + swCheckIv;
-        if (nextSwCheckIdx >= tads.length) {
-          nextSwCheckIdx = 0;
+      if (def(nextFailCheck) && nowup > nextFailCheck) {
+        nextFailCheck = nowup + failCheckIv;
+        if (didFail) {
+          didFail = false;
+          startDis();
         }
       } elseIf (def(inDis) && inDis && nowup > nextDisCheck && TS.notEmpty(disNetBase)) {
         nextDisCheck = nowup + disCheckIv;
@@ -418,6 +426,7 @@ class Embedded:TaSc {
 
    doState(List cmdl) String {
      "in dostate".print();
+     String dsr = ok;
      String scm = cmdl[3];
      if (scm == getsw) {
       if (TS.notEmpty(sw)) {
@@ -431,14 +440,22 @@ class Embedded:TaSc {
         String insw = cmdl[4];
         if (insw == on) {
           sw = insw;
-          "on".print();
+          on.print();
           String turl = tad.wada + uon;
           String disRes = taserver.httpGet(turl);
+          unless (TS.notEmpty(disRes) && disRes.lowerValue().has("on")) {
+            dsr = CNS.fail;
+            taserver.didFail = true;
+          }
         } elseIf (insw == off) {
           sw = insw;
-          "off".print();
+          off.print();
           turl = tad.wada + uoff;
           disRes = taserver.httpGet(turl);
+          unless (TS.notEmpty(disRes) && disRes.lowerValue().has("off")) {
+            dsr = CNS.fail;
+            taserver.didFail = true;
+          }
         }
         if (TS.notEmpty(disRes)) {
           ("setsw disRes " + disRes).print();
@@ -446,7 +463,7 @@ class Embedded:TaSc {
         lastEvent.setValue(ash.nowup);
         ash.lastEventsRes = null;
      }
-     return(ok);
+     return(dsr);
    }
 
    clearStates() {
