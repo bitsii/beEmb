@@ -31,6 +31,7 @@ class Embedded:TAServer {
       String readBuf = String.new();
       Bool shouldSave = false;
       String swt = "sw";
+      String rgbbt = "rgbcwsgd";
       Int myup = Int.new();
     }
     fields {
@@ -327,9 +328,9 @@ http.begin(client, beq->beva_turl->bems_toCcString().c_str());
               }
             }
             if (pwc == 5) {
-              res = "rgbcwsgd";
+              res = rgbbt;
             } elseIf (rlc == 1) {
-              res = "sw";
+              res = swt;
             }
           }
         }
@@ -379,6 +380,11 @@ http.begin(client, beq->beva_turl->bems_toCcString().c_str());
         tasc.initControl();
         ash.controls[conPos] = tasc;
         conPos = conPos + 1;
+      } elseIf (tad.etp == rgbbt) {
+        var tabc = Embedded:TaRgbbc.new(ash, conPos, tad, self);
+        tabc.initControl();
+        ash.controls[conPos] = tabc;
+        conPos = conPos + 1;
       }
     }
     ash.genControlDef();
@@ -414,6 +420,7 @@ class Embedded:TaSc {
 
    initControl() {
      slots {
+       Int scswi;
        String getsw = "getsw";
        String on = CNS.on;
        String off = CNS.off;
@@ -421,6 +428,12 @@ class Embedded:TaSc {
      }
      fields {
        String sw;
+     }
+     scswi = config.getPos("sc.sw." + conPos);
+
+     String insw = config.get(scswi);
+     if (TS.notEmpty(insw)) {
+       sw = insw;
      }
    }
 
@@ -443,7 +456,9 @@ class Embedded:TaSc {
           on.print();
           String turl = tad.wada + uon;
           String disRes = taserver.httpGet(turl);
-          unless (TS.notEmpty(disRes) && disRes.lowerValue().has("on")) {
+          if (TS.notEmpty(disRes) && disRes.lowerValue().has("on")) {
+            config.put(scswi, on);
+          } else {
             dsr = CNS.fail;
             taserver.didFail = true;
           }
@@ -452,7 +467,9 @@ class Embedded:TaSc {
           off.print();
           turl = tad.wada + uoff;
           disRes = taserver.httpGet(turl);
-          unless (TS.notEmpty(disRes) && disRes.lowerValue().has("off")) {
+          if (TS.notEmpty(disRes) && disRes.lowerValue().has("off")) {
+            config.put(scswi, off);
+          } else {
             dsr = CNS.fail;
             taserver.didFail = true;
           }
@@ -467,6 +484,134 @@ class Embedded:TaSc {
    }
 
    clearStates() {
+     config.put(scswi, off);
+   }
+
+}
+
+class Embedded:TaRgbbc {
+
+    new(_ash, Int _conPos, Tad _tad, Embedded:TAServer _taserver) {
+     slots {
+       Embedded:AppShell ash = _ash;
+       Config config = ash.config;
+       Embedded:App app = ash.app;
+       Int conPos = _conPos;
+       String conType = _tad.etp;
+       Tad tad = _tad;
+       Embedded:TAServer taserver = _taserver;
+       String ok = CNS.ok;
+       String ud = CNS.undefined;
+       String uon = "/cm?cmnd=Power%20On";
+       String uoff = "/cm?cmnd=Power%20Off";
+       String fifidy = "255,255,255,255,255"; //r,g,b,c,w
+       String on = CNS.on;
+       String off = CNS.off;
+     }
+     fields {
+       Int lastEvent = Int.new();
+       String rgbcw = fifidy;
+       String sw = off;
+     }
+   }
+
+   conTypeGet() String {
+     return(conType);
+   }
+
+   initControl() {
+     slots {
+       String getrgbcw = "getrgbcw";
+       String setrgbcw = "setrgbcw";
+       String setsw = "setsw";
+       String getsw = "getsw";
+       Int ctrgbcwi;
+       Int ctswi;
+     }
+
+     ctswi = config.getPos("ct.sw." + conPos);
+
+     ctrgbcwi = config.getPos("ct.rgbcwi." + conPos);
+
+    String inrgbcw = config.get(ctrgbcwi);
+    if (TS.notEmpty(inrgbcw)) {
+      rgbcw = inrgbcw;
+    }
+
+    String insw = config.get(ctswi);
+    if (TS.notEmpty(insw)) {
+      sw = insw;
+    } else {
+      sw = on;
+    }
+
+   }
+
+   doState(List cmdl) String {
+     "in dostate fifidy".print();
+     String dsr = ok;
+     String scm = cmdl[3];
+     if (scm == getsw) {
+       return(sw);
+     } elseIf (scm == getrgbcw) {
+       return(rgbcw);
+     } elseIf (scm == setsw) {
+       //curl http://192.168.4.7/cm?cmnd=Power%20On
+       //curl http://192.168.4.7/cm?cmnd=Power%20Off
+        String insw = cmdl[4];
+        if (insw == on) {
+          sw = insw;
+          on.print();
+          String turl = tad.wada + uon;
+          String disRes = taserver.httpGet(turl);
+          if (TS.notEmpty(disRes) && disRes.lowerValue().has("on")) {
+            config.put(ctswi, on);
+          } else {
+            dsr = CNS.fail;
+            taserver.didFail = true;
+          }
+        } elseIf (insw == off) {
+          sw = insw;
+          off.print();
+          turl = tad.wada + uoff;
+          disRes = taserver.httpGet(turl);
+          if (TS.notEmpty(disRes) && disRes.lowerValue().has("off")) {
+            config.put(ctswi, off);
+          } else {
+            dsr = CNS.fail;
+            taserver.didFail = true;
+          }
+        }
+        if (TS.notEmpty(disRes)) {
+          ("setsw disRes " + disRes).print();
+        }
+        lastEvent.setValue(ash.nowup);
+        ash.lastEventsRes = null;
+     } elseIf (scm == setrgbcw) {
+        sw = on;
+        rgbcw = cmdl[4];
+        if (TS.notEmpty(rgbcw)) {
+          config.put(ctswi, on);
+          config.put(ctrgbcwi, rgbcw);
+          ("rgbcw " + rgbcw).print();
+          //USE cmdl[5] that's where xsd is, and it's r,g,b,lvl,cw (0-255).  lsToMired in app gets the right val, send it too after xd from BAM TO ACTUALLY SET THINGS do the raw rgb or mired temp + level of dim in batch
+          if (rgbcw.begins("255,255,255")) {
+            "do cw".print();
+          } else {
+            "do rgb".print();
+          }
+        } else {
+          "something undef".print();
+        }
+        lastEvent.setValue(ash.nowup);
+        ash.lastEventsRes = null;
+     }
+     return(dsr);
+   }
+
+   clearStates() {
+     config.put(ctswi, on);
+     config.put(ctrgbcwi, fifidy);
    }
 
 }
