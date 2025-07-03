@@ -590,16 +590,31 @@ class Embedded:TaRgbbc {
      } elseIf (scm == setrgbcw) {
         sw = on;
         rgbcw = cmdl[4];
-        if (TS.notEmpty(rgbcw)) {
+        if (cmdl.length > 7) {
+          String xd = cmdl[5];
+          String mr = cmdl[6];//cw mired
+          String lv = cmdl[7];//dimmer 0-100
+        }
+        if (TS.notEmpty(rgbcw) && TS.notEmpty(xd) && TS.notEmpty(mr)) {
           config.put(ctswi, on);
           config.put(ctrgbcwi, rgbcw);
           ("rgbcw " + rgbcw).print();
-          //USE cmdl[5] that's where xsd is, and it's r,g,b,lvl,cw (0-255).  lsToMired in app gets the right val, send it too after xd from BAM TO ACTUALLY SET THINGS do the raw rgb or mired temp + level of dim in batch
+          //USE cmdl[5] that's where xsd is, and it's r,g,b,lvl,cw (0-255) cmd 6 is lstomired cw
+          //always batch send lvl for either rgb or cb cases
+          var xdl = xd.split(",");
           if (rgbcw.begins("255,255,255")) {
             "do cw".print();
+            String lcm = "/cm?cmnd=backlog%20CT%20" + mr + "%3BDimmer%20" + lv;
           } else {
             "do rgb".print();
+            lcm = "/cm?cmnd=backlog%20Color%20" + xdl[0] + "%2C" + xdl[1] + "%2C" + xdl[2] + "%3BDimmer%20" + lv;
           }
+          turl = tad.wada + lcm;
+          ("turl " + turl).print();
+          /*String disRes = taserver.httpGet(turl);
+          if (TS.notEmpty(disRes)) {
+            ("disRes " + disRes).print();
+          }*/
         } else {
           "something undef".print();
         }
