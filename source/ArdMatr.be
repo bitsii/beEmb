@@ -143,7 +143,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
          //rm ool id
         if (cmdl.length > 2 && cmdl[2] == "clear") {
           clearMeps();
-          ash.needsFsRestart = true;
+          //ash.needsFsRestart = true;
         } elseIf (cmdl.length > 3) {
           String act = cmdl[2];
           if (act == "add" && cmdl.length > 6) {
@@ -152,7 +152,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
             }
             meps += Mmep.new(cmdl[3], cmdl[4], cmdl[5], cmdl[6]);
             saveMeps();
-            ash.needsFsRestart = true;
+            //ash.needsFsRestart = true;
           } elseIf (act == "rm" && cmdl.length > 5) {
             List nx = List.new();
             for (Mmep mmep in meps) {
@@ -162,7 +162,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
             }
             meps = nx;
             saveMeps();
-            ash.needsFsRestart = true;
+            //ash.needsFsRestart = true;
           } else {
             ("unknown matr act " + act).print();
             return("matrbadact");
