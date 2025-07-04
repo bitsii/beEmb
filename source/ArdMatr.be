@@ -30,6 +30,7 @@ emit(cc) {
 
   using sloocb = std::function<bool(bool)>;
   using sdlscb = std::function<bool(bool,uint8_t)>;
+  using seclscb = std::function<bool(bool, espHsvColor_t, uint8_t, uint16_t)>;
 
   std::mutex cmdsLk;
   std::deque<int> cmdsDq;
@@ -111,6 +112,21 @@ emit(cc) {
   bool sdls14(bool state, uint8_t brightness) { return setDimLightState(14, state, brightness); }
 
   std::vector<sdlscb> sdlscbs = { sdls0, sdls1, sdls2, sdls3, sdls4, sdls5, sdls6, sdls7, sdls8, sdls9, sdls10, sdls11, sdls12, sdls13, sdls14 };
+
+  bool setECLState(size_t idx, bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) {
+    Serial.printf("setDimLightState %zu changed state to: %d %u %u\r\n", idx, state, brightness, witemp);
+    //just get dim and on off working first
+    return true;
+  }
+
+  //std::function<bool(bool, espHsvColor_t, uint8_t, uint16_t)>;
+  bool secls0(bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) { return setECLState(0, state, color, brightness, witemp); }
+  bool secls1(bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) { return setECLState(1, state, color, brightness, witemp); }
+  bool secls2(bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) { return setECLState(2, state, color, brightness, witemp); }
+  bool secls3(bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) { return setECLState(3, state, color, brightness, witemp); }
+  bool secls4(bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) { return setECLState(4, state, color, brightness, witemp); }
+
+  std::vector<seclscb> seclscbs = { secls0, secls1, secls2, secls3, secls4 };
 
   """
 }
@@ -245,6 +261,8 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
           meti = 0;
         } elseIf (mmep.met == "dl") {
           meti = 1;
+        } elseIf (mmep.met == "ecl") {
+          meti = 2;
         }
         if (def(meti)) {
           emit(cc) {
@@ -264,6 +282,13 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
               bevi_mdl->begin();
               bevi_mdl->onChange(sdlscbs[mepi]);
               bevi_meps.push_back(bevi_mdl);
+            }
+            if (meti == 2) {
+              std::shared_ptr<MatterEnhancedColorLight> bevi_mecl;
+              bevi_mecl = std::make_shared<MatterEnhancedColorLight>();
+              bevi_mecl->begin();
+              bevi_mecl->onChange(seclscbs[mepi]);
+              bevi_meps.push_back(bevi_mecl);
             }
             """
           }
@@ -394,6 +419,8 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
               Int mmepmet = 0;
             } elseIf (mmep.met == "dl") {
               mmepmet = 1;
+            } elseIf (mmep.met == "ecl") {
+              mmepmet = 2;
             }
             if (def(swto)) {
               //"doing sloo".print();
