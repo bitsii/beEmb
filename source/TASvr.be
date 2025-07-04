@@ -610,11 +610,17 @@ class Embedded:TaRgbbc {
             lcm = "/cm?cmnd=backlog%20Color%20" + xdl[0] + "%2C" + xdl[1] + "%2C" + xdl[2] + "%3BDimmer%20" + lv;
           }
           turl = tad.wada + lcm;
-          ("turl " + turl).print();
-          /*String disRes = taserver.httpGet(turl);
-          if (TS.notEmpty(disRes)) {
+          //("turl " + turl).print();
+          disRes = taserver.httpGet(turl);
+          if (TS.notEmpty(disRes) && disRes.has("{}")) {
+            //config.put(ctswi, off);
             ("disRes " + disRes).print();
-          }*/
+            config.put(ctswi, on);
+            config.put(ctrgbcwi, rgbcw);
+          } else {
+            dsr = CNS.fail;
+            taserver.didFail = true;
+          }
         } else {
           "something undef".print();
         }
