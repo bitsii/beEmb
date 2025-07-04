@@ -115,6 +115,7 @@ emit(cc) {
 
   bool setECLState(size_t idx, bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) {
     Serial.printf("setDimLightState %zu changed state to: %d %u %u\r\n", idx, state, brightness, witemp);
+    //see what color looks like, hsv prolly
     //just get dim and on off working first
     return true;
   }

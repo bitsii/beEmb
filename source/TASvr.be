@@ -607,7 +607,7 @@ class Embedded:TaRgbbc {
             String lcm = "/cm?cmnd=backlog%20CT%20" + mr + "%3BDimmer%20" + lv;
           } else {
             "do rgb".print();
-            lcm = "/cm?cmnd=backlog%20Color%20" + xdl[0] + "%2C" + xdl[1] + "%2C" + xdl[2] + "%3BDimmer%20" + lv;
+            lcm = "/cm?cmnd=backlog%20Color2%20" + xdl[0] + "%2C" + xdl[1] + "%2C" + xdl[2] + "%3BDimmer%20" + lv;
           }
           turl = tad.wada + lcm;
           //("turl " + turl).print();
