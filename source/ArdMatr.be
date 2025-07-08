@@ -34,20 +34,18 @@ emit(cc) {
 
   std::mutex cmdsLk;
   std::deque<int> cmdsDq;
+  std::deque<bool> stateDq;
+  std::deque<uint8_t> brightDq;
+  std::deque<uint16_t> tempDq;
+  std::deque<espRgbColor_t> rgbDq;
 
   bool setLightOnOff(size_t idx, bool state) {
     Serial.printf("setLightOnOff %zu changed state to: %d\r\n", idx, state);
-    int sti;
-    if (state) {
-     sti = 1;
-    } else {
-     sti = 0;
-    }
     cmdsLk.lock();
     try {
       cmdsDq.push_back(0);
       cmdsDq.push_back(idx);
-      cmdsDq.push_back(sti);
+      stateDq.push_back(state);
     } catch (...) {
       cmdsLk.unlock();
     }
@@ -74,20 +72,17 @@ emit(cc) {
 
   bool setDimLightState(size_t idx, bool state, uint8_t brightness) {
     Serial.printf("setDimLightState %zu changed state to: %d %u\r\n", idx, state, brightness);
-    int act;
-    int val;
-    if (state) {
-     act = 1;
-     val = brightness;
-    } else {
-     act = 0;
-     val = 0;
-    }
     cmdsLk.lock();
     try {
-      cmdsDq.push_back(act);
-      cmdsDq.push_back(idx);
-      cmdsDq.push_back(val);
+      if (state) {
+        cmdsDq.push_back(1);
+        cmdsDq.push_back(idx);
+        brightDq.push_back(brightness);
+      } else {
+        cmdsDq.push_back(0);
+        cmdsDq.push_back(idx);
+        stateDq.push_back(state);
+      }
     } catch (...) {
       cmdsLk.unlock();
     }
@@ -114,7 +109,10 @@ emit(cc) {
   std::vector<sdlscb> sdlscbs = { sdls0, sdls1, sdls2, sdls3, sdls4, sdls5, sdls6, sdls7, sdls8, sdls9, sdls10, sdls11, sdls12, sdls13, sdls14 };
 
   bool setECLState(size_t idx, bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) {
-    Serial.printf("setDimLightState %zu changed state to: %d %u %u\r\n", idx, state, brightness, witemp);
+    Serial.printf("setECLState %zu changed to: state %d bright %u temp %u\r\n", idx, state, brightness, witemp);
+    Serial.printf("hsv %u %u %u\r\n", color.h, color.s, color.v);
+    espRgbColor_t rgb = espHsvColorToRgbColor(color);
+    Serial.printf("rgb %u %u %u\r\n", rgb.r, rgb.g, rgb.b);
     //see what color looks like, hsv prolly
     //just get dim and on off working first
     return true;
@@ -335,18 +333,22 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
       """
       int act = -1;
       int idx = -1;
-      int val = -1;
+      bool state = false;
+      int bright = -1;
 
       cmdsLk.lock();
       try {
         if (!cmdsDq.empty()) {
           act = cmdsDq.front();
           cmdsDq.pop_front();
-          if (act == 0 || act == 1) {
-            idx = cmdsDq.front();
-            cmdsDq.pop_front();
-            val = cmdsDq.front();
-            cmdsDq.pop_front();
+          idx = cmdsDq.front();
+          cmdsDq.pop_front();
+          if (act == 0) {
+            state = stateDq.front();
+            stateDq.pop_front();
+          } else if (act == 1) {
+            bright = brightDq.front();
+            brightDq.pop_front();
           }
         }
       } catch (...) {
@@ -356,12 +358,16 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
 
       if (act == 0) {
         beq->bevl_idx = new BEC_2_4_3_MathInt(idx);
-        beq->bevl_st = new BEC_2_4_3_MathInt(val);
+        if (state) {
+          beq->bevl_st = new BEC_2_4_3_MathInt(1);
+        } else {
+          beq->bevl_st = new BEC_2_4_3_MathInt(0);
+        }
       }
 
       if (act == 1) {
         beq->bevl_bidx = new BEC_2_4_3_MathInt(idx);
-        beq->bevl_bb = new BEC_2_4_3_MathInt(val);
+        beq->bevl_bb = new BEC_2_4_3_MathInt(bright);
       }
       """
     }
