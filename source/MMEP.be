@@ -18,6 +18,7 @@ class Embedded:Mmep {
       String ondid = _ondid;
       String ipos = _ipos;
       String spass = _spass;
+      Bool sw; //sw state, all types
     }
   }
 }

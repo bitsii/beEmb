@@ -325,10 +325,6 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
     Int bidx;
     Int bb;
     Int didact;
-    slots {
-      Int lastSwcIdx;
-      String lastSwcState;
-    }
     emit(cc) {
       """
       int act = -1;
@@ -377,17 +373,25 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
       Mmep mmep = meps.get(idx);
       if (st == 1) {
         String sts = CNS.on;
+        Bool tost = true;
       } else {
         sts = CNS.off;
+        tost = false;
       }
-      if (def(lastSwcIdx) && idx == lastSwcIdx && def(lastSwcState) && sts == lastSwcState) {
-        "not doing update is callthrough".print();
-        lastSwcIdx = null;
-      } else {
-        if (def(mmep)) {
+      if (def(mmep)) {
+        if (undef(mmep.sw) || mmep.sw != tost) {
           String kdn = "CasNic" + mmep.ondid;
           String scmds = "dostate " + mmep.spass + " " + mmep.ipos + " setsw " + sts + " e";
-          sendCmd(kdn, scmds);
+          String scres = sendCmd(kdn, scmds);
+          if (TS.notEmpty(scres)) {
+            ("scres " + scres).print();
+            if (scres.has(CNS.ok)) {
+              ("setting mmep.sw").print();
+              mmep.sw = tost;
+            }
+          }
+        } else {
+          ("state already " + tost + " not sending dostate").print();
         }
       }
     }
@@ -417,10 +421,8 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
             //("got res |" + res + "|").print();
             if (res.has(CNS.on)) {
               Bool swto = true;
-              lastSwcState = CNS.on;
             } elseIf (res.has(CNS.off)) {
               swto = false;
-              lastSwcState = CNS.off;
             }
             if (mmep.met == "ool") {
               Int mmepmet = 0;
@@ -430,6 +432,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
               mmepmet = 2;
             }
             if (def(swto)) {
+              mmep.sw = swto;
               //"doing sloo".print();
               emit(cc) {
                 """
@@ -455,7 +458,6 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
                 if (didup) {
                   """
                 }
-                lastSwcIdx = nextSwCheckIdx.copy();
                 emit(cc) {
                   """
                 }
