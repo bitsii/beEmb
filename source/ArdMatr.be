@@ -115,6 +115,23 @@ emit(cc) {
     Serial.printf("rgb %u %u %u\r\n", rgb.r, rgb.g, rgb.b);
     //see what color looks like, hsv prolly
     //just get dim and on off working first
+    cmdsLk.lock();
+    try {
+      if (state) {
+        cmdsDq.push_back(2);
+        cmdsDq.push_back(idx);
+        brightDq.push_back(brightness);
+        tempDq.push_back(witemp);
+        rgbDq.push_back(rgb);
+      } else {
+        cmdsDq.push_back(0);
+        cmdsDq.push_back(idx);
+        stateDq.push_back(state);
+      }
+    } catch (...) {
+      cmdsLk.unlock();
+    }
+    cmdsLk.unlock();
     return true;
   }
 
@@ -320,10 +337,20 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
   }
 
   checkDoMes() {
+    //for sw
     Int idx;
     Int st;
+    //for dl
     Int bidx;
     Int bb;
+    //for ecl
+    Int eidx;
+    Int ebb;//bright
+    Int ewt;//temp
+    Int er;//color
+    Int eg;
+    Int eb;
+    //did I act
     Int didact;
     emit(cc) {
       """
@@ -331,6 +358,8 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
       int idx = -1;
       bool state = false;
       int bright = -1;
+      int ewt;
+      espRgbColor_t rgb;
 
       cmdsLk.lock();
       try {
@@ -345,6 +374,15 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
           } else if (act == 1) {
             bright = brightDq.front();
             brightDq.pop_front();
+          } else if (act == 2) {
+            bright = brightDq.front();
+            brightDq.pop_front();
+            bright = brightDq.front();
+            brightDq.pop_front();
+            ewt = tempDq.front();
+            tempDq.pop_front();
+            rgb = rgbDq.front();
+            rgbDq.pop_front();
           }
         }
       } catch (...) {
@@ -364,6 +402,15 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
       if (act == 1) {
         beq->bevl_bidx = new BEC_2_4_3_MathInt(idx);
         beq->bevl_bb = new BEC_2_4_3_MathInt(bright);
+      }
+
+      if (act == 2) {
+        beq->bevl_eidx = new BEC_2_4_3_MathInt(idx);
+        beq->bevl_ebb = new BEC_2_4_3_MathInt(bright);
+        beq->bevl_ewt = new BEC_2_4_3_MathInt(ewt);
+        beq->bevl_er = new BEC_2_4_3_MathInt(rgb.r);
+        beq->bevl_eg = new BEC_2_4_3_MathInt(rgb.g);
+        beq->bevl_eb = new BEC_2_4_3_MathInt(rgb.b);
       }
       """
     }
@@ -403,6 +450,16 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
          kdn = "CasNic" + mmep.ondid;
          scmds = "dostate " + mmep.spass + " " + mmep.ipos + " setlvl " + bb + " e";
          sendCmd(kdn, scmds);
+      }
+    }
+    if (def(eidx) && def(ebb) && def(ewt) && def(er) && def(eg) && def(eb)) {
+      didact = 1;
+      mmep = meps.get(eidx);
+      if (def(mmep)) {
+        ("eidx " + eidx + " ebb " + ebb + " ewt " + ewt + " er " + er + " eg " + eg + " eb " + eb).print();
+         //kdn = "CasNic" + mmep.ondid;
+         //scmds = "dostate " + mmep.spass + " " + mmep.ipos + " setlvl " + bb + " e";
+         //sendCmd(kdn, scmds);
       }
     }
     if (undef(didact)) {
