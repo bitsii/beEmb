@@ -109,7 +109,7 @@ emit(cc) {
   std::vector<sdlscb> sdlscbs = { sdls0, sdls1, sdls2, sdls3, sdls4, sdls5, sdls6, sdls7, sdls8, sdls9, sdls10, sdls11, sdls12, sdls13, sdls14 };
 
   bool setECLState(size_t idx, bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) {
-    Serial.printf("setECLState %zu changed to: state %d bright %u temp %u\r\n", idx, state, brightness, witemp);
+    //Serial.printf("setECLState %zu changed to: state %d bright %u temp %u\r\n", idx, state, brightness, witemp);
     //Serial.printf("hsv %u %u %u\r\n", color.h, color.s, color.v);
     espRgbColor_t rgb = espHsvColorToRgbColor(color);
     //Serial.printf("rgb %u %u %u\r\n", rgb.r, rgb.g, rgb.b);
@@ -379,7 +379,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
             tempDq.pop_back();
             rgb = rgbDq.back();
             rgbDq.pop_back();
-            Serial.printf("checkDoMes %zu changed to: state %d bright %u temp %u\r\n", idx, state, bright, ewt);
+            //Serial.printf("checkDoMes %zu changed to: state %d bright %u temp %u\r\n", idx, state, bright, ewt);
           }
         }
       } catch (...) {
@@ -457,11 +457,64 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
     if (def(eidx) && def(est) && def(ebb) && def(ewt) && def(er) && def(eg) && def(eb)) {
       didact = 1;
       mmep = meps.get(eidx);
+      if (est == 1) {
+        String ests = CNS.on;
+        Bool etost = true;
+      } else {
+        ests = CNS.off;
+        etost = false;
+      }
       if (def(mmep)) {
         ("eidx " + eidx + " est " + est + " ebb " + ebb + " ewt " + ewt + " er " + er + " eg " + eg + " eb " + eb).print();
          //kdn = "CasNic" + mmep.ondid;
          //scmds = "dostate " + mmep.spass + " " + mmep.ipos + " setlvl " + bb + " e";
          //sendCmd(kdn, scmds);
+        if (etost) {
+          if (def(mmep.lvl) && def(mmep.r) && def(mmep.g) && def(mmep.b) && def(mmep.ct)) {
+            if (mmep.lvl != ebb) { Bool lvlCh = true; } else { lvlCh = false; }
+            if (mmep.ct != ewt) { Bool ctCh = true; } else { ctCh = false; }
+            if (mmep.r != er || mmep.g != eg || mmep.b != eb) { Bool rgbCh = true; } else { rgbCh = false; }
+            ("ecl on changes lvlCh " + lvlCh + " ctCh " + ctCh + " rgbCh " + rgbCh).print();
+            unless (ctCh || rgbCh) {
+              if (lvlCh) {
+                if (def(mmep.lastChRgb) && mmep.lastChRgb) {
+                  rgbCh = true;
+                  "lastChRgb true doing rgbCh".print();
+                }
+              }
+            }
+            if (ctCh) {
+              mmep.lastChRgb = false;
+              String rgbc = "255,255,255";
+            } elseIf (rgbCh) {
+              mmep.lastChRgb = true;
+              rgbc = "" + er + "," + eg + "," + eb;
+            }
+            //if fails set etost to false
+          } else {
+            ("ecl on first time").print();
+            //just turn on, don't set anything else
+            //if fails set etost to false
+          }
+        } else {
+          //it's off, that's all
+          //capture vals, they are set after off to recover original state after a "transition"
+          if (def(mmep.sw) && mmep.sw == etost) {
+            ("ecl got off when off just updated vals").print();
+          } elseIf (undef(mmep.sw)) {
+            ("ecl got off when sw undef just updated vals").print();
+          } else {
+            //turn it off
+            ("ecl will dostate sw off").print();
+            //if fails set etost to true
+          }
+        }
+        mmep.sw = etost;
+        mmep.lvl = ebb;
+        mmep.ct = ewt;
+        mmep.r = er;
+        mmep.g = eg;
+        mmep.b = eb;
       }
     }
     if (undef(didact)) {

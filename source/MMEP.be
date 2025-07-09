@@ -19,6 +19,12 @@ class Embedded:Mmep {
       String ipos = _ipos;
       String spass = _spass;
       Bool sw; //sw state, all types
+      Int lvl;
+      Int ct;//temp
+      Int r;//color
+      Int g;
+      Int b;
+      Bool lastChRgb;
     }
   }
 }
