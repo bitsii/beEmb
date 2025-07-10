@@ -9,6 +9,7 @@
  */
 
 use Math:Int;
+use Math:Float;
 use Embedded:Wifi;
 use Text:String;
 use Text:Strings as TS;
@@ -485,16 +486,39 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
             }
             if (ctCh) {
               mmep.lastChRgb = false;
-              String rgbc = "255,255,255";
+              String rgblct = "255,255,255" + "," + ebb + "," + bigLsToTff(ewt);
+              //xd = orgb + "," + rstate + "," + ocw;
+              //cmds = "dostatexd spass " + rpos.toString() + " setrgbcw " + frgb + " " + xd + " " + lsToMired(Int.new(ocw)) + " " + lvlToPct(Int.new(rstate)) + " e";
+              ("ecl will dostate ctCh").print();
+              scmds = "dostatexd " + mmep.spass + " " + mmep.ipos + " setrgbcw " + rgblct + " " + rgblct + " " + bigLsToMired(ewt) + " " + lvlToPct(ebb) + " e";
             } elseIf (rgbCh) {
               mmep.lastChRgb = true;
-              rgbc = "" + er + "," + eg + "," + eb;
+              rgblct = "" + er + "," + eg + "," + eb + "," + ebb + "," + bigLsToTff(ewt);
+              ("ecl will dostate rgbCh").print();
+              scmds = "dostatexd " + mmep.spass + " " + mmep.ipos + " setrgbcw " + rgblct + " " + rgblct + " " + bigLsToMired(ewt) + " " + lvlToPct(ebb) + " e";
             }
-            //if fails set etost to false
+            if (TS.notEmpty(scmds)) {
+              kdn = "CasNic" + mmep.ondid;
+              scres = sendCmd(kdn, scmds);
+              //if fails set etost to false
+              unless (TS.notEmpty(scres) && scres.has(CNS.ok)) {
+                ("scres " + scres).print();
+                //if fails set etost to false
+                etost = false;
+              }
+            }
           } else {
             ("ecl on first time").print();
             //just turn on, don't set anything else
-            //if fails set etost to false
+            ("ecl will dostate sw on").print();
+            kdn = "CasNic" + mmep.ondid;
+            scmds = "dostate " + mmep.spass + " " + mmep.ipos + " setsw " + ests + " e";
+            scres = sendCmd(kdn, scmds);
+            unless (TS.notEmpty(scres) && scres.has(CNS.ok)) {
+              ("scres " + scres).print();
+              //if fails set etost to false
+              etost = false;
+            }
           }
         } else {
           //it's off, that's all
@@ -506,7 +530,14 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
           } else {
             //turn it off
             ("ecl will dostate sw off").print();
-            //if fails set etost to true
+            kdn = "CasNic" + mmep.ondid;
+            scmds = "dostate " + mmep.spass + " " + mmep.ipos + " setsw " + ests + " e";
+            scres = sendCmd(kdn, scmds);
+            unless (TS.notEmpty(scres) && scres.has(CNS.ok)) {
+              ("scres " + scres).print();
+              //if fails set etost to true
+              etost = true;
+            }
           }
         }
         mmep.sw = etost;
@@ -584,6 +615,42 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
       }
     }
   }
+
+  lvlToPct(Int ls) Int {
+    if (ls < 0 || ls > 255) { ls = 255; }
+    Float lsf = Float.intNew(ls);
+    Float fh = Float.intNew(255);
+    Float mp = lsf / fh;
+    Float mrm = Float.intNew(100);
+    Float mrf = mp * mrm;
+    Int mr = mrf.toInt();
+    return(mr);
+  }
+
+  bigLsToMired(Int ls) Int {
+      if (ls < 100 || ls > 65279) { ls = 65279; }
+      ls = ls - 100;
+      Float lsf = Float.intNew(ls);
+      Float fh = Float.intNew(65179);
+      Float mp = lsf / fh;
+      Float mrm = Float.intNew(347);
+      Float mrf = mp * mrm;
+      Int mr = mrf.toInt();
+      mr = mr + 153;
+      return(mr);
+    }
+
+  bigLsToTff(Int ls) Int {
+      if (ls < 100 || ls > 65279) { ls = 65279; }
+      ls = ls - 100;
+      Float lsf = Float.intNew(ls);
+      Float fh = Float.intNew(65179);
+      Float mp = lsf / fh;
+      Float mrm = Float.intNew(255);
+      Float mrf = mp * mrm;
+      Int mr = mrf.toInt();
+      return(mr);
+    }
 
   sendCmd(String kdn, String scmds) String {
       String mcmdres;
