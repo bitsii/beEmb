@@ -409,7 +409,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
         } else {
           beq->bevl_est = new BEC_2_4_3_MathInt(0);
         }
-        beq->bevl_ebb = new BEC_2_4_3_MathInt(static_cast<int32_t>(bright));
+        beq->bevl_ebb = new BEC_2_4_3_MathInt(bright);
         beq->bevl_ewt = new BEC_2_4_3_MathInt(ewt);
         beq->bevl_er = new BEC_2_4_3_MathInt(rgb.r);
         beq->bevl_eg = new BEC_2_4_3_MathInt(rgb.g);
@@ -477,45 +477,32 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
             if (mmep.r != er || mmep.g != eg || mmep.b != eb) { Bool rgbCh = true; } else { rgbCh = false; }
             ("ecl on changes lvlCh " + lvlCh + " ctCh " + ctCh + " rgbCh " + rgbCh).print();
             unless (ctCh || rgbCh) {
-              if (lvlCh) {
-                if (def(mmep.lastChRgb) && mmep.lastChRgb) {
-                  rgbCh = true;
-                  "lastChRgb true doing rgbCh".print();
-                }
-              }
-            }
-            if (ctCh) {
-              mmep.lastChRgb = false;
-              String rgblct = "255,255,255" + "," + ebb + "," + bigLsToTff(ewt);
-              //xd = orgb + "," + rstate + "," + ocw;
-              //cmds = "dostatexd spass " + rpos.toString() + " setrgbcw " + frgb + " " + xd + " " + lsToMired(Int.new(ocw)) + " " + lvlToPct(Int.new(rstate)) + " e";
-              ("ecl will dostate ctCh").print();
-              scmds = "dostatexd " + mmep.spass + " " + mmep.ipos + " setrgbcw " + rgblct + " " + rgblct + " " + bigLsToMired(ewt) + " " + lvlToPct(ebb) + " e";
-            } elseIf (rgbCh) {
-              mmep.lastChRgb = true;
-              rgblct = "" + er + "," + eg + "," + eb + "," + ebb + "," + bigLsToTff(ewt);
-              ("ecl will dostate rgbCh").print();
-              scmds = "dostatexd " + mmep.spass + " " + mmep.ipos + " setrgbcw " + rgblct + " " + rgblct + " " + bigLsToMired(ewt) + " " + lvlToPct(ebb) + " e";
-            }
-            if (TS.notEmpty(scmds)) {
-              kdn = "CasNic" + mmep.ondid;
-              scres = sendCmd(kdn, scmds);
-              //if fails set etost to false
-              unless (TS.notEmpty(scres) && scres.has(CNS.ok)) {
-                ("scres " + scres).print();
-                //if fails set etost to false
-                etost = false;
-              }
+              //look at rgb and see if they are all 255, if so is temp, if not is rgb
+              //this will work after we're getting settings from device. or if we start storing state.
+              rgbCh = true;
             }
           } else {
             ("ecl on first time").print();
-            //just turn on, don't set anything else
-            ("ecl will dostate sw on").print();
+            rgbCh = true;
+          }
+          if (rgbCh) {
+            String xd = "" += er += "," += eg += "," += eb += "," += ebb += ",0";
+            String rgblct = "" += er += "," += eg += "," += eb += "," += ebb += ",0";//last 0 is cw for rgb case
+            ("ecl will dostate rgbCh").print();
+            scmds = "dostatexd " + mmep.spass + " " + mmep.ipos + " setrgbcw " + rgblct + " " + xd + " " + " e";
+          } elseIf (ctCh) {
+            //String rgblct = "255,255,255" + "," + ebb + "," + bigLsToTff(ewt);
+            ////xd = orgb + "," + rstate + "," + ocw;
+            ////cmds = "dostatexd spass " + rpos.toString() + " setrgbcw " + frgb + " " + xd + " " + lsToMired(Int.new(ocw)) + " " + lvlToPct(Int.new(rstate)) + " e";
+            //("ecl will dostate ctCh").print();
+            //scmds = "dostatexd " + mmep.spass + " " + mmep.ipos + " setrgbcw " + rgblct + " " + rgblct + " " + bigLsToMired(ewt) + " " + lvlToPct(ebb) + " e";
+          }
+          if (TS.notEmpty(scmds)) {
             kdn = "CasNic" + mmep.ondid;
-            scmds = "dostate " + mmep.spass + " " + mmep.ipos + " setsw " + ests + " e";
             scres = sendCmd(kdn, scmds);
+            //if fails set etost to false
             unless (TS.notEmpty(scres) && scres.has(CNS.ok)) {
-              ("scres " + scres).print();
+              "attempt failed setting etost false".print();
               //if fails set etost to false
               etost = false;
             }
@@ -523,21 +510,15 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
         } else {
           //it's off, that's all
           //capture vals, they are set after off to recover original state after a "transition"
-          if (def(mmep.sw) && mmep.sw == etost) {
-            ("ecl got off when off just updated vals").print();
-          } elseIf (undef(mmep.sw)) {
-            ("ecl got off when sw undef just updated vals").print();
-          } else {
-            //turn it off
-            ("ecl will dostate sw off").print();
-            kdn = "CasNic" + mmep.ondid;
-            scmds = "dostate " + mmep.spass + " " + mmep.ipos + " setsw " + ests + " e";
-            scres = sendCmd(kdn, scmds);
-            unless (TS.notEmpty(scres) && scres.has(CNS.ok)) {
-              ("scres " + scres).print();
-              //if fails set etost to true
-              etost = true;
-            }
+          //turn it off
+          ("ecl will dostate sw off").print();
+          kdn = "CasNic" + mmep.ondid;
+          scmds = "dostate " + mmep.spass + " " + mmep.ipos + " setsw " + ests + " e";
+          scres = sendCmd(kdn, scmds);
+          unless (TS.notEmpty(scres) && scres.has(CNS.ok)) {
+            "attempt failed setting etost true".print();
+            //if fails set etost to true
+            etost = true;
           }
         }
         mmep.sw = etost;
@@ -615,42 +596,6 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
       }
     }
   }
-
-  lvlToPct(Int ls) Int {
-    if (ls < 0 || ls > 255) { ls = 255; }
-    Float lsf = Float.intNew(ls);
-    Float fh = Float.intNew(255);
-    Float mp = lsf / fh;
-    Float mrm = Float.intNew(100);
-    Float mrf = mp * mrm;
-    Int mr = mrf.toInt();
-    return(mr);
-  }
-
-  bigLsToMired(Int ls) Int {
-      if (ls < 100 || ls > 65279) { ls = 65279; }
-      ls = ls - 100;
-      Float lsf = Float.intNew(ls);
-      Float fh = Float.intNew(65179);
-      Float mp = lsf / fh;
-      Float mrm = Float.intNew(347);
-      Float mrf = mp * mrm;
-      Int mr = mrf.toInt();
-      mr = mr + 153;
-      return(mr);
-    }
-
-  bigLsToTff(Int ls) Int {
-      if (ls < 100 || ls > 65279) { ls = 65279; }
-      ls = ls - 100;
-      Float lsf = Float.intNew(ls);
-      Float fh = Float.intNew(65179);
-      Float mp = lsf / fh;
-      Float mrm = Float.intNew(255);
-      Float mrf = mp * mrm;
-      Int mr = mrf.toInt();
-      return(mr);
-    }
 
   sendCmd(String kdn, String scmds) String {
       String mcmdres;

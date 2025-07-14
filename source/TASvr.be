@@ -245,10 +245,10 @@ http.begin(client, beq->beva_turl->bems_toCcString().c_str());
   }
 
   testGetMac() {
-     String mac1 = getMac('{"StatusNET":{"Hostname":"tasmota","IPAddress":"192.168.4.48","Gateway":"192.168.4.1","Subnetmask":"255.255.255.0","DNSServer1":"0.0.0.0","DNSServer2":"0.0.0.0","Mac":"40:4C:30:31:32:33","Webserver":2,"HTTP_API":1,"WifiConfig":4,"WifiPower":19.0}}');
+     /*String mac1 = getMac('{"StatusNET":{"Hostname":"tasmota","IPAddress":"192.168.4.48","Gateway":"192.168.4.1","Subnetmask":"255.255.255.0","DNSServer1":"0.0.0.0","DNSServer2":"0.0.0.0","Mac":"40:4C:30:31:32:33","Webserver":2,"HTTP_API":1,"WifiConfig":4,"WifiPower":19.0}}');
      if (TS.notEmpty(mac1)) {
        ("mac1 " + mac1).print();
-     }
+     }*/
   }
 
   getMac(String disRes) String {
@@ -282,13 +282,13 @@ http.begin(client, beq->beva_turl->bems_toCcString().c_str());
   }
 
   testDetectType() {
-    String r1 = detectType('{"NAME":"Athom Plug V3","GPIO":[0,0,0,32,0,224,576,0,0,0,0,0,0,0,0,0,0,0,0,0,3104,0],"FLAG":0,"BASE":1}');
+    /*String r1 = detectType('{"NAME":"Athom Plug V3","GPIO":[0,0,0,32,0,224,576,0,0,0,0,0,0,0,0,0,0,0,0,0,3104,0],"FLAG":0,"BASE":1}');
     String r2 = detectType('{"NAME":"Athom 15W Bulb","GPIO":[0,0,0,0,416,419,0,0,417,452,418,0,0,0],"FLAG":0,"BASE":18}');
     if (TS.isEmpty(r1) || TS.isEmpty(r2)) {
       ("tdt had empty").print();
     } else {
       ("r1 " + r1 + " r2 " + r2).print();
-    }
+    }*/
   }
 
   detectType(String disRes) String {

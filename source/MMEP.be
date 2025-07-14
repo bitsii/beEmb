@@ -24,7 +24,6 @@ class Embedded:Mmep {
       Int r;//color
       Int g;
       Int b;
-      Bool lastChRgb;
     }
   }
 }
