@@ -38,7 +38,7 @@ emit(cc) {
   std::deque<bool> stateDq;
   std::deque<uint8_t> brightDq;
   std::deque<uint16_t> tempDq;
-  std::deque<espRgbColor_t> rgbDq;
+  std::deque<espHsvColor_t> hsvDq;
 
   bool setLightOnOff(size_t idx, bool state) {
     Serial.printf("setLightOnOff %zu changed state to: %d\r\n", idx, state);
@@ -110,12 +110,8 @@ emit(cc) {
   std::vector<sdlscb> sdlscbs = { sdls0, sdls1, sdls2, sdls3, sdls4, sdls5, sdls6, sdls7, sdls8, sdls9, sdls10, sdls11, sdls12, sdls13, sdls14 };
 
   bool setECLState(size_t idx, bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) {
-    //Serial.printf("setECLState %zu changed to: state %d bright %u temp %u\r\n", idx, state, brightness, witemp);
-    //Serial.printf("hsv %u %u %u\r\n", color.h, color.s, color.v);
-    espRgbColor_t rgb = espHsvColorToRgbColor(color);
-    //Serial.printf("rgb %u %u %u\r\n", rgb.r, rgb.g, rgb.b);
-    //see what color looks like, hsv prolly
-    //just get dim and on off working first
+    Serial.printf("setECLState %zu changed to: state %d bright %u temp %u\r\n", idx, state, brightness, witemp);
+    Serial.printf("hsv %u %u %u\r\n", color.h, color.s, color.v);
     cmdsLk.lock();
     try {
       cmdsDq.push_front(2);
@@ -123,7 +119,7 @@ emit(cc) {
       stateDq.push_front(state);
       brightDq.push_front(brightness);
       tempDq.push_front(witemp);
-      rgbDq.push_front(rgb);
+      hsvDq.push_front(color);
     } catch (...) {
       cmdsLk.unlock();
     }
@@ -356,7 +352,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
       bool state = false;
       uint8_t bright;
       uint16_t ewt;
-      espRgbColor_t rgb;
+      espHsvColor_t hsv;
 
       cmdsLk.lock();
       try {
@@ -378,8 +374,8 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
             brightDq.pop_back();
             ewt = tempDq.back();
             tempDq.pop_back();
-            rgb = rgbDq.back();
-            rgbDq.pop_back();
+            hsv = hsvDq.back();
+            hsvDq.pop_back();
             //Serial.printf("checkDoMes %zu changed to: state %d bright %u temp %u\r\n", idx, state, bright, ewt);
           }
         }
@@ -411,9 +407,16 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
         }
         beq->bevl_ebb = new BEC_2_4_3_MathInt(bright);
         beq->bevl_ewt = new BEC_2_4_3_MathInt(ewt);
+
+        if (bright != 0) {
+          hsv.v = bright;
+        }
+        espRgbColor_t rgb = espHsvColorToRgbColor(hsv);
+
         beq->bevl_er = new BEC_2_4_3_MathInt(rgb.r);
         beq->bevl_eg = new BEC_2_4_3_MathInt(rgb.g);
         beq->bevl_eb = new BEC_2_4_3_MathInt(rgb.b);
+
       }
       """
     }
@@ -486,9 +489,10 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
             rgbCh = true;
           }
           if (rgbCh) {
-            String xd = "" += er += "," += eg += "," += eb += "," += ebb += ",0";
             String rgblct = "" += er += "," += eg += "," += eb += "," += ebb += ",0";//last 0 is cw for rgb case
             ("ecl will dostate rgbCh").print();
+
+            String xd = "" += er += "," += eg += "," += eb += "," += ebb += ",0";
             scmds = "dostatexd " + mmep.spass + " " + mmep.ipos + " setrgbcw " + rgblct + " " + xd + " " + " e";
           } elseIf (ctCh) {
             //String rgblct = "255,255,255" + "," + ebb + "," + bigLsToTff(ewt);
