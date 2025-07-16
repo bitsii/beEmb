@@ -410,18 +410,19 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
         }
         beq->bevl_ebb = new BEC_2_4_3_MathInt(bright);
 
+        Serial.printf("ewt1 %d\r\n", ewt);
 
-        if (ewt >= 1500 && ewt <= 10000) { ewt = 1500; }
-        if (ewt >= 40000) { ewt = 1600; }
-        if (ewt >= 10000) { ewt = 1550; }
         if (ewt >= 100) { ewt = ewt - 100; }
-        //now ewt 0-1500
-        float tff = 1500;
+        if (ewt >= 500) { ewt = 500; }
+        float tff = 500;
         float ef = (float)((int) ewt);
         float mul = ef / tff;
+        mul = mul * mul;
+        Serial.printf("mul %f\r\n", mul);
         float ns = 255;
         ef = mul * ns;
         ewt = (int) ef;
+        Serial.printf("ewt2 %d\r\n", ewt);
 
         beq->bevl_ewt = new BEC_2_4_3_MathInt(ewt);
 
@@ -513,6 +514,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
           //maybe check values to guess
           rgbCh = true;
           ctCh = false;
+          Bool eclFirst = true;
         }
         if (etost) {
           if (rgbCh) {
@@ -555,14 +557,16 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
           //it's off, that's all
           //capture vals, they are set after off to recover original state after a "transition"
           //turn it off
-          ("ecl will dostate sw off").print();
-          kdn = "CasNic" + mmep.ondid;
-          scmds = "dostate " + mmep.spass + " " + mmep.ipos + " setsw " + ests + " e";
-          scres = sendCmd(kdn, scmds);
-          unless (TS.notEmpty(scres) && scres.has(CNS.ok)) {
-            "attempt failed setting etost true".print();
-            //if fails set etost to true
-            etost = true;
+          unless (def(eclFirst) && eclFirst) {
+            ("ecl will dostate sw off").print();
+            kdn = "CasNic" + mmep.ondid;
+            scmds = "dostate " + mmep.spass + " " + mmep.ipos + " setsw " + ests + " e";
+            scres = sendCmd(kdn, scmds);
+            unless (TS.notEmpty(scres) && scres.has(CNS.ok)) {
+              "attempt failed setting etost true".print();
+              //if fails set etost to true
+              etost = true;
+            }
           }
         }
         if (ctCh) {
@@ -626,6 +630,14 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
                   didup = true;
                   Serial.println("will setonoff");
                   swdl->setOnOff(swtost);
+                }
+                }
+                if (beq->bevl_mmepmet->bevi_int == 2) {
+                std::shared_ptr<MatterEnhancedColorLight> mecl = std::static_pointer_cast<MatterEnhancedColorLight>(swmep);
+                if (mecl->getOnOff() != swtost) {
+                  didup = true;
+                  Serial.println("will setonoff");
+                  mecl->setOnOff(swtost);
                 }
                 }
                 if (didup) {
