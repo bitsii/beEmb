@@ -14,16 +14,16 @@ use Text:Strings as TS;
 class Embedded:Mmep {
   new(String _met, String _ondid, String _ipos, String _spass) {
     fields {
-      String met = _met; //ool or dl or ecl
+      String met = _met; //ool or dl or ecl or eclns
       String ondid = _ondid;
       String ipos = _ipos;
       String spass = _spass;
       Bool sw; //sw state, all types
-      Int lvl;
       Int ct;//temp
-      Int r;//color
-      Int g;
-      Int b;
+      Int h;
+      Int s;
+      Int v;
+      Bool inCtCh;
     }
   }
 }

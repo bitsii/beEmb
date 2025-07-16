@@ -343,6 +343,9 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
     Int er;//color
     Int eg;
     Int eb;
+    Int eh;
+    Int es;
+    Int ev;
     //did I act
     Int didact;
     emit(cc) {
@@ -406,7 +409,25 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
           beq->bevl_est = new BEC_2_4_3_MathInt(0);
         }
         beq->bevl_ebb = new BEC_2_4_3_MathInt(bright);
+
+
+        if (ewt >= 1500 && ewt <= 10000) { ewt = 1500; }
+        if (ewt >= 40000) { ewt = 1600; }
+        if (ewt >= 10000) { ewt = 1550; }
+        if (ewt >= 100) { ewt = ewt - 100; }
+        //now ewt 0-1500
+        float tff = 1500;
+        float ef = (float)((int) ewt);
+        float mul = ef / tff;
+        float ns = 255;
+        ef = mul * ns;
+        ewt = (int) ef;
+
         beq->bevl_ewt = new BEC_2_4_3_MathInt(ewt);
+
+        beq->bevl_eh = new BEC_2_4_3_MathInt(hsv.h);
+        beq->bevl_es = new BEC_2_4_3_MathInt(hsv.s);
+        beq->bevl_ev = new BEC_2_4_3_MathInt(hsv.v);
 
         if (bright != 0) {
           hsv.v = bright;
@@ -470,36 +491,55 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
       }
       if (def(mmep)) {
         ("eidx " + eidx + " est " + est + " ebb " + ebb + " ewt " + ewt + " er " + er + " eg " + eg + " eb " + eb).print();
-         //kdn = "CasNic" + mmep.ondid;
-         //scmds = "dostate " + mmep.spass + " " + mmep.ipos + " setlvl " + bb + " e";
-         //sendCmd(kdn, scmds);
-        if (etost) {
-          if (def(mmep.lvl) && def(mmep.r) && def(mmep.g) && def(mmep.b) && def(mmep.ct)) {
-            if (mmep.lvl != ebb) { Bool lvlCh = true; } else { lvlCh = false; }
-            if (mmep.ct != ewt) { Bool ctCh = true; } else { ctCh = false; }
-            if (mmep.r != er || mmep.g != eg || mmep.b != eb) { Bool rgbCh = true; } else { rgbCh = false; }
-            ("ecl on changes lvlCh " + lvlCh + " ctCh " + ctCh + " rgbCh " + rgbCh).print();
-            unless (ctCh || rgbCh) {
-              //look at rgb and see if they are all 255, if so is temp, if not is rgb
-              //this will work after we're getting settings from device. or if we start storing state.
-              rgbCh = true;
-            }
+        //kdn = "CasNic" + mmep.ondid;
+        //scmds = "dostate " + mmep.spass + " " + mmep.ipos + " setlvl " + bb + " e";
+        //sendCmd(kdn, scmds);
+        if (def(mmep.h) && def(mmep.s)) {
+          if (def(mmep.inCtCh) && mmep.inCtCh && mmep.h == eh && mmep.s == es) {
+            //not real hsv changes, just bright reflected in v
+            //if already in ctCh stay
+            Bool ctCh = true;
+            Bool rgbCh = false;
+          } elseIf (mmep.h == eh && mmep.s == es && mmep.ct != ewt) {
+            ctCh = true;
+            rgbCh = false;
           } else {
-            ("ecl on first time").print();
+            ctCh = false;
             rgbCh = true;
           }
+          ("ecl on changes ctCh " + ctCh + " rgbCh " + rgbCh).print();
+        } else {
+          ("ecl first time").print();
+          //maybe check values to guess
+          rgbCh = true;
+          ctCh = false;
+        }
+        if (etost) {
           if (rgbCh) {
+            if (ebb == 0) { ebb = 255; }
             String rgblct = "" += er += "," += eg += "," += eb += "," += ebb += ",0";//last 0 is cw for rgb case
             ("ecl will dostate rgbCh").print();
 
             String xd = "" += er += "," += eg += "," += eb += "," += ebb += ",0";
             scmds = "dostatexd " + mmep.spass + " " + mmep.ipos + " setrgbcw " + rgblct + " " + xd + " " + " e";
           } elseIf (ctCh) {
-            //String rgblct = "255,255,255" + "," + ebb + "," + bigLsToTff(ewt);
-            ////xd = orgb + "," + rstate + "," + ocw;
-            ////cmds = "dostatexd spass " + rpos.toString() + " setrgbcw " + frgb + " " + xd + " " + lsToMired(Int.new(ocw)) + " " + lvlToPct(Int.new(rstate)) + " e";
-            //("ecl will dostate ctCh").print();
-            //scmds = "dostatexd " + mmep.spass + " " + mmep.ipos + " setrgbcw " + rgblct + " " + rgblct + " " + bigLsToMired(ewt) + " " + lvlToPct(ebb) + " e";
+            ("ecl will dostate ctCh").print();
+
+            if (ebb == 0) { ebb = 255; }
+            Int lvli = ebb;
+            Int cwi = ewt;
+            if (lvli < 0 || lvli > 255) { lvli = 255; }
+            if (lvli == 1) { lvli = 2; } //cws seems to be off at analog write 1
+            if (cwi < 0 || cwi > 255) { cwi = 255; }
+            cwi = 255 - cwi;
+
+            rgblct = "255,255,255," += ebb; //,cw
+            xd = "255,255,255," += ebb; //,cw
+
+            xd += "," += ewt;
+            rgblct += "," += cwi;
+
+            scmds = "dostatexd " + mmep.spass + " " + mmep.ipos + " setrgbcw " + rgblct + " " + xd + " " + " e";
           }
           if (TS.notEmpty(scmds)) {
             kdn = "CasNic" + mmep.ondid;
@@ -525,12 +565,17 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
             etost = true;
           }
         }
+        if (ctCh) {
+          mmep.inCtCh = true;
+        }
+        if (rgbCh) {
+          mmep.inCtCh = false;
+        }
         mmep.sw = etost;
-        mmep.lvl = ebb;
         mmep.ct = ewt;
-        mmep.r = er;
-        mmep.g = eg;
-        mmep.b = eb;
+        mmep.h = eh;
+        mmep.s = es;
+        mmep.v = ev;
       }
     }
     if (undef(didact)) {
