@@ -24,6 +24,7 @@ class Embedded:Mmep {
       Int s;
       Int v;
       Bool inCtCh;
+      Int ctLvl;
     }
   }
 }

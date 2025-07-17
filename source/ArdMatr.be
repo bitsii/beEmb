@@ -528,7 +528,12 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
           } elseIf (ctCh) {
             ("ecl will dostate ctCh").print();
 
-            if (ebb == 0) { ebb = 255; }
+            if (ebb == 0) {
+              if (def(mmep.ctLvl)) { ebb = mmep.ctLvl; }
+              else { ebb = 255; }
+            }
+
+            mmep.ctLvl = ebb;
             Int lvli = ebb;
             Int cwi = ewt;
             if (lvli < 0 || lvli > 255) { lvli = 255; }
