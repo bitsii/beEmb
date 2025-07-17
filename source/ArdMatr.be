@@ -412,12 +412,13 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
 
         Serial.printf("ewt1 %d\r\n", ewt);
 
-        if (ewt >= 100) { ewt = ewt - 100; }
-        if (ewt >= 500) { ewt = 500; }
-        float tff = 500;
+        //if (ewt >= 100) { ewt = ewt - 100; }
+        ewt = ewt + 200;
+        if (ewt >= 800) { ewt = 800; }
+
+        float tff = 800;
         float ef = (float)((int) ewt);
         float mul = ef / tff;
-        mul = mul * mul;
         Serial.printf("mul %f\r\n", mul);
         float ns = 255;
         ef = mul * ns;
