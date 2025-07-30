@@ -590,29 +590,24 @@ class Embedded:TaRgbbc {
      } elseIf (scm == setrgbcw) {
         sw = on;
         rgbcw = cmdl[4];
-        if (cmdl.length > 7) {
-          String xd = cmdl[5];
-          String mr = cmdl[6];//cw mired
-          String lv = cmdl[7];//dimmer 0-100
-        }
-        if (TS.notEmpty(rgbcw) && TS.notEmpty(xd) && TS.notEmpty(mr)) {
+        if (TS.notEmpty(rgbcw)) {
           config.put(ctswi, on);
           config.put(ctrgbcwi, rgbcw);
           ("rgbcw " + rgbcw).print();
           //USE cmdl[5] that's where xsd is, and it's r,g,b,lvl,cw (0-255) cmd 6 is lstomired cw
           //always batch send lvl for either rgb or cb cases
-          var xdl = xd.split(",");
+          var rgbcwl = rgbcw.split(",");
           if (rgbcw.begins("255,255,255")) {
             "do cw".print();
-            String lcm = "/cm?cmnd=backlog%20CT%20" + mr + "%3BDimmer%20" + lv;
+            String lcm = "/cm?cmnd=CT%20" + rgbcwl[0];
           } else {
             "do rgb".print();
-            lcm = "/cm?cmnd=backlog%20Color2%20" + xdl[0] + "%2C" + xdl[1] + "%2C" + xdl[2] + "%3BDimmer%20" + lv;
+            lcm = "/cm?cmnd=Color%20" + rgbcwl[0] + "%2C" + rgbcwl[1] + "%2C" + rgbcwl[2];
+            turl = tad.wada + lcm;
+            //("turl " + turl).print();
+            disRes = taserver.httpGet(turl);
           }
-          turl = tad.wada + lcm;
-          //("turl " + turl).print();
-          disRes = taserver.httpGet(turl);
-          if (TS.notEmpty(disRes) && disRes.has("{}")) {
+          if (TS.notEmpty(disRes) && disRes.has("Color")) {
             //config.put(ctswi, off);
             ("disRes " + disRes).print();
             config.put(ctswi, on);
