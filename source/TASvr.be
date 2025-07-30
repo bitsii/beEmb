@@ -9,6 +9,7 @@
  */
 
 use Math:Int;
+use Math:Float;
 use Embedded:Wifi;
 use Text:String;
 use Text:Strings as TS;
@@ -547,6 +548,29 @@ class Embedded:TaRgbbc {
 
    }
 
+   lsToMired(Int ls) Int {
+      if (ls < 0 || ls > 255) { ls = 255; }
+      Float lsf = Float.intNew(ls);
+      Float fh = Float.intNew(255);
+      Float mp = lsf / fh;
+      Float mrm = Float.intNew(347);
+      Float mrf = mp * mrm;
+      Int mr = mrf.toInt();
+      mr = mr + 153;
+      return(mr);
+    }
+
+    lvlToPct(Int ls) Int {
+      if (ls < 0 || ls > 255) { ls = 255; }
+      Float lsf = Float.intNew(ls);
+      Float fh = Float.intNew(255);
+      Float mp = lsf / fh;
+      Float mrm = Float.intNew(100);
+      Float mrf = mp * mrm;
+      Int mr = mrf.toInt();
+      return(mr);
+    }
+
    doState(List cmdl) String {
      "in dostate fifidy".print();
      String dsr = ok;
@@ -594,20 +618,32 @@ class Embedded:TaRgbbc {
           config.put(ctswi, on);
           config.put(ctrgbcwi, rgbcw);
           ("rgbcw " + rgbcw).print();
-          //USE cmdl[5] that's where xsd is, and it's r,g,b,lvl,cw (0-255) cmd 6 is lstomired cw
-          //always batch send lvl for either rgb or cb cases
           var rgbcwl = rgbcw.split(",");
-          if (rgbcw.begins("255,255,255")) {
-            "do cw".print();
-            String lcm = "/cm?cmnd=CT%20" + rgbcwl[0];
-          } else {
-            "do rgb".print();
-            lcm = "/cm?cmnd=Color%20" + rgbcwl[0] + "%2C" + rgbcwl[1] + "%2C" + rgbcwl[2];
+          if (rgbcwl.length > 4) {
+            if (rgbcw.begins("255,255,255")) {
+              "do cw".print();
+              Int cti = Int.new(rgbcwl[4]);
+              cti = 255 - cti;
+              ("cti 2 " + cti).print();
+              cti = lsToMired(cti);
+              ("cti 3 " + cti).print();
+              Int lvli = Int.new(rgbcwl[3]);
+              lvli = lvlToPct(lvli);
+              if (lvli < 1) { lvli = 1; }
+              ("lvli 2 " + lvli).print();
+              String lcm = "/cm?cmnd=backlog%20Dimmer%20" + lvli  + "%3BCT%20" + cti;
+              ("ct lcm " + lcm).print();
+            } else {
+              "do rgb".print();
+              lcm = "/cm?cmnd=Color%20" + rgbcwl[0] + "%2C" + rgbcwl[1] + "%2C" + rgbcwl[2];
+            }
             turl = tad.wada + lcm;
             //("turl " + turl).print();
             disRes = taserver.httpGet(turl);
+          } else {
+           "rgbcwl too short".print();
           }
-          if (TS.notEmpty(disRes) && disRes.has("Color")) {
+          if (TS.notEmpty(disRes) && (disRes.has("Color") || disRes.has("{}"))) {
             //config.put(ctswi, off);
             ("disRes " + disRes).print();
             config.put(ctswi, on);
