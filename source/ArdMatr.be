@@ -339,6 +339,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
     Int eidx;
     Int est;//sw
     Int ebb;//bright
+    Int ebv;//v from hsv
     Int ewt;//temp
     Int er;//color
     Int eg;
@@ -433,6 +434,9 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
 
         if (bright != 0) {
           hsv.v = bright;
+          beq->bevl_ebv = new BEC_2_4_3_MathInt(bright);
+        } else {
+          beq->bevl_ebv = new BEC_2_4_3_MathInt(hsv.v);
         }
         espRgbColor_t rgb = espHsvColorToRgbColor(hsv);
 
@@ -519,11 +523,11 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
         }
         if (etost) {
           if (rgbCh) {
-            if (ebb == 0) { ebb = 255; }
-            String rgblct = "" += er += "," += eg += "," += eb += "," += ebb += ",0";//last 0 is cw for rgb case
+            if (ebv == 0) { ebv = 255; }
+            String rgblct = "" += er += "," += eg += "," += eb += "," += ebv += ",0";//last 0 is cw for rgb case
             ("ecl will dostate rgbCh").print();
 
-            String xd = "" += er += "," += eg += "," += eb += "," += ebb += ",0";
+            String xd = "" += er += "," += eg += "," += eb += "," += ebv += ",0";
             scmds = "dostatexd " + mmep.spass + " " + mmep.ipos + " setrgbcw " + rgblct + " " + xd + " " + " e";
           } elseIf (ctCh) {
             ("ecl will dostate ctCh").print();
