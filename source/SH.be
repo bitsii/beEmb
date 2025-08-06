@@ -76,6 +76,7 @@ class Embedded:AppShell {
        String readBuf = String.new();
        String controlSpec;
        String controlDef;
+       Int controlHash;
        Bool needsNetworkInit = true;
        Bool needsBuildControls = true;
        Bool needsInitControls = true;
@@ -183,6 +184,9 @@ class Embedded:AppShell {
             les += conType += d += conPos += d += le += cd;
           }
           conPos++;
+        }
+        if (def(controlHash)) {
+          les += "sccf" += d += conPos += d += controlHash += cd;
         }
       }
       if (TS.isEmpty(les)) { les = CNS.undefined; }
@@ -338,6 +342,10 @@ class Embedded:AppShell {
        conPos = conPos + 1;
      }
      ("controlDef " + controlDef).print();
+     if (TS.notEmpty(swSpec)) {
+       String chs = swSpec + ".," + controlDef;
+       controlHash = chs.hash.absValue();
+     }
    }
 
    buildControlsIn() {
