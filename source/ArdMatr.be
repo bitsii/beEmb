@@ -461,7 +461,9 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
       if (def(mmep)) {
         if (undef(mmep.sw) || mmep.sw != tost) {
           String kdn = "CasNic" + mmep.ondid;
-          String scmds = "dostate " + mmep.spass + " " + mmep.ipos + " setsw " + sts + " e";
+          //String scmds = "dostate " + mmep.spass + " " + mmep.ipos + " setsw " + sts + " e";
+          //String scres = sendCmd(kdn, scmds);
+          String scmds = "sp2 " + doSec(mmep.spass) + " dostate X " + mmep.ipos + " setsw " + sts + " e";
           String scres = sendCmd(kdn, scmds);
           if (TS.notEmpty(scres)) {
             ("scres " + scres).print();
@@ -481,7 +483,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
       mmep = meps.get(bidx);
       if (def(mmep) && bb > 0) {
          kdn = "CasNic" + mmep.ondid;
-         scmds = "dostate " + mmep.spass + " " + mmep.ipos + " setlvl " + bb + " e";
+         scmds = "sp2 " + doSec(mmep.spass) + " dostate X " + mmep.ipos + " setlvl " + bb + " e";
          sendCmd(kdn, scmds);
       }
     }
@@ -528,7 +530,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
             ("ecl will dostate rgbCh").print();
 
             String xd = "" += er += "," += eg += "," += eb += "," += ebv += ",0";
-            scmds = "dostatexd " + mmep.spass + " " + mmep.ipos + " setrgbcw " + rgblct + " " + xd + " " + " e";
+            scmds = "sp2 " + doSec(mmep.spass) + " dostatexd X " + mmep.ipos + " setrgbcw " + rgblct + " " + xd + " " + " e";
           } elseIf (ctCh) {
             ("ecl will dostate ctCh").print();
 
@@ -551,7 +553,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
             xd += "," += ewt;
             rgblct += "," += cwi;
 
-            scmds = "dostatexd " + mmep.spass + " " + mmep.ipos + " setrgbcw " + rgblct + " " + xd + " " + " e";
+            scmds = "sp2 " + doSec(mmep.spass) + " dostatexd X " + mmep.ipos + " setrgbcw " + rgblct + " " + xd + " " + " e";
           }
           if (TS.notEmpty(scmds)) {
             kdn = "CasNic" + mmep.ondid;
@@ -570,7 +572,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
           unless (def(eclFirst) && eclFirst) {
             ("ecl will dostate sw off").print();
             kdn = "CasNic" + mmep.ondid;
-            scmds = "dostate " + mmep.spass + " " + mmep.ipos + " setsw " + ests + " e";
+            scmds = "sp2 " + doSec(mmep.spass) + " dostate X " + mmep.ipos + " setsw " + ests + " e";
             scres = sendCmd(kdn, scmds);
             unless (TS.notEmpty(scres) && scres.has(CNS.ok)) {
               "attempt failed setting etost true".print();
@@ -602,7 +604,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
         mmep = meps.get(nextSwCheckIdx);
         if (def(mmep)) {
           kdn = "CasNic" + mmep.ondid;
-          scmds = "dostate " + mmep.spass + " " + mmep.ipos + " getsw e";
+          scmds = "sp2 " + doSec(mmep.spass) + " dostate X " + mmep.ipos + " getsw e";
           String res = sendCmd(kdn, scmds);
           if (TS.notEmpty(res)) {
             //("got res |" + res + "|").print();
@@ -666,6 +668,12 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
         nextSwCheckIdx++;
       }
     }
+  }
+
+  doSec(String sp) String {
+    String iv = System:Random.getString(8);
+    String sec = ash.hashIt(iv + "," + sp);
+    return(iv + " " + sec);
   }
 
   sendCmd(String kdn, String scmds) String {

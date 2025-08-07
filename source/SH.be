@@ -1117,52 +1117,16 @@ class Embedded:AppShell {
      //if (channel == "tcp" && cmdl.length > 0) {
      //  cmdl.put(cmdl.length - 1, cmdl.get(cmdl.length - 1).swap("\r\n", ""));
      //}
-     if (cmdl.length > 0 && (cmdl[0].ends("p4") || cmdl[0].ends("p5") || cmdl[0].ends("p6"))) {
+     if (cmdl.length > 0 && (cmdl[0].ends("p2") || cmdl[0].ends("p4") || cmdl[0].ends("p5") || cmdl[0].ends("p6"))) {
        return(doCmdlSec(channel, cmdl));
      }
      return(doCmdl(channel, cmdl));
    }
 
-   doCmdlSec(String channel, List cmdl) String {
-     if (cmdl.length > 4) {
-       List cmdn = List.new();
-       String hdone;
-       //sporap1 iv
-       "doing cmdlsec".print();
-       String spw = "";
-       if (cmdl[0].begins("sp")) {
-         spw = spass;
-       } elseIf (cmdl[0].begins("ap")) {
-         spw = pass;
-       } else {
-         ("unknown secsceme " + cmdl[0]).print();
-       }
-       ifNotEmit(noAes) {
-        if (cmdl[0].ends("p5")) {
-          "decrypting".print();
-          String dhex = Encode:Hex.decode(cmdl[4]);
-          String dcryp = Embedded:Aes.decrypt(cmdl[1], spw, dhex);
-          "dcryp".print();
-          dcryp.print();
-          var cadd = dcryp.split(" ");
-          for (Int k = 0;k < cadd.length;k++) {
-            cmdl[k + 4] = cadd[k];
-          }
-        }
-       }
-       Int abeg = 4;
-       String tohash = cmdl[1] + "," + spw + "," + cmdl[3] + ",";
-       if (cmdl[0].ends("p6")) {
-         abeg = 5;
-         tohash = tohash + cmdl[4] + ",";
-       }
-       Int toc = cmdl.length - 1;
-        String sp = " ";
-        for (Int j = abeg.copy();j < toc;j++) {
-          tohash += cmdl[j] += sp;
-        }
-       //("tohash |" + tohash + "|").print();
-       emit(cc) {
+   hashIt(String it) String {
+    String tohash = it;
+    String hdone;
+           emit(cc) {
          """
 #ifdef BEAR_ESP8266
       String lip = sha1(beq->bevl_tohash->bems_toCcString().c_str());
@@ -1201,9 +1165,59 @@ class Embedded:AppShell {
 #endif
          """
        }
+    return(hdone);
+  }
+
+   doCmdlSec(String channel, List cmdl) String {
+     if (cmdl.length > 3) {
+       List cmdn = List.new();
+       String hdone;
+       //sporap1 iv
+       "doing cmdlsec".print();
+       String spw = "";
+       if (cmdl[0].begins("sp")) {
+         spw = spass;
+       } elseIf (cmdl[0].begins("ap")) {
+         spw = pass;
+       } else {
+         ("unknown secsceme " + cmdl[0]).print();
+       }
+       ifNotEmit(noAes) {
+        if (cmdl[0].ends("p5")) {
+          "decrypting".print();
+          String dhex = Encode:Hex.decode(cmdl[4]);
+          String dcryp = Embedded:Aes.decrypt(cmdl[1], spw, dhex);
+          "dcryp".print();
+          dcryp.print();
+          var cadd = dcryp.split(" ");
+          for (Int k = 0;k < cadd.length;k++) {
+            cmdl[k + 4] = cadd[k];
+          }
+        }
+       }
+       if (cmdl[0].ends("p2")) {
+        abeg = 3;
+        tohash = cmdl[1] + "," + spw;
+      } else {
+        Int abeg = 4;
+        String tohash = cmdl[1] + "," + spw + "," + cmdl[3] + ",";
+        if (cmdl[0].ends("p6")) {
+          abeg = 5;
+          tohash = tohash + cmdl[4] + ",";
+        }
+        Int toc = cmdl.length - 1;
+          String sp = " ";
+          for (Int j = abeg.copy();j < toc;j++) {
+            tohash += cmdl[j] += sp;
+          }
+        //("tohash |" + tohash + "|").print();
+       }
+       hdone = hashIt(tohash);
        if (TS.notEmpty(hdone)) {
          //("hdone " + hdone).print();
-         hdone = secTime(cmdl[1], hdone, cmdl[3]);
+         if (abeg > 3) {
+          hdone = secTime(cmdl[1], hdone, cmdl[3]);
+         }
          if (TS.notEmpty(cmdl[2]) && hdone == cmdl[2]) {
            ("hsec passed").print();
            cmdl.put(abeg + 1, spw);
