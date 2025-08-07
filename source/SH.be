@@ -1423,8 +1423,8 @@ class Embedded:AppShell {
       }
 
       String newpass = cmdl[2];
-      if (inResetByPow) {
-        "in resetByPow skip pass".print();
+      if (inResetByPow || TS.isEmpty(ssid)) {
+        "in resetByPow skip pass or ssid not yet set".print();
       } elseIf (TS.notEmpty(pass)) {
         if (TS.isEmpty(newpass)) {
           return("Error, pass was not sent");
