@@ -138,7 +138,7 @@ class Embedded:TAServer {
       Int failCheckIv = 600000; //millis per fail check and rescan
       //Int failCheckIv = 30000;
       Int nextFailCheck = ash.nowup + failCheckIv;
-      Int disCheckIv = 250; //ms pause between checks when scanning for devices
+      Int disCheckIv = 250; //ms pause between checks when scanning ffor devices
       Int nextDisCheck = ash.nowup + disCheckIv;
       Int nextDisIp = 1;
       Int maxDisIp = 255;

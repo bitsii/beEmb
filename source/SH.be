@@ -346,6 +346,7 @@ class Embedded:AppShell {
        String chs = swSpec + ".," + controlDef;
        controlHash = chs.hash.absValue();
      }
+     lastEventsRes = null;
    }
 
    buildControlsIn() {
