@@ -157,6 +157,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
       String slashr = "\r";
       String readBuf = String.new();
       Bool triedCommission = false;
+      Bool matrepCh = false;
     }
   }
 
@@ -168,19 +169,38 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
         if (cmdl.length > 2 && cmdl[2] == "clear") {
           clearMeps();
           //ash.needsFsRestart = true;
+        } elseIf (cmdl.length > 2 && cmdl[2] == "commish") {
+          commission();
+        } elseIf (cmdl.length > 2 && cmdl[2] == "decommish") {
+          decommission();
+        } elseIf (cmdl.length > 2 && cmdl[2] == "chrestart") {
+          if (matrepCh) {
+            "will restart chrestart".print();
+            matrepCh = false;
+            ash.needsFsRestart = true;
+          }
         } elseIf (cmdl.length > 3) {
           String act = cmdl[2];
           if (act == "add" && cmdl.length > 6) {
             if (meps.length >= 15) {
               return("matreptoomany");
             }
+            for (Mmep mmep in meps) {
+              if (mmep.ondid == cmdl[4] && mmep.ipos == cmdl[5]) {
+                "matrep add sent a dupe".print();
+                return("matrepok");
+              }
+            }
+            matrepCh = true;
             meps += Mmep.new(cmdl[3], cmdl[4], cmdl[5], cmdl[6]);
             saveMeps();
             //ash.needsFsRestart = true;
           } elseIf (act == "rm" && cmdl.length > 5) {
             List nx = List.new();
-            for (Mmep mmep in meps) {
-              unless (mmep.ondid == cmdl[4] && mmep.ipos == cmdl[5]) {
+            for (mmep in meps) {
+              if (mmep.ondid == cmdl[4] && mmep.ipos == cmdl[5]) {
+                matrepCh = true;
+              } else {
                 nx += mmep;
               }
             }
@@ -725,11 +745,11 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
    checkDoMes();
    unless (triedCommission) {
      triedCommission = true;
-     checkGetCommission();
+     //commission();
    }
   }
 
-  checkGetCommission() {
+  commission() {
     emit(cc) {
       """
       //Matter.decommission();
@@ -754,9 +774,13 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
           //}
           }
         }
-        Serial.println("Matter Node is commissioned and connected to Wi-Fi. Ready for use.");
+        if (Matter.isDeviceCommissioned()) {
+          Serial.println("Matter Node is commissioned and connected to Wi-Fi. Ready for use.");
+        } else {
+          Serial.println("Matter was not commissioned.");
+        }
       } else {
-        //Serial.println("Matter Node already provisioned");
+        Serial.println("Matter Node already provisioned");
       }
       """
     }
