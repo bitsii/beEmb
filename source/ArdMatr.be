@@ -159,6 +159,9 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
       Bool triedCommission = false;
       Bool matrepCh = false;
     }
+    fields {
+      Bool timeToDecom = false;
+    }
   }
 
   handleCmdl(List cmdl) String {
@@ -172,7 +175,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
         } elseIf (cmdl.length > 2 && cmdl[2] == "commish") {
           commission();
         } elseIf (cmdl.length > 2 && cmdl[2] == "decommish") {
-          decommission();
+          timeToDecom = true;
         } elseIf (cmdl.length > 2 && cmdl[2] == "chrestart") {
           if (matrepCh) {
             "will restart chrestart".print();
@@ -747,6 +750,12 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
      triedCommission = true;
      //commission();
    }
+   if (timeToDecom) {
+     timeToDecom = false;
+     "decom".print();
+     decommission();
+     "decom done".print();
+   }
   }
 
   commission() {
@@ -789,7 +798,9 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
   decommission() {
     emit(cc) {
       """
-      Matter.decommission();
+      if (Matter.isDeviceCommissioned()) {
+        Matter.decommission();
+      }
       """
     }
   }

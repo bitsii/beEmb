@@ -1086,7 +1086,7 @@ class Embedded:AppShell {
      if (needsRestart) {
        needsRestart = false;
        "prep restart needsRestart".print();
-        nextRestart = nowup + 2000;
+        nextRestart = nowup + 9000;// was 2000 / two sec
      }
      if (needsFsRestart) {
        needsFsRestart = false;
@@ -1607,8 +1607,10 @@ class Embedded:AppShell {
     clearStates();
     ifNotEmit(noMatr) {
       if (def(matrserver)) {
+        "clearing meps".print();
         matrserver.clearMeps();
-        matrserver.decommission();
+        "meps cleared".print();
+        matrserver.timeToDecom = true;
       }
     }
     ifEmit(ehSvr) {
