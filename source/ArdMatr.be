@@ -264,15 +264,6 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
 
     ifNotEmit(noTds) {
       Embedded:Tds tdserver = ash.tdserver;
-      if (def(tdserver)) {
-        tdserver.mW = 9;
-        tdserver.mH = 6;
-        /*for (Embedded:Mmep mmep in ools) {
-          String kdn = "CasNic" + mmep.ondid;
-          tdserver.getAddr(kdn);
-          tdserver.update();
-        }*/
-      }
     }
 
     mepi = config.getPos("matr.meps");
@@ -483,11 +474,11 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
       }
       if (def(mmep)) {
         if (undef(mmep.sw) || mmep.sw != tost) {
-          String kdn = "CasNic" + mmep.ondid;
+          //String kdn = "CasNic" + mmep.ondid;
           //String scmds = "dostate " + mmep.spass + " " + mmep.ipos + " setsw " + sts + " e";
           //String scres = sendCmd(kdn, scmds);
           String scmds = "sp2 " + doSec(mmep.spass) + " dostate X " + mmep.ipos + " setsw " + sts + " e";
-          String scres = sendCmd(kdn, scmds);
+          String scres = sendCmd(mmep, scmds);
           if (TS.notEmpty(scres)) {
             ("scres " + scres).print();
             if (scres.has(CNS.ok)) {
@@ -505,9 +496,9 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
       ("bidx " + bidx + " bb " + bb).print();
       mmep = meps.get(bidx);
       if (def(mmep) && bb > 0) {
-         kdn = "CasNic" + mmep.ondid;
+         //kdn = "CasNic" + mmep.ondid;
          scmds = "sp2 " + doSec(mmep.spass) + " dostate X " + mmep.ipos + " setlvl " + bb + " e";
-         sendCmd(kdn, scmds);
+         sendCmd(mmep, scmds);
       }
     }
     if (def(eidx) && def(est) && def(ebb) && def(ewt) && def(er) && def(eg) && def(eb)) {
@@ -579,8 +570,8 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
             scmds = "sp2 " + doSec(mmep.spass) + " dostatexd X " + mmep.ipos + " setrgbcw " + rgblct + " " + xd + " " + " e";
           }
           if (TS.notEmpty(scmds)) {
-            kdn = "CasNic" + mmep.ondid;
-            scres = sendCmd(kdn, scmds);
+            //kdn = "CasNic" + mmep.ondid;
+            scres = sendCmd(mmep, scmds);
             //if fails set etost to false
             unless (TS.notEmpty(scres) && scres.has(CNS.ok)) {
               "attempt failed setting etost false".print();
@@ -594,9 +585,9 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
           //turn it off
           unless (def(eclFirst) && eclFirst) {
             ("ecl will dostate sw off").print();
-            kdn = "CasNic" + mmep.ondid;
+            //kdn = "CasNic" + mmep.ondid;
             scmds = "sp2 " + doSec(mmep.spass) + " dostate X " + mmep.ipos + " setsw " + ests + " e";
-            scres = sendCmd(kdn, scmds);
+            scres = sendCmd(mmep, scmds);
             unless (TS.notEmpty(scres) && scres.has(CNS.ok)) {
               "attempt failed setting etost true".print();
               //if fails set etost to true
@@ -626,9 +617,9 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
         //("doing getsw for mep " + nextSwCheckIdx).print();
         mmep = meps.get(nextSwCheckIdx);
         if (def(mmep)) {
-          kdn = "CasNic" + mmep.ondid;
+          //kdn = "CasNic" + mmep.ondid;
           scmds = "sp2 " + doSec(mmep.spass) + " dostate X " + mmep.ipos + " getsw e";
-          String res = sendCmd(kdn, scmds);
+          String res = sendCmd(mmep, scmds);
           if (TS.notEmpty(res)) {
             //("got res |" + res + "|").print();
             if (res.has(CNS.on)) {
@@ -699,8 +690,9 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
     return(iv + " " + sec);
   }
 
-  sendCmd(String kdn, String scmds) String {
+  sendCmd(Mmep mmep, String scmds) String {
       String mcmdres;
+      String kdn = "CasNic" + mmep.ondid;
       ("checkDoMes kdn scmds |" + kdn + "| |" + scmds + "|").print();
       ifNotEmit(noTds) {
       Embedded:Tds tdserver = ash.tdserver;
@@ -710,9 +702,14 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
           "selfgate".print();
           //mcmdres = doCmd("matr", scmds);
         } else {
-          String rip = tdserver.reallyGetAddr(kdn);
+          if (TS.notEmpty(mmep.rip)) {
+            rip = mmep.rip;
+          } else {
+            String rip = tdserver.reallyGetAddr(kdn);
+          }
           if (rip != CNS.undefined) {
             ("rip " + rip).print();
+            mmep.rip = rip;
             //look for r and n, send back r n (it's already there) FALSE NOT FROM MQ IT ISN'T
             //String ppay = preq.checkGetPayload(readBuf, slashn);
             var tcpc = Embedded:TCPClient.new(rip, 6420);
@@ -730,7 +727,8 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
             if (TS.isEmpty(tcpcres)) {
               //"tcpcres empty".print();
               //in case ip changed rewantit
-              tdserver.wants = kdn;
+              mmep.rip = null;
+              tdserver.sayWantsCb(kdn, mmep);
             } else {
               //("tcpcres " + tcpcres).print();
               mcmdres = tcpcres;

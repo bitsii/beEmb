@@ -48,29 +48,18 @@ const int port = 3121;
 
   new(String _myName, _ash) self {
     slots {
-      String amc = "am2:";
-      String wac = "want2:";
+      String amc = "am3:";
+      String wac = "want3:";
       String mySay = amc + _myName + "#" + Wifi.localIP;
       String myWants = wac + _myName;
-      //w - wanted (requested names)
-      //h - happened - some we got, wanted or not
-      //N - names
-      //A - addrs
-      //m - max we'll hold
-      //o - spot we're on for new ones
-      List wN = List.new();
-      List wA = List.new();
-      List hN = List.new();
-      List hA = List.new();
-      Int oW = 0;
-      Int oH = 0;
-      String myName = _myName;
+      //String myName = _myName;
       Embedded:AppShell ash = _ash;
-    }
-    fields {
-      Int mW = 6;
-      Int mH = 3;
-      String wants;
+      String waits;
+      String waitsRip;
+      String gots;
+      String gotsRip;
+      String sayMy;
+      String sayWants;
     }
   }
 
@@ -117,7 +106,6 @@ const int port = 3121;
   
   start() self {
     startListen();
-    say(mySay);
   }
 
   update() self {
@@ -145,102 +133,75 @@ const int port = 3121;
     //beq->bevl_rip = new BEC_2_4_6_TextString(rips);
     std::string msgs = std::string(msg);
     beq->bevl_msg = new BEC_2_4_6_TextString(msgs);
-    delay(20);
+    delay(10);
   }
   """
   }
     if (def(msg)) {
       ("be msg|" + msg + "|").print();
       if (msg.begins(amc)) {
+        Int ax = msg.find(":");
         Int dx = msg.find("#");
         if (def(dx)) {
           rip = msg.substring(dx + 1, msg.length);
-          msg = msg.substring(0, dx);
+          msg = msg.substring(ax + 1, dx);
         }
         if (TS.notEmpty(rip)) {
           ("be rip|" + rip + "|").print();
-          Int p = wN.find(msg);
-          if (def(p)) {
-            wA.put(p, rip);
-          } else {
-            p = hN.find(msg);
-            if (def(p)) {
-              hA.put(p, rip);
-            } else {
-              hN.put(oH, msg);
-              hA.put(oH, rip);
-              oH++;
-              if (oH >= mH) {
-                oH = 0;
-              }
+          if (TS.notEmpty(waits) && msg == waits) {
+            waitsRip = rip;
+            if (def(cb)) {
+              cb.gotWants(waits, rip);
+              cb = null;
             }
+          } else {
+            gots = msg;
+            gotsRip = rip;
           }
         }
       } elseIf (msg == myWants) {
-        say(mySay);
-      } elseIf (msg.begins(wac)) {
-        String wnm = msg.substring(wac.length, msg.length);
-        mdnsGet(wnm);
+        sayMy = mySay;
       }
-    } elseIf (TS.notEmpty(wants)) {
-      say(wac + wants);
-      mdnsGet(wants);
-      wants = null;
+    } elseIf (TS.notEmpty(sayMy)) {
+      say(sayMy);
+      sayMy = null;
+    } elseIf (TS.notEmpty(sayWants)) {
+      say(sayWants);
+      sayWants = null;
     }
   }
 
-  mdnsGet(wnm) {
-    ifNotEmit(noMdns) {
-    if (TS.notEmpty(wnm)) {
-      //("in mdnsGet |" + wnm + "|").print();
-      if (def(ash.mdserver)) {
-        String tqip = ash.mdserver.getAddr(wnm);
-        if (TS.notEmpty(tqip)) {
-          //("mdnsGet tqip |" + tqip + "|").print();
-          say(amc + wnm + "#" + tqip);
-        } else {
-          //"tqip empty".print();
-        }
-      }
-    } else {
-      //"got empty wnm in mdnsGet".print();
+  sayWants(String wants) {
+    sayWants = wac + wants;
+  }
+
+  sayWantsCb(String wants, _cb) {
+    slots {
+      any cb = _cb;
     }
-    }
+    sayWants(wants);
   }
 
   getAddr(String name) String {
-    String msg = amc + name;
-    String res;
-    Int p = wN.find(msg);
-    if (def(p)) {
-      res = wA.get(p);
-    } else {
-      p = hN.find(msg);
-      if (def(p)) {
-       res = hA.get(p);
+    if (TS.notEmpty(name)) {
+      if (TS.notEmpty(waits) && waits == name && TS.notEmpty(waitsRip)) {
+        return(waitsRip);
+      } elseIf (TS.notEmpty(gots) && gots == name && TS.notEmpty(gotsRip)) {
+        return(gotsRip);
       } else {
-        wN.put(oW, msg);
-        wA.put(oW, null);
-        oW++;
-        if (oW >= mW) {
-          oW = 0;
-        }
+        sayWants(name);
       }
     }
-    if (TS.isEmpty(res)) {
-      res = CNS.undefined;
-      wants = name;
-    }
-    return(res);
+    return(CNS.undefined);
   }
 
   reallyGetAddr(String kdn) String {
     String rip = getAddr(kdn);
     if (rip == CNS.undefined) {
-      for (Int i = 0;i < 5;i++) {
+      for (Int i = 0;i < 3;i++) {
         ("no rip " + i).print();
         update();
-        ash.app.delay(25);
+        ash.app.delay(15);
         update();
         rip = getAddr(kdn);
         if (rip != CNS.undefined) {

@@ -542,11 +542,6 @@ class Embedded:AppShell {
         if (undef(tdserver)) {
           tdserver = Embedded:Tds.new(myName, self);
           tdserver.start();
-          ifEmit(smcGm) {
-            //increase tdserver so I have addrs when I need them, I need moar than the uge
-            tdserver.mW = 9;
-            tdserver.mH = 6;
-          }
         }
       }
     }
@@ -739,11 +734,11 @@ class Embedded:AppShell {
      if (TS.notEmpty(pow)) {
        Int powi = Int.new(pow);
        powi++;
-       if (powi > 4) {
-         powi = 4;
+       if (powi > 3) {
+         powi = 3;
        }
-       if (powi == 4 && resetByPow) {
-         inResetByPow = true;
+       if (powi > 2 && resetByPow) {
+         inResetByPow = true; //if was long running, must plug and unplug 3 times lt 30 secs each time
          "now inResetByPow".print();
        }
      } else {
@@ -816,7 +811,7 @@ class Embedded:AppShell {
       return(self);
      }
      if (nowup > nextPow) {
-      nextPow = nowup + 45000;//45 secs
+      nextPow = nowup + 30000;//30 secs
       clearPow();
       return(self);
      }
@@ -921,7 +916,7 @@ class Embedded:AppShell {
                           if (TS.isEmpty(tcpcres)) {
                             //"tcpcres empty".print();
                             //in case ip changed rewantit
-                            tdserver.wants = kdn;
+                            tdserver.sayWants(kdn);
                           } else {
                             //("tcpcres " + tcpcres).print();
                             mcmdres = tcpcres;
@@ -1407,7 +1402,7 @@ class Embedded:AppShell {
         } elseIf (cmd == "gettda") {
           ifNotEmit(noTds) {
             if (def(tdserver)) {
-              return(tdserver.getAddr(cmdl[2]));
+              return(tdserver.reallyGetAddr(cmdl[2]));
             }
           }
           return(CNS.ok);
