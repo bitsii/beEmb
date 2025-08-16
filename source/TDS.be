@@ -83,7 +83,7 @@ const int port = 3121;
     udp.beginPacket(broadcast, port);
     udp.write(msg8, strlen(msg));
     udp.endPacket();
-    delay(10);
+    delay(5);
 
     """
     }
@@ -133,7 +133,7 @@ const int port = 3121;
     //beq->bevl_rip = new BEC_2_4_6_TextString(rips);
     std::string msgs = std::string(msg);
     beq->bevl_msg = new BEC_2_4_6_TextString(msgs);
-    delay(10);
+    delay(5);
   }
   """
   }
@@ -195,21 +195,5 @@ const int port = 3121;
     return(CNS.undefined);
   }
 
-  reallyGetAddr(String kdn) String {
-    String rip = getAddr(kdn);
-    if (rip == CNS.undefined) {
-      for (Int i = 0;i < 3;i++) {
-        ("no rip " + i).print();
-        update();
-        ash.app.delay(15);
-        update();
-        rip = getAddr(kdn);
-        if (rip != CNS.undefined) {
-          break;
-        }
-      }
-    }
-    return(rip);
-  }
 
 }

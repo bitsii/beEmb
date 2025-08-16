@@ -705,7 +705,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
           if (TS.notEmpty(mmep.rip)) {
             rip = mmep.rip;
           } else {
-            String rip = tdserver.reallyGetAddr(kdn);
+            String rip = tdserver.getAddr(kdn);
           }
           if (rip != CNS.undefined) {
             ("rip " + rip).print();

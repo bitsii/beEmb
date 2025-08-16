@@ -894,7 +894,7 @@ class Embedded:AppShell {
                 } else {
                   ifNotEmit(noTds) {
                     if (def(tdserver)) {
-                        String rip = tdserver.reallyGetAddr(kdn);
+                        String rip = tdserver.getAddr(kdn);
                         if (rip == CNS.undefined) {
                           "no rip".print();
                         } else {
@@ -1402,7 +1402,7 @@ class Embedded:AppShell {
         } elseIf (cmd == "gettda") {
           ifNotEmit(noTds) {
             if (def(tdserver)) {
-              return(tdserver.reallyGetAddr(cmdl[2]));
+              return(tdserver.getAddr(cmdl[2]));
             }
           }
           return(CNS.ok);
