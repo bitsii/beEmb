@@ -12,15 +12,12 @@
 //#define BESPEC_SW "1,p2.Generic.22"  //supergeneric
 //#define BESPEC_SW "1,p2.WNN.31"  //nodemcu
 //#define BESPEC_SW "1,q,p3,p2.Rando.69" //testing changes
-#define BESPEC_SW "1,q,ge1,gm,t2,p6,p2.rGE.86"  //nodemcu
-//q = quickstate, t1 tds multicast discovery, p6 auth with reid ret, dm direct mq, pm proxy over mq
-//p2 auth type 2 (hash), p2 always last
-//
+#define BESPEC_SW "1,q,nm,a1,t3,p6,p2.rMatrC6N8.113"  //nodemcu q = quickstate, p2 auth type 2 (hash), p2 always last
 //#define BESPEC_SW  "0.DollaTek.20" //dollatek 2mb 1led
 //#define BESPEC_SW "1,p2.WNAP2.29" //Athom Plug V2 US THE REAL ONE
 // UPD
-#define BE_UPDBASE "na"  //if we don't have one.  otherwise, the url base for the update ver txt file and binfiles
-//#define BE_UPDBASE "http://storage.googleapis.com/casnicdl.casnic.net/pfnodemcu32.ino.esp32c3"
+//#define BE_UPDBASE "na"  //if we don't have one.  otherwise, the url base for the update ver txt file and binfiles
+#define BE_UPDBASE "http://storage.googleapis.com/casnicdl.casnic.net/pfmatrc6n8.ino.esp32c6"
 //
 // CON - definition of device's controls
 // ctlconfver.control.ctlconf,args.control.ctlconf,args
