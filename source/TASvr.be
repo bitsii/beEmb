@@ -135,7 +135,7 @@ class Embedded:TAServer {
 
     if (tadslen <= 0) { Int ivdiv = 1; } else { ivdiv = tadslen; }
     slots {
-      Int failCheckIv = 600000; //millis per fail check and rescan
+      Int failCheckIv = 1200000; //millis per fail check and rescan 600000 10 mins 1200000 20 mins
       //Int failCheckIv = 30000;
       Int nextFailCheck = ash.nowup + failCheckIv;
       Int disCheckIv = 250; //ms pause between checks when scanning ffor devices
