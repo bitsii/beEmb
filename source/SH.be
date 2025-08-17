@@ -167,7 +167,13 @@ class Embedded:AppShell {
    }
 
    doState(Int ctlPos, List cmdl) String {
-     return(controls[ctlPos].doState(cmdl));
+     //"in doState".print();
+     any con = controls[ctlPos];
+     if (def(con)) {
+       //"calling con".print();
+       return(con.doState(cmdl));
+     }
+     return(null);
    }
 
    getLastEvents(List cmdl) String {
@@ -1016,6 +1022,7 @@ class Embedded:AppShell {
         if (TS.notEmpty(ppay)) {
             try {
                 String pcmdres = doCmd("tcp", ppay);
+                //"fin doCmd tcp".print();
                 if (TS.isEmpty(pcmdres)) {
                   "pcmdres empty".print();
                 } else {
@@ -1342,7 +1349,7 @@ class Embedded:AppShell {
        Int ctlPos = app.strToInt(cmdl[2]);
        stateres = doState(ctlPos, cmdl);
        //("dosl cmdl len " + cmdl.length).print();
-       if (cmdl.length > 5) {
+       if (cmdl.length > 5 && def(stateres)) {
          stateres = cmdl[4] + " " + stateres;
        }
        return(stateres);
@@ -1384,6 +1391,7 @@ class Embedded:AppShell {
         if (cmd == "dostate") {
           ctlPos = app.strToInt(cmdl[2]);
           String stateres = doState(ctlPos, cmdl);
+          //"returning stateres".print();
           return(stateres);
         } elseIf (cmd == "dostatexd") {
           ctlPos = app.strToInt(cmdl[2]);
