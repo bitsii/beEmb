@@ -50,6 +50,10 @@ class Embedded:TAServer {
           //ash.needsFsRestart = true;
         } elseIf (cmdl.length > 2 && cmdl[2] == "startdis") {
           startDis();
+        } elseIf (cmdl.length > 4 && cmdl[2] == "startdisr") {
+          minDisIp = Int.new(cmdl[3]);
+          maxDisIp = Int.new(cmdl[4]);
+          startDis();
         } elseIf (cmdl.length > 2 && cmdl[2] == "testdt") {
           testDetectType();
         } elseIf (cmdl.length > 2 && cmdl[2] == "testgm") {
