@@ -45,11 +45,6 @@ class Embedded:AppShell {
      }
      slots {
        Int shpowi;
-       ifNotEmit(noSmc) {
-         Int smcconi;
-         Int smcui;
-         Int smcpi;
-       }
 
        Int zero = 0;
        Int nextSwSpec = 0;
@@ -89,11 +84,6 @@ class Embedded:AppShell {
      config.load();
 
      shpowi = config.getPos("sh.pow");
-     ifNotEmit(noSmc) {
-       smcconi = config.getPos("smc.con");
-       smcui = config.getPos("smc.u");
-       smcpi = config.getPos("smc.p");
-     }
 
      app.uptime(nowup);
      nextSwSpec = nowup + 540000;
@@ -520,8 +510,11 @@ class Embedded:AppShell {
             String smcu;
             String smcp;
           }
+          Int smcconi = config.getPos("smc.con");
           smccon = config.get(smcconi);
+          Int smcui = config.getPos("smc.u");
           smcu = config.get(smcui);
+          Int smcpi = config.getPos("smc.p");
           smcp = config.get(smcpi);
         }
         checkStartSmcServer();
@@ -905,10 +898,29 @@ class Embedded:AppShell {
                 } else {
                   ifNotEmit(noTds) {
                     if (def(tdserver)) {
-                        String rip = tdserver.getAddr(kdn);
-                        if (rip == CNS.undefined) {
-                          "no rip".print();
-                        } else {
+                        List nrips = smcserver.nrips;
+                        Int nrl = nrips.length;
+                        Int fnripp;
+                        for (Int nripp = 0;nripp < nrl, nripp++) {
+                          String nrip = nrips[nripp];
+                          if (TS.notEmpty(nrip) && nrip.begins(kdn)) {
+                            rip = nrip.substring(nrip.find(",") + 1, nrip.length);
+                            fnripp = nripp;
+                            "got rip rips".print();
+                            break;
+                          }
+                        }
+                        if (TS.isEmpty(rip)) {
+                          String rip = tdserver.getAddr(kdn);
+                          if (rip == CNS.undefined) {
+                            "no rip tds".print();
+                          } else {
+                            "got rip tds".print();
+                            Int nrp = System:Random.getIntMax(smcserver.nrips.length);
+                            smcserver.nrips.put(nrp, kdn + "," + rip);
+                          }
+                        }
+                        if (TS.notEmpty(rip)) {
                           ("rip " + rip).print();
                           //look for r and n, send back r n (it's already there) FALSE NOT FROM MQ IT ISN'T
                           //String ppay = preq.checkGetPayload(readBuf, slashn);
@@ -927,6 +939,9 @@ class Embedded:AppShell {
                           if (TS.isEmpty(tcpcres)) {
                             //"tcpcres empty".print();
                             //in case ip changed rewantit
+                            if (def(fnripp)) {
+                              nrips[fnripp] = null;
+                            }
                             tdserver.sayWants(kdn);
                           } else {
                             //("tcpcres " + tcpcres).print();
@@ -1533,6 +1548,9 @@ class Embedded:AppShell {
         }
      } elseIf (cmd == "setsmc") {
        ifNotEmit(noSmc) {
+         Int smcconi = config.getPos("smc.con");
+         Int smcui = config.getPos("smc.u");
+         Int smcpi = config.getPos("smc.p");
          //cmds = "setsmc " + devPass + " nohex " + smch + " " + bkrs[2] + " " + bkrs[0] + " " + mqr["mqttUser"] + " " + mqr["mqttPass"] + " e";
         if (cmdl.length > 5) {
         if (cmdl[2] == "hex") {
@@ -1550,9 +1568,10 @@ class Embedded:AppShell {
           config.put(smcpi, smcp);
         } else {
           "clearing smc".print();
-          config.put(smcconi, "");
-          config.put(smcui, "");
-          config.put(smcpi, "");
+          String es = "";
+          config.put(smcconi, es);
+          config.put(smcui, es);
+          config.put(smcpi, es);
         }
         }
         return("smcok");
@@ -1645,8 +1664,11 @@ class Embedded:AppShell {
       }
     }
     ifNotEmit(noSmc) {
+      Int smcconi = config.getPos("smc.con");
       config.put(smcconi, es);
+      Int smcui = config.getPos("smc.u");
       config.put(smcui, es);
+      Int smcpi = config.getPos("smc.p");
       config.put(smcpi, es);
     }
     needsFsRestart = true;

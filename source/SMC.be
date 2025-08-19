@@ -72,6 +72,11 @@ std::unique_ptr<MqttClient> mqclient;
         """
       }
     }
+    ifEmit(smcGm) {
+      fields {
+        List nrips = List.new(12);
+      }
+    }
   }
 
   new(String _mqttServer, Int _mqttPort, Bool _ssl, String _user, String _pass) self {
