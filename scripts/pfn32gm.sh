@@ -4,7 +4,7 @@ export APPBLDNM=pfn32gm
 
 mkdir -p $APPBLDNM
 
-echo "Profile for a Esp32 NodeMCU composed Matter switch/light proxy.  Serial input enabled." > $APPBLDNM/README.txt
+echo "Profile for a Esp32 NodeMCU Mqtt Gateway.  Serial input enabled." > $APPBLDNM/README.txt
 
 export BEEMB_CONF=../beEmb/confs/${APPBLDNM}.hpp
 
