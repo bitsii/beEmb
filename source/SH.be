@@ -40,16 +40,10 @@ class Embedded:AppShell {
        List loopers = List.new();
        List sxd = List.new();
        List sxdi = List.new();
-       Embedded:TCPClient concon;
        Bool needsFsRestart = false;
        String swSpec;
      }
      slots {
-       Int shpassi;
-       Int shspassi;
-       Int shssidi;
-       Int shseci;
-       Int shdidi;
        Int shpowi;
        ifNotEmit(noSmc) {
          Int smcconi;
@@ -94,11 +88,6 @@ class Embedded:AppShell {
      "loading config".print();
      config.load();
 
-     shpassi = config.getPos("sh.pass");
-     shspassi = config.getPos("sh.spass");
-     shssidi = config.getPos("sh.ssid");
-     shseci = config.getPos("sh.sec");
-     shdidi = config.getPos("sh.did");
      shpowi = config.getPos("sh.pow");
      ifNotEmit(noSmc) {
        smcconi = config.getPos("smc.con");
@@ -236,6 +225,8 @@ class Embedded:AppShell {
       }
       pin = pinpart + pinpart;
 
+
+      Int shdidi = config.getPos("sh.did");
       did = config.get(shdidi);
       if (TS.isEmpty(did)) {
         did = System:Random.getString(16).lowerValue();
@@ -250,7 +241,9 @@ class Embedded:AppShell {
         String spass;
       }
 
+      Int shpassi = config.getPos("sh.pass");
       pass = config.get(shpassi);
+      Int shspassi = config.getPos("sh.spass");
       spass = config.get(shspassi);
 
    }
@@ -445,7 +438,15 @@ class Embedded:AppShell {
      }
      slots {
        Embedded:TCPServer tcpserver;
-       Embedded:TCPServer conserver;
+     }
+
+     ifEmit (tcCon) {
+       slots {
+        Embedded:TCPServer conserver;
+      }
+      fields {
+        Embedded:TCPClient concon;
+      }
      }
 
      app.wdtFeed();
@@ -485,6 +486,7 @@ class Embedded:AppShell {
         tcpserver = Embedded:TCPServer.new(6420);
         tcpserver.start();
 
+        ifEmit (tcCon) {
         String tccon;
         emit(cc) {
           """
@@ -498,6 +500,7 @@ class Embedded:AppShell {
           conserver.start();
         }
         ("tcpconsole " + tccon).print();
+        }
 
         ifNotEmit(noWeb) {
          tweb = Embedded:TinyWeb.new();
@@ -695,7 +698,9 @@ class Embedded:AppShell {
        String ssid;
        String sec;
      }
+     Int shssidi = config.getPos("sh.ssid");
      ssid = config.get(shssidi);
+     Int shseci = config.getPos("sh.sec");
      sec = config.get(shseci);
      //("shssidi " + shssidi).print();
      //("shseci " + shseci).print();
@@ -1061,6 +1066,7 @@ class Embedded:AppShell {
          eupd.handleLoop();
        }
      }
+     ifEmit (tcCon) {
      if (def(conserver)) {
        if (undef(concon)) {
         concon = conserver.checkGetClient();
@@ -1069,6 +1075,7 @@ class Embedded:AppShell {
           concon = null;
         }
        }
+     }
      }
      looperI.setValue(zero);
      while (looperI < loopers.length) {
@@ -1454,6 +1461,7 @@ class Embedded:AppShell {
       if (TS.isEmpty(newpass)) {
         return("Error, new password is required");
       } else {
+        Int shpassi = config.getPos("sh.pass");
         config.put(shpassi, newpass);
         pass = newpass;
       }
@@ -1463,11 +1471,13 @@ class Embedded:AppShell {
         return("Error, new spass is required");
       }
       spass = newspass;
+      Int shspassi = config.getPos("sh.spass");
       config.put(shspassi, spass);
 
       String newdid = cmdl[4];
       if (TS.notEmpty(did) && did.length == 16) {
         did = newdid;
+        Int shdidi = config.getPos("sh.did");
         config.put(shdidi, did);
       } else {
         return("Error, newdid sized 16 required");
@@ -1493,6 +1503,8 @@ class Embedded:AppShell {
      }
 
      if (cmd == "setwifi") {
+        Int shssidi = config.getPos("sh.ssid");
+        Int shseci = config.getPos("sh.sec");
         if (cmdl[2] == "hex") {
           ssid = Encode:Hex.decode(cmdl[3]);
           sec = Encode:Hex.decode(cmdl[4]);
@@ -1602,11 +1614,17 @@ class Embedded:AppShell {
    }
 
    reset() {
-    config.put(shpassi, "");
-    config.put(shssidi, "");
-    config.put(shseci, "");
-    config.put(shspassi, "");
-    config.put(shdidi, "");
+    String es = "";
+    Int shpassi = config.getPos("sh.pass");
+    config.put(shpassi, es);
+    Int shssidi = config.getPos("sh.ssid");
+    config.put(shssidi, es);
+    Int shseci = config.getPos("sh.sec");
+    config.put(shseci, es);
+    Int shspassi = config.getPos("sh.spass");
+    config.put(shspassi, es);
+    Int shdidi = config.getPos("sh.did");
+    config.put(shdidi, es);
     clearStates();
     ifNotEmit(noMatr) {
       if (def(matrserver)) {
@@ -1627,9 +1645,9 @@ class Embedded:AppShell {
       }
     }
     ifNotEmit(noSmc) {
-      config.put(smcconi, "");
-      config.put(smcui, "");
-      config.put(smcpi, "");
+      config.put(smcconi, es);
+      config.put(smcui, es);
+      config.put(smcpi, es);
     }
     needsFsRestart = true;
    }

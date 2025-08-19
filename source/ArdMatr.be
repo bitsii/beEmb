@@ -335,7 +335,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
 
     if (mepslen <= 0) { Int ivdiv = 1; } else { ivdiv = mepslen; }
     slots {
-      Int swCheckIv = 120000 / ivdiv;//millis per each check on any given device 30000 30 secs, 120000 2 mins
+      Int swCheckIv = 1800000 / ivdiv;//millis per each check on any given device 30000 30 secs, 120000 2 mins, 1800000 30 mins
       Int nextSwCheck = ash.nowup + swCheckIv;
       Int nextSwCheckIdx = 0;
     }

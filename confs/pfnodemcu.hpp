@@ -12,12 +12,12 @@
 //#define BESPEC_SW "1,p2.Generic.22"  //supergeneric
 //#define BESPEC_SW "1,p2.WNN.31"  //nodemcu
 //#define BESPEC_SW "1,q,p3,p2.Rando.69" //testing changes
-#define BESPEC_SW "1,q,t3,p6,p2.rNodeMCU.105"  //nodemcu q = quickstate, p2 auth type 2 (hash), p2 always last
+#define BESPEC_SW "1,q,t3,p6,p2.rNodeMCU.106"  //nodemcu q = quickstate, p2 auth type 2 (hash), p2 always last
 //#define BESPEC_SW  "0.DollaTek.20" //dollatek 2mb 1led
 //#define BESPEC_SW "1,p2.WNAP2.29" //Athom Plug V2 US THE REAL ONE
 // UPD
-//#define BE_UPDBASE "na"  //if we don't have one.  otherwise, the url base for the update ver txt file and binfiles
-#define BE_UPDBASE "http://storage.googleapis.com/casnicdl.casnic.net/pfnodemcu.ino.generic"
+#define BE_UPDBASE "na"  //if we don't have one.  otherwise, the url base for the update ver txt file and binfiles
+//#define BE_UPDBASE "http://storage.googleapis.com/casnicdl.casnic.net/pfnodemcu.ino.generic"
 //
 // CON - definition of device's controls
 // ctlconfver.control.ctlconf,args.control.ctlconf,args
@@ -60,8 +60,8 @@
 // things like bulbs/less sensitive devices w/out another reasonable choice, it should be enabled.  device
 // waits a bit for the wifi to come up when configured  to avoid power losses leading to entering this mode
 //
-#define BE_RESETBYPOW "on" //enabled
-//#define BE_RESETBYPOW "off" //disabled
+//#define BE_RESETBYPOW "on" //enabled
+#define BE_RESETBYPOW "off" //disabled
 //
 // tcpconsole - if you want to enable a debugish tcp port on the device (all be prints will be echoed there)
 // turn BE_TCPCONSOLE on, otherwise leave off.  only for development, really only useful if serial connection

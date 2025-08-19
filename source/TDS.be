@@ -147,7 +147,7 @@ const int port = 3121;
           msg = msg.substring(ax + 1, dx);
         }
         if (TS.notEmpty(rip)) {
-          ("be rip|" + rip + "|").print();
+          //("be rip|" + rip + "|").print();
           if (TS.notEmpty(waits) && msg == waits) {
             waitsRip = rip;
             if (def(cb)) {
