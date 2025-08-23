@@ -1575,7 +1575,7 @@ class Embedded:AppShell {
         }
         }
         return("smcok");
-     } elseIf (cmd == "matrep") {
+     } elseIf (cmd == "brd") {
        ifNotEmit(noMatr) {
          if (def(matrserver)) {
            return(matrserver.handleCmdl(cmdl));

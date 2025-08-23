@@ -16,147 +16,20 @@ use Text:Strings as TS;
 use Embedded:AppShell;
 use Embedded:Config;
 
-//
-//https://github.com/espressif/arduino-esp32/blob/master/libraries/Matter/examples/MatterOnOffLight/MatterOnOffLight.ino
-//put in BEAR_Imports.hpp for esp32
-//#include <Matter.h>
-//
-//looks like max 15 devices/endpoints supported at present
-
 use Embedded:CommonNames as CNS;
-use Embedded:Mmep;
+use Embedded:Hqd;
 
-emit(cc) {
-  """
-
-  using sloocb = std::function<bool(bool)>;
-  using sdlscb = std::function<bool(bool,uint8_t)>;
-  using seclscb = std::function<bool(bool, espHsvColor_t, uint8_t, uint16_t)>;
-
-  std::mutex cmdsLk;
-  std::deque<int> cmdsDq;
-  std::deque<bool> stateDq;
-  std::deque<uint8_t> brightDq;
-  std::deque<uint16_t> tempDq;
-  std::deque<espHsvColor_t> hsvDq;
-
-  bool setLightOnOff(size_t idx, bool state) {
-    Serial.printf("setLightOnOff %zu changed state to: %d\r\n", idx, state);
-    cmdsLk.lock();
-    try {
-      cmdsDq.push_front(0);
-      cmdsDq.push_front(idx);
-      stateDq.push_front(state);
-    } catch (...) {
-      cmdsLk.unlock();
-    }
-    cmdsLk.unlock();
-    return true;
-  }
-  bool sloo0(bool state) { return setLightOnOff(0, state); }
-  bool sloo1(bool state) { return setLightOnOff(1, state); }
-  bool sloo2(bool state) { return setLightOnOff(2, state); }
-  bool sloo3(bool state) { return setLightOnOff(3, state); }
-  bool sloo4(bool state) { return setLightOnOff(4, state); }
-  bool sloo5(bool state) { return setLightOnOff(5, state); }
-  bool sloo6(bool state) { return setLightOnOff(6, state); }
-  bool sloo7(bool state) { return setLightOnOff(7, state); }
-  bool sloo8(bool state) { return setLightOnOff(8, state); }
-  bool sloo9(bool state) { return setLightOnOff(9, state); }
-  bool sloo10(bool state) { return setLightOnOff(10, state); }
-  bool sloo11(bool state) { return setLightOnOff(11, state); }
-  bool sloo12(bool state) { return setLightOnOff(12, state); }
-  bool sloo13(bool state) { return setLightOnOff(13, state); }
-  bool sloo14(bool state) { return setLightOnOff(14, state); }
-
-  std::vector<sloocb> sloocbs = { sloo0, sloo1, sloo2, sloo3, sloo4, sloo5, sloo6, sloo7, sloo8, sloo9, sloo10, sloo11, sloo12, sloo13, sloo14 };
-
-  bool setDimLightState(size_t idx, bool state, uint8_t brightness) {
-    Serial.printf("setDimLightState %zu changed state to: %d %u\r\n", idx, state, brightness);
-    cmdsLk.lock();
-    try {
-      if (state) {
-        cmdsDq.push_front(1);
-        cmdsDq.push_front(idx);
-        brightDq.push_front(brightness);
-      } else {
-        cmdsDq.push_front(0);
-        cmdsDq.push_front(idx);
-        stateDq.push_front(state);
-      }
-    } catch (...) {
-      cmdsLk.unlock();
-    }
-    cmdsLk.unlock();
-    return true;
-  }
-
-  bool sdls0(bool state, uint8_t brightness) { return setDimLightState(0, state, brightness); }
-  bool sdls1(bool state, uint8_t brightness) { return setDimLightState(1, state, brightness); }
-  bool sdls2(bool state, uint8_t brightness) { return setDimLightState(2, state, brightness); }
-  bool sdls3(bool state, uint8_t brightness) { return setDimLightState(3, state, brightness); }
-  bool sdls4(bool state, uint8_t brightness) { return setDimLightState(4, state, brightness); }
-  bool sdls5(bool state, uint8_t brightness) { return setDimLightState(5, state, brightness); }
-  bool sdls6(bool state, uint8_t brightness) { return setDimLightState(6, state, brightness); }
-  bool sdls7(bool state, uint8_t brightness) { return setDimLightState(7, state, brightness); }
-  bool sdls8(bool state, uint8_t brightness) { return setDimLightState(8, state, brightness); }
-  bool sdls9(bool state, uint8_t brightness) { return setDimLightState(9, state, brightness); }
-  bool sdls10(bool state, uint8_t brightness) { return setDimLightState(10, state, brightness); }
-  bool sdls11(bool state, uint8_t brightness) { return setDimLightState(11, state, brightness); }
-  bool sdls12(bool state, uint8_t brightness) { return setDimLightState(12, state, brightness); }
-  bool sdls13(bool state, uint8_t brightness) { return setDimLightState(13, state, brightness); }
-  bool sdls14(bool state, uint8_t brightness) { return setDimLightState(14, state, brightness); }
-
-  std::vector<sdlscb> sdlscbs = { sdls0, sdls1, sdls2, sdls3, sdls4, sdls5, sdls6, sdls7, sdls8, sdls9, sdls10, sdls11, sdls12, sdls13, sdls14 };
-
-  bool setECLState(size_t idx, bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) {
-    Serial.printf("setECLState %zu changed to: state %d bright %u temp %u\r\n", idx, state, brightness, witemp);
-    Serial.printf("hsv %u %u %u\r\n", color.h, color.s, color.v);
-    cmdsLk.lock();
-    try {
-      cmdsDq.push_front(2);
-      cmdsDq.push_front(idx);
-      stateDq.push_front(state);
-      brightDq.push_front(brightness);
-      tempDq.push_front(witemp);
-      hsvDq.push_front(color);
-    } catch (...) {
-      cmdsLk.unlock();
-    }
-    cmdsLk.unlock();
-    return true;
-  }
-
-  //std::function<bool(bool, espHsvColor_t, uint8_t, uint16_t)>;
-  bool secls0(bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) { return setECLState(0, state, color, brightness, witemp); }
-  bool secls1(bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) { return setECLState(1, state, color, brightness, witemp); }
-  bool secls2(bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) { return setECLState(2, state, color, brightness, witemp); }
-  bool secls3(bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) { return setECLState(3, state, color, brightness, witemp); }
-  bool secls4(bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) { return setECLState(4, state, color, brightness, witemp); }
-
-  std::vector<seclscb> seclscbs = { secls0, secls1, secls2, secls3, secls4 };
-
-  """
-}
-
-class Embedded:MatrServer {
-
-emit(cc_classHead) {
-"""
-std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
-"""
-}
+class Embedded:Hqb {
 
   new(_ash) self {
     slots {
       Embedded:AppShell ash = _ash;
       Config config = ash.config;
-      Int mepi;
-      List meps = List.new();
+      Int hdi;
+      List hds = List.new();
       String slashn = "\n";
       String slashr = "\r";
       String readBuf = String.new();
-      Bool triedCommission = false;
       Bool brdCh = false;
     }
     fields {
@@ -185,33 +58,33 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
         } elseIf (cmdl.length > 3) {
           String act = cmdl[2];
           if (act == "add" && cmdl.length > 6) {
-            if (meps.length >= 15) {
+            if (hds.length >= 15) {
               return("brdtoomany");
             }
-            for (Mmep mmep in meps) {
+            for (Mmep mmep in hds) {
               if (mmep.ondid == cmdl[4] && mmep.ipos == cmdl[5]) {
                 "brd add sent a dupe".print();
                 return("brdok");
               }
             }
             brdCh = true;
-            meps += Mmep.new(cmdl[3], cmdl[4], cmdl[5], cmdl[6]);
+            hds += Mmep.new(cmdl[3], cmdl[4], cmdl[5], cmdl[6]);
             saveMeps();
             //ash.needsFsRestart = true;
           } elseIf (act == "rm" && cmdl.length > 5) {
             List nx = List.new();
-            for (mmep in meps) {
+            for (mmep in hds) {
               if (mmep.ondid == cmdl[4] && mmep.ipos == cmdl[5]) {
                 brdCh = true;
               } else {
                 nx += mmep;
               }
             }
-            meps = nx;
+            hds = nx;
             saveMeps();
             //ash.needsFsRestart = true;
           } else {
-            ("unknown matr act " + act).print();
+            ("unknown brd act " + act).print();
             return("brdbadact");
           }
         } else {
@@ -222,29 +95,29 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
   }
 
   saveMeps() {
-    if (meps.isEmpty) {
-      "empty meps".print();
-      config.put(mepi, "");
+    if (hds.isEmpty) {
+      "empty hds".print();
+      config.put(hdi, "");
     } else {
       String mc = String.new();
-      for (Mmep mmep in meps) {
+      for (Mmep mmep in hds) {
         if (TS.notEmpty(mc)) {
           mc += ".";
         }
         mc += mmep.met += "," += mmep.ondid += "," += mmep.ipos += "," += mmep.spass;
       }
       ("conf putting mc " + mc).print();
-      config.put(mepi, mc);
+      config.put(hdi, mc);
     }
   }
 
   loadMeps() {
-    String mcs = config.get(mepi);
+    String mcs = config.get(hdi);
     if (TS.notEmpty(mcs)) {
       var mce = mcs.split(".");
       for (String mc in mce) {
         var mcl = mc.split(",");
-        meps += Mmep.new(mcl[0], mcl[1], mcl[2], mcl[3]);
+        hds += Mmep.new(mcl[0], mcl[1], mcl[2], mcl[3]);
         ("added Mmep " + mc).print();
       }
     }
@@ -257,7 +130,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
   //also, is it add, remove, or clear
 
   clearMeps() {
-    config.put(mepi, "");
+    config.put(hdi, "");
   }
 
   start() {
@@ -266,17 +139,17 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
       Embedded:Tds tdserver = ash.tdserver;
     }
 
-    mepi = config.getPos("matr.meps");
-    "loading meps".print();
+    hdi = config.getPos("matr.hds");
+    "loading hds".print();
     loadMeps();
 
-    Int mepslen = meps.length;
+    Int hdslen = hds.length;
 
-    for (Int i = 0;i < mepslen;i++) {
+    for (Int i = 0;i < hdslen;i++) {
       if (i >= 15) {
         break;
       }
-      Mmep mmep = meps[i];
+      Mmep mmep = hds[i];
       if (def(mmep)) {
         Int meti;
         if (mmep.met == "ool") {
@@ -290,27 +163,27 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
           emit(cc) {
             """
             int meti = beq->bevl_meti->bevi_int;
-            int mepi = beq->bevl_i->bevi_int;
+            int hdi = beq->bevl_i->bevi_int;
             if (meti == 0) {
               std::shared_ptr<MatterOnOffLight> bevi_mool;
               bevi_mool = std::make_shared<MatterOnOffLight>();
               bevi_mool->begin();
-              bevi_mool->onChangeOnOff(sloocbs[mepi]);
-              bevi_meps.push_back(bevi_mool);
+              bevi_mool->onChangeOnOff(sloocbs[hdi]);
+              bevi_hds.push_back(bevi_mool);
             }
             if (meti == 1) {
               std::shared_ptr<MatterDimmableLight> bevi_mdl;
               bevi_mdl = std::make_shared<MatterDimmableLight>();
               bevi_mdl->begin();
-              bevi_mdl->onChange(sdlscbs[mepi]);
-              bevi_meps.push_back(bevi_mdl);
+              bevi_mdl->onChange(sdlscbs[hdi]);
+              bevi_hds.push_back(bevi_mdl);
             }
             if (meti == 2) {
               std::shared_ptr<MatterEnhancedColorLight> bevi_mecl;
               bevi_mecl = std::make_shared<MatterEnhancedColorLight>();
               bevi_mecl->begin();
-              bevi_mecl->onChange(seclscbs[mepi]);
-              bevi_meps.push_back(bevi_mecl);
+              bevi_mecl->onChange(seclscbs[hdi]);
+              bevi_hds.push_back(bevi_mecl);
             }
             """
           }
@@ -320,20 +193,20 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
 
     emit(cc) {
       """
-      int ml = beq->bevl_mepslen->bevi_int;
+      int ml = beq->bevl_hdslen->bevi_int;
       if (ml < 1) {
         //must have one to avoid decommissioning
         std::shared_ptr<MatterOnOffLight> bevi_mool;
         bevi_mool = std::make_shared<MatterOnOffLight>();
         bevi_mool->begin();
         bevi_mool->onChangeOnOff(sloocbs[0]);
-        bevi_meps.push_back(bevi_mool);
+        bevi_hds.push_back(bevi_mool);
       }
       Matter.begin();
       """
     }
 
-    if (mepslen <= 0) { Int ivdiv = 1; } else { ivdiv = mepslen; }
+    if (hdslen <= 0) { Int ivdiv = 1; } else { ivdiv = hdslen; }
     slots {
       Int swCheckIv = 1800000 / ivdiv;//millis per each check on any given device 30000 30 secs, 120000 2 mins, 1800000 30 mins
       Int nextSwCheck = ash.nowup + swCheckIv;
@@ -464,7 +337,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
     if (def(idx) && def(st)) {
       didact = 0;
       ("idx " + idx + " st " + st).print();
-      Mmep mmep = meps.get(idx);
+      Mmep mmep = hds.get(idx);
       if (st == 1) {
         String sts = CNS.on;
         Bool tost = true;
@@ -494,7 +367,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
     if (def(bidx) && def(bb)) {
       didact = 1;
       ("bidx " + bidx + " bb " + bb).print();
-      mmep = meps.get(bidx);
+      mmep = hds.get(bidx);
       if (def(mmep) && bb > 0) {
          //kdn = "CasNic" + mmep.ondid;
          scmds = "sp2 " + doSec(mmep.spass) + " dostate X " + mmep.ipos + " setlvl " + bb + " e";
@@ -503,7 +376,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
     }
     if (def(eidx) && def(est) && def(ebb) && def(ewt) && def(er) && def(eg) && def(eb)) {
       didact = 1;
-      mmep = meps.get(eidx);
+      mmep = hds.get(eidx);
       if (est == 1) {
         String ests = CNS.on;
         Bool etost = true;
@@ -611,11 +484,11 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
     if (undef(didact)) {
       if (ash.nowup > nextSwCheck) {
         nextSwCheck = ash.nowup + swCheckIv;
-        if (nextSwCheckIdx >= meps.length) {
+        if (nextSwCheckIdx >= hds.length) {
           nextSwCheckIdx = 0;
         }
         //("doing getsw for mep " + nextSwCheckIdx).print();
-        mmep = meps.get(nextSwCheckIdx);
+        mmep = hds.get(nextSwCheckIdx);
         if (def(mmep)) {
           //kdn = "CasNic" + mmep.ondid;
           scmds = "sp2 " + doSec(mmep.spass) + " dostate X " + mmep.ipos + " getsw e";
@@ -640,7 +513,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
               emit(cc) {
                 """
                 bool swtost = beq->bevl_swto->bevi_bool;
-                std::shared_ptr<MatterEndPoint> swmep = bevi_meps[bevp_nextSwCheckIdx->bevi_int];
+                std::shared_ptr<MatterEndPoint> swmep = bevi_hds[bevp_nextSwCheckIdx->bevi_int];
                 bool didup = false;
                 if (beq->bevl_mmepmet->bevi_int == 0) {
                 std::shared_ptr<MatterOnOffLight> swool = std::static_pointer_cast<MatterOnOffLight>(swmep);

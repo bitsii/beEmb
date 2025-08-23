@@ -12,7 +12,7 @@
 //#define BESPEC_SW "1,p2.Generic.22"  //supergeneric
 //#define BESPEC_SW "1,p2.WNN.31"  //nodemcu
 //#define BESPEC_SW "1,q,p3,p2.Rando.69" //testing changes
-#define BESPEC_SW "1,q,t3,p6,p2.rNodeMCU32.107"  //nodemcu
+#define BESPEC_SW "1,q,h1,t3,p6,p2.rNmcuGH.84"  //nodemcu
 //q = quickstate, t1 tds multicast discovery, p6 auth with reid ret, dm direct mq, pm proxy over mq
 //p2 auth type 2 (hash), p2 always last
 //
@@ -22,10 +22,11 @@
 #define BE_UPDBASE "na"  //if we don't have one.  otherwise, the url base for the update ver txt file and binfiles
 //#define BE_UPDBASE "http://storage.googleapis.com/casnicdl.casnic.net/pfnodemcu32.ino.esp32c3"
 //
+//
 // CON - definition of device's controls
 // ctlconfver.control.ctlconf,args.control.ctlconf,args
 //
-//#define BESPEC_CON "" //supergeneric
+#define BESPEC_CON "" //supergeneric
 //
 //FOR THE BELOW LINE THIS IS HOW TO SETUP THE BUTTON on a node mcu, follow
 //this site roughly https://miliohm.com/arduino-button-without-resistor-pull-up-or-pull-down/
@@ -35,9 +36,7 @@
 //#define BESPEC_CON "0.sw.2.dim.13.sw.12.sw.14" //motor test, sw is just led to see if powered, 13 enable/speed, 12 input 1 direction 14 input 2 direction (should be one off one on) 13 is to ena of l298n, 12 to in1, 14 to in2
 //#define BESPEC_CON "0.pwm.2,1" //nodemcu just pwm local led
 //#define BESPEC_CON "0.sw.2,1" //nodemcu just sw. claimed for DOIT ESP32 DEVKIT V1 - WORKS
-#define BESPEC_CON "0.sw.30,2" //trying DevKitC-02 ESP32-C3-WROOM-02 - WORKS
-//#define BESPEC_CON "0.sw.13,2" //
-//#define BESPEC_CON "0.sw.4,2" //try for aithinker esp ce 12f 5b, 4g, 3r - WORKS
+//#define BESPEC_CON "0.sw.30,2" //trying DevKitC-02 ESP32-C3-WROOM-02 - WORKS
 //#define BESPEC_CON "0.sw.2.bu.14,0,30,0,10000" //nodemcu like athsw
 //#define BESPEC_CON "0.dim.2,1" //nodemcu just dim local led (reversed)
 //#define BESPEC_CON "0.rgbcwgd.4,12,14,5,13" //all in one, pins cold, warm, red, green, blue, gammadim, exclusive cw or rgb
