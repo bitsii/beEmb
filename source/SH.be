@@ -407,8 +407,11 @@ class Embedded:AppShell {
        }
      }
      ifNotEmit(noSmc) {
-       slots {
+       fields {
         Embedded:Smc smcserver;
+       }
+       slots {
+        String stopic = String.new();
        }
      }
      ifNotEmit(noMatr) {
@@ -522,11 +525,11 @@ class Embedded:AppShell {
           Int smcpi = config.getPos("smc.p");
           smcp = config.get(smcpi);
         }
+        checkStartHbServer();//must be before smcserver
         checkStartSmcServer();
         checkStartMatrServer();
         checkStartEhServer();
         checkStartTaServer();
-        checkStartHbServer();
        }
       }
    }
@@ -590,6 +593,11 @@ class Embedded:AppShell {
                 }
                 ifEmit(smcGm) {
                   smcserver.subscribe("casnic/cmds");
+                }
+                ifEmit(hqB) {
+                  if (def(hbserver)) {
+                    hbserver.subscribe();
+                  }
                 }
               }
             }
@@ -742,11 +750,11 @@ class Embedded:AppShell {
        }
        checkStartUpServer();
        checkStartTdServer();
+       checkStartHbServer();//must be before smcserver
        checkStartSmcServer();
        checkStartMatrServer();
        checkStartEhServer();
        checkStartTaServer();
-       checkStartHbServer();
      }
    }
 
@@ -895,7 +903,7 @@ class Embedded:AppShell {
      }
      ifNotEmit(noSmc) {
       if (def(smcserver)) {
-        String smcpay = smcserver.checkGetPayload(readBuf);
+        String smcpay = smcserver.checkGetPayload(stopic, readBuf);
       }
       if (TS.notEmpty(smcpay)) {
         try {
@@ -990,6 +998,9 @@ class Embedded:AppShell {
                 //("mq reid " + reid).print();
                 smcserver.publish("casnic/res/" + reid, mcmdres);
               }
+            }
+            ifEmit(hqB) {
+              hbserver.handleMessage(stopic, smcpay);
             }
           } catch (any mdce) {
             "error handling command".print();
@@ -1092,6 +1103,11 @@ class Embedded:AppShell {
      ifEmit(taSvr) {
        if (def(taserver)) {
         taserver.handleLoop();
+       }
+     }
+     ifEmit(hqB) {
+       if (def(hbserver)) {
+        hbserver.handleLoop();
        }
      }
      ifNotEmit(noUpd) {

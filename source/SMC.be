@@ -142,7 +142,7 @@ std::unique_ptr<MqttClient> mqclient;
     return(cgres);
   }
 
-  checkGetPayload(String payload) String {
+  checkGetPayload(String topic, String payload) String {
     payload.clear();
     emit(cc) {
     """
@@ -158,8 +158,16 @@ std::unique_ptr<MqttClient> mqclient;
     chars.setCodeUnchecked(0, 32);
     chars.length.setValue(1);
     Int zero = 0;
+    String tmptop;
+    if (def(topic)) {
+      topic.clear();
+    }
     emit(cc) {
     """
+      String lip = mqclient->messageTopic();
+      //Serial.println(lip);
+      std::string lips = std::string(lip.c_str());
+      beq->bevl_tmptop = new BEC_2_4_6_TextString(lips);
       currentTime = millis();
       previousTime = currentTime;
       while (mqclient->connected() && currentTime - previousTime <= timeoutTime) {
@@ -183,6 +191,10 @@ emit(cc) {
           //Serial.println("not available");
           """
           }
+          if (def(topic) && TS.notEmpty(tmptop)) {
+            //"adding tmptop".print();
+            topic += tmptop;
+          }
           return(payload);
           emit(cc) {
             """
@@ -196,10 +208,6 @@ emit(cc) {
     }
     """
     }
-    //if (TS.notEmpty(payload)) {
-    //"got request, payload".print();
-    //payload.print();
-    //}
     return(payload);
   }
 

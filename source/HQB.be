@@ -31,6 +31,8 @@ class Embedded:Hqb {
       String slashr = "\r";
       String readBuf = String.new();
       Bool brdCh = false;
+      Int zero = 0;
+      Int nextPubState = zero;
     }
     fields {
       Bool timeToDecom = false;
@@ -90,6 +92,70 @@ class Embedded:Hqb {
         return("brdok");
   }
 
+  subscribe() {
+    "hbserver in subscribe".print();
+    ash.smcserver.subscribe("homeassistant/status");
+    pubDevices();
+  }
+
+  handleMessage(String top, String msg) {
+    "hbsserver in handleMessage".print();
+    if (TS.notEmpty(top) && TS.notEmpty(msg)) {
+      ("top " + top + " msg " + msg).print();
+    }
+  }
+
+  checkPubStates() {
+    if (nextPubState > zero && ash.nowup > nextPubState) {
+      "time to pubState".print();
+      nextPubState = zero;
+    }
+  }
+
+  pubDevices() {
+    /*String tpp = "homeassistant/switch/" + did + "-" + i;
+    Map cf = Maps.from("name", conf["name"], "command_topic", tpp + "/set", "state_topic", tpp + "/state", "unique_id", did + "-" + i);
+    String cfs = Json:Marshaller.marshall(cf);
+    log.log("will set discovery tpp " + tpp + " cfs " + cfs);
+    mqtt.subscribe(tpp + "/set");
+    mqtt.publish(tpp + "/config", cfs);
+    String st = hasw.get(did + "-" + i);
+    if (TS.notEmpty(st)) {
+      topubs.put(tpp + "/state", st.upper());
+    } else {
+      topubs.put(tpp + "/state", "OFF");
+    }*/
+
+    if (def(hds)) {
+      Int hdslen = hds.length;
+      for (Int i = 0;i < hdslen;i++) {
+        if (i >= 15) {
+          break;
+        }
+        Hqd hd = hds[i];
+        if (def(hd)) {
+          if (hd.met == "ool") {
+            "pubbing ool".print();
+            String uid = hd.ondid + "-" + i;
+            String tpp = "homeassistant/switch/" + uid;
+            String cfs = "{\"name\":\"Switch\",\"command_topic\":\"" += tpp += "/set\",\"state_topic\":\"" += tpp += "/state\",\"unique_id\":\"" += uid += "\"}";
+            ash.smcserver.publish(tpp + "/config", cfs);
+            //cfs.print();
+            /*if (def(hd.sw) && hd.sw) {
+              String st = "ON";
+            } else {
+              st = "OFF";
+            }*/
+            nextPubState = ash.nowup + 1000;
+          } elseIf (hd.met == "ecl") {
+            "not pubbing ecl".print();
+          }
+        }
+      }
+    }
+
+  }
+
   saveHds() {
     if (hds.isEmpty) {
       "empty hds".print();
@@ -140,25 +206,6 @@ class Embedded:Hqb {
     loadHds();
 
     Int hdslen = hds.length;
-
-    for (Int i = 0;i < hdslen;i++) {
-      if (i >= 15) {
-        break;
-      }
-      Hqd hd = hds[i];
-      if (def(hd)) {
-        Int meti;
-        if (hd.met == "ool") {
-          meti = 0;
-        } elseIf (hd.met == "dl") {
-          meti = 1;
-        } elseIf (hd.met == "ecl") {
-          meti = 2;
-        }
-        if (def(meti)) {
-        }
-      }
-    }
 
     if (hdslen <= 0) { Int ivdiv = 1; } else { ivdiv = hdslen; }
     slots {
@@ -436,7 +483,8 @@ class Embedded:Hqb {
   }
 
   handleLoop() {
-   checkDoMes();
+    //checkDoMes();
+    checkPubStates();
   }
 
 }
