@@ -426,6 +426,11 @@ class Embedded:AppShell {
         Embedded:TAServer taserver;
        }
      }
+     ifEmit(hqB) {
+       slots {
+        Embedded:Hqb hbserver;
+       }
+     }
      slots {
        Embedded:TCPServer tcpserver;
      }
@@ -521,6 +526,7 @@ class Embedded:AppShell {
         checkStartMatrServer();
         checkStartEhServer();
         checkStartTaServer();
+        checkStartHbServer();
        }
       }
    }
@@ -620,6 +626,17 @@ class Embedded:AppShell {
         if (undef(taserver)) {
           taserver = Embedded:TAServer.new(self);
           taserver.start();
+        }
+      }
+    }
+   }
+
+   checkStartHbServer() {
+     ifEmit(hqB) {
+      if (Wifi.isConnected) {
+        if (undef(hbserver)) {
+          hbserver = Embedded:Hqb.new(self);
+          hbserver.start();
         }
       }
     }
@@ -729,6 +746,7 @@ class Embedded:AppShell {
        checkStartMatrServer();
        checkStartEhServer();
        checkStartTaServer();
+       checkStartHbServer();
      }
    }
 
@@ -1579,6 +1597,11 @@ class Embedded:AppShell {
        ifNotEmit(noMatr) {
          if (def(matrserver)) {
            return(matrserver.handleCmdl(cmdl));
+         }
+        }
+        ifEmit(hqB) {
+         if (def(hbserver)) {
+           return(hbserver.handleCmdl(cmdl));
          }
         }
         return("unsupported");

@@ -43,12 +43,8 @@ class Embedded:Hqb {
          //add ool id ipos spass
          //rm ool id
         if (cmdl.length > 2 && cmdl[2] == "clear") {
-          clearMeps();
+          clearHds();
           //ash.needsFsRestart = true;
-        } elseIf (cmdl.length > 2 && cmdl[2] == "commish") {
-          commission();
-        } elseIf (cmdl.length > 2 && cmdl[2] == "decommish") {
-          timeToDecom = true;
         } elseIf (cmdl.length > 2 && cmdl[2] == "chrestart") {
           if (brdCh) {
             "will restart chrestart".print();
@@ -61,27 +57,27 @@ class Embedded:Hqb {
             if (hds.length >= 15) {
               return("brdtoomany");
             }
-            for (Mmep mmep in hds) {
-              if (mmep.ondid == cmdl[4] && mmep.ipos == cmdl[5]) {
+            for (Hqd hd in hds) {
+              if (hd.ondid == cmdl[4] && hd.ipos == cmdl[5]) {
                 "brd add sent a dupe".print();
                 return("brdok");
               }
             }
             brdCh = true;
-            hds += Mmep.new(cmdl[3], cmdl[4], cmdl[5], cmdl[6]);
-            saveMeps();
+            hds += Hqd.new(cmdl[3], cmdl[4], cmdl[5], cmdl[6]);
+            saveHds();
             //ash.needsFsRestart = true;
           } elseIf (act == "rm" && cmdl.length > 5) {
             List nx = List.new();
-            for (mmep in hds) {
-              if (mmep.ondid == cmdl[4] && mmep.ipos == cmdl[5]) {
+            for (hd in hds) {
+              if (hd.ondid == cmdl[4] && hd.ipos == cmdl[5]) {
                 brdCh = true;
               } else {
-                nx += mmep;
+                nx += hd;
               }
             }
             hds = nx;
-            saveMeps();
+            saveHds();
             //ash.needsFsRestart = true;
           } else {
             ("unknown brd act " + act).print();
@@ -94,31 +90,31 @@ class Embedded:Hqb {
         return("brdok");
   }
 
-  saveMeps() {
+  saveHds() {
     if (hds.isEmpty) {
       "empty hds".print();
       config.put(hdi, "");
     } else {
       String mc = String.new();
-      for (Mmep mmep in hds) {
+      for (Hqd hd in hds) {
         if (TS.notEmpty(mc)) {
           mc += ".";
         }
-        mc += mmep.met += "," += mmep.ondid += "," += mmep.ipos += "," += mmep.spass;
+        mc += hd.met += "," += hd.ondid += "," += hd.ipos += "," += hd.spass;
       }
       ("conf putting mc " + mc).print();
       config.put(hdi, mc);
     }
   }
 
-  loadMeps() {
+  loadHds() {
     String mcs = config.get(hdi);
     if (TS.notEmpty(mcs)) {
       var mce = mcs.split(".");
       for (String mc in mce) {
         var mcl = mc.split(",");
-        hds += Mmep.new(mcl[0], mcl[1], mcl[2], mcl[3]);
-        ("added Mmep " + mc).print();
+        hds += Hqd.new(mcl[0], mcl[1], mcl[2], mcl[3]);
+        ("added Hqd " + mc).print();
       }
     }
   }
@@ -129,7 +125,7 @@ class Embedded:Hqb {
   //matrtype,ondid,spass,ipos
   //also, is it add, remove, or clear
 
-  clearMeps() {
+  clearHds() {
     config.put(hdi, "");
   }
 
@@ -139,9 +135,9 @@ class Embedded:Hqb {
       Embedded:Tds tdserver = ash.tdserver;
     }
 
-    hdi = config.getPos("matr.hds");
+    hdi = config.getPos("hqb.hds");
     "loading hds".print();
-    loadMeps();
+    loadHds();
 
     Int hdslen = hds.length;
 
@@ -149,61 +145,19 @@ class Embedded:Hqb {
       if (i >= 15) {
         break;
       }
-      Mmep mmep = hds[i];
-      if (def(mmep)) {
+      Hqd hd = hds[i];
+      if (def(hd)) {
         Int meti;
-        if (mmep.met == "ool") {
+        if (hd.met == "ool") {
           meti = 0;
-        } elseIf (mmep.met == "dl") {
+        } elseIf (hd.met == "dl") {
           meti = 1;
-        } elseIf (mmep.met == "ecl") {
+        } elseIf (hd.met == "ecl") {
           meti = 2;
         }
         if (def(meti)) {
-          emit(cc) {
-            """
-            int meti = beq->bevl_meti->bevi_int;
-            int hdi = beq->bevl_i->bevi_int;
-            if (meti == 0) {
-              std::shared_ptr<MatterOnOffLight> bevi_mool;
-              bevi_mool = std::make_shared<MatterOnOffLight>();
-              bevi_mool->begin();
-              bevi_mool->onChangeOnOff(sloocbs[hdi]);
-              bevi_hds.push_back(bevi_mool);
-            }
-            if (meti == 1) {
-              std::shared_ptr<MatterDimmableLight> bevi_mdl;
-              bevi_mdl = std::make_shared<MatterDimmableLight>();
-              bevi_mdl->begin();
-              bevi_mdl->onChange(sdlscbs[hdi]);
-              bevi_hds.push_back(bevi_mdl);
-            }
-            if (meti == 2) {
-              std::shared_ptr<MatterEnhancedColorLight> bevi_mecl;
-              bevi_mecl = std::make_shared<MatterEnhancedColorLight>();
-              bevi_mecl->begin();
-              bevi_mecl->onChange(seclscbs[hdi]);
-              bevi_hds.push_back(bevi_mecl);
-            }
-            """
-          }
         }
       }
-    }
-
-    emit(cc) {
-      """
-      int ml = beq->bevl_hdslen->bevi_int;
-      if (ml < 1) {
-        //must have one to avoid decommissioning
-        std::shared_ptr<MatterOnOffLight> bevi_mool;
-        bevi_mool = std::make_shared<MatterOnOffLight>();
-        bevi_mool->begin();
-        bevi_mool->onChangeOnOff(sloocbs[0]);
-        bevi_hds.push_back(bevi_mool);
-      }
-      Matter.begin();
-      """
     }
 
     if (hdslen <= 0) { Int ivdiv = 1; } else { ivdiv = hdslen; }
@@ -236,108 +190,11 @@ class Embedded:Hqb {
     Int ev;
     //did I act
     Int didact;
-    emit(cc) {
-      """
-      int act = -1;
-      int idx = -1;
-      bool state = false;
-      uint8_t bright;
-      uint16_t ewt;
-      espHsvColor_t hsv;
 
-      cmdsLk.lock();
-      try {
-        if (!cmdsDq.empty()) {
-          act = cmdsDq.back();
-          cmdsDq.pop_back();
-          idx = cmdsDq.back();
-          cmdsDq.pop_back();
-          if (act == 0) {
-            state = stateDq.back();
-            stateDq.pop_back();
-          } else if (act == 1) {
-            bright = brightDq.back();
-            brightDq.pop_back();
-          } else if (act == 2) {
-            state = stateDq.back();
-            stateDq.pop_back();
-            bright = brightDq.back();
-            brightDq.pop_back();
-            ewt = tempDq.back();
-            tempDq.pop_back();
-            hsv = hsvDq.back();
-            hsvDq.pop_back();
-            //Serial.printf("checkDoMes %zu changed to: state %d bright %u temp %u\r\n", idx, state, bright, ewt);
-          }
-        }
-      } catch (...) {
-        cmdsLk.unlock();
-      }
-      cmdsLk.unlock();
-
-      if (act == 0) {
-        beq->bevl_idx = new BEC_2_4_3_MathInt(idx);
-        if (state) {
-          beq->bevl_st = new BEC_2_4_3_MathInt(1);
-        } else {
-          beq->bevl_st = new BEC_2_4_3_MathInt(0);
-        }
-      }
-
-      if (act == 1) {
-        beq->bevl_bidx = new BEC_2_4_3_MathInt(idx);
-        beq->bevl_bb = new BEC_2_4_3_MathInt(bright);
-      }
-
-      if (act == 2) {
-        beq->bevl_eidx = new BEC_2_4_3_MathInt(idx);
-        if (state) {
-          beq->bevl_est = new BEC_2_4_3_MathInt(1);
-        } else {
-          beq->bevl_est = new BEC_2_4_3_MathInt(0);
-        }
-        beq->bevl_ebb = new BEC_2_4_3_MathInt(bright);
-
-        Serial.printf("ewt1 %d\r\n", ewt);
-
-        //if (ewt >= 100) { ewt = ewt - 100; }
-        ewt = ewt + 200;
-        if (ewt >= 800) { ewt = 800; }
-
-        float tff = 800;
-        float ef = (float)((int) ewt);
-        float mul = ef / tff;
-        Serial.printf("mul %f\r\n", mul);
-        float ns = 255;
-        ef = mul * ns;
-        ewt = (int) ef;
-        Serial.printf("ewt2 %d\r\n", ewt);
-
-        beq->bevl_ewt = new BEC_2_4_3_MathInt(ewt);
-
-        beq->bevl_eh = new BEC_2_4_3_MathInt(hsv.h);
-        beq->bevl_es = new BEC_2_4_3_MathInt(hsv.s);
-        beq->bevl_ev = new BEC_2_4_3_MathInt(hsv.v);
-
-        if (bright != 0) {
-          hsv.v = bright;
-          beq->bevl_ebv = new BEC_2_4_3_MathInt(bright);
-        } else {
-          beq->bevl_ebv = new BEC_2_4_3_MathInt(hsv.v);
-        }
-        espRgbColor_t rgb = espHsvColorToRgbColor(hsv);
-
-        beq->bevl_er = new BEC_2_4_3_MathInt(rgb.r);
-        beq->bevl_eg = new BEC_2_4_3_MathInt(rgb.g);
-        beq->bevl_eb = new BEC_2_4_3_MathInt(rgb.b);
-
-      }
-      """
-    }
     if (def(idx) && def(st)) {
       didact = 0;
       ("idx " + idx + " st " + st).print();
-      Mmep mmep = hds.get(idx);
+      Hqd hd = hds.get(idx);
       if (st == 1) {
         String sts = CNS.on;
         Bool tost = true;
@@ -345,18 +202,18 @@ class Embedded:Hqb {
         sts = CNS.off;
         tost = false;
       }
-      if (def(mmep)) {
-        if (undef(mmep.sw) || mmep.sw != tost) {
-          //String kdn = "CasNic" + mmep.ondid;
-          //String scmds = "dostate " + mmep.spass + " " + mmep.ipos + " setsw " + sts + " e";
+      if (def(hd)) {
+        if (undef(hd.sw) || hd.sw != tost) {
+          //String kdn = "CasNic" + hd.ondid;
+          //String scmds = "dostate " + hd.spass + " " + hd.ipos + " setsw " + sts + " e";
           //String scres = sendCmd(kdn, scmds);
-          String scmds = "sp2 " + doSec(mmep.spass) + " dostate X " + mmep.ipos + " setsw " + sts + " e";
-          String scres = sendCmd(mmep, scmds);
+          String scmds = "sp2 " + doSec(hd.spass) + " dostate X " + hd.ipos + " setsw " + sts + " e";
+          String scres = sendCmd(hd, scmds);
           if (TS.notEmpty(scres)) {
             ("scres " + scres).print();
             if (scres.has(CNS.ok)) {
-              ("setting mmep.sw").print();
-              mmep.sw = tost;
+              ("setting hd.sw").print();
+              hd.sw = tost;
             }
           }
         } else {
@@ -367,16 +224,16 @@ class Embedded:Hqb {
     if (def(bidx) && def(bb)) {
       didact = 1;
       ("bidx " + bidx + " bb " + bb).print();
-      mmep = hds.get(bidx);
-      if (def(mmep) && bb > 0) {
-         //kdn = "CasNic" + mmep.ondid;
-         scmds = "sp2 " + doSec(mmep.spass) + " dostate X " + mmep.ipos + " setlvl " + bb + " e";
-         sendCmd(mmep, scmds);
+      hd = hds.get(bidx);
+      if (def(hd) && bb > 0) {
+         //kdn = "CasNic" + hd.ondid;
+         scmds = "sp2 " + doSec(hd.spass) + " dostate X " + hd.ipos + " setlvl " + bb + " e";
+         sendCmd(hd, scmds);
       }
     }
     if (def(eidx) && def(est) && def(ebb) && def(ewt) && def(er) && def(eg) && def(eb)) {
       didact = 1;
-      mmep = hds.get(eidx);
+      hd = hds.get(eidx);
       if (est == 1) {
         String ests = CNS.on;
         Bool etost = true;
@@ -384,18 +241,18 @@ class Embedded:Hqb {
         ests = CNS.off;
         etost = false;
       }
-      if (def(mmep)) {
+      if (def(hd)) {
         ("eidx " + eidx + " est " + est + " ebb " + ebb + " ewt " + ewt + " er " + er + " eg " + eg + " eb " + eb).print();
-        //kdn = "CasNic" + mmep.ondid;
-        //scmds = "dostate " + mmep.spass + " " + mmep.ipos + " setlvl " + bb + " e";
+        //kdn = "CasNic" + hd.ondid;
+        //scmds = "dostate " + hd.spass + " " + hd.ipos + " setlvl " + bb + " e";
         //sendCmd(kdn, scmds);
-        if (def(mmep.h) && def(mmep.s)) {
-          if (def(mmep.inCtCh) && mmep.inCtCh && mmep.h == eh && mmep.s == es) {
+        if (def(hd.h) && def(hd.s)) {
+          if (def(hd.inCtCh) && hd.inCtCh && hd.h == eh && hd.s == es) {
             //not real hsv changes, just bright reflected in v
             //if already in ctCh stay
             Bool ctCh = true;
             Bool rgbCh = false;
-          } elseIf (mmep.h == eh && mmep.s == es && mmep.ct != ewt) {
+          } elseIf (hd.h == eh && hd.s == es && hd.ct != ewt) {
             ctCh = true;
             rgbCh = false;
           } else {
@@ -417,16 +274,16 @@ class Embedded:Hqb {
             ("ecl will dostate rgbCh").print();
 
             String xd = "" += er += "," += eg += "," += eb += "," += ebv += ",0";
-            scmds = "sp2 " + doSec(mmep.spass) + " dostatexd X " + mmep.ipos + " setrgbcw " + rgblct + " " + xd + " " + " e";
+            scmds = "sp2 " + doSec(hd.spass) + " dostatexd X " + hd.ipos + " setrgbcw " + rgblct + " " + xd + " " + " e";
           } elseIf (ctCh) {
             ("ecl will dostate ctCh").print();
 
             if (ebb == 0) {
-              if (def(mmep.ctLvl)) { ebb = mmep.ctLvl; }
+              if (def(hd.ctLvl)) { ebb = hd.ctLvl; }
               else { ebb = 255; }
             }
 
-            mmep.ctLvl = ebb;
+            hd.ctLvl = ebb;
             Int lvli = ebb;
             Int cwi = ewt;
             if (lvli < 0 || lvli > 255) { lvli = 255; }
@@ -440,11 +297,11 @@ class Embedded:Hqb {
             xd += "," += ewt;
             rgblct += "," += cwi;
 
-            scmds = "sp2 " + doSec(mmep.spass) + " dostatexd X " + mmep.ipos + " setrgbcw " + rgblct + " " + xd + " " + " e";
+            scmds = "sp2 " + doSec(hd.spass) + " dostatexd X " + hd.ipos + " setrgbcw " + rgblct + " " + xd + " " + " e";
           }
           if (TS.notEmpty(scmds)) {
-            //kdn = "CasNic" + mmep.ondid;
-            scres = sendCmd(mmep, scmds);
+            //kdn = "CasNic" + hd.ondid;
+            scres = sendCmd(hd, scmds);
             //if fails set etost to false
             unless (TS.notEmpty(scres) && scres.has(CNS.ok)) {
               "attempt failed setting etost false".print();
@@ -458,9 +315,9 @@ class Embedded:Hqb {
           //turn it off
           unless (def(eclFirst) && eclFirst) {
             ("ecl will dostate sw off").print();
-            //kdn = "CasNic" + mmep.ondid;
-            scmds = "sp2 " + doSec(mmep.spass) + " dostate X " + mmep.ipos + " setsw " + ests + " e";
-            scres = sendCmd(mmep, scmds);
+            //kdn = "CasNic" + hd.ondid;
+            scmds = "sp2 " + doSec(hd.spass) + " dostate X " + hd.ipos + " setsw " + ests + " e";
+            scres = sendCmd(hd, scmds);
             unless (TS.notEmpty(scres) && scres.has(CNS.ok)) {
               "attempt failed setting etost true".print();
               //if fails set etost to true
@@ -469,16 +326,16 @@ class Embedded:Hqb {
           }
         }
         if (ctCh) {
-          mmep.inCtCh = true;
+          hd.inCtCh = true;
         }
         if (rgbCh) {
-          mmep.inCtCh = false;
+          hd.inCtCh = false;
         }
-        mmep.sw = etost;
-        mmep.ct = ewt;
-        mmep.h = eh;
-        mmep.s = es;
-        mmep.v = ev;
+        hd.sw = etost;
+        hd.ct = ewt;
+        hd.h = eh;
+        hd.s = es;
+        hd.v = ev;
       }
     }
     if (undef(didact)) {
@@ -488,11 +345,11 @@ class Embedded:Hqb {
           nextSwCheckIdx = 0;
         }
         //("doing getsw for mep " + nextSwCheckIdx).print();
-        mmep = hds.get(nextSwCheckIdx);
-        if (def(mmep)) {
-          //kdn = "CasNic" + mmep.ondid;
-          scmds = "sp2 " + doSec(mmep.spass) + " dostate X " + mmep.ipos + " getsw e";
-          String res = sendCmd(mmep, scmds);
+        hd = hds.get(nextSwCheckIdx);
+        if (def(hd)) {
+          //kdn = "CasNic" + hd.ondid;
+          scmds = "sp2 " + doSec(hd.spass) + " dostate X " + hd.ipos + " getsw e";
+          String res = sendCmd(hd, scmds);
           if (TS.notEmpty(res)) {
             //("got res |" + res + "|").print();
             if (res.has(CNS.on)) {
@@ -500,53 +357,16 @@ class Embedded:Hqb {
             } elseIf (res.has(CNS.off)) {
               swto = false;
             }
-            if (mmep.met == "ool") {
-              Int mmepmet = 0;
-            } elseIf (mmep.met == "dl") {
-              mmepmet = 1;
-            } elseIf (mmep.met == "ecl") {
-              mmepmet = 2;
+            if (hd.met == "ool") {
+              Int hdmet = 0;
+            } elseIf (hd.met == "dl") {
+              hdmet = 1;
+            } elseIf (hd.met == "ecl") {
+              hdmet = 2;
             }
             if (def(swto)) {
-              mmep.sw = swto;
+              hd.sw = swto;
               //"doing sloo".print();
-              emit(cc) {
-                """
-                bool swtost = beq->bevl_swto->bevi_bool;
-                std::shared_ptr<MatterEndPoint> swmep = bevi_hds[bevp_nextSwCheckIdx->bevi_int];
-                bool didup = false;
-                if (beq->bevl_mmepmet->bevi_int == 0) {
-                std::shared_ptr<MatterOnOffLight> swool = std::static_pointer_cast<MatterOnOffLight>(swmep);
-                if (swool->getOnOff() != swtost) {
-                  didup = true;
-                  Serial.println("will setonoff");
-                  swool->setOnOff(swtost);
-                }
-                }
-                if (beq->bevl_mmepmet->bevi_int == 1) {
-                std::shared_ptr<MatterDimmableLight> swdl = std::static_pointer_cast<MatterDimmableLight>(swmep);
-                if (swdl->getOnOff() != swtost) {
-                  didup = true;
-                  Serial.println("will setonoff");
-                  swdl->setOnOff(swtost);
-                }
-                }
-                if (beq->bevl_mmepmet->bevi_int == 2) {
-                std::shared_ptr<MatterEnhancedColorLight> mecl = std::static_pointer_cast<MatterEnhancedColorLight>(swmep);
-                if (mecl->getOnOff() != swtost) {
-                  didup = true;
-                  Serial.println("will setonoff");
-                  mecl->setOnOff(swtost);
-                }
-                }
-                if (didup) {
-                  """
-                }
-                emit(cc) {
-                  """
-                }
-                """
-              }
             }
           } else {
             //"res was empty".print();
@@ -563,9 +383,9 @@ class Embedded:Hqb {
     return(iv + " " + sec);
   }
 
-  sendCmd(Mmep mmep, String scmds) String {
+  sendCmd(Hqd hd, String scmds) String {
       String mcmdres;
-      String kdn = "CasNic" + mmep.ondid;
+      String kdn = "CasNic" + hd.ondid;
       ("checkDoMes kdn scmds |" + kdn + "| |" + scmds + "|").print();
       ifNotEmit(noTds) {
       Embedded:Tds tdserver = ash.tdserver;
@@ -575,14 +395,14 @@ class Embedded:Hqb {
           "selfgate".print();
           //mcmdres = doCmd("matr", scmds);
         } else {
-          if (TS.notEmpty(mmep.rip)) {
-            rip = mmep.rip;
+          if (TS.notEmpty(hd.rip)) {
+            rip = hd.rip;
           } else {
             String rip = tdserver.getAddr(kdn);
           }
           if (rip != CNS.undefined) {
             ("rip " + rip).print();
-            mmep.rip = rip;
+            hd.rip = rip;
             //look for r and n, send back r n (it's already there) FALSE NOT FROM MQ IT ISN'T
             //String ppay = preq.checkGetPayload(readBuf, slashn);
             var tcpc = Embedded:TCPClient.new(rip, 6420);
@@ -600,8 +420,8 @@ class Embedded:Hqb {
             if (TS.isEmpty(tcpcres)) {
               //"tcpcres empty".print();
               //in case ip changed rewantit
-              mmep.rip = null;
-              tdserver.sayWantsCb(kdn, mmep);
+              hd.rip = null;
+              tdserver.sayWantsCb(kdn, hd);
             } else {
               //("tcpcres " + tcpcres).print();
               mcmdres = tcpcres;
@@ -617,63 +437,6 @@ class Embedded:Hqb {
 
   handleLoop() {
    checkDoMes();
-   unless (triedCommission) {
-     triedCommission = true;
-     //commission();
-   }
-   if (timeToDecom) {
-     timeToDecom = false;
-     "decom".print();
-     decommission();
-     "decom done".print();
-   }
-  }
-
-  commission() {
-    emit(cc) {
-      """
-      //Matter.decommission();
-      if (!Matter.isDeviceCommissioned()) {
-        Serial.println("");
-        Serial.println("Matter Node is not commissioned yet.");
-        Serial.println("Initiate the device discovery in your Matter environment.");
-        Serial.println("Commission it to your Matter hub with the manual pairing code or QR code");
-        Serial.printf("Manual pairing code: %s\r\n", Matter.getManualPairingCode().c_str());
-        Serial.printf("QR code URL: %s\r\n", Matter.getOnboardingQRCodeUrl().c_str());
-        // waits for Matter Light Commissioning.
-        uint32_t timeCount = 0;
-        while (!Matter.isDeviceCommissioned()) {
-          delay(100);
-          if ((timeCount++ % 50) == 0) {  // 50*100ms = 5 sec
-            Serial.println("Matter Node not commissioned yet. Waiting for commissioning.");
-          }
-          if (timeCount > 3000) { //5 mins
-          //if (timeCount > 300) { //30s, for testing
-            Serial.println("Matter Node not commissioned after 5 mins.  Giving up, unplug and replug to get another 5 minute window for commissioning");
-            break;
-          //}
-          }
-        }
-        if (Matter.isDeviceCommissioned()) {
-          Serial.println("Matter Node is commissioned and connected to Wi-Fi. Ready for use.");
-        } else {
-          Serial.println("Matter was not commissioned.");
-        }
-      } else {
-        Serial.println("Matter Node already provisioned");
-      }
-      """
-    }
-  }
-
-  decommission() {
-    emit(cc) {
-      """
-      if (Matter.isDeviceCommissioned()) {
-        Matter.decommission();
-      }
-      """
-    }
   }
 
 }
