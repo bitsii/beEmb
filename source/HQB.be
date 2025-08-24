@@ -109,6 +109,30 @@ class Embedded:Hqb {
     if (nextPubState > zero && ash.nowup > nextPubState) {
       "time to pubState".print();
       nextPubState = zero;
+      if (def(hds)) {
+        Int hdslen = hds.length;
+        for (Int i = 0;i < hdslen;i++) {
+          if (i >= 15) {
+            break;
+          }
+          Hqd hd = hds[i];
+          if (def(hd)) {
+            if (hd.met == "ool") {
+              "pubbing ool".print();
+              String uid = hd.ondid + "-" + i;
+              String tpp = "homeassistant/switch/" + uid;
+              if (def(hd.sw) && hd.sw) {
+                String st = "ON";
+              } else {
+                st = "OFF";
+              }
+              ash.smcserver.publish(tpp + "/state", st);
+            } elseIf (hd.met == "ecl") {
+              "not pubbing ecl".print();
+            }
+          }
+        }
+      }
     }
   }
 
