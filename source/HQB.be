@@ -111,11 +111,22 @@ class Embedded:Hqb {
         if (def(hds)) {
           Hqd hd = hds[hdi];
           if (def(hd)) {
-            String scmds = "sp2 " + doSec(hd.spass) + " dostate X " + hd.ipos + " setsw " + msg.lower() + " e";
-            sendCmd(hd, scmds);
-            var tl = top.split("/");
-            String stpp = "homeassistant/switch/" + tl[2] + "/state";
-            ash.smcserver.publish(stpp, msg);
+            String mlow = msg.lower();
+            String scmds = "sp2 " + doSec(hd.spass) + " dostate X " + hd.ipos + " setsw " + mlow + " e";
+            String scres = sendCmd(hd, scmds);
+            if (TS.notEmpty(scres)) {
+              ("scres " + scres).print();
+              if (scres.has(CNS.ok)) {
+                var tl = top.split("/");
+                String stpp = "homeassistant/switch/" + tl[2] + "/state";
+                ash.smcserver.publish(stpp, msg);
+                if (mlow == CNS.on) {
+                 hd.sw = true;
+                } else {
+                 hd.sw = false;
+                }
+              }
+            }
           }
         }
       } elseIf (top == "homeassistant/status" && msg == "online") {
