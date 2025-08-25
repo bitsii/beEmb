@@ -95,6 +95,7 @@ class Embedded:Hqb {
   subscribe() {
     "hbserver in subscribe".print();
     ash.smcserver.subscribe("homeassistant/status");
+    subDevices();
     pubDevices();
   }
 
@@ -102,6 +103,24 @@ class Embedded:Hqb {
     "hbsserver in handleMessage".print();
     if (TS.notEmpty(top) && TS.notEmpty(msg)) {
       ("top " + top + " msg " + msg).print();
+      if (top.begins("homeassistant/switch/") && top.ends("/set")) {
+        var ll = top.split("/");
+        String didpos = ll[2];
+        var dp = didpos.split("-");
+        Int hdi = Int.new(dp[1]);
+        if (def(hds)) {
+          Hqd hd = hds[hdi];
+          if (def(hd)) {
+            String scmds = "sp2 " + doSec(hd.spass) + " dostate X " + hd.ipos + " setsw " + msg.lower() + " e";
+            sendCmd(hd, scmds);
+            var tl = top.split("/");
+            String stpp = "homeassistant/switch/" + tl[2] + "/state";
+            ash.smcserver.publish(stpp, msg);
+          }
+        }
+      } elseIf (top == "homeassistant/status" && msg == "online") {
+        pubDevices();
+      }
     }
   }
 
@@ -136,20 +155,29 @@ class Embedded:Hqb {
     }
   }
 
-  pubDevices() {
-    /*String tpp = "homeassistant/switch/" + did + "-" + i;
-    Map cf = Maps.from("name", conf["name"], "command_topic", tpp + "/set", "state_topic", tpp + "/state", "unique_id", did + "-" + i);
-    String cfs = Json:Marshaller.marshall(cf);
-    log.log("will set discovery tpp " + tpp + " cfs " + cfs);
-    mqtt.subscribe(tpp + "/set");
-    mqtt.publish(tpp + "/config", cfs);
-    String st = hasw.get(did + "-" + i);
-    if (TS.notEmpty(st)) {
-      topubs.put(tpp + "/state", st.upper());
-    } else {
-      topubs.put(tpp + "/state", "OFF");
-    }*/
+  subDevices() {
+    if (def(hds)) {
+      Int hdslen = hds.length;
+      for (Int i = 0;i < hdslen;i++) {
+        if (i >= 15) {
+          break;
+        }
+        Hqd hd = hds[i];
+        if (def(hd)) {
+          if (hd.met == "ool") {
+            "subbing ool".print();
+            String tpp = "homeassistant/switch/" + hd.ondid + "-" + i;
+            ash.smcserver.subscribe(tpp += "/set");
+          } elseIf (hd.met == "ecl") {
+            "not pubbing ecl".print();
+          }
+        }
+      }
+    }
 
+  }
+
+  pubDevices() {
     if (def(hds)) {
       Int hdslen = hds.length;
       for (Int i = 0;i < hdslen;i++) {
@@ -160,16 +188,10 @@ class Embedded:Hqb {
         if (def(hd)) {
           if (hd.met == "ool") {
             "pubbing ool".print();
-            String uid = hd.ondid + "-" + i;
-            String tpp = "homeassistant/switch/" + uid;
+            String uid = hd.ondid + "-" + hd.ipos;
+            String tpp = "homeassistant/switch/" + hd.ondid + "-" + i;
             String cfs = "{\"name\":\"Switch\",\"command_topic\":\"" += tpp += "/set\",\"state_topic\":\"" += tpp += "/state\",\"unique_id\":\"" += uid += "\"}";
             ash.smcserver.publish(tpp + "/config", cfs);
-            //cfs.print();
-            /*if (def(hd.sw) && hd.sw) {
-              String st = "ON";
-            } else {
-              st = "OFF";
-            }*/
             nextPubState = ash.nowup + 1000;
           } elseIf (hd.met == "ecl") {
             "not pubbing ecl".print();
@@ -221,10 +243,6 @@ class Embedded:Hqb {
 
   start() {
 
-    ifNotEmit(noTds) {
-      Embedded:Tds tdserver = ash.tdserver;
-    }
-
     hdi = config.getPos("hqb.hds");
     "loading hds".print();
     loadHds();
@@ -233,7 +251,7 @@ class Embedded:Hqb {
 
     if (hdslen <= 0) { Int ivdiv = 1; } else { ivdiv = hdslen; }
     slots {
-      Int swCheckIv = 1800000 / ivdiv;//millis per each check on any given device 30000 30 secs, 120000 2 mins, 1800000 30 mins
+      Int swCheckIv = 360000 / ivdiv;//millis per each check on any given device 30000 30 secs, 120000 2 mins, 1800000 30 mins, 600000 10 mins, 360000 6 mins
       Int nextSwCheck = ash.nowup + swCheckIv;
       Int nextSwCheckIdx = 0;
     }
