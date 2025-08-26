@@ -748,7 +748,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
             if (TS.isEmpty(tcpcres)) {
               //"tcpcres empty".print();
               //in case ip changed rewantit
-              mmep.rip = null;
+              //mmep.rip = null;
               tdserver.sayWants(kdn);
             } else {
               //("tcpcres " + tcpcres).print();

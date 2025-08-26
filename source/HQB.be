@@ -525,7 +525,7 @@ class Embedded:Hqb {
             if (TS.isEmpty(tcpcres)) {
               //"tcpcres empty".print();
               //in case ip changed rewantit
-              hd.rip = null;
+              //hd.rip = null;
               tdserver.sayWants(kdn);
             } else {
               //("tcpcres " + tcpcres).print();
