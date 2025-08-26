@@ -110,22 +110,26 @@ class Embedded:Hqb {
         Int hdi = Int.new(dp[1]);
         if (def(hds)) {
           Hqd hd = hds[hdi];
-          if (def(hd)) {
-            String mlow = msg.lower();
-            String scmds = "sp2 " + doSec(hd.spass) + " dostate X " + hd.ipos + " setsw " + mlow + " e";
-            String scres = sendCmd(hd, scmds);
-            if (TS.notEmpty(scres)) {
-              ("scres " + scres).print();
-              if (scres.has(CNS.ok)) {
-                var tl = top.split("/");
-                String stpp = "homeassistant/switch/" + tl[2] + "/state";
-                ash.smcserver.publish(stpp, msg);
-                if (mlow == CNS.on) {
-                 hd.sw = true;
-                } else {
-                 hd.sw = false;
+          if (def(hd) && TS.notEmpty(hd.met)) {
+            if (hd.met == "ool") {
+              String mlow = msg.lower();
+              String scmds = "sp2 " + doSec(hd.spass) + " dostate X " + hd.ipos + " setsw " + mlow + " e";
+              String scres = sendCmd(hd, scmds);
+              if (TS.notEmpty(scres)) {
+                ("scres " + scres).print();
+                if (scres.has(CNS.ok)) {
+                  var tl = top.split("/");
+                  String stpp = "homeassistant/switch/" + tl[2] + "/state";
+                  ash.smcserver.publish(stpp, msg);
+                  if (mlow == CNS.on) {
+                  hd.sw = true;
+                  } else {
+                  hd.sw = false;
+                  }
                 }
               }
+            } elseIf (hd.met == "ecl") {
+              "got ecl set".print();
             }
           }
         }
@@ -158,7 +162,23 @@ class Embedded:Hqb {
               }
               ash.smcserver.publish(tpp + "/state", st);
             } elseIf (hd.met == "ecl") {
-              "not pubbing ecl".print();
+              "pubbing ecl".print();
+              uid = hd.ondid + "-" + i;
+              tpp = "homeassistant/light/" + uid;
+              if (def(hd.sw) && hd.sw) {
+                st = "ON";
+              } else {
+                st = "OFF";
+              }
+              if (undef(hd.r)) { hd.r = 255; }
+              if (undef(hd.g)) { hd.g = 255; }
+              if (undef(hd.b)) { hd.b = 255; }
+              if (undef(hd.lvl)) { hd.lvl = 255; }
+              //String jst = "{\"state\":\"" += st += "\",\"brightness\":" += hd.lvl += ",\"color\":{\"r\":" += hd.r += ",\"g\":" += hd.g += ",\"b\":" += hd.b += "}}";
+              String jst = "{\"state\":\"" += st += "\"}";
+              ash.smcserver.publish(tpp + "/state", jst);
+              //dps.put("brightness", Int.new(lv));
+              //dps.put("color_temp", lsToMired(Int.new(cw)));
             }
           }
         }
@@ -180,7 +200,9 @@ class Embedded:Hqb {
             String tpp = "homeassistant/switch/" + hd.ondid + "-" + i;
             ash.smcserver.subscribe(tpp += "/set");
           } elseIf (hd.met == "ecl") {
-            "not pubbing ecl".print();
+            "subbing ecl".print();
+            tpp = "homeassistant/light/" + hd.ondid + "-" + i;
+            ash.smcserver.subscribe(tpp += "/set");
           }
         }
       }
@@ -205,12 +227,16 @@ class Embedded:Hqb {
             ash.smcserver.publish(tpp + "/config", cfs);
             nextPubState = ash.nowup + 1000;
           } elseIf (hd.met == "ecl") {
-            "not pubbing ecl".print();
+            "pubbing ecl".print();
+            uid = hd.ondid + "-" + hd.ipos;
+            tpp = "homeassistant/light/" + hd.ondid + "-" + i;
+            cfs = "{\"name\":\"Light\",\"command_topic\":\"" += tpp += "/set\",\"state_topic\":\"" += tpp += "/state\",\"unique_id\":\"" += uid += "\",\"schema\":\"json\",\"brightness\":true,\"supported_color_modes\": [\"rgb\",\"color_temp\"]}";
+            ash.smcserver.publish(tpp + "/config", cfs);
+            nextPubState = ash.nowup + 1000;
           }
         }
       }
     }
-
   }
 
   saveHds() {
@@ -272,214 +298,6 @@ class Embedded:Hqb {
       tdserver.callback = self;
     }
 
-  }
-
-  checkDoMes() {
-    //for sw
-    Int idx;
-    Int st;
-    //for dl
-    Int bidx;
-    Int bb;
-    //for ecl
-    Int eidx;
-    Int est;//sw
-    Int ebb;//bright
-    Int ebv;//v from hsv
-    Int ewt;//temp
-    Int er;//color
-    Int eg;
-    Int eb;
-    Int eh;
-    Int es;
-    Int ev;
-    //did I act
-    Int didact;
-
-    if (def(idx) && def(st)) {
-      didact = 0;
-      ("idx " + idx + " st " + st).print();
-      Hqd hd = hds.get(idx);
-      if (st == 1) {
-        String sts = CNS.on;
-        Bool tost = true;
-      } else {
-        sts = CNS.off;
-        tost = false;
-      }
-      if (def(hd)) {
-        if (undef(hd.sw) || hd.sw != tost) {
-          //String kdn = "CasNic" + hd.ondid;
-          //String scmds = "dostate " + hd.spass + " " + hd.ipos + " setsw " + sts + " e";
-          //String scres = sendCmd(kdn, scmds);
-          String scmds = "sp2 " + doSec(hd.spass) + " dostate X " + hd.ipos + " setsw " + sts + " e";
-          String scres = sendCmd(hd, scmds);
-          if (TS.notEmpty(scres)) {
-            ("scres " + scres).print();
-            if (scres.has(CNS.ok)) {
-              ("setting hd.sw").print();
-              hd.sw = tost;
-            }
-          }
-        } else {
-          ("state already " + tost + " not sending dostate").print();
-        }
-      }
-    }
-    if (def(bidx) && def(bb)) {
-      didact = 1;
-      ("bidx " + bidx + " bb " + bb).print();
-      hd = hds.get(bidx);
-      if (def(hd) && bb > 0) {
-         //kdn = "CasNic" + hd.ondid;
-         scmds = "sp2 " + doSec(hd.spass) + " dostate X " + hd.ipos + " setlvl " + bb + " e";
-         sendCmd(hd, scmds);
-      }
-    }
-    if (def(eidx) && def(est) && def(ebb) && def(ewt) && def(er) && def(eg) && def(eb)) {
-      didact = 1;
-      hd = hds.get(eidx);
-      if (est == 1) {
-        String ests = CNS.on;
-        Bool etost = true;
-      } else {
-        ests = CNS.off;
-        etost = false;
-      }
-      if (def(hd)) {
-        ("eidx " + eidx + " est " + est + " ebb " + ebb + " ewt " + ewt + " er " + er + " eg " + eg + " eb " + eb).print();
-        //kdn = "CasNic" + hd.ondid;
-        //scmds = "dostate " + hd.spass + " " + hd.ipos + " setlvl " + bb + " e";
-        //sendCmd(kdn, scmds);
-        if (def(hd.h) && def(hd.s)) {
-          if (def(hd.inCtCh) && hd.inCtCh && hd.h == eh && hd.s == es) {
-            //not real hsv changes, just bright reflected in v
-            //if already in ctCh stay
-            Bool ctCh = true;
-            Bool rgbCh = false;
-          } elseIf (hd.h == eh && hd.s == es && hd.ct != ewt) {
-            ctCh = true;
-            rgbCh = false;
-          } else {
-            ctCh = false;
-            rgbCh = true;
-          }
-          ("ecl on changes ctCh " + ctCh + " rgbCh " + rgbCh).print();
-        } else {
-          ("ecl first time").print();
-          //maybe check values to guess
-          rgbCh = true;
-          ctCh = false;
-          Bool eclFirst = true;
-        }
-        if (etost) {
-          if (rgbCh) {
-            if (ebv == 0) { ebv = 255; }
-            String rgblct = "" += er += "," += eg += "," += eb += "," += ebv += ",0";//last 0 is cw for rgb case
-            ("ecl will dostate rgbCh").print();
-
-            String xd = "" += er += "," += eg += "," += eb += "," += ebv += ",0";
-            scmds = "sp2 " + doSec(hd.spass) + " dostatexd X " + hd.ipos + " setrgbcw " + rgblct + " " + xd + " " + " e";
-          } elseIf (ctCh) {
-            ("ecl will dostate ctCh").print();
-
-            if (ebb == 0) {
-              if (def(hd.ctLvl)) { ebb = hd.ctLvl; }
-              else { ebb = 255; }
-            }
-
-            hd.ctLvl = ebb;
-            Int lvli = ebb;
-            Int cwi = ewt;
-            if (lvli < 0 || lvli > 255) { lvli = 255; }
-            if (lvli == 1) { lvli = 2; } //cws seems to be off at analog write 1
-            if (cwi < 0 || cwi > 255) { cwi = 255; }
-            cwi = 255 - cwi;
-
-            rgblct = "255,255,255," += ebb; //,cw
-            xd = "255,255,255," += ebb; //,cw
-
-            xd += "," += ewt;
-            rgblct += "," += cwi;
-
-            scmds = "sp2 " + doSec(hd.spass) + " dostatexd X " + hd.ipos + " setrgbcw " + rgblct + " " + xd + " " + " e";
-          }
-          if (TS.notEmpty(scmds)) {
-            //kdn = "CasNic" + hd.ondid;
-            scres = sendCmd(hd, scmds);
-            //if fails set etost to false
-            unless (TS.notEmpty(scres) && scres.has(CNS.ok)) {
-              "attempt failed setting etost false".print();
-              //if fails set etost to false
-              etost = false;
-            }
-          }
-        } else {
-          //it's off, that's all
-          //capture vals, they are set after off to recover original state after a "transition"
-          //turn it off
-          unless (def(eclFirst) && eclFirst) {
-            ("ecl will dostate sw off").print();
-            //kdn = "CasNic" + hd.ondid;
-            scmds = "sp2 " + doSec(hd.spass) + " dostate X " + hd.ipos + " setsw " + ests + " e";
-            scres = sendCmd(hd, scmds);
-            unless (TS.notEmpty(scres) && scres.has(CNS.ok)) {
-              "attempt failed setting etost true".print();
-              //if fails set etost to true
-              etost = true;
-            }
-          }
-        }
-        if (ctCh) {
-          hd.inCtCh = true;
-        }
-        if (rgbCh) {
-          hd.inCtCh = false;
-        }
-        hd.sw = etost;
-        hd.ct = ewt;
-        hd.h = eh;
-        hd.s = es;
-        hd.v = ev;
-      }
-    }
-    if (undef(didact)) {
-      if (ash.nowup > nextSwCheck) {
-        nextSwCheck = ash.nowup + swCheckIv;
-        if (nextSwCheckIdx >= hds.length) {
-          nextSwCheckIdx = 0;
-        }
-        //("doing getsw for mep " + nextSwCheckIdx).print();
-        hd = hds.get(nextSwCheckIdx);
-        if (def(hd)) {
-          //kdn = "CasNic" + hd.ondid;
-          scmds = "sp2 " + doSec(hd.spass) + " dostate X " + hd.ipos + " getsw e";
-          String res = sendCmd(hd, scmds);
-          if (TS.notEmpty(res)) {
-            //("got res |" + res + "|").print();
-            if (res.has(CNS.on)) {
-              Bool swto = true;
-            } elseIf (res.has(CNS.off)) {
-              swto = false;
-            }
-            if (hd.met == "ool") {
-              Int hdmet = 0;
-            } elseIf (hd.met == "dl") {
-              hdmet = 1;
-            } elseIf (hd.met == "ecl") {
-              hdmet = 2;
-            }
-            if (def(swto)) {
-              hd.sw = swto;
-              //"doing sloo".print();
-            }
-          } else {
-            //"res was empty".print();
-          }
-        }
-        nextSwCheckIdx++;
-      }
-    }
   }
 
   doSec(String sp) String {
@@ -559,7 +377,6 @@ class Embedded:Hqb {
   }
 
   handleLoop() {
-    //checkDoMes();
     checkPubStates();
   }
 

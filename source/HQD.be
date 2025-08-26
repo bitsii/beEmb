@@ -19,12 +19,16 @@ class Embedded:Hqd {
       String ipos = _ipos;
       String spass = _spass;
       Bool sw; //sw state, all types
-      Int ct;//temp
-      Int h;
-      Int s;
-      Int v;
-      Bool inCtCh;
-      Int ctLvl;
+      Int r;
+      Int g;
+      Int b;
+      Int lvl;
+      //Int ct;//temp
+      //Int h;
+      //Int s;
+      //Int v;
+      //Bool inCtCh;
+      //Int ctLvl;
       String rip; //it's ip if known
     }
   }
