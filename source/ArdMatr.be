@@ -260,10 +260,31 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
     config.put(mepi, "");
   }
 
+  gotAddr(String name, String rip) {
+    if (TS.notEmpty(name) && TS.notEmpty(rip)) {
+      String did = name.substring(6, name.length);
+      //("did in gotwants " + name + " " + did).print();
+      for (Mmep mmep in meps) {
+        if (TS.notEmpty(mmep.ondid)) {
+          if (mmep.ondid == did) {
+            mmep.rip = rip;
+            //"equal".print();
+            break;
+          } else {
+            //"not equal".print();
+          }
+        }
+      }
+    }
+  }
+
   start() {
 
     ifNotEmit(noTds) {
       Embedded:Tds tdserver = ash.tdserver;
+      if (def(tdserver)) {
+        tdserver.callback = self;
+      }
     }
 
     mepi = config.getPos("matr.meps");
@@ -705,7 +726,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
           if (TS.notEmpty(mmep.rip)) {
             rip = mmep.rip;
           } else {
-            String rip = tdserver.getAddr(kdn);
+            String rip = tdserver.getAddrDis(kdn);
           }
           if (rip != CNS.undefined) {
             ("rip " + rip).print();
@@ -728,7 +749,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
               //"tcpcres empty".print();
               //in case ip changed rewantit
               mmep.rip = null;
-              tdserver.sayWantsCb(kdn, mmep);
+              tdserver.sayWants(kdn);
             } else {
               //("tcpcres " + tcpcres).print();
               mcmdres = tcpcres;

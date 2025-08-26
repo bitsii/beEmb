@@ -61,6 +61,9 @@ const int port = 3121;
       String sayMy;
       String sayWants;
     }
+    fields {
+      any callback;
+    }
   }
 
   say(String toSay) {
@@ -148,12 +151,11 @@ const int port = 3121;
         }
         if (TS.notEmpty(rip)) {
           //("be rip|" + rip + "|").print();
+          if (def(callback)) {
+            callback.gotAddr(msg, rip);
+          }
           if (TS.notEmpty(waits) && msg == waits) {
             waitsRip = rip;
-            if (def(cb)) {
-              cb.gotWants(waits, rip);
-              cb = null;
-            }
           } else {
             gots = msg;
             gotsRip = rip;
@@ -175,13 +177,6 @@ const int port = 3121;
     sayWants = wac + wants;
   }
 
-  sayWantsCb(String wants, _cb) {
-    slots {
-      any cb = _cb;
-    }
-    sayWants(wants);
-  }
-
   getAddr(String name) String {
     if (TS.notEmpty(name)) {
       if (TS.notEmpty(waits) && waits == name && TS.notEmpty(waitsRip)) {
@@ -195,5 +190,17 @@ const int port = 3121;
     return(CNS.undefined);
   }
 
+  getAddrDis(String name) String {
+    for (Int i = 0;i < 2;i++) {
+      String res = getAddr(name);
+      if (res != CNS.undefined) {
+        return(res);
+      }
+      update();
+      ash.app.delay(2);
+      update();
+    }
+    return(res);
+  }
 
 }

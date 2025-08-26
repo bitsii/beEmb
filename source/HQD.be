@@ -29,13 +29,4 @@ class Embedded:Hqd {
     }
   }
 
-  gotWants(String name, String _rip) {
-    if (TS.notEmpty(name) && TS.notEmpty(_rip)) {
-      String myn = "CasNic" + ondid;
-      if (myn == name) {
-        rip = _rip;
-      }
-    }
-  }
-
 }

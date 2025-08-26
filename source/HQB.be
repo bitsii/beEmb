@@ -267,6 +267,11 @@ class Embedded:Hqb {
       Int nextSwCheckIdx = 0;
     }
 
+    Embedded:Tds tdserver = ash.tdserver;
+    if (def(tdserver)) {
+      tdserver.callback = self;
+    }
+
   }
 
   checkDoMes() {
@@ -498,7 +503,7 @@ class Embedded:Hqb {
           if (TS.notEmpty(hd.rip)) {
             rip = hd.rip;
           } else {
-            String rip = tdserver.getAddr(kdn);
+            String rip = tdserver.getAddrDis(kdn);
           }
           if (rip != CNS.undefined) {
             ("rip " + rip).print();
@@ -521,7 +526,7 @@ class Embedded:Hqb {
               //"tcpcres empty".print();
               //in case ip changed rewantit
               hd.rip = null;
-              tdserver.sayWantsCb(kdn, hd);
+              tdserver.sayWants(kdn);
             } else {
               //("tcpcres " + tcpcres).print();
               mcmdres = tcpcres;
@@ -533,6 +538,24 @@ class Embedded:Hqb {
       }
     }
     return(mcmdres);
+  }
+
+  gotAddr(String name, String rip) {
+    if (TS.notEmpty(name) && TS.notEmpty(rip)) {
+      String did = name.substring(6, name.length);
+      //("did in gotwants " + name + " " + did).print();
+      for (Hqd hd in hds) {
+        if (TS.notEmpty(hd.ondid)) {
+          if (hd.ondid == did) {
+            hd.rip = rip;
+            //"equal".print();
+            break;
+          } else {
+            //"not equal".print();
+          }
+        }
+      }
+    }
   }
 
   handleLoop() {

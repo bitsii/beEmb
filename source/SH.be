@@ -525,9 +525,9 @@ class Embedded:AppShell {
           Int smcpi = config.getPos("smc.p");
           smcp = config.get(smcpi);
         }
-        checkStartHbServer();//must be before smcserver
+        checkStartHbServer();//must be before smcserver, after tdserver
         checkStartSmcServer();
-        checkStartMatrServer();
+        checkStartMatrServer();//must be after tdserver
         checkStartEhServer();
         checkStartTaServer();
        }
@@ -750,9 +750,9 @@ class Embedded:AppShell {
        }
        checkStartUpServer();
        checkStartTdServer();
-       checkStartHbServer();//must be before smcserver
+       checkStartHbServer();//must be before smcserver, after tdserver
        checkStartSmcServer();
-       checkStartMatrServer();
+       checkStartMatrServer();//must be after tdserver
        checkStartEhServer();
        checkStartTaServer();
      }
@@ -937,7 +937,7 @@ class Embedded:AppShell {
                           }
                         }
                         if (TS.isEmpty(rip)) {
-                          String rip = tdserver.getAddr(kdn);
+                          String rip = tdserver.getAddrDis(kdn);
                           if (rip == CNS.undefined) {
                             "no rip tds".print();
                           } else {
