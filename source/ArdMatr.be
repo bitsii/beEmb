@@ -494,7 +494,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
         tost = false;
       }
       if (def(mmep)) {
-        if (undef(mmep.sw) || mmep.sw != tost) {
+        //if (undef(mmep.sw) || mmep.sw != tost) {
           //String kdn = "CasNic" + mmep.ondid;
           //String scmds = "dostate " + mmep.spass + " " + mmep.ipos + " setsw " + sts + " e";
           //String scres = sendCmd(kdn, scmds);
@@ -507,9 +507,9 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
               mmep.sw = tost;
             }
           }
-        } else {
-          ("state already " + tost + " not sending dostate").print();
-        }
+        //} else {
+        //  ("state already " + tost + " not sending dostate").print();
+        //}
       }
     }
     if (def(bidx) && def(bb)) {
