@@ -163,6 +163,9 @@ const int port = 3121;
         }
       } elseIf (msg == myWants) {
         sayMy = mySay;
+      } elseIf (msg.begins(wac)) {
+        String wnm = msg.substring(wac.length, msg.length);
+        mdnsGet(wnm);
       }
     } elseIf (TS.notEmpty(sayMy)) {
       say(sayMy);
@@ -170,6 +173,27 @@ const int port = 3121;
     } elseIf (TS.notEmpty(sayWants)) {
       say(sayWants);
       sayWants = null;
+
+
+    }
+  }
+
+  mdnsGet(wnm) {
+    ifNotEmit(noMdns) {
+    if (TS.notEmpty(wnm)) {
+      //("in mdnsGet |" + wnm + "|").print();
+      if (def(ash.mdserver)) {
+        String tqip = ash.mdserver.getAddr(wnm);
+        if (TS.notEmpty(tqip)) {
+          //("mdnsGet tqip |" + tqip + "|").print();
+          say(amc + wnm + "#" + tqip);
+        } else {
+          //"tqip empty".print();
+        }
+      }
+    } else {
+      //"got empty wnm in mdnsGet".print();
+    }
     }
   }
 

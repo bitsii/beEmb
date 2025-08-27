@@ -356,9 +356,10 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
 
     if (mepslen <= 0) { Int ivdiv = 1; } else { ivdiv = mepslen; }
     slots {
-      Int swCheckIv = 360000 / ivdiv;//millis per each check on any given device 30000 30 secs, 120000 2 mins, 1800000 30 mins, 600000 10 mins, 360000 6 mins
+      Int swCheckIv = 30000 / ivdiv;//millis per each check on any given device 30000 30 secs, 120000 2 mins, 1800000 30 mins, 600000 10 mins, 360000 6 mins
       Int nextSwCheck = ash.nowup + swCheckIv;
       Int nextSwCheckIdx = 0;
+      Int swCycle = 0;//name checks but every 6 cycles get sw (3 mins)
     }
 
   }
@@ -634,70 +635,85 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
         nextSwCheck = ash.nowup + swCheckIv;
         if (nextSwCheckIdx >= meps.length) {
           nextSwCheckIdx = 0;
+          swCycle++;
+          if (swCycle > 5) { swCycle = 0; }
         }
         //("doing getsw for mep " + nextSwCheckIdx).print();
         mmep = meps.get(nextSwCheckIdx);
         if (def(mmep)) {
-          //kdn = "CasNic" + mmep.ondid;
-          scmds = "sp2 " + doSec(mmep.spass) + " dostate X " + mmep.ipos + " getsw e";
-          String res = sendCmd(mmep, scmds);
-          if (TS.notEmpty(res)) {
-            //("got res |" + res + "|").print();
-            if (res.has(CNS.on)) {
-              Bool swto = true;
-            } elseIf (res.has(CNS.off)) {
-              swto = false;
-            }
-            if (mmep.met == "ool") {
-              Int mmepmet = 0;
-            } elseIf (mmep.met == "dl") {
-              mmepmet = 1;
-            } elseIf (mmep.met == "ecl") {
-              mmepmet = 2;
-            }
-            if (def(swto)) {
-              mmep.sw = swto;
-              //"doing sloo".print();
-              emit(cc) {
-                """
-                bool swtost = beq->bevl_swto->bevi_bool;
-                std::shared_ptr<MatterEndPoint> swmep = bevi_meps[bevp_nextSwCheckIdx->bevi_int];
-                bool didup = false;
-                if (beq->bevl_mmepmet->bevi_int == 0) {
-                std::shared_ptr<MatterOnOffLight> swool = std::static_pointer_cast<MatterOnOffLight>(swmep);
-                if (swool->getOnOff() != swtost) {
-                  didup = true;
-                  Serial.println("will setonoff");
-                  swool->setOnOff(swtost);
-                }
-                }
-                if (beq->bevl_mmepmet->bevi_int == 1) {
-                std::shared_ptr<MatterDimmableLight> swdl = std::static_pointer_cast<MatterDimmableLight>(swmep);
-                if (swdl->getOnOff() != swtost) {
-                  didup = true;
-                  Serial.println("will setonoff");
-                  swdl->setOnOff(swtost);
-                }
-                }
-                if (beq->bevl_mmepmet->bevi_int == 2) {
-                std::shared_ptr<MatterEnhancedColorLight> mecl = std::static_pointer_cast<MatterEnhancedColorLight>(swmep);
-                if (mecl->getOnOff() != swtost) {
-                  didup = true;
-                  Serial.println("will setonoff");
-                  mecl->setOnOff(swtost);
-                }
-                }
-                if (didup) {
-                  """
-                }
+          if (swCycle == 5) {
+            //kdn = "CasNic" + mmep.ondid;
+            scmds = "sp2 " + doSec(mmep.spass) + " dostate X " + mmep.ipos + " getsw e";
+            String res = sendCmd(mmep, scmds);
+            if (TS.notEmpty(res)) {
+              //("got res |" + res + "|").print();
+              if (res.has(CNS.on)) {
+                Bool swto = true;
+              } elseIf (res.has(CNS.off)) {
+                swto = false;
+              }
+              if (mmep.met == "ool") {
+                Int mmepmet = 0;
+              } elseIf (mmep.met == "dl") {
+                mmepmet = 1;
+              } elseIf (mmep.met == "ecl") {
+                mmepmet = 2;
+              }
+              if (def(swto)) {
+                mmep.sw = swto;
+                //"doing sloo".print();
                 emit(cc) {
                   """
+                  bool swtost = beq->bevl_swto->bevi_bool;
+                  std::shared_ptr<MatterEndPoint> swmep = bevi_meps[bevp_nextSwCheckIdx->bevi_int];
+                  bool didup = false;
+                  if (beq->bevl_mmepmet->bevi_int == 0) {
+                  std::shared_ptr<MatterOnOffLight> swool = std::static_pointer_cast<MatterOnOffLight>(swmep);
+                  if (swool->getOnOff() != swtost) {
+                    didup = true;
+                    Serial.println("will setonoff");
+                    swool->setOnOff(swtost);
+                  }
+                  }
+                  if (beq->bevl_mmepmet->bevi_int == 1) {
+                  std::shared_ptr<MatterDimmableLight> swdl = std::static_pointer_cast<MatterDimmableLight>(swmep);
+                  if (swdl->getOnOff() != swtost) {
+                    didup = true;
+                    Serial.println("will setonoff");
+                    swdl->setOnOff(swtost);
+                  }
+                  }
+                  if (beq->bevl_mmepmet->bevi_int == 2) {
+                  std::shared_ptr<MatterEnhancedColorLight> mecl = std::static_pointer_cast<MatterEnhancedColorLight>(swmep);
+                  if (mecl->getOnOff() != swtost) {
+                    didup = true;
+                    Serial.println("will setonoff");
+                    mecl->setOnOff(swtost);
+                  }
+                  }
+                  if (didup) {
+                    """
+                  }
+                  emit(cc) {
+                    """
+                  }
+                  """
                 }
-                """
               }
+            } else {
+              //"res was empty".print();
             }
           } else {
-            //"res was empty".print();
+            if (TS.isEmpty(mmep.rip)) {
+              Embedded:Tds tdserver = ash.tdserver;
+              if (def(tdserver)) {
+                String kdn = "CasNic" + mmep.ondid;
+                String rip = tdserver.getAddrDis(kdn);
+                if (rip != CNS.undefined) {
+                  mmep.rip = rip;
+                }
+              }
+            }
           }
         }
         nextSwCheckIdx++;
