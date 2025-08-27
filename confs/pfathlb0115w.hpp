@@ -9,7 +9,7 @@
 // SW - name (type) and version of the device.  Typename 10 char max ssid rules (no spaces)
 // swconfver.DeviceTypeName.DeviceVersion
 //
-#define BESPEC_SW "1,q,t3,p6,p2.rAthBlb15w.124"  //generic configurable controls Athlb017w LB01-7W-B22
+#define BESPEC_SW "1,q,p6,p2.rAthBlb15w.126"  //generic configurable controls Athlb017w LB01-7W-B22
 // UPD
 //#define BE_UPDBASE "na"  //if we don't have one.  otherwise, the url base for the update ver txt file and binfiles
 #define BE_UPDBASE "http://storage.googleapis.com/casnicdl.casnic.net/pfathlb0115w.ino.generic"

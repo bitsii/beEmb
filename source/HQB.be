@@ -103,7 +103,7 @@ class Embedded:Hqb {
     "hbsserver in handleMessage".print();
     if (TS.notEmpty(top) && TS.notEmpty(msg)) {
       ("top " + top + " msg " + msg).print();
-      if (top.begins("homeassistant/switch/") && top.ends("/set")) {
+      if (top.begins("homeassistant/") && top.ends("/set")) {
         var ll = top.split("/");
         String didpos = ll[2];
         var dp = didpos.split("-");
@@ -130,6 +130,13 @@ class Embedded:Hqb {
               }
             } elseIf (hd.met == "ecl") {
               "got ecl set".print();
+              //do the do. you can tell rgb or temp from what you go, save the mode (rgb or colortemp) on
+              //the hd.  will have to use when getting brightness.
+
+              //if it worked send back state.  you need to construct it from the settings, and include brightness, state, color mode, color mode value
+              tl = top.split("/");
+              stpp = "homeassistant/light/" + tl[2] + "/state";
+              ash.smcserver.publish(stpp, msg);
             }
           }
         }
