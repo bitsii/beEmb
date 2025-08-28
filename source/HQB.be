@@ -138,6 +138,49 @@ class Embedded:Hqb {
                 hd.sw = false;
               }
 
+              for (String cs in msg.split(",")) {
+                ("cs " + cs).print();
+                if (cs.has("\"brightness\"")) {
+                  Int c = cs.find(":");
+                  Int e = cs.find(",");
+                  if (undef(e)) {
+                    e = cs.find("}");
+                  }
+                  if (def(c) && def(e)) {
+                    String bi = cs.substring(c + 1, e);
+                    Int b = Int.new(bi);
+                    hd.lvl = b;
+                    ("set lvl to " + b).print();
+                  }
+                }
+                if (cs.has("\"h\"")) {
+                  Int hih = cs.find("\"h\"");
+                  Int hic = cs.find(":", hih);
+                  if (def(hic)) {
+                    Int hip = cs.find(".", hic);
+                    if (def(hip)) {
+                      String his = cs.substring(hic + 1, hip);
+                      Int hi = Int.new(his);
+                      hd.h = hi;
+                      ("set h to " + hi).print();
+                    }
+                  }
+                }
+                if (cs.has("\"s\"")) {
+                  Int sih = cs.find("\"s\"");
+                  Int sic = cs.find(":", sih);
+                  if (def(sic)) {
+                    Int sip = cs.find(".", sic);
+                    if (def(sip)) {
+                      String sis = cs.substring(sic + 1, sip);
+                      Int si = Int.new(sis);
+                      hd.s = si;
+                      ("set s to " + si).print();
+                    }
+                  }
+                }
+              }
+
               pubEcl(hd, tl[2]);
             }
           }
