@@ -130,13 +130,15 @@ class Embedded:Hqb {
               }
             } elseIf (hd.met == "ecl") {
               "got ecl set".print();
-              //do the do. you can tell rgb or temp from what you go, save the mode (rgb or colortemp) on
-              //the hd.  will have to use when getting brightness.
-
-              //if it worked send back state.  you need to construct it from the settings, and include brightness, state, color mode, color mode value
               tl = top.split("/");
-              stpp = "homeassistant/light/" + tl[2] + "/state";
-              ash.smcserver.publish(stpp, msg);
+
+              if (msg.has("\"ON\"")) {
+                hd.sw = true;
+              } elseIf (msg.has("\"OFF\"")) {
+                hd.sw = false;
+              }
+
+              pubEcl(hd, tl[2]);
             }
           }
         }
@@ -169,28 +171,34 @@ class Embedded:Hqb {
               }
               ash.smcserver.publish(tpp + "/state", st);
             } elseIf (hd.met == "ecl") {
-              "pubbing ecl".print();
               uid = hd.ondid + "-" + i;
-              tpp = "homeassistant/light/" + uid;
-              if (def(hd.sw) && hd.sw) {
-                st = "ON";
-              } else {
-                st = "OFF";
-              }
-              if (undef(hd.r)) { hd.r = 255; }
-              if (undef(hd.g)) { hd.g = 255; }
-              if (undef(hd.b)) { hd.b = 255; }
-              if (undef(hd.lvl)) { hd.lvl = 255; }
-              //String jst = "{\"state\":\"" += st += "\",\"brightness\":" += hd.lvl += ",\"color\":{\"r\":" += hd.r += ",\"g\":" += hd.g += ",\"b\":" += hd.b += "}}";
-              String jst = "{\"state\":\"" += st += "\"}";
-              ash.smcserver.publish(tpp + "/state", jst);
-              //dps.put("brightness", Int.new(lv));
-              //dps.put("color_temp", lsToMired(Int.new(cw)));
+              pubEcl(hd, uid);
             }
           }
         }
       }
     }
+  }
+
+  pubEcl(Hqd hd, String uid) {
+   "pubbing ecl".print();
+    String tpp = "homeassistant/light/" + uid;
+    if (def(hd.sw) && hd.sw) {
+      String st = "ON";
+    } else {
+      st = "OFF";
+    }
+    if (undef(hd.h)) { hd.h = 0; }
+    if (undef(hd.s)) { hd.s = 0; }
+    if (undef(hd.lvl)) { hd.lvl = 255; }
+    //String jst = "{\"state\":\"" += st += "\",\"brightness\":" += hd.lvl += ",\"color\":{\"r\":" += hd.r += ",\"g\":" += hd.g += ",\"b\":" += hd.b += "}}";
+    //String jst = "{\"state\":\"" += st += "\"}";
+
+    String jst = "{\"state\":\"" += st += "\",\"brightness\":" += hd.lvl += ",\"color_mode\":\"hs\",\"color\":{\"h\":" += hd.h += ",\"s\":" += hd.s += "}}";
+
+    ash.smcserver.publish(tpp + "/state", jst);
+    //dps.put("brightness", Int.new(lv));
+    //dps.put("color_temp", lsToMired(Int.new(cw)));
   }
 
   subDevices() {
@@ -232,14 +240,15 @@ class Embedded:Hqb {
             String tpp = "homeassistant/switch/" + hd.ondid + "-" + i;
             String cfs = "{\"name\":\"Switch\",\"command_topic\":\"" += tpp += "/set\",\"state_topic\":\"" += tpp += "/state\",\"unique_id\":\"" += uid += "\"}";
             ash.smcserver.publish(tpp + "/config", cfs);
-            nextPubState = ash.nowup + 1000;
+            nextPubState = ash.nowup + 200;
           } elseIf (hd.met == "ecl") {
             "pubbing ecl".print();
             uid = hd.ondid + "-" + hd.ipos;
             tpp = "homeassistant/light/" + hd.ondid + "-" + i;
-            cfs = "{\"name\":\"Light\",\"command_topic\":\"" += tpp += "/set\",\"state_topic\":\"" += tpp += "/state\",\"unique_id\":\"" += uid += "\",\"schema\":\"json\",\"brightness\":true,\"supported_color_modes\": [\"rgb\",\"color_temp\"]}";
+            //cfs = "{\"name\":\"Light\",\"command_topic\":\"" += tpp += "/set\",\"state_topic\":\"" += tpp += "/state\",\"unique_id\":\"" += uid += "\",\"schema\":\"json\",\"brightness\":true,\"supported_color_modes\": [\"rgb\",\"color_temp\"]}";
+            cfs = "{\"name\":\"Light\",\"command_topic\":\"" += tpp += "/set\",\"state_topic\":\"" += tpp += "/state\",\"unique_id\":\"" += uid += "\",\"schema\":\"json\",\"brightness\":true,\"supported_color_modes\": [\"hs\",\"color_temp\"]}";
             ash.smcserver.publish(tpp + "/config", cfs);
-            nextPubState = ash.nowup + 1000;
+            nextPubState = ash.nowup + 200;
           }
         }
       }
