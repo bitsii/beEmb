@@ -139,7 +139,7 @@ class Embedded:Hqb {
               }
 
               for (String cs in msg.split(",")) {
-                ("cs " + cs).print();
+                //("cs " + cs).print();
                 if (cs.has("\"brightness\"")) {
                   Int c = cs.find(":");
                   Int e = cs.find(",");
@@ -153,6 +153,20 @@ class Embedded:Hqb {
                     ("set lvl to " + b).print();
                   }
                 }
+                if (cs.has("\"color_temp\"")) {
+                  c = cs.find(":");
+                  e = cs.find(",");
+                  if (undef(e)) {
+                    e = cs.find("}");
+                  }
+                  if (def(c) && def(e)) {
+                    String ti = cs.substring(c + 1, e);
+                    Int t = Int.new(ti);
+                    hd.ct = t;
+                    ("set ct to " + t).print();
+                    hd.inCt = true;
+                  }
+                }
                 if (cs.has("\"h\"")) {
                   Int hih = cs.find("\"h\"");
                   Int hic = cs.find(":", hih);
@@ -163,6 +177,7 @@ class Embedded:Hqb {
                       Int hi = Int.new(his);
                       hd.h = hi;
                       ("set h to " + hi).print();
+                      hd.inCt = false;
                     }
                   }
                 }

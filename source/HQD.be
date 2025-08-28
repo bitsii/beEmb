@@ -23,11 +23,11 @@ class Embedded:Hqd {
       //Int g;
       //Int b;
       Int lvl;
-      //Int ct;//temp
+      Int ct;//temp
       Int h;
       Int s;
       //Int v;
-      //Bool inCtCh;
+      Bool inCt;
       //Int ctLvl;
       String rip; //it's ip if known
     }
