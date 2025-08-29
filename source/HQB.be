@@ -252,8 +252,13 @@ class Embedded:Hqb {
     //String jst = "{\"state\":\"" += st += "\",\"brightness\":" += hd.lvl += ",\"color\":{\"r\":" += hd.r += ",\"g\":" += hd.g += ",\"b\":" += hd.b += "}}";
     //String jst = "{\"state\":\"" += st += "\"}";
 
-    String jst = "{\"state\":\"" += st += "\",\"brightness\":" += hd.lvl += ",\"color_mode\":\"hs\",\"color\":{\"h\":" += hd.h += ",\"s\":" += hd.s += "}}";
+    if (def(hd.inCt) && hd.inCt) {
+      String jst = "{\"state\":\"" += st += "\",\"brightness\":" += hd.lvl += ",\"color_mode\":\"color_temp\",\"color_temp\":" += hd.ct += "}";
+    } else {
+      jst = "{\"state\":\"" += st += "\",\"brightness\":" += hd.lvl += ",\"color_mode\":\"hs\",\"color\":{\"h\":" += hd.h += ".0,\"s\":" += hd.s += ".0}}";
+    }
 
+    ("ecl " + jst).print();
     ash.smcserver.publish(tpp + "/state", jst);
     //dps.put("brightness", Int.new(lv));
     //dps.put("color_temp", lsToMired(Int.new(cw)));
