@@ -195,8 +195,16 @@ class Embedded:Hqb {
                   }
                 }
               }
-
-              pubEcl(hd, tl[2]);
+              hsvToRgb(hd);
+              String rgblct = "" += hd.r += "," += hd.g += "," += hd.b += "," += hd.lvl += ",0";//last 0 is cw for rgb case
+              scmds = "sp2 " + doSec(hd.spass) + " dostatexd X " + hd.ipos + " setrgbcw " + rgblct + " " + rgblct + " " + " e";
+              scres = sendCmd(hd, scmds);
+              if (TS.notEmpty(scres)) {
+                ("scres " + scres).print();
+                if (scres.has(CNS.ok)) {
+                  pubEcl(hd, tl[2]);
+                }
+              }
             }
           }
         }
@@ -204,6 +212,59 @@ class Embedded:Hqb {
         pubDevices();
       }
     }
+  }
+
+  hsvToRgb(Hqd hd) {
+    //Hue (h) → 0–360 Saturation (s) → 0–100 Brightness (brightness) → 0–255
+    // * Assumes h, s, and v are contained in the set [0, 1] and
+    // * returns r, g, and b in the set [0, 255].
+
+    Float sixf = Float.intNew(6);
+    Float onef = Float.intNew(1);
+    Float tff = Float.intNew(255);
+    Float tsf = Float.intNew(360);
+    Float ohf = Float.intNew(100);
+
+    if (undef(hd.h)) { hd.h = 0; }
+    if (undef(hd.s)) { hd.s = 0; }
+    if (undef(hd.lvl)) { hd.lvl = 255; }
+
+    Int hi = hd.h;
+    Int si = hd.s;
+    Int vi = hd.lvl;
+
+    if (hi > 359 || hi < 0) { hi = 0; }
+
+    Int i = hi / 60;
+    Float h = Float.intNew(hi) / tsf;
+    Float s = Float.intNew(si) / ohf;
+    Float v = Float.intNew(vi) / tff;
+
+    Float f = h * sixf - Float.intNew(i);
+    Float p = v * (onef - s);
+    Float q = v * (onef - f * s);
+    Float t = v * (onef - (onef - f) * s);
+
+    Float r; Float g; Float b;
+
+    if (i == 0) {
+      r = v; g = t; b = p;
+    } elseIf (i == 1) {
+      r = q; g = v; b = p;
+    } elseIf (i == 2) {
+      r = p; g = v; b = t;
+    } elseIf (i == 3) {
+      r = p; g = q; b = v;
+    } elseIf (i == 4) {
+      r = t; g = p; b = v;
+    } elseIf (i == 5) {
+      r = v; g = p; b = q;
+    }
+
+    hd.r = (r * tff).toInt();
+    hd.g = (g * tff).toInt();
+    hd.b = (b * tff).toInt();
+
   }
 
   checkPubStates() {

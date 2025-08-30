@@ -19,9 +19,9 @@ class Embedded:Hqd {
       String ipos = _ipos;
       String spass = _spass;
       Bool sw; //sw state, all types
-      //Int r;
-      //Int g;
-      //Int b;
+      Int r;
+      Int g;
+      Int b;
       Int lvl;
       Int ct;//temp
       Int h;
