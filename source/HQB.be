@@ -195,14 +195,30 @@ class Embedded:Hqb {
                   }
                 }
               }
-              hsvToRgb(hd);
-              String rgblct = "" += hd.r += "," += hd.g += "," += hd.b += "," += hd.lvl += ",0";//last 0 is cw for rgb case
-              scmds = "sp2 " + doSec(hd.spass) + " dostatexd X " + hd.ipos + " setrgbcw " + rgblct + " " + rgblct + " " + " e";
-              scres = sendCmd(hd, scmds);
-              if (TS.notEmpty(scres)) {
-                ("scres " + scres).print();
-                if (scres.has(CNS.ok)) {
-                  pubEcl(hd, tl[2]);
+
+              if (undef(hd.sw)) { hd.sw = false; }
+              if (undef(hd.inCt)) { hd.inCt = false; }
+              if (hd.sw) {
+                if (hd.inCt) {
+                  //on with temp
+                } else {
+                  //on with color
+                  hsvToRgb(hd);
+                  String rgblct = "" += hd.r += "," += hd.g += "," += hd.b += "," += hd.lvl += ",0";//last 0 is cw for rgb case
+                  scmds = "sp2 " + doSec(hd.spass) + " dostatexd X " + hd.ipos + " setrgbcw " + rgblct + " " + rgblct + " " + " e";
+                }
+              } else {
+                //turn off
+                mlow = "off";
+                scmds = "sp2 " + doSec(hd.spass) + " dostate X " + hd.ipos + " setsw " + mlow + " e";
+              }
+              if (TS.notEmpty(scmds)) {
+                scres = sendCmd(hd, scmds);
+                if (TS.notEmpty(scres)) {
+                  ("scres " + scres).print();
+                  if (scres.has(CNS.ok)) {
+                    pubEcl(hd, tl[2]);
+                  }
                 }
               }
             }
