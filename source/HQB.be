@@ -201,6 +201,26 @@ class Embedded:Hqb {
               if (hd.sw) {
                 if (hd.inCt) {
                   //on with temp
+                  //500 - 153
+
+                  if (undef(hd.lvl)) { hd.lvl = 255; }
+                  Int ebb = hd.lvl;
+
+                  Int lvli = hd.lvl;
+                  Int ewt = miredToLs(hd.ct);
+                  Int cwi = ewt;
+                  if (lvli < 0 || lvli > 255) { lvli = 255; }
+                  if (lvli == 1) { lvli = 2; } //cws seems to be off at analog write 1
+                  if (cwi < 0 || cwi > 255) { cwi = 255; }
+                  cwi = 255 - cwi;
+
+                  rgblct = "255,255,255," += ebb; //,cw
+                  xd = "255,255,255," += ebb; //,cw
+
+                  String xd += "," += ewt;
+                  rgblct += "," += cwi;
+
+                  scmds = "sp2 " + doSec(hd.spass) + " dostatexd X " + hd.ipos + " setrgbcw " + rgblct + " " + xd + " " + " e";
                 } else {
                   //on with color
                   hsvToRgb(hd);
@@ -228,6 +248,18 @@ class Embedded:Hqb {
         pubDevices();
       }
     }
+  }
+
+  miredToLs(Int mr) Int {
+    if (mr < 153 || mr > 500) { mr = 153; }
+    Int mrb = mr - 153;
+    Float mrbf = Float.intNew(mrb);
+    Float fh = Float.intNew(347);
+    Float mp = mrbf / fh;
+    Float lsm = Float.intNew(255);
+    Float lsf = mp * lsm;
+    Int ls = lsf.toInt();
+    return(ls);
   }
 
   hsvToRgb(Hqd hd) {
