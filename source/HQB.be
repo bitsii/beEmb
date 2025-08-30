@@ -315,7 +315,7 @@ class Embedded:Hqb {
 
   }
 
-  checkPubStates() {
+  checkPubStates() Bool {
     if (nextPubState > zero && ash.nowup > nextPubState) {
       "time to pubState".print();
       nextPubState = zero;
@@ -344,7 +344,9 @@ class Embedded:Hqb {
           }
         }
       }
+      return(true);
     }
+    return(false);
   }
 
   pubEcl(Hqd hd, String uid) {
@@ -476,9 +478,10 @@ class Embedded:Hqb {
 
     if (hdslen <= 0) { Int ivdiv = 1; } else { ivdiv = hdslen; }
     slots {
-      Int swCheckIv = 360000 / ivdiv;//millis per each check on any given device 30000 30 secs, 120000 2 mins, 1800000 30 mins, 600000 10 mins, 360000 6 mins
+      Int swCheckIv = 30000 / ivdiv;//millis per each check on any given device 30000 30 secs, 120000 2 mins, 1800000 30 mins, 600000 10 mins, 360000 6 mins
       Int nextSwCheck = ash.nowup + swCheckIv;
       Int nextSwCheckIdx = 0;
+      Int swCycle = 0;//name checks but every 6 cycles get sw (3 mins)
     }
 
     Embedded:Tds tdserver = ash.tdserver;
@@ -565,7 +568,56 @@ class Embedded:Hqb {
   }
 
   handleLoop() {
-    checkPubStates();
+    unless(checkPubStates()) {
+      devCheck();
+    }
   }
+
+  devCheck() {
+      if (ash.nowup > nextSwCheck) {
+        nextSwCheck = ash.nowup + swCheckIv;
+        if (nextSwCheckIdx >= hds.length) {
+          nextSwCheckIdx = 0;
+          swCycle++;
+          if (swCycle > 5) { swCycle = 0; }
+        }
+        //("doing getsw for mep " + nextSwCheckIdx).print();
+        Hqd mmep = hds.get(nextSwCheckIdx);
+        if (def(mmep)) {
+          if (swCycle == 5) {
+            //kdn = "CasNic" + mmep.ondid;
+            String scmds = "sp2 " + doSec(mmep.spass) + " dostate X " + mmep.ipos + " getsw e";
+            String res = sendCmd(mmep, scmds);
+            if (TS.notEmpty(res)) {
+              //("got res |" + res + "|").print();
+              if (res.has(CNS.on)) {
+                Bool swto = true;
+              } elseIf (res.has(CNS.off)) {
+                swto = false;
+              }
+              if (def(swto)) {
+                mmep.sw = swto;
+              }
+            } else {
+              //"res was empty".print();
+            }
+          } else {
+            if (TS.isEmpty(mmep.rip)) {
+              Embedded:Tds tdserver = ash.tdserver;
+              if (def(tdserver)) {
+                String kdn = "CasNic" + mmep.ondid;
+                String rip = tdserver.getAddrDis(kdn);
+                if (rip != CNS.undefined) {
+                  mmep.rip = rip;
+                }
+              }
+            }
+          }
+        }
+        nextSwCheckIdx++;
+        return(true);
+      }
+      return(false);
+    }
 
 }
