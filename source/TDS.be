@@ -173,12 +173,10 @@ const int port = 3121;
     } elseIf (TS.notEmpty(sayWants)) {
       say(sayWants);
       sayWants = null;
-
-
     }
   }
 
-  mdnsGet(wnm) {
+  mdnsGet(wnm) String {
     ifNotEmit(noMdns) {
     if (TS.notEmpty(wnm)) {
       //("in mdnsGet |" + wnm + "|").print();
@@ -187,6 +185,7 @@ const int port = 3121;
         if (TS.notEmpty(tqip)) {
           //("mdnsGet tqip |" + tqip + "|").print();
           say(amc + wnm + "#" + tqip);
+          return(tqip);
         } else {
           //"tqip empty".print();
         }
@@ -195,6 +194,7 @@ const int port = 3121;
       //"got empty wnm in mdnsGet".print();
     }
     }
+    return(null);
   }
 
   sayWants(String wants) {
@@ -221,6 +221,10 @@ const int port = 3121;
         return(res);
       }
       update();
+      String mrip = mdnsGet(name);
+      if (TS.notEmpty(mrip)) {
+        return(mrip);
+      }
       ash.app.delay(2);
       update();
     }
