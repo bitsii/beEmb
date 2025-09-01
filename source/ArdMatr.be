@@ -176,6 +176,22 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
           commission();
         } elseIf (cmdl.length > 2 && cmdl[2] == "decommish") {
           timeToDecom = true;
+        } elseIf (cmdl.length > 2 && cmdl[2] == "rmold") {
+          nx = List.new();
+          nowup = ash.nowup;
+          if (def(nowup)) {
+            for (mmep in meps) {
+              //mmep.lastUp = nowup;
+              if (undef(mmep.lastUp) || nowup - mmep.lastUp > 60000) {
+                "rmold removing a device".print();
+                brdCh = true;
+              } else {
+                 nx += mmep;
+              }
+            }
+          }
+          meps = nx;
+          saveMeps();
         } elseIf (cmdl.length > 2 && cmdl[2] == "chrestart") {
           if (brdCh) {
             "will restart chrestart".print();
@@ -183,6 +199,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
             ash.needsFsRestart = true;
           }
         } elseIf (cmdl.length > 3) {
+          Int nowup = ash.nowup;
           String act = cmdl[2];
           if (act == "add" && cmdl.length > 6) {
             if (meps.length >= 15) {
@@ -191,11 +208,14 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
             for (Mmep mmep in meps) {
               if (mmep.ondid == cmdl[4] && mmep.ipos == cmdl[5]) {
                 "brd add sent a dupe".print();
+                mmep.lastUp = nowup;
                 return("brdok");
               }
             }
             brdCh = true;
-            meps += Mmep.new(cmdl[3], cmdl[4], cmdl[5], cmdl[6]);
+            Mmep addm = Mmep.new(cmdl[3], cmdl[4], cmdl[5], cmdl[6]);
+            addm.lastUp = nowup;
+            meps += addm;
             saveMeps();
             //ash.needsFsRestart = true;
           } elseIf (act == "rm" && cmdl.length > 5) {

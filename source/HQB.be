@@ -53,7 +53,23 @@ class Embedded:Hqb {
             brdCh = false;
             ash.needsFsRestart = true;
           }
+        } elseIf (cmdl.length > 2 && cmdl[2] == "rmold") {
+          nx = List.new();
+          nowup = ash.nowup;
+          if (def(nowup)) {
+            for (hd in hds) {
+              if (undef(hd.lastUp) || nowup - hd.lastUp > 60000) {
+                "rmold removing a device".print();
+                brdCh = true;
+              } else {
+                 nx += hd;
+              }
+            }
+          }
+          hds = nx;
+          saveHds();
         } elseIf (cmdl.length > 3) {
+          Int nowup = ash.nowup;
           String act = cmdl[2];
           if (act == "add" && cmdl.length > 6) {
             if (hds.length >= 15) {
@@ -62,11 +78,14 @@ class Embedded:Hqb {
             for (Hqd hd in hds) {
               if (hd.ondid == cmdl[4] && hd.ipos == cmdl[5]) {
                 "brd add sent a dupe".print();
+                hd.lastUp = nowup;
                 return("brdok");
               }
             }
             brdCh = true;
-            hds += Hqd.new(cmdl[3], cmdl[4], cmdl[5], cmdl[6]);
+            Hqd addh = Hqd.new(cmdl[3], cmdl[4], cmdl[5], cmdl[6]);
+            addh.lastUp = nowup;
+            hds += addh;
             saveHds();
             //ash.needsFsRestart = true;
           } elseIf (act == "rm" && cmdl.length > 5) {

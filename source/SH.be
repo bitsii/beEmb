@@ -1466,7 +1466,7 @@ class Embedded:AppShell {
         } elseIf (cmd == "gettda") {
           ifNotEmit(noTds) {
             if (def(tdserver)) {
-              return(tdserver.getAddr(cmdl[2]));
+              return(tdserver.getAddrDis(cmdl[2]));
             }
           }
           return(CNS.ok);
