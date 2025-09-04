@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export APPBLDNM=pfn32gm
+export APPBLDNM=pfn32gmq
 
 mkdir -p $APPBLDNM
 
