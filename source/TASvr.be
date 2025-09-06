@@ -208,6 +208,17 @@ class Embedded:TAServer {
     }
   }
 
+  httpGetRetry(String turl) String {
+     for (Int i = 0;i < 3;i++) {
+       String res = httpGet(turl);
+       if (TS.notEmpty(res)) {
+         return(res);
+       }
+       //ash.app.delay(5);
+     }
+     return(null);
+   }
+
   httpGet(String turl) String {
     ("turl " + turl).print();
     String disRes;
@@ -460,7 +471,7 @@ class Embedded:TaSc {
           sw = insw;
           on.print();
           String turl = tad.wada + uon;
-          String disRes = taserver.httpGet(turl);
+          String disRes = taserver.httpGetRetry(turl);
           if (TS.notEmpty(disRes) && disRes.lowerValue().has("on")) {
             config.put(scswi, on);
           } else {
@@ -471,7 +482,7 @@ class Embedded:TaSc {
           sw = insw;
           off.print();
           turl = tad.wada + uoff;
-          disRes = taserver.httpGet(turl);
+          disRes = taserver.httpGetRetry(turl);
           if (TS.notEmpty(disRes) && disRes.lowerValue().has("off")) {
             config.put(scswi, off);
           } else {
@@ -591,7 +602,7 @@ class Embedded:TaRgbbc {
           sw = insw;
           on.print();
           String turl = tad.wada + uon;
-          String disRes = taserver.httpGet(turl);
+          String disRes = taserver.httpGetRetry(turl);
           if (TS.notEmpty(disRes) && disRes.lowerValue().has("on")) {
             config.put(ctswi, on);
           } else {
@@ -602,7 +613,7 @@ class Embedded:TaRgbbc {
           sw = insw;
           off.print();
           turl = tad.wada + uoff;
-          disRes = taserver.httpGet(turl);
+          disRes = taserver.httpGetRetry(turl);
           if (TS.notEmpty(disRes) && disRes.lowerValue().has("off")) {
             config.put(ctswi, off);
           } else {
@@ -643,7 +654,7 @@ class Embedded:TaRgbbc {
             }
             turl = tad.wada + lcm;
             //("turl " + turl).print();
-            disRes = taserver.httpGet(turl);
+            disRes = taserver.httpGetRetry(turl);
           } else {
            "rgbcwl too short".print();
           }
