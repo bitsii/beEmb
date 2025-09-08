@@ -34,6 +34,7 @@ class Embedded:TAServer {
       String swt = "sw";
       String rgbbt = "rgbcwsgd";
       Int myup = Int.new();
+      Int forceDisco = 0;
     }
     fields {
       Bool didFail = false;
@@ -140,6 +141,7 @@ class Embedded:TAServer {
     if (tadslen <= 0) { Int ivdiv = 1; } else { ivdiv = tadslen; }
     slots {
       Int failCheckIv = 1200000; //millis per fail check and rescan 600000 10 mins 1200000 20 mins
+      Int discoRpt = 9;
       //Int failCheckIv = 30000;
       Int nextFailCheck = ash.nowup + failCheckIv;
       Int disCheckIv = 250; //ms pause between checks when scanning ffor devices
@@ -172,6 +174,12 @@ class Embedded:TAServer {
         if (didFail) {
           didFail = false;
           startDis();
+        } else {
+          forceDisco++;
+          if (forceDisco > discoRpt) {
+            forceDisco = 0;
+            didFail = true;
+          }
         }
       } elseIf (def(inDis) && inDis && nowup > nextDisCheck && TS.notEmpty(disNetBase)) {
         nextDisCheck = nowup + disCheckIv;
