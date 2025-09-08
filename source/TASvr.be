@@ -178,14 +178,14 @@ class Embedded:TAServer {
         //"disCheck".print();
         //scan addresses 1 through 254 inclusive
         String turl = htp + disNetBase + nextDisIp + templ;
-        String disRes = httpGet(turl);
+        String disRes = httpGetRetry(turl);
         if (TS.notEmpty(disRes)) {
           //("disRes " + disRes).print();
           String ft = detectType(disRes);
           disRes = null;
           if (TS.notEmpty(ft)) {
             turl = htp + disNetBase + nextDisIp + macgt;
-            disRes = httpGet(turl);
+            disRes = httpGetRetry(turl);
             if (TS.notEmpty(disRes)) {
               //("disRes2 " + disRes).print();
               String mac = getMac(disRes);

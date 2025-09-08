@@ -60,7 +60,7 @@ class Embedded:AppShell {
        Bool pastSetupTime = false;
        String did;
        String devCode;
-       Bool resetByPow; //4 times 20 secs
+       Bool resetByPow; //if was long running, must plug and unplug 3 times lt 30 secs each time
        Bool inResetByPow = false;
        String readBuf = String.new();
        String controlSpec;
@@ -88,7 +88,7 @@ class Embedded:AppShell {
      app.uptime(nowup);
      nextSwSpec = nowup + 540000;
      nextMaybeSave = nowup + 15000;//15 secs
-     nextPow = nowup + 45000;//45 secs
+     nextPow = nowup + 35000;//35 secs
      endResetByPow = nowup + 1800000; //30 mins
      //nextWifiCheck = nowup + 180000;//3 mins
      nextWifiCheck = nowup + 45000;//45 secs
@@ -659,7 +659,9 @@ class Embedded:AppShell {
         startWifi();
        }
       unless (Wifi.up) {
-        initAp();
+        if (TS.isEmpty(ssid) || inResetByPow) {
+          initAp();
+        }
       }
      }
    }
@@ -841,7 +843,7 @@ class Embedded:AppShell {
       return(self);
      }
      if (nowup > nextPow) {
-      nextPow = nowup + 30000;//30 secs
+      nextPow = nowup + 35000;//35 secs
       clearPow();
       return(self);
      }
