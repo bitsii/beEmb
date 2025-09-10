@@ -42,6 +42,7 @@ class Embedded:AppShell {
        List sxdi = List.new();
        Bool needsFsRestart = false;
        String swSpec;
+       Bool needsGc = false;
      }
      slots {
        Int shpowi;
@@ -69,7 +70,6 @@ class Embedded:AppShell {
        Bool needsNetworkInit = true;
        Bool needsBuildControls = true;
        Bool needsInitControls = true;
-       Bool needsGc = false;
        Int looperI = Int.new();
        Int drift = 20;
      }

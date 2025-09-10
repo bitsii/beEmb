@@ -21,7 +21,9 @@
 //Just the R G B part now
 //#define BESPEC_CON "0.rgb.4,12,14" //Athom 7W 600lm RGBCCT Bulb (LB01-7W-B22)
 //#define BESPEC_CON "0.rgbgdim.4,12,14" //Athom 7W 600lm RGBCCT Bulb (LB01-7W-B22)
-#define BESPEC_CON "0.rgbcwgd.4,12,14,5,13" //all in one, pins cold, warm, red, green, blue, gammadim, exclusive cw or
+#define BESPEC_CON "0.rgbcwgd.4,12,14,5,13" //all in one, red, green, blue, (cold) white, (warm) white
+//#define BESPEC_CON "0.rgbcwgd.12,14,5,4,13" //for tasmota xcrhom.tech AC:85-265V. Order from ali 8/27/2025 Creative Ideas Store
+//for tasmota "regular bulbs" PNM 1 is red, PNM 2 is green, PNM 3 is blue, PNM 4 is cold white, PNM 5 is warm white
 //#define BESPEC_CON "0.cwgd.5,13"
 //putconfigs pass raw fc.conspec 0.dim.2,0 e
 //
