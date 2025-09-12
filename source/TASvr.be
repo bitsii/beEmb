@@ -120,6 +120,7 @@ class Embedded:TAServer {
 
   clearTads() {
     config.put(tadi, "");
+    ash.needsFsRestart = true;
   }
 
   start() {

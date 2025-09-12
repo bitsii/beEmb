@@ -72,6 +72,11 @@ class Embedded:AppShell {
        Bool needsInitControls = true;
        Int looperI = Int.new();
        Int drift = 20;
+       Int secCount = 0;
+       Int upCount = 0;
+       Int one = 1;
+       Int onek = 1000;
+       Int oneh = 100;
      }
      ifNotEmit(noWeb) {
       slots {
@@ -791,7 +796,80 @@ class Embedded:AppShell {
      app.wdtFeed();
      app.yield();
      //app.wdtDisable();
-     app.uptime(nowup);
+     ifEmit(bearEsp8266) {
+       app.delay(one);
+     }
+     upCount++;
+     if (upCount >= oneh) {
+       app.uptime(nowup);
+       upCount.setValue(zero);
+     }
+     secCount++;
+     if (secCount >= onek) {
+       secCount.setValue(zero);
+       if (nowup > nextMaybeSave) {
+        nextMaybeSave = nowup + 15000;//15 secs
+        if (config.changed) {
+          "maybeSave config".print();
+          config.maybeSave();
+        }
+        needsGc = true;
+        return(self);
+      }
+      if (nowup > nextPow) {
+        nextPow = nowup + 35000;//35 secs
+        clearPow();
+        return(self);
+      }
+      if (nowup > endResetByPow) {
+        endResetByPow = nowup + 1800000; //30 mins
+        pastSetupTime = true;
+        if (inResetByPow) {
+          inResetByPow = false;
+          needsFsRestart = true;
+          "endResetByPow".print();
+        }
+        return(self);
+      }
+      if (nowup > nextWifiCheck) {
+        //nextWifiCheck = nowup + 180000;//3 mins
+        nextWifiCheck = nowup + 45000;//45 secs
+        unless (inResetByPow) {
+          checkWifiUp();
+          needsGc = true;
+          return(self);
+        }
+      }
+      if (nowup > nextSwSpec) {
+        nextSwSpec = nowup + 540000;
+        swSpec.print();
+        nowup.print();
+        return(self);
+      }
+      if (nextRestart > zero && nowup > nextRestart) {
+        "restarting from nextRestart".print();
+        Wifi.stop();
+        Wifi.clearAll();
+        app.restart();
+        return(self);
+      }
+      if (needsRestart) {
+        needsRestart = false;
+        "prep restart needsRestart".print();
+          nextRestart = nowup + 9000;// was 2000 / two sec
+      }
+      if (needsFsRestart) {
+        needsFsRestart = false;
+        "maybeSave config".print();
+        config.maybeSave();
+        needsRestart = true;
+      }
+      ifNotEmit(noUpd) {
+        if (def(eupd)) {
+          eupd.handleLoop();
+        }
+      }
+     }
      if (needsGc) {
        needsGc = false;
        app.maybeGc();
@@ -832,52 +910,6 @@ class Embedded:AppShell {
        networkInit();
        needsGc = true;
        return(self);
-     }
-     if (nowup > nextMaybeSave) {
-      nextMaybeSave = nowup + 15000;//15 secs
-      if (config.changed) {
-        "maybeSave config".print();
-        config.maybeSave();
-      }
-      needsGc = true;
-      return(self);
-     }
-     if (nowup > nextPow) {
-      nextPow = nowup + 35000;//35 secs
-      clearPow();
-      return(self);
-     }
-     if (nowup > endResetByPow) {
-       endResetByPow = nowup + 1800000; //30 mins
-       pastSetupTime = true;
-       if (inResetByPow) {
-        inResetByPow = false;
-        needsFsRestart = true;
-        "endResetByPow".print();
-       }
-       return(self);
-     }
-     if (nowup > nextWifiCheck) {
-      //nextWifiCheck = nowup + 180000;//3 mins
-      nextWifiCheck = nowup + 45000;//45 secs
-      unless (inResetByPow) {
-        checkWifiUp();
-        needsGc = true;
-        return(self);
-      }
-     }
-     if (nowup > nextSwSpec) {
-      nextSwSpec = nowup + 540000;
-      swSpec.print();
-      nowup.print();
-      return(self);
-     }
-     if (nextRestart > zero && nowup > nextRestart) {
-      "restarting from nextRestart".print();
-      Wifi.stop();
-      Wifi.clearAll();
-      app.restart();
-      return(self);
      }
      ifNotEmit(noSer) {
       if (def(serserver) && serserver.available) {
@@ -1112,11 +1144,6 @@ class Embedded:AppShell {
         hbserver.handleLoop();
        }
      }
-     ifNotEmit(noUpd) {
-       if (def(eupd)) {
-         eupd.handleLoop();
-       }
-     }
      ifEmit (tcCon) {
      if (def(conserver)) {
        if (undef(concon)) {
@@ -1142,17 +1169,6 @@ class Embedded:AppShell {
       if (def(tdserver)) {
         tdserver.update();
       }
-     }
-     if (needsRestart) {
-       needsRestart = false;
-       "prep restart needsRestart".print();
-        nextRestart = nowup + 9000;// was 2000 / two sec
-     }
-     if (needsFsRestart) {
-       needsFsRestart = false;
-       "maybeSave config".print();
-       config.maybeSave();
-       needsRestart = true;
      }
    }
 
