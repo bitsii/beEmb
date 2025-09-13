@@ -385,33 +385,33 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
   }
 
   cwForCwLvl(Int rsi, Int l) {
-     if (rsi == 127) {
-       Int c = 255;
-       Int w = 255;
-     } elseIf (rsi < 127) {
-       c = 255;
-       w = rsi * 2; //127 == 254, 120 == 240, 64 == 128, 32 == 64, 16 == 8, 8 == 16, 4 == 8
-     } elseIf (rsi > 127) {
-       //254 == 2, 128 == 254, 134 == 240,
-       Int rsii = 255 - rsi;//128 == 127, 127+7=134,255-134=121,127+64= 255-251=4
-       c = rsii * 2; //127 == 254, 121 == 242, 64 == 128, 32 == 64
-       w = 255;
-     }
-     //c and w scaled to lvl/255
-     Float tff = Float.intNew(255);
-     Float cf = Float.intNew(c);
-     Float wf = Float.intNew(w);
-     Float lf = Float.intNew(l);
-     Float mpl = lf / tff;
-     Float fcf = cf * mpl;
-     Float fwf = wf * mpl;
-     Int fc = fcf.toInt();
-     Int fw = fwf.toInt();
-     if (fc < 1 && c > 0) { fc = 1; }
-     if (fw < 1 && w > 0) { fw = 1; }
-     String res = fc.toString() + "," + fw.toString();
-     return(res);
-   }
+    if (rsi == 127) {
+      Int c = 255;
+      Int w = 255;
+    } elseIf (rsi < 127) {
+      c = 255;
+      w = rsi * 2; //127 == 254, 120 == 240, 64 == 128, 32 == 64, 16 == 8, 8 == 16, 4 == 8
+    } elseIf (rsi > 127) {
+      //254 == 2, 128 == 254, 134 == 240,
+      Int rsii = 255 - rsi;//128 == 127, 127+7=134,255-134=121,127+64= 255-251=4
+      c = rsii * 2; //127 == 254, 121 == 242, 64 == 128, 32 == 64
+      w = 255;
+    }
+    //c and w scaled to lvl/255
+    Float tff = Float.intNew(255);
+    Float cf = Float.intNew(c);
+    Float wf = Float.intNew(w);
+    Float lf = Float.intNew(l);
+    Float mpl = lf / tff;
+    Float fcf = cf * mpl;
+    Float fwf = wf * mpl;
+    Int fc = fcf.toInt();
+    Int fw = fwf.toInt();
+    if (fc < 1 && c > 0) { fc = 1; }
+    if (fw < 1 && w > 0) { fw = 1; }
+    String res = fc.toString() + "," + fw.toString();
+    return(res);
+  }
 
   cwForCwsLvl(Int cwi, Int lvli) {
     if (lvli < 0 || lvli > 255) { lvli = 255; }

@@ -118,6 +118,44 @@ class Embedded:Hqb {
     pubDevices();
   }
 
+  cwForCwLvl(Int rsi, Int l) {
+    if (rsi == 127) {
+      Int c = 255;
+      Int w = 255;
+    } elseIf (rsi < 127) {
+      c = 255;
+      w = rsi * 2; //127 == 254, 120 == 240, 64 == 128, 32 == 64, 16 == 8, 8 == 16, 4 == 8
+    } elseIf (rsi > 127) {
+      //254 == 2, 128 == 254, 134 == 240,
+      Int rsii = 255 - rsi;//128 == 127, 127+7=134,255-134=121,127+64= 255-251=4
+      c = rsii * 2; //127 == 254, 121 == 242, 64 == 128, 32 == 64
+      w = 255;
+    }
+    //c and w scaled to lvl/255
+    Float tff = Float.intNew(255);
+    Float cf = Float.intNew(c);
+    Float wf = Float.intNew(w);
+    Float lf = Float.intNew(l);
+    Float mpl = lf / tff;
+    Float fcf = cf * mpl;
+    Float fwf = wf * mpl;
+    Int fc = fcf.toInt();
+    Int fw = fwf.toInt();
+    if (fc < 1 && c > 0) { fc = 1; }
+    if (fw < 1 && w > 0) { fw = 1; }
+    String res = fc.toString() + "," + fw.toString();
+    return(res);
+  }
+
+  cwForCwsLvl(Int cwi, Int lvli) {
+    if (lvli < 0 || lvli > 255) { lvli = 255; }
+    if (lvli == 1) { lvli = 2; } //cws seems to be off at analog write 1
+    if (cwi < 0 || cwi > 255) { cwi = 255; }
+    cwi = 255 - cwi;
+    String res = lvli.toString() + "," + cwi.toString();
+    return(res);
+  }
+
   handleMessage(String top, String msg) {
     "hbsserver in handleMessage".print();
     if (TS.notEmpty(top) && TS.notEmpty(msg)) {
@@ -224,20 +262,16 @@ class Embedded:Hqb {
 
                   if (undef(hd.lvl)) { hd.lvl = 255; }
                   Int ebb = hd.lvl;
-
-                  Int lvli = hd.lvl;
                   Int ewt = miredToLs(hd.ct);
-                  Int cwi = ewt;
-                  if (lvli < 0 || lvli > 255) { lvli = 255; }
-                  if (lvli == 1) { lvli = 2; } //cws seems to be off at analog write 1
-                  if (cwi < 0 || cwi > 255) { cwi = 255; }
-                  cwi = 255 - cwi;
 
-                  rgblct = "255,255,255," += ebb; //,cw
                   xd = "255,255,255," += ebb; //,cw
-
                   String xd += "," += ewt;
-                  rgblct += "," += cwi;
+
+                  if (hd.met == "ecl") {
+                    rgblct = "255,255,255," += cwForCwsLvl(ewt, ebb);
+                  } elseIf (hd.met == "eclns") {
+                    rgblct = "255,255,255," += cwForCwLvl(ewt, ebb);
+                  }
 
                   scmds = "sp2 " + doSec(hd.spass) + " dostatexd X " + hd.ipos + " setrgbcw " + rgblct + " " + xd + " " + " e";
                 } else {
