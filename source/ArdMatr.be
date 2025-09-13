@@ -324,7 +324,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
           meti = 0;
         } elseIf (mmep.met == "dl") {
           meti = 1;
-        } elseIf (mmep.met == "ecl") {
+        } elseIf (mmep.met.begins("ecl")) {
           meti = 2;
         }
         if (def(meti)) {
@@ -382,6 +382,44 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
       Int swCycle = 0;//name checks but every 6 cycles get sw (3 mins)
     }
 
+  }
+
+  cwForCwLvl(Int rsi, Int l) {
+     if (rsi == 127) {
+       Int c = 255;
+       Int w = 255;
+     } elseIf (rsi < 127) {
+       c = 255;
+       w = rsi * 2; //127 == 254, 120 == 240, 64 == 128, 32 == 64, 16 == 8, 8 == 16, 4 == 8
+     } elseIf (rsi > 127) {
+       //254 == 2, 128 == 254, 134 == 240,
+       Int rsii = 255 - rsi;//128 == 127, 127+7=134,255-134=121,127+64= 255-251=4
+       c = rsii * 2; //127 == 254, 121 == 242, 64 == 128, 32 == 64
+       w = 255;
+     }
+     //c and w scaled to lvl/255
+     Float tff = Float.intNew(255);
+     Float cf = Float.intNew(c);
+     Float wf = Float.intNew(w);
+     Float lf = Float.intNew(l);
+     Float mpl = lf / tff;
+     Float fcf = cf * mpl;
+     Float fwf = wf * mpl;
+     Int fc = fcf.toInt();
+     Int fw = fwf.toInt();
+     if (fc < 1 && c > 0) { fc = 1; }
+     if (fw < 1 && w > 0) { fw = 1; }
+     String res = fc.toString() + "," + fw.toString();
+     return(res);
+   }
+
+  cwForCwsLvl(Int cwi, Int lvli) {
+    if (lvli < 0 || lvli > 255) { lvli = 255; }
+    if (lvli == 1) { lvli = 2; } //cws seems to be off at analog write 1
+    if (cwi < 0 || cwi > 255) { cwi = 255; }
+    cwi = 255 - cwi;
+    String res = lvli.toString() + "," + cwi.toString();
+    return(res);
   }
 
   checkDoMes() {
@@ -596,18 +634,15 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
             }
 
             mmep.ctLvl = ebb;
-            Int lvli = ebb;
-            Int cwi = ewt;
-            if (lvli < 0 || lvli > 255) { lvli = 255; }
-            if (lvli == 1) { lvli = 2; } //cws seems to be off at analog write 1
-            if (cwi < 0 || cwi > 255) { cwi = 255; }
-            cwi = 255 - cwi;
 
-            rgblct = "255,255,255," += ebb; //,cw
             xd = "255,255,255," += ebb; //,cw
-
             xd += "," += ewt;
-            rgblct += "," += cwi;
+
+            if (mmep.met == "ecl") {
+              rgblct = "255,255,255," += cwForCwsLvl(ewt, ebb);
+            } elseIf (mmep.met == "eclns") {
+              rgblct = "255,255,255," += cwForCwLvl(ewt, ebb);
+            }
 
             scmds = "sp2 " + doSec(mmep.spass) + " dostatexd X " + mmep.ipos + " setrgbcw " + rgblct + " " + xd + " " + " e";
           }
@@ -676,7 +711,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
                 Int mmepmet = 0;
               } elseIf (mmep.met == "dl") {
                 mmepmet = 1;
-              } elseIf (mmep.met == "ecl") {
+              } elseIf (mmep.met.begins("ecl")) {
                 mmepmet = 2;
               }
               if (def(swto)) {

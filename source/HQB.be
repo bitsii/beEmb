@@ -147,7 +147,7 @@ class Embedded:Hqb {
                   }
                 }
               }
-            } elseIf (hd.met == "ecl") {
+            } elseIf (hd.met.begins("ecl")) {
               "got ecl set".print();
               tl = top.split("/");
 
@@ -356,7 +356,7 @@ class Embedded:Hqb {
                 st = "OFF";
               }
               ash.smcserver.publish(tpp + "/state", st);
-            } elseIf (hd.met == "ecl") {
+            } elseIf (hd.met.begins("ecl")) {
               uid = hd.ondid + "-" + i;
               pubEcl(hd, uid);
             }
@@ -407,7 +407,7 @@ class Embedded:Hqb {
             "subbing ool".print();
             String tpp = "homeassistant/switch/" + hd.ondid + "-" + i;
             ash.smcserver.subscribe(tpp += "/set");
-          } elseIf (hd.met == "ecl") {
+          } elseIf (hd.met.begins("ecl")) {
             "subbing ecl".print();
             tpp = "homeassistant/light/" + hd.ondid + "-" + i;
             ash.smcserver.subscribe(tpp += "/set");
@@ -434,7 +434,7 @@ class Embedded:Hqb {
             String cfs = "{\"name\":\"Switch\",\"command_topic\":\"" += tpp += "/set\",\"state_topic\":\"" += tpp += "/state\",\"unique_id\":\"" += uid += "\"}";
             ash.smcserver.publish(tpp + "/config", cfs);
             nextPubState = ash.nowup + 200;
-          } elseIf (hd.met == "ecl") {
+          } elseIf (hd.met.begins("ecl")) {
             "pubbing ecl".print();
             uid = hd.ondid + "-" + hd.ipos;
             tpp = "homeassistant/light/" + hd.ondid + "-" + i;
