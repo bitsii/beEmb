@@ -1360,12 +1360,12 @@ class Embedded:AppShell {
      return("f");
    }
 
-   getvisnets(List cmdl) String {
+   getvisnets(List cmdl, Int curpos) String {
      slots {
        List visnets;
      }
-      if (cmdl.length > 1) {
-        String st = cmdl[1];
+      if (cmdl.length > curpos) {
+        String st = cmdl[curpos];
         if (st.isInteger) {
           Int sti = Int.new(st);
         }
@@ -1415,7 +1415,7 @@ class Embedded:AppShell {
        return(stateres);
      } elseIf (cmd == "previsnets") {
        if (def(apSsid)) {
-         return(getvisnets(cmdl));
+         return(getvisnets(cmdl, 1));
        } else {
          return("on network nope");
        }
@@ -1484,7 +1484,7 @@ class Embedded:AppShell {
         } elseIf (cmd == "gettda") {
           ifNotEmit(noTds) {
             if (def(tdserver)) {
-              return(tdserver.getAddrDis(cmdl[2]));
+              return(tdserver.getAddr(cmdl[2]));
             }
           }
           return(CNS.ok);
@@ -1651,6 +1651,11 @@ class Embedded:AppShell {
          if (def(taserver)) {
            return(taserver.handleCmdl(cmdl));
          }
+        }
+        return("unsupported");
+     } elseIf (cmd == "dfvisnets") {
+       ifEmit(dfIs) {
+          return(getvisnets(cmdl, 2));
         }
         return("unsupported");
      } elseIf (cmd == "reset") {
