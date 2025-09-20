@@ -21,6 +21,7 @@ class Embedded:Dfis {
     slots {
       Embedded:AppShell ash = _ash;
       Int nextOutset = 0;
+      List ocmdl;
     }
   }
 
@@ -28,14 +29,22 @@ class Embedded:Dfis {
 
   }
 
-  teeOutset() {
-    nextOutset = ash.nowup + 6000;
-  }
-
   handleLoop() {
     if (nextOutset > 0 && ash.nowup > nextOutset) {
       "would outset".print();
+      nextOutset = 0;
+      //ocmdl = null;
     }
+  }
+
+  handleCmdl(List cmdl) String {
+    if (cmdl.length > 2 && cmdl[2] == "outset") {
+      "dfis cmdl outset".print();
+      ocmdl = cmdl;
+      nextOutset = ash.nowup + 6000;
+      return("dfisotry");
+    }
+    return("dfisnotok");
   }
 
 }

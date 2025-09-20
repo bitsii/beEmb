@@ -429,6 +429,11 @@ class Embedded:AppShell {
         Embedded:EHomeServer ehserver;
        }
      }
+     ifEmit(dfIs) {
+       slots {
+        Embedded:Dfis dfserver;
+       }
+     }
      ifEmit(taSvr) {
        slots {
         Embedded:TAServer taserver;
@@ -535,6 +540,7 @@ class Embedded:AppShell {
         checkStartMatrServer();//must be after tdserver
         checkStartEhServer();
         checkStartTaServer();
+        checkStartDfServer();
        }
       }
    }
@@ -628,6 +634,17 @@ class Embedded:AppShell {
         if (undef(ehserver)) {
           ehserver = Embedded:EHomeServer.new(self);
           ehserver.start();
+        }
+      }
+    }
+   }
+
+   checkStartDfServer() {
+     ifEmit(dfIs) {
+      if (Wifi.isConnected) {
+        if (undef(dfserver)) {
+          dfserver = Embedded:Dfis.new(self);
+          dfserver.start();
         }
       }
     }
@@ -762,6 +779,7 @@ class Embedded:AppShell {
        checkStartMatrServer();//must be after tdserver
        checkStartEhServer();
        checkStartTaServer();
+       checkStartDfServer();
      }
    }
 
@@ -1132,6 +1150,11 @@ class Embedded:AppShell {
      ifEmit(ehSvr) {
        if (def(ehserver)) {
         ehserver.handleLoop();
+       }
+     }
+     ifEmit(dfIs) {
+       if (def(dfserver)) {
+        dfserver.handleLoop();
        }
      }
      ifEmit(taSvr) {
@@ -1653,9 +1676,11 @@ class Embedded:AppShell {
          }
         }
         return("unsupported");
-     } elseIf (cmd == "outset") {
+     } elseIf (cmd == "dfis") {
        ifEmit(dfIs) {
-         "would outset".print();
+         if (def(dfserver)) {
+           return(dfserver.handleCmdl(cmdl));
+         }
        }
        return("unsupported");
      } elseIf (cmd == "dfvisnets") {
