@@ -1653,6 +1653,11 @@ class Embedded:AppShell {
          }
         }
         return("unsupported");
+     } elseIf (cmd == "outset") {
+       ifEmit(dfIs) {
+         "would outset".print();
+       }
+       return("unsupported");
      } elseIf (cmd == "dfvisnets") {
        ifEmit(dfIs) {
           return(getvisnets(cmdl, 2));
