@@ -21,6 +21,7 @@ class Embedded:Dfis {
     slots {
       Embedded:AppShell ash = _ash;
       Int nextOutset = 0;
+      Int nextWifiDis = 0;
       List ocmdl;
       String slashn = "\n";
       String slashr = "\r";
@@ -34,6 +35,10 @@ class Embedded:Dfis {
   }
 
   handleLoop() {
+    if (nextWifiDis > 0 && ash.nowup > nextWifiDis) {
+      nextWifiDis = 0;
+      Wifi.stop();
+    }
     if (nextOutset > 0 && ash.nowup > nextOutset) {
       "will outset".print();
       nextOutset = 0;
@@ -57,7 +62,8 @@ class Embedded:Dfis {
           ("allset res " + res).print();
           if (res.has("Error")) {
             status = "failed:" + res;
-            ash.nextWifiCheck = ash.nowup + 1;//we're done here
+            ash.nextWifiCheck = ash.nowup + 3000;//we're done here
+            nextWifiDis = ash.nowup + 2000;//we're done here
           } else {
             status = "setwifi";
             "sending wifi".print();
@@ -77,10 +83,12 @@ class Embedded:Dfis {
                     status = "failed:" + res;
                   }
                 }
-                ash.nextWifiCheck = ash.nowup + 2000;//we're done here
+                ash.nextWifiCheck = ash.nowup + 3000;//we're done here
+                nextWifiDis = ash.nowup + 2000;//we're done here
               } else {
                 status = "failed:" + res;
-                ash.nextWifiCheck = ash.nowup + 1;//we're done here
+                ash.nextWifiCheck = ash.nowup + 3000;//we're done here
+                nextWifiDis = ash.nowup + 2000;//we're done here
               }
             }
           }
@@ -98,8 +106,15 @@ class Embedded:Dfis {
     if (cmdl.length > 2 && cmdl[2] == "outset") {
       "dfis cmdl outset".print();
       ocmdl = cmdl;
-      nextOutset = ash.nowup + 6000;
+      nextOutset = ash.nowup + 3000;
       return("dfisotry");
+    }
+    if (cmdl.length > 2 && cmdl[2] == "status") {
+      "dfis cmdl status".print();
+      if (TS.notEmpty(status)) {
+        return(status);
+      }
+      return("dfisnostat");
     }
     return("dfisnotok");
   }
