@@ -111,7 +111,11 @@ class Embedded:Wifi {
     """
     WiFi.setAutoReconnect(false);
     WiFi.persistent(false);
-    WiFi.begin(bevp_ssid->bems_toCcString().c_str(), bevp_password->bems_toCcString().c_str());
+    if (bevp_password == nullptr) {
+      WiFi.begin(bevp_ssid->bems_toCcString().c_str());
+    } else {
+      WiFi.begin(bevp_ssid->bems_toCcString().c_str(), bevp_password->bems_toCcString().c_str());
+    }
     int count = 0;
     while (WiFi.status() != WL_CONNECTED && count < 60) {
       delay(500);

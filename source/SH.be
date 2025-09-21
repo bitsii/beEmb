@@ -43,17 +43,16 @@ class Embedded:AppShell {
        Bool needsFsRestart = false;
        String swSpec;
        Bool needsGc = false;
+       Int nextWifiCheck = 0;
      }
      slots {
        Int shpowi;
-
        Int zero = 0;
        Int nextSwSpec = 0;
        Int nextRestart = 0;
        Int nextMaybeSave = 0;
        Int nextPow = 0;
        Int endResetByPow = 0;
-       Int nextWifiCheck = 0;
        String slashn = "\n";
        String slashr = "\r";
        Bool needsRestart = false;
@@ -736,7 +735,7 @@ class Embedded:AppShell {
    
    startWifi() {
      //"in startWifi".print();
-     slots {
+     fields {
        String ssid;
        String sec;
      }

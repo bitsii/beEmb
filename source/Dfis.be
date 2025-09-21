@@ -22,6 +22,10 @@ class Embedded:Dfis {
       Embedded:AppShell ash = _ash;
       Int nextOutset = 0;
       List ocmdl;
+      String slashn = "\n";
+      String slashr = "\r";
+      String readBuf = String.new();
+      String status;
     }
   }
 
@@ -31,9 +35,62 @@ class Embedded:Dfis {
 
   handleLoop() {
     if (nextOutset > 0 && ash.nowup > nextOutset) {
-      "would outset".print();
+      "will outset".print();
       nextOutset = 0;
-      //ocmdl = null;
+      status = "start";
+      //03:54:27.565 -> ap6 INLVLZXEERMEABMD c0e01d7bd50eb13193f55ab7849195df794064ac 1758365668 OENRHJTDMFXZ dfis X outset CasnicO-cxqlqfwk-NodeMcu-6 cxqlqfwkcxqlqfwk EBWVLFTYMLRHKVZECD CVMYFLSLFOVOBUBYRT MEIACOYEGZTEPHHL e
+      if (def(ocmdl) && ocmdl.length > 7) {
+        "ocmdl length".print();
+        //ocmdl.length.print();//9
+        //ocmdl[0].print();dfis
+        //ocmdl[1].print();password
+        //2 is outset, ...
+        ash.nextWifiCheck = ash.nowup + 300000;//5 mins
+        status = "wifi";
+        Wifi.new(ocmdl[3], null).start();//in future check for CasnicO vs whatever and do the right thing
+        String scmds = "allset";//cmds = "allset " + devPin + " " + devPass + " " + devSpass + " " + devDid + " e";
+        for (Int i = 4; i < ocmdl.length;i++) {
+           scmds += " " += ocmdl[i];
+        }
+        String res = sendCmd("192.168.4.1", scmds);
+        if (TS.notEmpty(res)) {
+          ("allset res " + res).print();
+          if (res.has("Error")) {
+            status = "failed:" + res;
+            ash.nextWifiCheck = ash.nowup + 1;//we're done here
+          } else {
+            status = "setwifi";
+            "sending wifi".print();
+            scmds = "setwifi " + ocmdl[5] + " hex " + Encode:Hex.encode(ash.ssid) + " " + Encode:Hex.encode(ash.sec) + " e";
+            res = sendCmd("192.168.4.1", scmds);
+            if (TS.notEmpty(res)) {
+              ("wifi res " + res).print();
+              if (res.has("Wifi Setup Written")) {
+                "wifi ok restarting".print();
+                status = "restart";
+                scmds = "restart " + ocmdl[5] + " e";
+                res = sendCmd("192.168.4.1", scmds);
+                if (TS.notEmpty(res)) {
+                  if (res.has("Will restart")) {
+                    status = "success";
+                  } else {
+                    status = "failed:" + res;
+                  }
+                }
+                ash.nextWifiCheck = ash.nowup + 2000;//we're done here
+              } else {
+                status = "failed:" + res;
+                ash.nextWifiCheck = ash.nowup + 1;//we're done here
+              }
+            }
+          }
+        } else {
+          ("res empty").print();
+        }
+      } else {
+        "ocmdl too short or undef".print();
+      }
+      ocmdl = null;
     }
   }
 
@@ -45,6 +102,36 @@ class Embedded:Dfis {
       return("dfisotry");
     }
     return("dfisnotok");
+  }
+
+  sendCmd(String rip, String scmds) String {
+      String mcmdres;
+      if (TS.notEmpty(rip) && TS.notEmpty(scmds)) {
+        ("rip " + rip).print();
+        //look for r and n, send back r n (it's already there) FALSE NOT FROM MQ IT ISN'T
+        //String ppay = preq.checkGetPayload(readBuf, slashn);
+        var tcpc = Embedded:TCPClient.new(rip, 6420);
+        //"open".print();
+        tcpc.open();
+        //"write".print();
+        if (tcpc.connected) {
+          tcpc.write(scmds);
+          tcpc.write(slashr);
+          tcpc.write(slashn);
+          //"get tcpcres".print();
+          String tcpcres = tcpc.checkGetPayload(readBuf, slashn);
+          //"got res".print();
+        }
+        if (TS.isEmpty(tcpcres)) {
+          //"tcpcres empty".print();
+          //in case ip changed rewantit
+          //mmep.rip = null;
+        } else {
+          //("tcpcres " + tcpcres).print();
+          mcmdres = tcpcres;
+        }
+      }
+      return(mcmdres);
   }
 
 }
