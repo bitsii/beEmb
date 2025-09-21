@@ -107,6 +107,7 @@ class Embedded:Dfis {
       "dfis cmdl outset".print();
       ocmdl = cmdl;
       nextOutset = ash.nowup + 3000;
+      status = "wait";
       return("dfisotry");
     }
     if (cmdl.length > 2 && cmdl[2] == "status") {
