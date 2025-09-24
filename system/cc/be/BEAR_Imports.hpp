@@ -25,6 +25,11 @@
 //for ArdUpd.be
 #include <HTTPUpdate.h>
 #include <HTTPClient.h>
+//for BLE.be
+#include <BLEDevice.h>
+#include <BLEServer.h>
+#include <BLEUtils.h>
+#include <BLE2902.h>
 #endif
 //#include <EEPROM.h>
 #include <FS.h>
