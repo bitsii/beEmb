@@ -25,6 +25,16 @@
 //for ArdUpd.be
 #include <HTTPUpdate.h>
 #include <HTTPClient.h>
+<<<<<<< HEAD
+=======
+//for BLE.be
+#include <BLEDevice.h>
+#include <BLEUtils.h>
+#include <BLEServer.h>
+#include "esp_ota_ops.h"
+#include "nvs_flash.h"
+#include "nvs.h"
+>>>>>>> bea73e6 (trying more ble)
 #endif
 //#include <EEPROM.h>
 #include <FS.h>
