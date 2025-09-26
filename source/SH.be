@@ -1710,7 +1710,13 @@ class Embedded:AppShell {
         ifNotEmit(noUpd) {
           if (def(eupd)) {
            eupd.supurl = cmdl[2];
-          }
+           if (cmdl.length > 4) {
+             if (cmdl[3].isInteger) {
+               Int ufu = Int.new(cmdl[3]);
+               eupd.nextUfuCheck = nowup + ufu;
+             }
+           }
+         }
         }
         return("set supurl");
      } elseIf (cmd == "restart") {

@@ -19,11 +19,11 @@ class Embedded:Update {
       //Int upCheckIv = 20000;//millis per each check, 43200000 is 12 hours, 86400000 one day
       Int upCheckIv = 43200000;//millis per each check, 43200000 is 12 hours, 86400000 one day
       Int nextUpCheck = ash.nowup + upCheckIv;
-      Int nextUfuCheck = ash.nowup + 60000;
       String updBase;
     }
     fields {
       String supurl;
+      Int nextUfuCheck = ash.nowup + 60000;
     }
     emit(cc) {
       """
