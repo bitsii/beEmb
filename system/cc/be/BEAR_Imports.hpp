@@ -5,12 +5,14 @@
 #include <Hash.h>
 //for TDS
 //#include <WiFiUdp.h>
-//for SMC.be
-//#include <ArduinoMqttClient.h>
+//for SMC66.be
+#include <MQTT.h>
+#include <deque>
+//#include <mutex>
 //for ArdUpd.be
-#include <ESP8266httpUpdate.h>
-#include <ESP8266HTTPClient.h>
-#include <WiFiClient.h>
+//#include <ESP8266httpUpdate.h>
+//#include <ESP8266HTTPClient.h>
+//#include <WiFiClient.h>
 #endif
 #ifdef BEAR_ESP32
 #include <WiFi.h>
@@ -19,7 +21,7 @@
 #include <SimpleHOTP.h>
 //for TDS
 #include <NetworkUdp.h>
-//for SMC.be
+//for SMC32.be
 #include <NetworkClientSecure.h>
 #include <ArduinoMqttClient.h>
 //for ArdUpd.be

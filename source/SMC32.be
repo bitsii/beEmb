@@ -16,28 +16,18 @@ use Embedded:Smsg;
 in BEAR_Imports.hpp
 
 ESP32 section
-//for SMC.be
+//for SMC32.be
 #include <NetworkClientSecure.h>
 #include <ArduinoMqttClient.h>
 
-ESP8266 section
-//for SMC.be
-#include <ArduinoMqttClient.h>
 */
 
 class Embedded:Smc {
 
-  //despite the below, only works for esp32 at present
 emit(cc_classHead) {
 """
-#ifdef BEAR_ESP8266
-WiFiClient client;
-WiFiClientSecure clientSec;
-#endif
-#ifdef BEAR_ESP32
 NetworkClient client;
 NetworkClientSecure clientSec;
-#endif
 std::unique_ptr<MqttClient> mqclient;
 """
 }
