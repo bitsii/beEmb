@@ -16,46 +16,47 @@ use Embedded:Smsg;
 in BEAR_Imports.hpp
 ESP8266 section
 //for SMC66.be
-#include <MQTT.h>
-#include <deque>
-#include <mutex>
 */
 
 class Embedded:Smc {
 
-emit(cc_classHead) {
-"""
-std::unique_ptr<MQTTClient> client;
-WiFiClient net;
-"""
-}
-
 emit(cc) {
  """
+
+WiFiClient bevs_wifiClient;
+PubSubClient bevs_mqClient(bevs_wifiClient);
+
 std::deque<std::string> topDq;
 std::deque<std::string> payDq;
 //std::mutex tpLk;
 
-void messageReceived(String &topic, String &payload) {
-  //Serial.println("incoming: " + topic + " - " + payload);
+ void mqcallback(char* topic, byte* payload, unsigned int length) {
+   //Serial.println("in smc callback");
 
-  // Note: Do not use the client in the callback to publish, subscribe or
-  // unsubscribe as it may cause deadlocks when other things arrive while
-  // sending and receiving acknowledgments. Instead, change a global variable,
-  // or push to a queue and handle it in the loop after calling `client.loop()`.
+   std::string gotTopic = std::string(topic);
+   std::string gotPayload;
 
-  std::string gotTopic = std::string(topic.c_str());
-  std::string gotPayload = std::string(payload.c_str());
-
-  //tpLk.lock();
-  try {
-    topDq.push_front(gotTopic);
-    payDq.push_front(gotPayload);
-  } catch (...) {
-  //  tpLk.unlock();
-  }
-  //tpLk.unlock();
+   if (length > 0) {
+      for (int i = 0; i < length; i++) {
+        gotPayload.push_back((char)payload[i]);
+      }
+      //Serial.println(gotTopic.c_str());
+      //Serial.println(gotPayload.c_str());
+      //tpLk.lock();
+      try {
+        topDq.push_front(gotTopic);
+        payDq.push_front(gotPayload);
+      } catch (...) {
+        try {
+          bevs_mqClient.disconnect();
+        } catch (...) {
+        }
+      //  tpLk.unlock();
+      }
+      //tpLk.unlock();
+   }
 }
+
  """
 }
 
@@ -83,11 +84,9 @@ void messageReceived(String &topic, String &payload) {
     }
     emit(cc) {
       """
-      //one or two arguments for buffer sizes, first is read, second write, if only one same value used for both
-      //if no value given / the default is 128 each
-      //client = std::make_unique<MQTTClient>(384);
-      //client = std::make_unique<MQTTClient>();
-      client = std::make_unique<MQTTClient>(256, 128);
+       //bevs_mqClient.setCallback(mqcallback);
+       bevs_mqClient.setSocketTimeout(3);
+       bevs_mqClient.setKeepAlive(0);
       """
     }
   }
@@ -114,13 +113,23 @@ void messageReceived(String &topic, String &payload) {
     }
     emit(cc) {
       """
-      client->begin(bevp_mqttServer->bems_toCcString().c_str(), bevp_mqttPort->bevi_int, net);
-      client->onMessage(messageReceived);
-      if (client->connect(bevp_id->bems_toCcString().c_str(), bevp_user->bems_toCcString().c_str(), bevp_pass->bems_toCcString().c_str())) {
-          bevp_connectRes->bevi_int = 0;
+      try {
+      bevs_mqClient.setServer(bevp_mqttServer->bems_toCcString().c_str(), bevp_mqttPort->bevi_int);
+      if (bevs_mqClient.connect(bevp_id->bems_toCcString().c_str(), bevp_user->bems_toCcString().c_str(), bevp_pass->bems_toCcString().c_str())) {
+           bevp_connectRes->bevi_int = 0;
+           bevs_mqClient.setCallback(mqcallback);
         } else {
           bevp_connectRes->bevi_int = 2;
+          Serial.print("mq connect failed, rc=");
+          Serial.print(bevs_mqClient.state());
         }
+      } catch (...) {
+        try {
+          bevs_mqClient.disconnect();
+        } catch (...) {
+        }
+        //tpLk.unlock();
+      }
       """
     }
     ("mq connect result code " + connectRes).print();
@@ -136,8 +145,16 @@ void messageReceived(String &topic, String &payload) {
      ("subscribing to " + toq).print();
       emit(cc) {
         """
-        if (client->subscribe(beq->beva_toq->bems_toCcString().c_str())) {
+        try {
+        if (bevs_mqClient.subscribe(beq->beva_toq->bems_toCcString().c_str())) {
           beq->bevl_subRes->bevi_int = 1;
+        }
+        } catch (...) {
+          try {
+            bevs_mqClient.disconnect();
+          } catch (...) {
+          }
+          //tpLk.unlock();
         }
         """
       }
@@ -150,11 +167,19 @@ void messageReceived(String &topic, String &payload) {
     Int cgres = 0;
     emit(cc) {
       """
-      if (client->connected()) {
+      try {
+      if (bevs_mqClient.connected()) {
         //Serial.println("smc client connected");
         beq->bevl_cgres->bevi_int = 1;
       } else {
         //Serial.println("smc client not connected");
+      }
+      } catch (...) {
+        try {
+          bevs_mqClient.disconnect();
+        } catch (...) {
+        }
+        //tpLk.unlock();
       }
       """
     }
@@ -168,18 +193,26 @@ void messageReceived(String &topic, String &payload) {
     if (def(topic)) {
       topic.clear();
     }
-    if (def(sendTop) && def(sendPay)) {
+    /*if (def(sendTop) && def(sendPay)) {
       reallyPublish(sendTop, sendPay);
       sendTop = null;
       sendPay = null;
       return(payload);
-    }
+    }*/
     if (nextLoop) {
       nextLoop = false;
       emit(cc) {
         """
-        client->loop();
-        delay(10);  // <- fixes some issues with WiFi stability
+        try {
+        bevs_mqClient.loop();
+        //delay(10);  // <- fixes some issues with WiFi stability
+        } catch (...) {
+          try {
+            bevs_mqClient.disconnect();
+          } catch (...) {
+          }
+          //tpLk.unlock();
+        }
         """
       }
     } else {
@@ -214,6 +247,10 @@ void messageReceived(String &topic, String &payload) {
         }
       } catch (...) {
         //tpLk.unlock();
+        try {
+          bevs_mqClient.disconnect();
+        } catch (...) {
+        }
       }
       //tpLk.unlock();
         """
@@ -222,7 +259,7 @@ void messageReceived(String &topic, String &payload) {
     return(payload);
   }
 
-  publish(String topic, String payload) {
+  /*maybepublish(String topic, String payload) {
     if (TS.isEmpty(topic) || TS.isEmpty(payload)) {
       "can't publish, missing topic or payload".print();
     }
@@ -230,13 +267,21 @@ void messageReceived(String &topic, String &payload) {
       String sendTop = topic;
       String sendPay = payload;
     }
-  }
+  }*/
 
-  reallyPublish(String topic, String payload) {
+  publish(String topic, String payload) {
     emit(cc) {
       """
-      if (client->connected()) {
-        client->publish(beq->beva_topic->bems_toCcString().c_str(), beq->beva_payload->bems_toCcString().c_str());
+      try {
+      if (bevs_mqClient.connected()) {
+        bevs_mqClient.publish(beq->beva_topic->bems_toCcString().c_str(), beq->beva_payload->bems_toCcString().c_str());
+      }
+      } catch (...) {
+        //tpLk.unlock();
+        try {
+          bevs_mqClient.disconnect();
+        } catch (...) {
+        }
       }
       """
     }

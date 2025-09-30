@@ -6,9 +6,8 @@
 //for TDS
 //#include <WiFiUdp.h>
 //for SMC66.be
-#include <MQTT.h>
+#include <PubSubClient.h>
 #include <deque>
-//#include <mutex>
 //for ArdUpd.be
 //#include <ESP8266httpUpdate.h>
 //#include <ESP8266HTTPClient.h>
