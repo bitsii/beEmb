@@ -536,7 +536,9 @@ class Embedded:AppShell {
         }
         checkStartHbServer();//must be before smcserver, after tdserver
         checkStartSmcServer();
-        checkStartMatrServer();//must be after tdserver
+        ifNotEmit(noMatr) {
+          checkStartMatrServer();//must be after tdserver
+        }
         checkStartEhServer();
         checkStartTaServer();
         checkStartDfServer();
@@ -681,10 +683,27 @@ class Embedded:AppShell {
        }
       unless (Wifi.up) {
         if (TS.isEmpty(ssid) || inResetByPow) {
-          initAp();
+          ifEmit(bleSup) {
+            startBleSup();
+          }
+          ifNotEmit(bleSup) {
+            initAp();
+          }
         }
       }
      }
+   }
+
+   startBleSup() {
+     ifEmit(bleSup) {
+        slots {
+          Embedded:BLE blesup;
+        }
+        if (undef(blesup)) {
+          blesup = Embedded:BLE.new();
+          blesup.start();
+        }
+    }
    }
 
    initAp() {
@@ -775,7 +794,9 @@ class Embedded:AppShell {
        checkStartTdServer();
        checkStartHbServer();//must be before smcserver, after tdserver
        checkStartSmcServer();
-       checkStartMatrServer();//must be after tdserver
+       ifNotEmit(noMatr) {
+         checkStartMatrServer();//must be after tdserver
+       }
        checkStartEhServer();
        checkStartTaServer();
        checkStartDfServer();
@@ -1059,6 +1080,11 @@ class Embedded:AppShell {
           }
           return(self);
       }
+     }
+     ifEmit(bleSup) {
+        if(def(blesup)) {
+          //blesup.checkGetPayload(readBuf, slashn);
+        }
      }
      ifNotEmit(noWeb) {
       if (def(tweb)) {
