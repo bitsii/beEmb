@@ -683,30 +683,25 @@ class Embedded:AppShell {
        }
       unless (Wifi.up) {
         if (TS.isEmpty(ssid) || inResetByPow) {
-          ifEmit(bleSup) {
-            startBleSup();
-          }
-          ifNotEmit(bleSup) {
-            initAp();
-          }
+          initSetup();
         }
       }
      }
    }
 
-   startBleSup() {
+   startBleSup(String finssidp) {
      ifEmit(bleSup) {
         slots {
           Embedded:BLE blesup;
         }
         if (undef(blesup)) {
-          blesup = Embedded:BLE.new();
+          blesup = Embedded:BLE.new(finssidp);
           blesup.start();
         }
     }
    }
 
-   initAp() {
+   initSetup() {
       slots {
         String apSsid;
         String apType; //O open, S secure, for wifi sec
@@ -744,10 +739,15 @@ class Embedded:AppShell {
         }
         apSsid = ssid + pinpt + "-" + devCode + "-42";
         ("Device setup code " + sec).print();
-        if (apType == "O") {
-          Wifi.new(finssidp, null).startAp();
-        } else {
-          Wifi.new(finssidp, sec).startAp();
+        ifEmit(bleSup) {
+          startBleSup(finssidp);
+        }
+        ifNotEmit(bleSup) {
+          if (apType == "O") {
+            Wifi.new(finssidp, null).startAp();
+          } else {
+            Wifi.new(finssidp, sec).startAp();
+          }
         }
       }
    }
