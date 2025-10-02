@@ -34,14 +34,14 @@ class MyCallbacksC : public BLECharacteristicCallbacks {
       nowCs = value;
       nowCm = millis();
 
-      Serial.println("*********");
+      /*Serial.println("*********");
       Serial.print("C New value: ");
       for (int i = 0; i < value.length(); i++) {
         Serial.print(value[i]);
       }
 
       Serial.println();
-      Serial.println("*********");
+      Serial.println("*********");*/
     }
   }
 };
@@ -113,6 +113,7 @@ class MyCallbacksC : public BLECharacteristicCallbacks {
     emit(cc) {
       """
       if (nowCm != lastCm) {
+        lastCm = nowCm;
         if (nowCs.length() > 0) {
           std::string ncs = std::string(nowCs.c_str());
           beq->bevl_ncs = new BEC_2_4_6_TextString(ncs);
@@ -122,6 +123,7 @@ class MyCallbacksC : public BLECharacteristicCallbacks {
     }
     if (TS.notEmpty(ncs)) {
       ("ncs " + ncs).print();
+      payload += ncs;
     }
     return(payload);
   }

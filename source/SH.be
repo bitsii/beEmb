@@ -536,9 +536,7 @@ class Embedded:AppShell {
         }
         checkStartHbServer();//must be before smcserver, after tdserver
         checkStartSmcServer();
-        ifNotEmit(noMatr) {
-          checkStartMatrServer();//must be after tdserver
-        }
+        checkStartMatrServer();//must be after tdserver
         checkStartEhServer();
         checkStartTaServer();
         checkStartDfServer();
@@ -794,9 +792,7 @@ class Embedded:AppShell {
        checkStartTdServer();
        checkStartHbServer();//must be before smcserver, after tdserver
        checkStartSmcServer();
-       ifNotEmit(noMatr) {
-         checkStartMatrServer();//must be after tdserver
-       }
+       checkStartMatrServer();//must be after tdserver
        checkStartEhServer();
        checkStartTaServer();
        checkStartDfServer();
@@ -1083,7 +1079,27 @@ class Embedded:AppShell {
      }
      ifEmit(bleSup) {
         if(def(blesup)) {
-          //blesup.checkGetPayload(readBuf, slashn);
+          String blepay = blesup.checkGetPayload(readBuf, slashn);
+          if (TS.notEmpty(blepay)) {
+            try {
+                //"doing serpay".print();
+                String bcmdres = doCmd("ble", blepay);
+                if (TS.isEmpty(bcmdres)) {
+                  "bcmdres empty".print();
+                } else {
+                  ("bcmdres " + bcmdres).print();
+                  blesup.write(pcmdres);
+                  "bcmdres send done".print();
+                }
+              } catch (any bdce) {
+                "error handling command".print();
+                if (def(bdce)) {bdce.print();}
+              }
+              "blepay returning now".print();
+              //app.yield();
+              //"now".print();
+              return(self);
+          }
         }
      }
      ifNotEmit(noWeb) {
