@@ -110,6 +110,7 @@ class MyCallbacksC : public NimBLECharacteristicCallbacks {
   write(String line) self {
     emit(cc) {
     """
+    pCharacteristicR->setValue(beq->beva_line->bems_toCcString().c_str());
     """
     }
   }

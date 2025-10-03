@@ -740,13 +740,13 @@ class Embedded:AppShell {
         ifEmit(bleSup) {
           startBleSup(finssidp);
         }
-        ifNotEmit(bleSup) {
+        //ifNotEmit(bleSup) {
           if (apType == "O") {
             Wifi.new(finssidp, null).startAp();
           } else {
             Wifi.new(finssidp, sec).startAp();
           }
-        }
+        //}
       }
    }
    
@@ -1088,7 +1088,7 @@ class Embedded:AppShell {
                   "bcmdres empty".print();
                 } else {
                   ("bcmdres " + bcmdres).print();
-                  blesup.write(pcmdres);
+                  blesup.write(bcmdres);
                   "bcmdres send done".print();
                 }
               } catch (any bdce) {
