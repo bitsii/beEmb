@@ -26,8 +26,8 @@ int32_t nowCm = 0;
 String nowCs;
 BLECharacteristic *pCharacteristicR;
 
-class MyCallbacksC : public BLECharacteristicCallbacks {
-  void onWrite(BLECharacteristic *pCharacteristic) {
+class MyCallbacksC : public NimBLECharacteristicCallbacks {
+  void onWrite(NimBLECharacteristic *pCharacteristic, NimBLEConnInfo& connInfo) {
     String value = pCharacteristic->getValue();
 
     if (value.length() > 0) {
@@ -76,25 +76,32 @@ class MyCallbacksC : public BLECharacteristicCallbacks {
   start() {
     emit(cc) {
     """
-  BLEDevice::init(bevp_finssidp->bems_toCcString().c_str());
-  BLEServer *pServer = BLEDevice::createServer();
+  NimBLEDevice::init(bevp_finssidp->bems_toCcString().c_str());
+  NimBLEServer *pServer = NimBLEDevice::createServer();
 
-  BLEService *pService = pServer->createService(SERVICE_UUID);
+  NimBLEService *pService = pServer->createService(SERVICE_UUID);
 
-  //BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE
-  BLECharacteristic *pCharacteristicC =
-    pService->createCharacteristic(CMD_UUID, BLECharacteristic::PROPERTY_WRITE);
+  NimBLECharacteristic *pCharacteristicC =
+    pService->createCharacteristic(CMD_UUID, NIMBLE_PROPERTY::WRITE);
   pCharacteristicC->setCallbacks(new MyCallbacksC());
   pCharacteristicC->setValue("undefined");
 
   pCharacteristicR =
-    pService->createCharacteristic(RES_UUID, BLECharacteristic::PROPERTY_READ);
+    pService->createCharacteristic(RES_UUID, NIMBLE_PROPERTY::READ);
   //pCharacteristicR->setCallbacks(new MyCallbacksR());
   pCharacteristicR->setValue("undefined");
 
   pService->start();
 
-  BLEAdvertising *pAdvertising = pServer->getAdvertising();
+  NimBLEAdvertising* pAdvertising = NimBLEDevice::getAdvertising();
+  pAdvertising->setName(bevp_finssidp->bems_toCcString().c_str());
+  pAdvertising->addServiceUUID(pService->getUUID());
+  /**
+    *  If your device is battery powered you may consider setting scan response
+    *  to false as it will extend battery life at the expense of less data sent.
+    */
+  pAdvertising->enableScanResponse(true);
+
   pAdvertising->start();
     """
     }
