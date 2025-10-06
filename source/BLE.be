@@ -46,22 +46,14 @@ class MyCallbacksC : public NimBLECharacteristicCallbacks {
   }
 };
 
-/*class MyCallbacksR : public BLECharacteristicCallbacks {
-  void onWrite(BLECharacteristic *pCharacteristic) {
-    String value = pCharacteristic->getValue();
+class ServerCallbacks : public NimBLEServerCallbacks {
 
-    if (value.length() > 0) {
-      Serial.println("*********");
-      Serial.print("R New value: ");
-      for (int i = 0; i < value.length(); i++) {
-        Serial.print(value[i]);
-      }
-
-      Serial.println();
-      Serial.println("*********");
+    void onDisconnect(NimBLEServer* pServer, NimBLEConnInfo& connInfo, int reason) override {
+        Serial.printf("Client disconnected - start advertising\n");
+        NimBLEDevice::startAdvertising();
     }
-  }
-};*/
+
+} serverCallbacks;
 """
 }
   
@@ -78,6 +70,7 @@ class MyCallbacksC : public NimBLECharacteristicCallbacks {
     """
   NimBLEDevice::init(bevp_finssidp->bems_toCcString().c_str());
   NimBLEServer *pServer = NimBLEDevice::createServer();
+  pServer->setCallbacks(&serverCallbacks);
 
   NimBLEService *pService = pServer->createService(SERVICE_UUID);
 
@@ -88,7 +81,6 @@ class MyCallbacksC : public NimBLECharacteristicCallbacks {
 
   pCharacteristicR =
     pService->createCharacteristic(RES_UUID, NIMBLE_PROPERTY::READ);
-  //pCharacteristicR->setCallbacks(new MyCallbacksR());
   pCharacteristicR->setValue("undefined");
 
   pService->start();
