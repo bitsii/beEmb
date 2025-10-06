@@ -66,6 +66,7 @@ class ServerCallbacks : public NimBLEServerCallbacks {
   default() self { }
   
   start() {
+    "starting bleSup".print();
     emit(cc) {
     """
   NimBLEDevice::init(bevp_finssidp->bems_toCcString().c_str());
