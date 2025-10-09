@@ -537,11 +537,6 @@ class Embedded:Hqb {
       Int swCycle = 0;//name checks but every 6 cycles get sw (3 mins)
     }
 
-    Embedded:Tds tdserver = ash.tdserver;
-    if (def(tdserver)) {
-      tdserver.callback = self;
-    }
-
   }
 
   doSec(String sp) String {
@@ -554,51 +549,49 @@ class Embedded:Hqb {
       String mcmdres;
       String kdn = "CasNic" + hd.ondid;
       ("checkDoMes kdn scmds |" + kdn + "| |" + scmds + "|").print();
-      ifNotEmit(noTds) {
-      Embedded:Tds tdserver = ash.tdserver;
-      if (def(tdserver)) {
-        if (kdn == ash.myName) {
-          //"call is coming from inside house".print();
-          "selfgate".print();
-          //mcmdres = doCmd("matr", scmds);
+      if (kdn == ash.myName) {
+        //"call is coming from inside house".print();
+        "selfgate".print();
+        //mcmdres = doCmd("matr", scmds);
+      } else {
+        if (TS.notEmpty(hd.rip)) {
+          rip = hd.rip;
         } else {
-          if (TS.notEmpty(hd.rip)) {
-            rip = hd.rip;
-          } else {
-            String rip = tdserver.getAddrDis(kdn);
+          String rip = ash.mdserver.getAddr(kdn);
+        }
+        if (TS.notEmpty(rip)) {
+          ("rip " + rip).print();
+          hd.rip = rip;
+          //look for r and n, send back r n (it's already there) FALSE NOT FROM MQ IT ISN'T
+          //String ppay = preq.checkGetPayload(readBuf, slashn);
+          var tcpc = Embedded:TCPClient.new(rip, 6420);
+          //"open".print();
+          tcpc.open();
+          //"write".print();
+          if (tcpc.connected) {
+            tcpc.write(scmds);
+            tcpc.write(slashr);
+            tcpc.write(slashn);
+            //"get tcpcres".print();
+            String tcpcres = tcpc.checkGetPayload(readBuf, slashn);
+            //"got res".print();
           }
-          if (rip != CNS.undefined) {
-            ("rip " + rip).print();
-            hd.rip = rip;
-            //look for r and n, send back r n (it's already there) FALSE NOT FROM MQ IT ISN'T
-            //String ppay = preq.checkGetPayload(readBuf, slashn);
-            var tcpc = Embedded:TCPClient.new(rip, 6420);
-            //"open".print();
-            tcpc.open();
-            //"write".print();
-            if (tcpc.connected) {
-              tcpc.write(scmds);
-              tcpc.write(slashr);
-              tcpc.write(slashn);
-              //"get tcpcres".print();
-              String tcpcres = tcpc.checkGetPayload(readBuf, slashn);
-              //"got res".print();
-            }
-            if (TS.isEmpty(tcpcres)) {
-              //"tcpcres empty".print();
-              //in case ip changed rewantit
-              //hd.rip = null;
-              tdserver.sayWants(kdn);
-            } else {
-              //("tcpcres " + tcpcres).print();
-              mcmdres = tcpcres;
+          if (TS.isEmpty(tcpcres)) {
+            //"tcpcres empty".print();
+            //in case ip changed rewantit
+            //hd.rip = null;
+            rip = ash.mdserver.getAddr(kdn);
+            if (TS.notEmpty(rip)) {
+              hd.rip = rip;
             }
           } else {
-            "still no rip".print();
+            //("tcpcres " + tcpcres).print();
+            mcmdres = tcpcres;
           }
+        } else {
+          "still no rip".print();
         }
       }
-    }
     return(mcmdres);
   }
 
@@ -656,13 +649,10 @@ class Embedded:Hqb {
             }
           } else {
             if (TS.isEmpty(mmep.rip)) {
-              Embedded:Tds tdserver = ash.tdserver;
-              if (def(tdserver)) {
-                String kdn = "CasNic" + mmep.ondid;
-                String rip = tdserver.getAddrDis(kdn);
-                if (rip != CNS.undefined) {
-                  mmep.rip = rip;
-                }
+              String kdn = "CasNic" + mmep.ondid;
+              String rip = ash.mdserver.getAddr(kdn);
+              if (TS.notEmpty(rip)) {
+                mmep.rip = rip;
               }
             }
           }
