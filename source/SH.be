@@ -1790,6 +1790,11 @@ class Embedded:AppShell {
         taserver.clearTads();
       }
     }
+    ifEmit(hqB) {
+      if (def(hbserver)) {
+        hbserver.clearHds();
+      }
+    }
     ifNotEmit(noSmc) {
       Int smcconi = config.getPos("smc.con");
       config.put(smcconi, es);

@@ -101,3 +101,7 @@
 //
 // END OF CONFIGURATION OPTIONS
 //
+// extra includes
+//for SMC.be
+#include <NetworkClientSecure.h>
+#include <ArduinoMqttClient.h>
