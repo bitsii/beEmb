@@ -19,7 +19,7 @@
 //#define BESPEC_SW  "0.DollaTek.20" //dollatek 2mb 1led
 //#define BESPEC_SW "1,p2.WNAP2.29" //Athom Plug V2 US THE REAL ONE
 // UPD
-#define BE_UPDBASE "na"  //if we don't have one.  otherwise, the url base for the update ver txt file and binfiles
+//#define BE_UPDBASE "na"  //if we don't have one.  otherwise, the url base for the update ver txt file and binfiles
 //#define BE_UPDBASE "http://storage.googleapis.com/casnicdl.casnic.net/pfnodemcu32.ino.esp32c3"
 //
 // CON - definition of device's controls

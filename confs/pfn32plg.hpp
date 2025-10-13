@@ -9,10 +9,10 @@
 // SW - name (type) and version of the device.  Typename 10 char max ssid rules (no spaces)
 // swconfver.DeviceTypeName.DeviceVersion
 //
-#define BESPEC_SW "1,q,p6,p2.Plug.133" //template plug df,
+#define BESPEC_SW "1,q,p6,p2.Plug.135" //template plug df,
 // Esp32 4mb minimal spiffs 1.9mb app with ota/190kb spiffs  esp32c3
 // UPD
-#define BE_UPDBASE "na"  //if we don't have one.  otherwise, the url base for the update ver txt file and binfiles
+//#define BE_UPDBASE "na"  //if we don't have one.  otherwise, the url base for the update ver txt file and binfiles
 //#define BE_UPDBASE "http://storage.googleapis.com/casnicdl.casnic.net/pfathp3.ino.esp32c3"
 //
 // CON - definition of device's controls
@@ -29,7 +29,7 @@
 // things like bulbs/less sensitive devices w/out another reasonable choice, it should be enabled.  device
 // waits a bit for the wifi to come up when configured  to avoid power losses leading to entering this mode
 //
-#define BE_RESETBYPOW "off"
+#define BE_RESETBYPOW "on"
 //
 // tcpconsole - if you want to enable a debugish tcp port on the device (all be prints will be echoed there)
 // turn BE_TCPCONSOLE on, otherwise leave off.  only for development, really only useful if serial connection

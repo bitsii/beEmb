@@ -1732,18 +1732,6 @@ class Embedded:AppShell {
      } elseIf (cmd == "reset") {
       reset();
       return("Device reset");//we look for this result, don't change
-    } elseIf (cmd == "updnow") {
-      ifEmit(noUpd) {
-        return("updnow disabled");
-      }
-      ifNotEmit(noUpd) {
-        if (def(eupd)) {
-          eupd.handleUpdate();
-          return("updnow attempting");
-        } else {
-          return("updnow failed undef");
-        }
-      }
      } elseIf (cmd == "maybesave") {
         config.maybeSave();
         needsGc = true;

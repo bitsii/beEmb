@@ -20,7 +20,7 @@
 //#define BESPEC_SW "1,p2.WNAP2.29" //Athom Plug V2 US THE REAL ONE
 // UPD
 //#define BE_UPDBASE "na"  //if we don't have one.  otherwise, the url base for the update ver txt file and binfiles
-#define BE_UPDBASE "http://storage.googleapis.com/casnicdl.casnic.net/pfghasse32w.ino.esp32"
+//#define BE_UPDBASE "http://storage.googleapis.com/casnicdl.casnic.net/pfghasse32w.ino.esp32"
 //
 //
 // CON - definition of device's controls

@@ -11,7 +11,7 @@
 //
 #define BESPEC_SW "1,q,p6,p2.rAthPlugV2.131" //Athom Plug V2 US THE REAL ONE
 // UPD
-#define BE_UPDBASE "na"  //if we don't have one.  otherwise, the url base for the update ver txt file and binfiles
+//#define BE_UPDBASE "na"  //if we don't have one.  otherwise, the url base for the update ver txt file and binfiles
 //#define BE_UPDBASE "http://storage.googleapis.com/casnicdl.casnic.net/pfathp2.ino.generic"
 //
 // CON - definition of device's controls

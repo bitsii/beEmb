@@ -141,7 +141,7 @@ class Embedded:TAServer {
 
     if (tadslen <= 0) { Int ivdiv = 1; } else { ivdiv = tadslen; }
     slots {
-      Int failCheckIv = 1200000; //millis per fail check and rescan 600000 10 mins 1200000 20 mins
+      Int failCheckIv = 3600000; //millis per fail check and rescan 600000 10 mins 1200000 20 mins 3600000 1hr
       Int discoRpt = 9;
       //Int failCheckIv = 30000;
       Int nextFailCheck = ash.nowup + failCheckIv;

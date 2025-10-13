@@ -9,24 +9,16 @@
 //#include <ArduinoMqttClient.h>
 //for ArdUpd.be
 #include <ESP8266httpUpdate.h>
-#include <ESP8266HTTPClient.h>
-#include <WiFiClient.h>
+//#include <ESP8266HTTPClient.h>
+//#include <WiFiClient.h>
 #endif
 #ifdef BEAR_ESP32
 #include <WiFi.h>
 #include <ESPmDNS.h>
 #include "SPIFFS.h"
 #include <SimpleHOTP.h>
-//for TDS
-#include <NetworkUdp.h>
-//for SMC.be
-#include <NetworkClientSecure.h>
-#include <ArduinoMqttClient.h>
 //for ArdUpd.be
 #include <HTTPUpdate.h>
-#include <HTTPClient.h>
-//for BLE.be
-#include <NimBLEDevice.h>
 #endif
 //#include <EEPROM.h>
 #include <FS.h>

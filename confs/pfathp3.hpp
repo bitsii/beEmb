@@ -13,7 +13,7 @@
 // Esp32 4mb minimal spiffs 1.9mb app with ota/190kb spiffs  esp32c3
 // UPD
 //#define BE_UPDBASE "na"  //if we don't have one.  otherwise, the url base for the update ver txt file and binfiles
-#define BE_UPDBASE "http://storage.googleapis.com/casnicdl.casnic.net/pfathp3.ino.esp32c3"
+//#define BE_UPDBASE "http://storage.googleapis.com/casnicdl.casnic.net/pfathp3.ino.esp32c3"
 //
 // CON - definition of device's controls
 // ctlconfver.control.ctlconf,args.control.ctlconf,args

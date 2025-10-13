@@ -12,7 +12,7 @@
 //#define BESPEC_SW "1,p2.Generic.22"  //supergeneric
 //#define BESPEC_SW "1,p2.WNN.31"  //nodemcu
 //#define BESPEC_SW "1,q,p3,p2.Rando.69" //testing changes
-#define BESPEC_SW "1,q,gm,df,t3,p6,p2.rGateDfEw.187"  //nodemcu df,t3
+#define BESPEC_SW "1,q,df,t3,p6,p2.rGateDfEw.187"  //nodemcu df,t3
 //q = quickstate, t1 tds multicast discovery, p6 auth with reid ret, dm direct mq, pm proxy over mq
 //p2 auth type 2 (hash), p2 always last
 //
@@ -20,7 +20,7 @@
 //#define BESPEC_SW "1,p2.WNAP2.29" //Athom Plug V2 US THE REAL ONE
 // UPD
 //#define BE_UPDBASE "na"  //if we don't have one.  otherwise, the url base for the update ver txt file and binfiles
-#define BE_UPDBASE "http://storage.googleapis.com/casnicdl.casnic.net/pfgdfe32w.ino.esp32"
+//#define BE_UPDBASE "http://storage.googleapis.com/casnicdl.casnic.net/pfgdfe32w.ino.esp32"
 //
 //
 // CON - definition of device's controls
@@ -101,3 +101,8 @@
 //
 // END OF CONFIGURATION OPTIONS
 //
+// extra includes
+//for BLE.be
+#include <NimBLEDevice.h>
+//for TDS
+#include <NetworkUdp.h>

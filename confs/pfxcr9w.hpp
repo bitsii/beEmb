@@ -12,7 +12,7 @@
 #define BESPEC_SW "1,q,p6,p2.Xcr9w.168"  //generic configurable controls Athlb017w LB01-7W-B22
 //
 // UPD
-#define BE_UPDBASE "na"  //if we don't have one.  otherwise, the url base for the update ver txt file and binfiles
+//#define BE_UPDBASE "na"  //if we don't have one.  otherwise, the url base for the update ver txt file and binfiles
 // CON - definition of device's controls
 // ctlconfver.control.ctlconf,args.control.ctlconf,args
 //

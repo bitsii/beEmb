@@ -11,7 +11,7 @@
 //
 #define BESPEC_SW "1,q,p6,p2.rAthBlb15w.131"  //generic configurable controls Athlb017w LB01-7W-B22
 // UPD
-#define BE_UPDBASE "na"  //if we don't have one.  otherwise, the url base for the update ver txt file and binfiles
+//#define BE_UPDBASE "na"  //if we don't have one.  otherwise, the url base for the update ver txt file and binfiles
 //#define BE_UPDBASE "http://storage.googleapis.com/casnicdl.casnic.net/pfathlb0115w.ino.generic"
 //
 // CON - definition of device's controls

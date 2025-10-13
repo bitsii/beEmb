@@ -12,7 +12,7 @@
 #define BESPEC_SW "1,q,p6,p2.Bulb.167"  //template for rgb cold warm bulb df,
 //
 // UPD
-#define BE_UPDBASE "na"  //if we don't have one.  otherwise, the url base for the update ver txt file and binfiles
+//#define BE_UPDBASE "na"  //if we don't have one.  otherwise, the url base for the update ver txt file and binfiles
 // CON - definition of device's controls
 // ctlconfver.control.ctlconf,args.control.ctlconf,args
 //
