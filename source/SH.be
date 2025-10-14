@@ -521,7 +521,7 @@ class Embedded:AppShell {
         checkStartUpServer();
         checkStartTdServer();
 
-        ifNotEmit(noSmc) {
+        ifEmit(smcSet) {
           slots {
             String smccon;
             String smcu;
@@ -1663,7 +1663,7 @@ class Embedded:AppShell {
           return("Wifi Setup cleared");
         }
      } elseIf (cmd == "setsmc") {
-       ifNotEmit(noSmc) {
+       ifEmit(smcSet) {
          Int smcconi = config.getPos("smc.con");
          Int smcui = config.getPos("smc.u");
          Int smcpi = config.getPos("smc.p");
@@ -1795,7 +1795,7 @@ class Embedded:AppShell {
         hbserver.clearHds();
       }
     }
-    ifNotEmit(noSmc) {
+    ifEmit(smcSet) {
       Int smcconi = config.getPos("smc.con");
       config.put(smcconi, es);
       Int smcui = config.getPos("smc.u");
