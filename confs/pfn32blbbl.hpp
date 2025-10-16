@@ -9,7 +9,7 @@
 // SW - name (type) and version of the device.  Typename 10 char max ssid rules (no spaces)
 // swconfver.DeviceTypeName.DeviceVersion
 //
-#define BESPEC_SW "1,q,p6,p2.Bulb.170"  //template for rgb cold warm bulb df,
+#define BESPEC_SW "1,q,p6,p2.BulbBl.170"  //template for rgb cold warm bulb df,
 //
 // UPD
 //#define BE_UPDBASE "na"  //if we don't have one.  otherwise, the url base for the update ver txt file and binfiles
@@ -75,3 +75,5 @@
 //
 // END OF CONFIGURATION OPTIONS
 //
+//for BLE.be
+#include <NimBLEDevice.h>
