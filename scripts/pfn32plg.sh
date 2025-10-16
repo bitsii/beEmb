@@ -8,7 +8,7 @@ echo "Profile for a Node32 Plug.  Button toggles the switch on +30ms hold and re
 
 export BEEMB_CONF=../beEmb/confs/${APPBLDNM}.hpp
 
-./scripts/bldesp32.sh --mainClass Embedded:SwitchButton source/SC.be source/BC.be source/SWBU.be
+./scripts/bldesp32noser.sh --mainClass Embedded:SwitchButton source/SC.be source/BC.be source/SWBU.be
 
 cp ard/* $APPBLDNM
 

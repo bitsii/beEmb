@@ -18,8 +18,8 @@
 // CON - definition of device's controls
 // ctlconfver.control.ctlconf,args.control.ctlconf,args
 //
-//#define BESPEC_CON "0.sw.30,2" //trying DevKitC-02 ESP32-C3-WROOM-02 - WORKS
-#define BESPEC_CON "0.sw.5,1" //just the relay first
+#define BESPEC_CON "0.sw.30,2" //trying DevKitC-02 ESP32-C3-WROOM-02 - WORKS
+//#define BESPEC_CON "0.sw.5,1" //just the relay first
 //#define BESPEC_CON "0.sw.5,1.bu.3,0,30,0,30000"  //5 is switch, 6 is led, 3 button - athom plug v3 us - esp32c3 4mb THE REAL ONE sic look unnecessary led does on it's own NOT TESTED BUT LOOKS RIGHT FROM SPECS
 //
 //pinposes //16, 2 nodemcu - Athom 16A US 13 LED 14 RELAY, SONOFF BASIC R2 13 LED 12 RELAY, 16 for dollatek 8285
@@ -57,3 +57,5 @@
 //
 // END OF CONFIGURATION OPTIONS
 //
+//for BLE.be
+#include <NimBLEDevice.h>
