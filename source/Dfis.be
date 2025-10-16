@@ -50,7 +50,7 @@ class Embedded:Dfis {
         //ocmdl[0].print();dfis
         //ocmdl[1].print();password
         //2 is outset, ...
-        ash.nextWifiCheck = ash.nowup + 300000;//5 mins
+        ash.nextWifiCheck = ash.nowup + 45000;//45 sec
         status = "wifi";
         Wifi.new(ocmdl[3], null).start();//in future check for CasnicO vs whatever and do the right thing
         String scmds = "allset";//cmds = "allset " + devPin + " " + devPass + " " + devSpass + " " + devDid + " e";
