@@ -9,7 +9,7 @@
 // SW - name (type) and version of the device.  Typename 10 char max ssid rules (no spaces)
 // swconfver.DeviceTypeName.DeviceVersion
 //
-#define BESPEC_SW "1,q,p6,p2.Bulb.170"  //template for rgb cold warm bulb df,
+#define BESPEC_SW "1,q,p6,p2.rIotBlb12Df.172"  //template for rgb cold warm bulb df,
 //
 // UPD
 //#define BE_UPDBASE "na"  //if we don't have one.  otherwise, the url base for the update ver txt file and binfiles
@@ -23,7 +23,7 @@
 //Just the R G B part now
 //#define BESPEC_CON "0.rgb.4,12,14" //Athom 7W 600lm RGBCCT Bulb (LB01-7W-B22)
 //#define BESPEC_CON "0.rgbgdim.4,12,14" //Athom 7W 600lm RGBCCT Bulb (LB01-7W-B22)
-#define BESPEC_CON "0.rgbcwgd.6,7,5,4,3" //all in one, red, green, blue, (cold) white, (warm) white
+#define BESPEC_CON "0.rgbcwgd.6,7,5,3,4" //all in one, red, green, blue, (cold) white, (warm) white
 //#define BESPEC_CON "0.rgbcwgd.12,14,5,4,13" //for tasmota xcrhom.tech AC:85-265V. Order from ali 8/27/2025 Creative Ideas Store.  All the other 9w around same time look same.
 //for tasmota "regular bulbs" PNM 1 is red, PNM 2 is green, PNM 3 is blue, PNM 4 is cold white, PNM 5 is warm white
 //#define BESPEC_CON "0.cwgd.5,13"
