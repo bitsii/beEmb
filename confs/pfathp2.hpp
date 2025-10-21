@@ -9,7 +9,7 @@
 // SW - name (type) and version of the device.  Typename 10 char max ssid rules (no spaces)
 // swconfver.DeviceTypeName.DeviceVersion
 //
-#define BESPEC_SW "1,q,p6,p2.rAthPlugV2.132" //Athom Plug V2 US THE REAL ONE
+#define BESPEC_SW "1,q,p6,p2.rAthPlugV2.133" //Athom Plug V2 US THE REAL ONE
 // UPD
 //#define BE_UPDBASE "na"  //if we don't have one.  otherwise, the url base for the update ver txt file and binfiles
 //#define BE_UPDBASE "http://storage.googleapis.com/casnicdl.casnic.net/pfathp2.ino.generic"
@@ -17,7 +17,7 @@
 // CON - definition of device's controls
 // ctlconfver.control.ctlconf,args.control.ctlconf,args
 //
-#define BESPEC_CON "0.sw.12,1.bu.5,0,30,0,5000"  //12 is switch, 13 is led, 5 button - athom plug v2 us - esp8266ex 2mb THE REAL ONE sic look unnecessary led does on it's own
+#define BESPEC_CON "0.sw.12,1.bu.5,0,30,0,9000"  //12 is switch, 13 is led, 5 button - athom plug v2 us - esp8266ex 2mb THE REAL ONE sic look unnecessary led does on it's own
 //
 //pinposes //16, 2 nodemcu - Athom 16A US 13 LED 14 RELAY, SONOFF BASIC R2 13 LED 12 RELAY, 16 for dollatek 8285
 //
