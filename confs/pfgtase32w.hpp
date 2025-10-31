@@ -102,3 +102,4 @@
 //
 // extra includes
 #include <HTTPClient.h>
+#define BEDCC_ARDSER "on"
