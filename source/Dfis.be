@@ -37,6 +37,11 @@ class Embedded:Dfis {
   handleLoop() {
     if (nextWifiDis > 0 && ash.nowup > nextWifiDis) {
       nextWifiDis = 0;
+      if (TS.notEmpty(status)) {
+        unless (status.begins("success") || status.begins("failed")) {
+          status = "failed:Timed out during device setup";
+        }
+      }
       Wifi.stop();
     }
     if (nextOutset > 0 && ash.nowup > nextOutset) {
@@ -50,7 +55,8 @@ class Embedded:Dfis {
         //ocmdl[0].print();dfis
         //ocmdl[1].print();password
         //2 is outset, ...
-        ash.nextWifiCheck = ash.nowup + 45000;//45 sec
+        ash.nextWifiCheck = ash.nowup + 45000;//45 sec, you get 30s to connect max, 10s for setting, stop 5s wifi
+        nextWifiDis = ash.nowup + 40000;//when we give up
         status = "wifi";
         Wifi.new(ocmdl[3], null).start();//in future check for CasnicO vs whatever and do the right thing
         String scmds = "allset";//cmds = "allset " + devPin + " " + devPass + " " + devSpass + " " + devDid + " e";
