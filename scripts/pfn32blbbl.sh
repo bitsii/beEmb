@@ -4,7 +4,7 @@ export APPBLDNM=pfn32blbbl
 
 mkdir -p $APPBLDNM
 
-echo "Profile for a Node32 Bulb." > $APPBLDNM/README.txt
+echo "Profile for an Esp32C3 Bulb." > $APPBLDNM/README.txt
 
 export BEEMB_CONF=../beEmb/confs/${APPBLDNM}.hpp
 

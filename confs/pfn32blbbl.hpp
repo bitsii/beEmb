@@ -11,33 +11,12 @@
 //
 #define BESPEC_SW "1,q,p6,p2.rIotBlb12Bl.171"  //template for rgb cold warm bulb df,
 //
-// UPD
-//#define BE_UPDBASE "na"  //if we don't have one.  otherwise, the url base for the update ver txt file and binfiles
-// CON - definition of device's controls
-// ctlconfver.control.ctlconf,args.control.ctlconf,args
-//
-//#define BESPEC_CON "" //supergeneric
-//next really rgbcct, rgbcw red green blue cold warm
-//R W G T B || R C G W B pin order 4,5,12,13,14 - 5 cold, 13 warm
-//#define BESPEC_CON "0.pwmh.4.pwmh.5.pwmh.12.pwmh.13.pwmh.14.rgbcw.0,2,4,1,3" //Athom 7W 600lm RGBCCT Bulb (LB01-7W-B22)
-//Just the R G B part now
-//#define BESPEC_CON "0.rgb.4,12,14" //Athom 7W 600lm RGBCCT Bulb (LB01-7W-B22)
-//#define BESPEC_CON "0.rgbgdim.4,12,14" //Athom 7W 600lm RGBCCT Bulb (LB01-7W-B22)
 #define BESPEC_CON "0.rgbcwgd.6,7,5,3,4" //all in one, red, green, blue, (cold) white, (warm) white
-//#define BESPEC_CON "0.rgbcwgd.12,14,5,4,13" //for tasmota xcrhom.tech AC:85-265V. Order from ali 8/27/2025 Creative Ideas Store.  All the other 9w around same time look same.
-//for tasmota "regular bulbs" PNM 1 is red, PNM 2 is green, PNM 3 is blue, PNM 4 is cold white, PNM 5 is warm white
-//#define BESPEC_CON "0.cwgd.5,13"
-//putconfigs pass raw fc.conspec 0.dim.2,0 e
 //
-//pinposes //16, 2 nodemcu - Athom 16A US 13 LED 14 RELAY, SONOFF BASIC R2 13 LED 12 RELAY, 16 for dollatek 8285
+// Is Reset by power on off supported
+// https://gitlab.com/bitsii/CasCon/-/wikis/Advanced-Topics#resetting-a-device
 //
-// Is Reset by Pin supported - when not on network can use pin to reset device (clear all config, prep for
-// re-setup).  For most (and secure) devices a physical option (button) is instead recommended, but for
-// things like bulbs/less sensitive devices w/out another reasonable choice, it should be enabled.  device
-// waits a bit for the wifi to come up when configured  to avoid power losses leading to entering this mode
-//
-//#define BE_RESETBYPOW "on" //enabled
-#define BE_RESETBYPOW "off" //disabled
+#define BE_RESETBYPOW "on" //enabled
 //
 // tcpconsole - if you want to enable a debugish tcp port on the device (all be prints will be echoed there)
 // turn BE_TCPCONSOLE on, otherwise leave off.  only for development, really only useful if serial connection

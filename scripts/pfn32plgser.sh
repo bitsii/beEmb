@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export APPBLDNM=pfn32plg
+export APPBLDNM=pfn32plgser
 
 mkdir -p $APPBLDNM
 
@@ -8,7 +8,7 @@ echo "Profile for an Esp32C3 Plug.  Button toggles the switch on +30ms hold and 
 
 export BEEMB_CONF=../beEmb/confs/${APPBLDNM}.hpp
 
-./scripts/bldesp32noser.sh --mainClass Embedded:SwitchButton source/SC.be source/BC.be source/SWBU.be
+./scripts/bldesp32.sh --mainClass Embedded:SwitchButton source/SC.be source/BC.be source/SWBU.be
 
 cp ard/* $APPBLDNM
 
