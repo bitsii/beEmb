@@ -9,12 +9,12 @@
 // SW - name (type) and version of the device.  Typename 10 char max ssid rules (no spaces)
 // swconfver.DeviceTypeName.DeviceVersion
 //
-#define BESPEC_SW "1,q,p3,p2.MJPlug.50" //Athom Plug V2 US THE REAL ONE
+#define BESPEC_SW "1,q,p6,p2.rMJPlug.151"
 //
 // CON - definition of device's controls
 // ctlconfver.control.ctlconf,args.control.ctlconf,args
 //
-#define BESPEC_CON "0.sw.12,1.bu.13,0,30,0,30000"  //12 is switch, 5 is led, 13 button - martin jerry round plug V - esp8266 1mb
+#define BESPEC_CON "0.sw.12,1.bu.13,0,30,0,9000"  //12 is switch, 5 is led, 13 button - martin jerry round plug V - esp8266 1mb
 //
 //pinposes //16, 2 nodemcu - Athom 16A US 13 LED 14 RELAY, SONOFF BASIC R2 13 LED 12 RELAY, 16 for dollatek 8285
 //
