@@ -35,6 +35,10 @@ class Embedded:Dfis {
   }
 
   handleLoop() {
+    doDfis();
+  }
+
+  doDfis() {
     if (nextWifiDis > 0 && ash.nowup > nextWifiDis) {
       nextWifiDis = 0;
       if (TS.notEmpty(status)) {

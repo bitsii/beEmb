@@ -35,6 +35,10 @@ class Embedded:TAServer {
       String rgbbt = "rgbcwsgd";
       Int myup = Int.new();
       Int forceDisco = 0;
+      Int nextOutset = 0;
+      Int nextWifiDis = 0;
+      List ocmdl;
+      String status;
     }
     fields {
       Bool didFail = false;
@@ -55,6 +59,11 @@ class Embedded:TAServer {
           minDisIp = Int.new(cmdl[3]);
           maxDisIp = Int.new(cmdl[4]);
           startDis();
+        } elseIf (cmdl.length > 3 && cmdl[2] == "outset") {
+          //outssid = cmdl[3];
+          ocmdl = cmdl;
+          nextOutset = ash.nowup + 3000;
+          status = "wait";
         } elseIf (cmdl.length > 2 && cmdl[2] == "testdt") {
           testDetectType();
         } elseIf (cmdl.length > 2 && cmdl[2] == "testgm") {
@@ -214,6 +223,51 @@ class Embedded:TAServer {
           nextDisIp = minDisIp.copy();
         }
       }
+    }
+  }
+
+  doTasDfis() {
+    if (nextWifiDis > 0 && ash.nowup > nextWifiDis) {
+      nextWifiDis = 0;
+      if (TS.notEmpty(status)) {
+        unless (status.begins("success") || status.begins("failed")) {
+          status = "failed:Timed out during device setup";
+        }
+      }
+      Wifi.stop();
+    }
+    if (nextOutset > 0 && ash.nowup > nextOutset) {
+      "will outset".print();
+      nextOutset = 0;
+      status = "start";
+      //03:54:27.565 -> ap6 INLVLZXEERMEABMD c0e01d7bd50eb13193f55ab7849195df794064ac 1758365668 OENRHJTDMFXZ dfis X outset CasnicO-cxqlqfwk-NodeMcu-6 cxqlqfwkcxqlqfwk EBWVLFTYMLRHKVZECD CVMYFLSLFOVOBUBYRT MEIACOYEGZTEPHHL e
+      if (def(ocmdl) && ocmdl.length > 3) {
+        "ocmdl length".print();
+        //ocmdl.length.print();//9
+        //ocmdl[0].print();dfis
+        //ocmdl[1].print();password
+        //2 is outset, ...
+        ash.nextWifiCheck = ash.nowup + 45000;//45 sec, you get 30s to connect max, 10s for setting, stop 5s wifi
+        nextWifiDis = ash.nowup + 40000;//when we give up
+        status = "wifi";
+        Wifi.new(ocmdl[3], null).start();
+        String cmd = "backlog ssid1 " + ash.ssid + ";password1 " + ash.sec + ";Restart";
+        String cmdenc = Encode:Url.encode(cmd);
+        String url = "http://192.168.4.1/cm?cmnd=" + cmdenc;
+        String res = httpGetRetry(url);
+        ash.nextWifiCheck = ash.nowup + 3000;//we're done here
+        nextWifiDis = ash.nowup + 2000;//we're done here
+        status = "success";
+
+        //scmds = "setwifi " + ocmdl[5] + " hex " + Encode:Hex.encode(ash.ssid) + " " + Encode:Hex.encode(ash.sec) + " e";
+        //status = "success";status = "failed:" + res;
+        //ash.nextWifiCheck = ash.nowup + 3000;//we're done here
+        //nextWifiDis = ash.nowup + 2000;//we're done here
+
+      } else {
+        "ocmdl too short or undef".print();
+      }
+      ocmdl = null;
     }
   }
 
@@ -395,6 +449,7 @@ http.begin(client, beq->beva_turl->bems_toCcString().c_str());
 
   handleLoop() {
    checkNDo();
+   doTasDfis();
   }
 
   regenControls() {
