@@ -257,6 +257,8 @@ class Embedded:TAServer {
         String res = httpGetRetry(url);
         ash.nextWifiCheck = ash.nowup + 3000;//we're done here
         nextWifiDis = ash.nowup + 2000;//we're done here
+        nextFailCheck = ash.nowup + 15000;
+        didFail = true;
         status = "success";
 
         //scmds = "setwifi " + ocmdl[5] + " hex " + Encode:Hex.encode(ash.ssid) + " " + Encode:Hex.encode(ash.sec) + " e";
