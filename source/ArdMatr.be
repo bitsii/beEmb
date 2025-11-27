@@ -158,6 +158,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
       String readBuf = String.new();
       Bool triedCommission = false;
       Bool brdCh = false;
+      Int nextName = 0;
     }
     fields {
       Bool timeToDecom = false;
@@ -845,6 +846,63 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
      "decom".print();
      decommission();
      "decom done".print();
+   }
+   Int nowup = ash.nowup;
+   if (nowup > nextName) {
+     String orgName;
+    nextName = nowup +  40000;
+    String myName = ash.myName;
+    emit(cc) {
+      """
+
+      esp_netif_t *intf = esp_netif_get_default_netif();
+      const char *delegated_hostname = beq->bevl_myName->bems_toCcString().c_str();
+
+      mdns_ip_addr_t addr4, addr6;
+      addr4.addr.type = ESP_IPADDR_TYPE_V4;
+      esp_netif_ip_info_t info;
+      esp_netif_get_ip_info(intf, &info);
+      addr4.addr.u_addr.ip4 = info.ip;
+      addr6.addr.type = ESP_IPADDR_TYPE_V6;
+      esp_netif_get_ip6_linklocal(intf, &addr6.addr.u_addr.ip6);
+      addr4.next = &addr6;
+      addr6.next = NULL;
+      //ESP_ERROR_CHECK( mdns_delegate_hostname_add(delegated_hostname, &addr4) );
+      //ESP_ERROR_CHECK( mdns_service_add_for_host(NULL, "_casnic", "_tcp", delegated_hostname, 6420, NULL, 0) );
+      //free(delegated_hostname);
+
+      char hostname_buffer[64];
+      hostname_buffer[0] = '\0'; // Ensure it's null-terminated for safety
+
+      // 2. Call the ESP-IDF function to get the C-string hostname
+      esp_err_t err = mdns_hostname_get(hostname_buffer);
+
+      mdns_txt_item_t serviceTxtData[2] = {
+        {"arrr","matey"},
+        {delegated_hostname,"myname"}
+      };
+      mdns_delegate_hostname_add(delegated_hostname, &addr4);
+      //mdns_service_add_for_host(NULL, "_casnic", "_tcp", delegated_hostname, 6420, NULL, 0);
+      //mdns_service_add_for_host(hostname_buffer, "_casnic", "_tcp", delegated_hostname, 6420, NULL, 0);
+      //mdns_service_instance_name_set("_casnic", "_tcp", delegated_hostname);
+      mdns_service_add_for_host(NULL, "_casnic", "_tcp", delegated_hostname, 6420, serviceTxtData, 2);
+
+      if (err == ESP_OK) {
+        // 3. Convert the null-terminated C-string buffer to a C++ std::string
+        // The std::string constructor takes the char* (C-string) directly.
+        mdns_delegate_hostname_add(hostname_buffer, &addr4);
+        std::string hostname_cpp(hostname_buffer);
+        beq->bevl_orgName = new BEC_2_4_6_TextString(hostname_cpp);
+      }
+
+      """
+    }
+    ("also added myname " + myName).print();
+    if (TS.notEmpty(orgName)) {
+      ("orgName " + orgName).print();
+    } else {
+      ("orgName empty").print();
+    }
    }
   }
 
