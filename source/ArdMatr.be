@@ -764,7 +764,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
               Embedded:Tds tdserver = ash.tdserver;
               if (def(tdserver)) {
                 String kdn = "CasNic" + mmep.ondid;
-                String rip = getAddrDis(kdn);
+                String rip = tdserver.getAddrDis(kdn);
                 if (rip != CNS.undefined) {
                   mmep.rip = rip;
                 }
@@ -775,62 +775,6 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
         nextSwCheckIdx++;
       }
     }
-  }
-
-  getAddrDis(String kdname) {
-    String kdaddr;
-    if (TS.notEmpty(kdname)) {
-      ("matr getAddrDis " + kdname).print();
-      emit(cc) {
-        """
-      // Structure to hold the resolved IPv4 address
-      esp_ip4_addr_t addr;
-      addr.addr = 0; // Initialize to 0.0.0.0
-
-      // NOTE: Querying the network for the A record.
-      // Hostname should NOT include the ".local" suffix.
-      esp_err_t err = mdns_query_a(
-          beq->beva_kdname->bems_toCcString().c_str(), // The hostname (e.g., "my-other-device")
-          1000,             // Timeout in milliseconds (e.g., 2 seconds)
-          &addr             // Pointer to the address structure to fill
-      );
-
-      if (err == ESP_OK) {
-          // Successful resolution.
-          // NOTE: Hostname resolved successfully.
-          char ip_str[16]; // Buffer for the IP address string (max 15 chars + null)
-
-          snprintf(
-          ip_str,
-          sizeof(ip_str),
-          "%d.%d.%d.%d",
-          (int)((addr.addr >> 0) & 0xFF),   // D (Least significant byte in memory)
-          (int)((addr.addr >> 8) & 0xFF),   // C
-          (int)((addr.addr >> 16) & 0xFF),  // B
-          (int)((addr.addr >> 24) & 0xFF)   // A (Most significant byte in memory)
-      );
-
-          // Convert the IP address structure to a human-readable string
-          //inet_ntoa_r(addr.addr, ip_str, sizeof(ip_str));
-
-          //printf("Resolved IP for %s.local: %s\n", target_host_name, ip_str);
-          std::string ipccs(ip_str);
-          beq->bevl_kdaddr = new BEC_2_4_6_TextString(ipccs);
-      } else if (err == ESP_ERR_NOT_FOUND) {
-          // NOTE: Host was not found error here.
-          //printf("Host %s.local was not found.\n", target_host_name);
-      } else {
-          // NOTE: Query failed due to a network or mDNS error.
-          //printf("mDNS Query Failed: %s\n", esp_err_to_name(err));
-      }
-        """
-      }
-    }
-    if (TS.isEmpty(kdaddr)) {
-      kdaddr = CNS.undefined;
-    }
-    ("returning kdaddr " + kdaddr).print();
-    return(kdaddr);
   }
 
   doSec(String sp) String {
@@ -854,7 +798,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
           if (TS.notEmpty(mmep.rip)) {
             rip = mmep.rip;
           } else {
-            String rip = getAddrDis(kdn);
+            String rip = tdserver.getAddrDis(kdn);
           }
           if (rip != CNS.undefined) {
             ("rip " + rip).print();
