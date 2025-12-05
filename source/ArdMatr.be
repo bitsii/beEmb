@@ -133,8 +133,18 @@ emit(cc) {
   bool secls2(bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) { return setECLState(2, state, color, brightness, witemp); }
   bool secls3(bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) { return setECLState(3, state, color, brightness, witemp); }
   bool secls4(bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) { return setECLState(4, state, color, brightness, witemp); }
+  bool secls5(bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) { return setECLState(5, state, color, brightness, witemp); }
+  bool secls6(bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) { return setECLState(6, state, color, brightness, witemp); }
+  bool secls7(bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) { return setECLState(7, state, color, brightness, witemp); }
+  bool secls8(bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) { return setECLState(8, state, color, brightness, witemp); }
+  bool secls9(bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) { return setECLState(9, state, color, brightness, witemp); }
+  bool secls10(bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) { return setECLState(10, state, color, brightness, witemp); }
+  bool secls11(bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) { return setECLState(11, state, color, brightness, witemp); }
+  bool secls12(bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) { return setECLState(12, state, color, brightness, witemp); }
+  bool secls13(bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) { return setECLState(13, state, color, brightness, witemp); }
+  bool secls14(bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) { return setECLState(14, state, color, brightness, witemp); }
 
-  std::vector<seclscb> seclscbs = { secls0, secls1, secls2, secls3, secls4 };
+  std::vector<seclscb> seclscbs = { secls0, secls1, secls2, secls3, secls4, secls5, secls6, secls7, secls8, secls9, secls10, secls11, secls12, secls13, secls14 };
 
   """
 }
