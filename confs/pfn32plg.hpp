@@ -14,6 +14,7 @@
 // CON - definition of device's controls
 // ctlconfver.control.ctlconf,args.control.ctlconf,args
 //
+//#define BESPEC_CON "" //supergeneric
 #define BESPEC_CON "0.sw.30,2" //trying DevKitC-02 ESP32-C3-WROOM-02 - WORKS
 //#define BESPEC_CON "0.sw.5,1" //just the relay first
 //#define BESPEC_CON "0.sw.5,1.bu.3,0,30,0,30000"  //5 is switch, 6 is led, 3 button
