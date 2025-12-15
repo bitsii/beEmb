@@ -103,6 +103,10 @@
 //
 // extra includes
 //for BLE.be
+//#define MYNEWT_VAL_BLE_MAX_CONNECTIONS 2
+#define MYNEWT_VAL_BLE_ROLE_CENTRAL 0
+#define MYNEWT_VAL_BLE_ROLE_OBSERVER 0
+//#define MYNEWT_VAL_NIMBLE_MEM_ALLOC_MODE_EXTERNAL 1
 #include <NimBLEDevice.h>
 //for TDS
 #include <NetworkUdp.h>
