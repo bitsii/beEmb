@@ -163,6 +163,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
     fields {
       Bool timeToDecom = false;
     }
+    nextName = ash.nowup + 2000;
   }
 
   handleCmdl(List cmdl) String {
@@ -922,10 +923,6 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
         Serial.println("service missing no hostname");
         addService = true;
       }
-      /*if (!mdns_service_exists("_casnic", "_tcp", delegated_hostname)) {
-        Serial.println("service missing hostname");
-        addService = true;
-      }*/
 
       mdns_ip_addr_t addr4;
       if (addName || addMName || addService) {
@@ -934,12 +931,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
         esp_netif_ip_info_t info;
         esp_netif_get_ip_info(intf, &info);
         addr4.addr.u_addr.ip4 = info.ip;
-
-        //mdns_ip_addr_t addr6;
-        //addr6.addr.type = ESP_IPADDR_TYPE_V6;
-        //esp_netif_get_ip6_linklocal(intf, &addr6.addr.u_addr.ip6);
-        //addr4.next = &addr6;
-        //addr6.next = NULL;
+        addr4.next = NULL;
       }
 
       if (addMName) {
@@ -954,11 +946,12 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
       
       if (addService) {
         Serial.println("adding service");
-        mdns_txt_item_t serviceTxtData[2] = {
+        /*mdns_txt_item_t serviceTxtData[2] = {
           {"arrr","matey"},
           {delegated_hostname,"myname"}
         };
-        mdns_service_add(NULL, "_casnic", "_tcp", 6420, serviceTxtData, 2);
+        mdns_service_add(NULL, "_casnic", "_tcp", 6420, serviceTxtData, 2);*/
+        mdns_service_add(NULL, "_casnic", "_tcp", 6420, NULL, 0);
       }
 
       """
