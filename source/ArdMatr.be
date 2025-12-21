@@ -897,7 +897,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
     //String orgName;
     nextName = nowup + 20000;
     String myName = ash.myName;
-    String myDid = myName.substring(7, myName.length);
+    String myDid = myName.substring(6, myName.length - 3);
     emit(cc) {
       """
       const char *delegated_hostname = beq->bevl_myName->bems_toCcString().c_str();
@@ -948,7 +948,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
       if (addService) {
         Serial.println("adding service");
         const char *txtval = beq->bevl_myDid->bems_toCcString().c_str();
-        mdns_txt_item_t serviceTxtEntry = {txtval, "CasDid"};
+        mdns_txt_item_t serviceTxtEntry = {txtval, "CD"};
         mdns_txt_item_t serviceTxtData[1];
         serviceTxtData[0] = serviceTxtEntry;
         mdns_service_add(NULL, "_casnic", "_tcp", 6420, serviceTxtData, 1);
