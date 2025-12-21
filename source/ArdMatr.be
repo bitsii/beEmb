@@ -898,56 +898,67 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
     String myName = ash.myName;
     emit(cc) {
       """
-
-      esp_netif_t *intf = esp_netif_get_default_netif();
       const char *delegated_hostname = beq->bevl_myName->bems_toCcString().c_str();
 
-      mdns_ip_addr_t addr4, addr6;
-      addr4.addr.type = ESP_IPADDR_TYPE_V4;
-      esp_netif_ip_info_t info;
-      esp_netif_get_ip_info(intf, &info);
-      addr4.addr.u_addr.ip4 = info.ip;
-      addr6.addr.type = ESP_IPADDR_TYPE_V6;
-      esp_netif_get_ip6_linklocal(intf, &addr6.addr.u_addr.ip6);
-      addr4.next = &addr6;
-      addr6.next = NULL;
-      //ESP_ERROR_CHECK( mdns_delegate_hostname_add(delegated_hostname, &addr4) );
-      //ESP_ERROR_CHECK( mdns_service_add_for_host(NULL, "_casnic", "_tcp", delegated_hostname, 6420, NULL, 0) );
-      //free(delegated_hostname);
+      boolean addName = false;
+      boolean addMName = false;
+      boolean addService = false;
 
+      if (!mdns_hostname_exists(delegated_hostname)) {
+        Serial.println("hostname missing");
+        addName = true;
+      }
       char hostname_buffer[64];
       hostname_buffer[0] = '\0'; // Ensure it's null-terminated for safety
-
-      // 2. Call the ESP-IDF function to get the C-string hostname
       esp_err_t err = mdns_hostname_get(hostname_buffer);
-
-      mdns_txt_item_t serviceTxtData[2] = {
-        {"arrr","matey"},
-        {delegated_hostname,"myname"}
-      };
-      //if (!mdns_hostname_exists(delegated_hostname)) {
-        mdns_delegate_hostname_add(delegated_hostname, &addr4);
-      //}
-      //mdns_service_add_for_host(NULL, "_casnic", "_tcp", delegated_hostname, 6420, NULL, 0);
-      //mdns_service_add_for_host(hostname_buffer, "_casnic", "_tcp", delegated_hostname, 6420, NULL, 0);
-      //mdns_service_instance_name_set("_casnic", "_tcp", delegated_hostname);
-
-      if (mdns_service_exists("_casnic", "_tcp", NULL)) {
-        mdns_service_remove("_casnic", "_tcp");
-      }
-      if (mdns_service_exists("_casnic", "_tcp", delegated_hostname)) {
-        mdns_service_remove("_casnic", "_tcp");
-      }
-      mdns_service_add_for_host(NULL, "_casnic", "_tcp", delegated_hostname, 6420, serviceTxtData, 2);
-
       if (err == ESP_OK) {
-        // 3. Convert the null-terminated C-string buffer to a C++ std::string
-        // The std::string constructor takes the char* (C-string) directly.
-        //if (!mdns_hostname_exists(hostname_buffer)) {
-          mdns_delegate_hostname_add(hostname_buffer, &addr4);
-        //}
-        //std::string hostname_cpp(hostname_buffer);
-        //beq->bevl_orgName = new BEC_2_4_6_TextString(hostname_cpp);
+        if (!mdns_hostname_exists(hostname_buffer)) {
+          Serial.println("m hostname missing");
+          addMName = true;
+        }
+      }
+
+      if (!mdns_service_exists("_casnic", "_tcp", NULL)) {
+        Serial.println("service missing no hostname");
+        addService = true;
+      }
+      /*if (!mdns_service_exists("_casnic", "_tcp", delegated_hostname)) {
+        Serial.println("service missing hostname");
+        addService = true;
+      }*/
+
+      mdns_ip_addr_t addr4;
+      if (addName || addMName || addService) {
+        esp_netif_t *intf = esp_netif_get_default_netif();
+        addr4.addr.type = ESP_IPADDR_TYPE_V4;
+        esp_netif_ip_info_t info;
+        esp_netif_get_ip_info(intf, &info);
+        addr4.addr.u_addr.ip4 = info.ip;
+
+        //mdns_ip_addr_t addr6;
+        //addr6.addr.type = ESP_IPADDR_TYPE_V6;
+        //esp_netif_get_ip6_linklocal(intf, &addr6.addr.u_addr.ip6);
+        //addr4.next = &addr6;
+        //addr6.next = NULL;
+      }
+
+      if (addMName) {
+        Serial.println("adding mname");
+        mdns_delegate_hostname_add(hostname_buffer, &addr4);
+      }
+
+      if (addName) {
+        Serial.println("adding name");
+        mdns_delegate_hostname_add(delegated_hostname, &addr4);
+      }
+      
+      if (addService) {
+        Serial.println("adding service");
+        mdns_txt_item_t serviceTxtData[2] = {
+          {"arrr","matey"},
+          {delegated_hostname,"myname"}
+        };
+        mdns_service_add(NULL, "_casnic", "_tcp", 6420, serviceTxtData, 2);
       }
 
       """
