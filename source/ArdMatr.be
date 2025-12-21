@@ -168,10 +168,12 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
       String readBuf = String.new();
       Bool triedCommission = false;
       Bool brdCh = false;
+      Int nextName = 0;
     }
     fields {
       Bool timeToDecom = false;
     }
+    nextName = ash.nowup + 2000;
   }
 
   handleCmdl(List cmdl) String {
@@ -309,13 +311,6 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
   }
 
   start() {
-
-    ifNotEmit(noTds) {
-      Embedded:Tds tdserver = ash.tdserver;
-      if (def(tdserver)) {
-        tdserver.callback = self;
-      }
-    }
 
     mepi = config.getPos("matr.meps");
     "loading meps".print();
@@ -770,13 +765,10 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
             }
           } else {
             if (TS.isEmpty(mmep.rip)) {
-              Embedded:Tds tdserver = ash.tdserver;
-              if (def(tdserver)) {
-                String kdn = "CasNic" + mmep.ondid;
-                String rip = tdserver.getAddrDis(kdn);
-                if (rip != CNS.undefined) {
-                  mmep.rip = rip;
-                }
+              String kdn = "CasNic" + mmep.ondid;
+              String rip = getAddrDis(kdn);
+              if (rip != CNS.undefined) {
+                mmep.rip = rip;
               }
             }
           }
@@ -784,6 +776,62 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
         nextSwCheckIdx++;
       }
     }
+  }
+
+  getAddrDis(String kdname) {
+    String kdaddr;
+    if (TS.notEmpty(kdname)) {
+      //("matr getAddrDis " + kdname).print();
+      emit(cc) {
+        """
+      // Structure to hold the resolved IPv4 address
+      esp_ip4_addr_t addr;
+      addr.addr = 0; // Initialize to 0.0.0.0
+
+      // NOTE: Querying the network for the A record.
+      // Hostname should NOT include the ".local" suffix.
+      esp_err_t err = mdns_query_a(
+          beq->beva_kdname->bems_toCcString().c_str(), // The hostname (e.g., "my-other-device")
+          1000,             // Timeout in milliseconds (e.g., 2 seconds)
+          &addr             // Pointer to the address structure to fill
+      );
+
+      if (err == ESP_OK) {
+          // Successful resolution.
+          // NOTE: Hostname resolved successfully.
+          char ip_str[16]; // Buffer for the IP address string (max 15 chars + null)
+
+          snprintf(
+          ip_str,
+          sizeof(ip_str),
+          "%d.%d.%d.%d",
+          (int)((addr.addr >> 0) & 0xFF),   // D (Least significant byte in memory)
+          (int)((addr.addr >> 8) & 0xFF),   // C
+          (int)((addr.addr >> 16) & 0xFF),  // B
+          (int)((addr.addr >> 24) & 0xFF)   // A (Most significant byte in memory)
+      );
+
+          // Convert the IP address structure to a human-readable string
+          //inet_ntoa_r(addr.addr, ip_str, sizeof(ip_str));
+
+          //printf("Resolved IP for %s.local: %s\n", target_host_name, ip_str);
+          std::string ipccs(ip_str);
+          beq->bevl_kdaddr = new BEC_2_4_6_TextString(ipccs);
+      } else if (err == ESP_ERR_NOT_FOUND) {
+          // NOTE: Host was not found error here.
+          //printf("Host %s.local was not found.\n", target_host_name);
+      } else {
+          // NOTE: Query failed due to a network or mDNS error.
+          //printf("mDNS Query Failed: %s\n", esp_err_to_name(err));
+      }
+        """
+      }
+    }
+    if (TS.isEmpty(kdaddr)) {
+      kdaddr = CNS.undefined;
+    }
+    //("returning kdaddr " + kdaddr).print();
+    return(kdaddr);
   }
 
   doSec(String sp) String {
@@ -796,51 +844,49 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
       String mcmdres;
       String kdn = "CasNic" + mmep.ondid;
       ("checkDoMes kdn scmds |" + kdn + "| |" + scmds + "|").print();
-      ifNotEmit(noTds) {
-      Embedded:Tds tdserver = ash.tdserver;
-      if (def(tdserver)) {
-        if (kdn == ash.myName) {
-          //"call is coming from inside house".print();
-          "selfgate".print();
-          //mcmdres = doCmd("matr", scmds);
+      if (kdn == ash.myName) {
+        //"call is coming from inside house".print();
+        "selfgate".print();
+        //mcmdres = doCmd("matr", scmds);
+      } else {
+        if (TS.notEmpty(mmep.rip)) {
+          rip = mmep.rip;
         } else {
-          if (TS.notEmpty(mmep.rip)) {
-            rip = mmep.rip;
-          } else {
-            String rip = tdserver.getAddrDis(kdn);
+          String rip = getAddrDis(kdn);
+        }
+        if (rip != CNS.undefined) {
+          ("rip " + rip).print();
+          mmep.rip = rip;
+          //look for r and n, send back r n (it's already there) FALSE NOT FROM MQ IT ISN'T
+          //String ppay = preq.checkGetPayload(readBuf, slashn);
+          var tcpc = Embedded:TCPClient.new(rip, 6420);
+          //"open".print();
+          tcpc.open();
+          //"write".print();
+          if (tcpc.connected) {
+            tcpc.write(scmds);
+            tcpc.write(slashr);
+            tcpc.write(slashn);
+            //"get tcpcres".print();
+            String tcpcres = tcpc.checkGetPayload(readBuf, slashn);
+            //"got res".print();
           }
-          if (rip != CNS.undefined) {
-            ("rip " + rip).print();
-            mmep.rip = rip;
-            //look for r and n, send back r n (it's already there) FALSE NOT FROM MQ IT ISN'T
-            //String ppay = preq.checkGetPayload(readBuf, slashn);
-            var tcpc = Embedded:TCPClient.new(rip, 6420);
-            //"open".print();
-            tcpc.open();
-            //"write".print();
-            if (tcpc.connected) {
-              tcpc.write(scmds);
-              tcpc.write(slashr);
-              tcpc.write(slashn);
-              //"get tcpcres".print();
-              String tcpcres = tcpc.checkGetPayload(readBuf, slashn);
-              //"got res".print();
-            }
-            if (TS.isEmpty(tcpcres)) {
-              //"tcpcres empty".print();
-              //in case ip changed rewantit
-              //mmep.rip = null;
-              tdserver.sayWants(kdn);
-            } else {
-              //("tcpcres " + tcpcres).print();
-              mcmdres = tcpcres;
+          if (TS.isEmpty(tcpcres)) {
+            //"tcpcres empty".print();
+            //in case ip changed rewantit
+            //mmep.rip = null;
+            String nip = getAddrDis(kdn);
+            if (nip != CNS.undefined) {
+              mmep.rip = nip;
             }
           } else {
-            "still no rip".print();
+            //("tcpcres " + tcpcres).print();
+            mcmdres = tcpcres;
           }
+        } else {
+          "still no rip".print();
         }
       }
-    }
     return(mcmdres);
   }
 
@@ -855,6 +901,78 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
      "decom".print();
      decommission();
      "decom done".print();
+   }
+   Int nowup = ash.nowup;
+   if (nowup > nextName) {
+    //String orgName;
+    nextName = nowup + 20000;
+    String myName = ash.myName;
+    String myDid = myName.substring(6, myName.length - 3);
+    emit(cc) {
+      """
+      const char *delegated_hostname = beq->bevl_myName->bems_toCcString().c_str();
+
+      boolean addName = false;
+      boolean addMName = false;
+      boolean addService = false;
+
+      if (!mdns_hostname_exists(delegated_hostname)) {
+        Serial.println("hostname missing");
+        addName = true;
+      }
+      char hostname_buffer[64];
+      hostname_buffer[0] = '\0'; // Ensure it's null-terminated for safety
+      esp_err_t err = mdns_hostname_get(hostname_buffer);
+      if (err == ESP_OK) {
+        if (!mdns_hostname_exists(hostname_buffer)) {
+          Serial.println("m hostname missing");
+          addMName = true;
+        }
+      }
+
+      if (!mdns_service_exists("_casnic", "_tcp", NULL)) {
+        Serial.println("service missing no hostname");
+        addService = true;
+      }
+
+      mdns_ip_addr_t addr4;
+      if (addName || addMName || addService) {
+        esp_netif_t *intf = esp_netif_get_default_netif();
+        addr4.addr.type = ESP_IPADDR_TYPE_V4;
+        esp_netif_ip_info_t info;
+        esp_netif_get_ip_info(intf, &info);
+        addr4.addr.u_addr.ip4 = info.ip;
+        addr4.next = NULL;
+      }
+
+      if (addMName) {
+        Serial.println("adding mname");
+        mdns_delegate_hostname_add(hostname_buffer, &addr4);
+      }
+
+      if (addName) {
+        Serial.println("adding name");
+        mdns_delegate_hostname_add(delegated_hostname, &addr4);
+      }
+      
+      if (addService) {
+        Serial.println("adding service");
+        const char *txtval = beq->bevl_myDid->bems_toCcString().c_str();
+        mdns_txt_item_t serviceTxtEntry = {txtval, "CD"};
+        mdns_txt_item_t serviceTxtData[1];
+        serviceTxtData[0] = serviceTxtEntry;
+        mdns_service_add(NULL, "_casnic", "_tcp", 6420, serviceTxtData, 1);
+        //mdns_service_add(NULL, "_casnic", "_tcp", 6420, NULL, 0);
+      }
+
+      """
+    }
+    //("also added myname " + myName).print();
+    //if (TS.notEmpty(orgName)) {
+    //  ("orgName " + orgName).print();
+    //} else {
+    //  ("orgName empty").print();
+    //}
    }
   }
 
