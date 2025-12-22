@@ -405,11 +405,6 @@ class Embedded:AppShell {
         Embedded:Mdns mdserver;
        }
      }
-     ifNotEmit(noTds) {
-       fields {
-        Embedded:Tds tdserver;
-       }
-     }
      ifNotEmit(noSmc) {
        fields {
         Embedded:Smc smcserver;
@@ -515,11 +510,10 @@ class Embedded:AppShell {
         }
 
         ifNotEmit(noMdns) {
-          mdserver = Embedded:Mdns.new(myName, "casnic", 6420, "tcp");
+          mdserver = Embedded:Mdns.new(myName, "casnic", 6420, "tcp", app);
           mdserver.start();
         }
         checkStartUpServer();
-        checkStartTdServer();
 
         ifEmit(smcSet) {
           slots {
@@ -534,9 +528,9 @@ class Embedded:AppShell {
           Int smcpi = config.getPos("smc.p");
           smcp = config.get(smcpi);
         }
-        checkStartHbServer();//must be before smcserver, after tdserver
+        checkStartHbServer();//must be before smcserver
         checkStartSmcServer();
-        checkStartMatrServer();//must be after tdserver
+        checkStartMatrServer();
         checkStartEhServer();
         checkStartTaServer();
         checkStartDfServer();
@@ -552,17 +546,6 @@ class Embedded:AppShell {
       if (Wifi.isConnected) {
         if (undef(eupd)) {
           eupd = Embedded:Update.new(self);
-        }
-      }
-    }
-   }
-
-   checkStartTdServer() {
-    ifNotEmit(noTds) {
-      if (Wifi.isConnected) {
-        if (undef(tdserver)) {
-          tdserver = Embedded:Tds.new(myName, self);
-          tdserver.start();
         }
       }
     }
@@ -789,10 +772,9 @@ class Embedded:AppShell {
          needsNetworkInit = true;
        }
        checkStartUpServer();
-       checkStartTdServer();
-       checkStartHbServer();//must be before smcserver, after tdserver
+       checkStartHbServer();//must be before smcserver
        checkStartSmcServer();
-       checkStartMatrServer();//must be after tdserver
+       checkStartMatrServer();
        checkStartEhServer();
        checkStartTaServer();
        checkStartDfServer();
@@ -990,8 +972,8 @@ class Embedded:AppShell {
                   "selfgate".print();
                   mcmdres = doCmd("mq", scmds);
                 } else {
-                  ifNotEmit(noTds) {
-                    if (def(tdserver)) {
+                  ifNotEmit(noMdns) {
+                    if (def(mdserver)) {
                         List nrips = smcserver.nrips;
                         Int nrl = nrips.length;
                         Int fnripp;
@@ -1005,7 +987,7 @@ class Embedded:AppShell {
                           }
                         }
                         if (TS.isEmpty(rip)) {
-                          String rip = tdserver.getAddrDis(kdn);
+                          String rip = mdserver.getAddrDis(kdn);
                           if (rip == CNS.undefined) {
                             "no rip tds".print();
                           } else {
@@ -1036,7 +1018,14 @@ class Embedded:AppShell {
                             if (def(fnripp)) {
                               nrips[fnripp] = null;
                             }
-                            tdserver.sayWants(kdn);
+                            rip = mdserver.getAddrDis(kdn);
+                            if (rip == CNS.undefined) {
+                              "no rip tds".print();
+                            } else {
+                              "got rip tds".print();
+                              nrp = System:Random.getIntMax(smcserver.nrips.length);
+                              smcserver.nrips.put(nrp, kdn + "," + rip);
+                            }
                           } else {
                             //("tcpcres " + tcpcres).print();
                             mcmdres = tcpcres;
@@ -1227,11 +1216,6 @@ class Embedded:AppShell {
      ifNotEmit(noMdns) {
       if (def(mdserver)) {
         mdserver.update();
-      }
-     }
-     ifNotEmit(noTds) {
-      if (def(tdserver)) {
-        tdserver.update();
       }
      }
    }
@@ -1546,11 +1530,6 @@ class Embedded:AppShell {
         } elseIf (cmd == "doswspec") {
           return(swSpec);
         } elseIf (cmd == "gettda") {
-          ifNotEmit(noTds) {
-            if (def(tdserver)) {
-              return(tdserver.getAddr(cmdl[2]));
-            }
-          }
           return(CNS.ok);
         } else {
           if (def(controlDef)) {

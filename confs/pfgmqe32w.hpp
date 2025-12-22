@@ -12,7 +12,7 @@
 //#define BESPEC_SW "1,p2.Generic.22"  //supergeneric
 //#define BESPEC_SW "1,p2.WNN.31"  //nodemcu
 //#define BESPEC_SW "1,q,p3,p2.Rando.69" //testing changes
-#define BESPEC_SW "1,q,gm,t3,p6,p2.rGateMqEw.127"  //nodemcu
+#define BESPEC_SW "1,q,gm,p6,p2.rGateMqEw.127"  //nodemcu
 //q = quickstate, t1 tds multicast discovery, p6 auth with reid ret, dm direct mq, pm proxy over mq
 //p2 auth type 2 (hash), p2 always last
 //

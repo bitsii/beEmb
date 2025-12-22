@@ -537,11 +537,6 @@ class Embedded:Hqb {
       Int swCycle = 0;//name checks but every 6 cycles get sw (3 mins)
     }
 
-    Embedded:Tds tdserver = ash.tdserver;
-    if (def(tdserver)) {
-      tdserver.callback = self;
-    }
-
   }
 
   doSec(String sp) String {
@@ -554,9 +549,9 @@ class Embedded:Hqb {
       String mcmdres;
       String kdn = "CasNic" + hd.ondid;
       ("checkDoMes kdn scmds |" + kdn + "| |" + scmds + "|").print();
-      ifNotEmit(noTds) {
-      Embedded:Tds tdserver = ash.tdserver;
-      if (def(tdserver)) {
+      ifNotEmit(noMdns) {
+      Embedded:Mdns mdserver = ash.mdserver;
+      if (def(mdserver)) {
         if (kdn == ash.myName) {
           //"call is coming from inside house".print();
           "selfgate".print();
@@ -565,7 +560,7 @@ class Embedded:Hqb {
           if (TS.notEmpty(hd.rip)) {
             rip = hd.rip;
           } else {
-            String rip = tdserver.getAddrDis(kdn);
+            String rip = mdserver.getAddrDis(kdn);
           }
           if (rip != CNS.undefined) {
             ("rip " + rip).print();
@@ -588,7 +583,11 @@ class Embedded:Hqb {
               //"tcpcres empty".print();
               //in case ip changed rewantit
               //hd.rip = null;
-              tdserver.sayWants(kdn);
+              rip = ash.mdserver.getAddrDis(kdn);
+              if (rip != CNS.undefined) {
+                ("rip " + rip).print();
+                hd.rip = rip;
+              }
             } else {
               //("tcpcres " + tcpcres).print();
               mcmdres = tcpcres;
@@ -600,24 +599,6 @@ class Embedded:Hqb {
       }
     }
     return(mcmdres);
-  }
-
-  gotAddr(String name, String rip) {
-    if (TS.notEmpty(name) && TS.notEmpty(rip)) {
-      String did = name.substring(6, name.length);
-      //("did in gotwants " + name + " " + did).print();
-      for (Hqd hd in hds) {
-        if (TS.notEmpty(hd.ondid)) {
-          if (hd.ondid == did) {
-            hd.rip = rip;
-            //"equal".print();
-            break;
-          } else {
-            //"not equal".print();
-          }
-        }
-      }
-    }
   }
 
   handleLoop() {
@@ -656,10 +637,10 @@ class Embedded:Hqb {
             }
           } else {
             if (TS.isEmpty(mmep.rip)) {
-              Embedded:Tds tdserver = ash.tdserver;
-              if (def(tdserver)) {
+              Embedded:Mdns mdserver = ash.mdserver;
+              if (def(mdserver)) {
                 String kdn = "CasNic" + mmep.ondid;
-                String rip = tdserver.getAddrDis(kdn);
+                String rip = mdserver.getAddrDis(kdn);
                 if (rip != CNS.undefined) {
                   mmep.rip = rip;
                 }

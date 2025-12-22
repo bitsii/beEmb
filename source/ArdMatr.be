@@ -292,24 +292,6 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
     config.put(mepi, "");
   }
 
-  gotAddr(String name, String rip) {
-    if (TS.notEmpty(name) && TS.notEmpty(rip)) {
-      String did = name.substring(6, name.length);
-      //("did in gotwants " + name + " " + did).print();
-      for (Mmep mmep in meps) {
-        if (TS.notEmpty(mmep.ondid)) {
-          if (mmep.ondid == did) {
-            mmep.rip = rip;
-            //"equal".print();
-            break;
-          } else {
-            //"not equal".print();
-          }
-        }
-      }
-    }
-  }
-
   start() {
 
     mepi = config.getPos("matr.meps");

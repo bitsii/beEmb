@@ -10,15 +10,17 @@
 
 use Text:Strings as TS;
 use System:Exception;
+use Embedded:CommonNames as CNS;
 
 class Embedded:Mdns {
 
-  new(String _name, String _service, Int _port, String _protocol) self {
+  new(String _name, String _service, Int _port, String _protocol, Embedded:App _app) self {
     slots {
       String name =  _name;
       String service = _service;
       Int port = _port;
       String protocol = _protocol;
+      Embedded:App app = _app;
     }
   }
   
@@ -67,6 +69,17 @@ class Embedded:Mdns {
     }
     }
     return(tqip);
+  }
+
+  getAddrDis(String name) String {
+    for (Int i = 0;i < 2;i++) {
+      String mrip = getAddr(name);
+      if (TS.notEmpty(mrip)) {
+        return(mrip);
+      }
+      app.delay(2);
+    }
+    return(CNS.undefined);
   }
   
   update() self {
