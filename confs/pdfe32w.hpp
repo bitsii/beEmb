@@ -12,7 +12,7 @@
 //#define BESPEC_SW "1,p2.Generic.22"  //supergeneric
 //#define BESPEC_SW "1,p2.WNN.31"  //nodemcu
 //#define BESPEC_SW "1,q,p3,p2.Rando.69" //testing changes
-#define BESPEC_SW "1,q,df,p6,p2.rGateDf.694"  //nodemcu df,t3
+#define BESPEC_SW "1,q,df,p6,p2.rGateDf.696"  //nodemcu df,t3
 //q = quickstate, t1 tds multicast discovery, p6 auth with reid ret, dm direct mq, pm proxy over mq
 //p2 auth type 2 (hash), p2 always last
 //
@@ -103,4 +103,8 @@
 //
 // extra includes
 //for BLE.be
+//#define MYNEWT_VAL_BLE_MAX_CONNECTIONS 2
+#define MYNEWT_VAL_BLE_ROLE_CENTRAL 0
+#define MYNEWT_VAL_BLE_ROLE_OBSERVER 0
+//#define MYNEWT_VAL_NIMBLE_MEM_ALLOC_MODE_EXTERNAL 1
 #include <NimBLEDevice.h>
