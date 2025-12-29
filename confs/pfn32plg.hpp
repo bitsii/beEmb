@@ -9,7 +9,7 @@
 // SW - name (type) and version of the device.  Typename 10 char max ssid rules (no spaces)
 // swconfver.DeviceTypeName.DeviceVersion
 //
-#define BESPEC_SW "1,q,p6,p2.Plug.135" //template plug df,
+#define BESPEC_SW "1,q,df,p6,p2.Plug.135" //template plug df,
 // Esp32 4mb minimal spiffs 1.9mb app with ota/190kb spiffs  esp32c3
 // CON - definition of device's controls
 // ctlconfver.control.ctlconf,args.control.ctlconf,args
