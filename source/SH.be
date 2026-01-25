@@ -1307,7 +1307,7 @@ class Embedded:AppShell {
        } else {
          ("unknown secsceme " + cmdl[0]).print();
        }
-       ifNotEmit(noAes) {
+       ifEmit(aesSup) {
         if (cmdl[0].ends("p5")) {
           "decrypting".print();
           String dhex = Encode:Hex.decode(cmdl[4]);
@@ -1354,7 +1354,7 @@ class Embedded:AppShell {
          }
        }
        String cdres = doCmdl(channel, cmdn);
-       ifNotEmit(noAes) {
+       ifEmit(aesSup) {
         if (cmdl[0].ends("p5") && TS.notEmpty(cdres)) {
           "encrypting".print();
           String ecryp = Embedded:Aes.encrypt(cmdl[1], spw, cdres);
