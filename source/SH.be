@@ -413,7 +413,7 @@ class Embedded:AppShell {
         String stopic = String.new();
        }
      }
-     ifNotEmit(noMatr) {
+     ifEmit(maSvr) {
        slots {
         Embedded:MatrServer matrserver;
        }
@@ -600,7 +600,7 @@ class Embedded:AppShell {
    }
 
    checkStartMatrServer() {
-     ifNotEmit(noMatr) {
+     ifEmit(maSvr) {
       if (Wifi.isConnected) {
         if (undef(matrserver)) {
           matrserver = Embedded:MatrServer.new(self);
@@ -1172,7 +1172,7 @@ class Embedded:AppShell {
         return(self);
       }
      }
-     ifNotEmit(noMatr) {
+     ifEmit(maSvr) {
        if (def(matrserver)) {
         matrserver.handleLoop();
        }
@@ -1671,7 +1671,7 @@ class Embedded:AppShell {
         }
         return("smcok");
      } elseIf (cmd == "brd") {
-       ifNotEmit(noMatr) {
+       ifEmit(maSvr) {
          if (def(matrserver)) {
            return(matrserver.handleCmdl(cmdl));
          }
@@ -1751,7 +1751,7 @@ class Embedded:AppShell {
     Int shdidi = config.getPos("sh.did");
     config.put(shdidi, es);
     clearStates();
-    ifNotEmit(noMatr) {
+    ifEmit(maSvr) {
       if (def(matrserver)) {
         "clearing meps".print();
         matrserver.clearMeps();

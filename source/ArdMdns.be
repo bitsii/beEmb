@@ -29,7 +29,7 @@ class Embedded:Mdns {
       "mdns needs a name".print();
       return(self);
     }
-    ifEmit(noMatr) {
+    ifNotEmit(maSvr) {
     emit(cc) {
     """
     int tries = 100;
