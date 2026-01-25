@@ -77,7 +77,7 @@ class Embedded:AppShell {
        Int onek = 1000;
        Int oneh = 100;
      }
-     ifNotEmit(noWeb) {
+     ifEmit(webSup) {
       slots {
         String htmlHead;
       }
@@ -98,7 +98,7 @@ class Embedded:AppShell {
      nextWifiCheck = nowup + 45000;//45 secs
      
      //"making webPage".print();
-     ifNotEmit(noWeb) {
+     ifEmit(webSup) {
      htmlHead = String.new();
      htmlHead += "HTTP/1.1 200 OK\r\n";
      htmlHead += "Content-type:text/html\r\n";
@@ -109,7 +109,7 @@ class Embedded:AppShell {
    }
 
    sendWebPage(treq) {
-    ifNotEmit(noWeb) {
+    ifEmit(webSup) {
      treq.client.write(htmlHead);
 
      /*String htmlStart = "<html><head></head><body>";
@@ -390,7 +390,7 @@ class Embedded:AppShell {
    
    startLoop() {
 
-     ifNotEmit(noWeb) {
+     ifEmit(webSup) {
        slots {
          Embedded:TinyWeb tweb;
        }
@@ -504,7 +504,7 @@ class Embedded:AppShell {
         ("tcpconsole " + tccon).print();
         }
 
-        ifNotEmit(noWeb) {
+        ifEmit(webSup) {
          tweb = Embedded:TinyWeb.new();
          tweb.start();
         }
@@ -1091,7 +1091,7 @@ class Embedded:AppShell {
           }
         }
      }
-     ifNotEmit(noWeb) {
+     ifEmit(webSup) {
       if (def(tweb)) {
         var treq = tweb.checkGetRequest();
         if (def(treq)) {
