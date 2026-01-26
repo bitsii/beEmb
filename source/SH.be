@@ -530,7 +530,7 @@ class Embedded:AppShell {
         }
         checkStartHbServer();//must be before smcserver
         checkStartSmcServer();
-        checkStartMatrServer();
+        checkStartServers();
         checkStartEhServer();
         checkStartTaServer();
         checkStartDfServer();
@@ -599,7 +599,7 @@ class Embedded:AppShell {
       }
    }
 
-   checkStartMatrServer() {
+   checkStartServers() {
      ifEmit(maSvr) {
       if (Wifi.isConnected) {
         if (undef(matrserver)) {
@@ -774,7 +774,7 @@ class Embedded:AppShell {
        checkStartUpServer();
        checkStartHbServer();//must be before smcserver
        checkStartSmcServer();
-       checkStartMatrServer();
+       checkStartServers();
        checkStartEhServer();
        checkStartTaServer();
        checkStartDfServer();
@@ -1612,6 +1612,15 @@ class Embedded:AppShell {
         }
      }
 
+     ifEmit(maSvr) {
+      if (def(matrserver)) {
+        String seres = matrserver.handleCmdl(cmdl);
+        if (def(seres)) {
+          return(seres);
+        }
+      }
+     }
+
      if (cmd == "setwifi") {
         Int shssidi = config.getPos("sh.ssid");
         Int shseci = config.getPos("sh.sec");
@@ -1671,11 +1680,6 @@ class Embedded:AppShell {
         }
         return("smcok");
      } elseIf (cmd == "brd") {
-       ifEmit(maSvr) {
-         if (def(matrserver)) {
-           return(matrserver.handleCmdl(cmdl));
-         }
-        }
         ifEmit(hqB) {
          if (def(hbserver)) {
            return(hbserver.handleCmdl(cmdl));
@@ -1753,10 +1757,7 @@ class Embedded:AppShell {
     clearStates();
     ifEmit(maSvr) {
       if (def(matrserver)) {
-        "clearing meps".print();
-        matrserver.clearMeps();
-        "meps cleared".print();
-        matrserver.timeToDecom = true;
+        matrserver.reset();
       }
     }
     ifEmit(ehSvr) {

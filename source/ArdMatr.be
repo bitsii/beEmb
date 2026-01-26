@@ -169,6 +169,14 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
       Bool triedCommission = false;
       Bool brdCh = false;
       Int nextName = 0;
+      String clear = "clear";
+      String brd = "brd";
+      String decommish = "decommish";
+      String rmold = "rmold";
+      String chrestart = "chrestart";
+      String add = "add";
+      String brdok = "brdok";
+      String rm = "rm";
     }
     fields {
       Bool timeToDecom = false;
@@ -181,14 +189,15 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
          //act ept ondid ipos spass
          //add ool id ipos spass
          //rm ool id
-        if (cmdl.length > 2 && cmdl[2] == "clear") {
+      if (cmdl[0] == brd) {
+        if (cmdl.length > 2 && cmdl[2] == clear) {
           clearMeps();
           //ash.needsFsRestart = true;
-        } elseIf (cmdl.length > 2 && cmdl[2] == "commish") {
-          commission();
-        } elseIf (cmdl.length > 2 && cmdl[2] == "decommish") {
+        //} elseIf (cmdl.length > 2 && cmdl[2] == "commish") {
+        //  commission();
+        } elseIf (cmdl.length > 2 && cmdl[2] == decommish) {
           timeToDecom = true;
-        } elseIf (cmdl.length > 2 && cmdl[2] == "rmold") {
+        } elseIf (cmdl.length > 2 && cmdl[2] == rmold) {
           nx = List.new();
           nowup = ash.nowup;
           if (def(nowup)) {
@@ -204,7 +213,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
           }
           meps = nx;
           saveMeps();
-        } elseIf (cmdl.length > 2 && cmdl[2] == "chrestart") {
+        } elseIf (cmdl.length > 2 && cmdl[2] == chrestart) {
           if (brdCh) {
             "will restart chrestart".print();
             brdCh = false;
@@ -213,7 +222,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
         } elseIf (cmdl.length > 3) {
           Int nowup = ash.nowup;
           String act = cmdl[2];
-          if (act == "add" && cmdl.length > 6) {
+          if (act == add && cmdl.length > 6) {
             if (meps.length >= 15) {
               return("brdtoomany");
             }
@@ -221,7 +230,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
               if (mmep.ondid == cmdl[4] && mmep.ipos == cmdl[5]) {
                 "brd add sent a dupe".print();
                 mmep.lastUp = nowup;
-                return("brdok");
+                return(brdok);
               }
             }
             brdCh = true;
@@ -230,7 +239,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
             meps += addm;
             saveMeps();
             //ash.needsFsRestart = true;
-          } elseIf (act == "rm" && cmdl.length > 5) {
+          } elseIf (act == rm && cmdl.length > 5) {
             List nx = List.new();
             for (mmep in meps) {
               if (mmep.ondid == cmdl[4] && mmep.ipos == cmdl[5]) {
@@ -250,7 +259,10 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
           "bad brd cmd".print();
           return("brdbadcmd");
         }
-        return("brdok");
+        return(brdok);
+      } else {
+        return(null);
+      }
   }
 
   saveMeps() {
@@ -290,6 +302,13 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
 
   clearMeps() {
     config.put(mepi, "");
+  }
+
+  reset() {
+    "clearing meps".print();
+    clearMeps();
+    "meps cleared".print();
+    timeToDecom = true;
   }
 
   start() {
