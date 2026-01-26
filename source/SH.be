@@ -413,10 +413,8 @@ class Embedded:AppShell {
         String stopic = String.new();
        }
      }
-     ifEmit(maSvr) {
-       slots {
-        Embedded:MatrServer matrserver;
-       }
+     slots {
+      List servers;
      }
      ifEmit(ehSvr) {
        slots {
@@ -599,16 +597,18 @@ class Embedded:AppShell {
       }
    }
 
-   checkStartServers() {
-     ifEmit(maSvr) {
+  checkStartServers() {
+    if (undef(servers)) {
+      servers = List.new();
       if (Wifi.isConnected) {
-        if (undef(matrserver)) {
-          matrserver = Embedded:MatrServer.new(self);
+        ifEmit(maSvr) {
+          Embedded:MatrServer matrserver = Embedded:MatrServer.new(self);
           matrserver.start();
+          servers += matrserver;
         }
       }
     }
-   }
+  }
 
    checkStartEhServer() {
      ifEmit(ehSvr) {
@@ -1172,10 +1172,12 @@ class Embedded:AppShell {
         return(self);
       }
      }
-     ifEmit(maSvr) {
-       if (def(matrserver)) {
-        matrserver.handleLoop();
-       }
+     if (def(servers)) {
+      looperI.setValue(zero);
+      while (looperI < servers.length) {
+        servers.get(looperI).handleLoop();
+        looperI++;
+      }
      }
      ifEmit(ehSvr) {
        if (def(ehserver)) {
@@ -1612,14 +1614,14 @@ class Embedded:AppShell {
         }
      }
 
-     ifEmit(maSvr) {
-      if (def(matrserver)) {
-        String seres = matrserver.handleCmdl(cmdl);
+    if (def(servers)) {
+      for (any server in servers) {
+        String seres = server.handleCmdl(cmdl);
         if (def(seres)) {
           return(seres);
         }
       }
-     }
+    }
 
      if (cmd == "setwifi") {
         Int shssidi = config.getPos("sh.ssid");
@@ -1755,9 +1757,9 @@ class Embedded:AppShell {
     Int shdidi = config.getPos("sh.did");
     config.put(shdidi, es);
     clearStates();
-    ifEmit(maSvr) {
-      if (def(matrserver)) {
-        matrserver.reset();
+    if (def(servers)) {
+      for (any server in servers) {
+        server.reset();
       }
     }
     ifEmit(ehSvr) {
