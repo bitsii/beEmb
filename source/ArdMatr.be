@@ -223,7 +223,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
           Int nowup = ash.nowup;
           String act = cmdl[2];
           if (act == add && cmdl.length > 6) {
-            if (meps.length >= 15) {
+            if (meps.length > 8) {
               return("brdtoomany");
             }
             for (Mmep mmep in meps) {
