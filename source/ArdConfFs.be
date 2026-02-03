@@ -25,6 +25,9 @@ class Embedded:Config {
       String bedv = "/bedv/";
       String bedmax = "/bedmax";
       Int lastBmx = 0;
+      Int chfal = 0;
+      Int chtru = 1;
+      Int chfog = 2;
     }
   }
 
@@ -59,8 +62,20 @@ class Embedded:Config {
   put(Int pos, String value) {
     //("put pos " + pos + " value " + value + " " + names[pos]).print();
     values.put(pos, value);
-    changes.put(pos, true);
+    changes.put(pos, chtru);
     changed = true;
+  }
+
+  putForget(Int pos, String value) {
+    //("put pos " + pos + " value " + value + " " + names[pos]).print();
+    values.put(pos, value);
+    changes.put(pos, chfog);
+    changed = true;
+  }
+
+  forget(Int pos) {
+    values.put(pos, null);
+    changes.put(pos, chfal);
   }
 
   maybeSave() {
@@ -179,7 +194,7 @@ class Embedded:Config {
       if (TS.notEmpty(bns) && TS.notEmpty(bvs)) {
         names.put(i, bns);
         values.put(i, bvs);
-        changes.put(i, false);
+        changes.put(i, chfal);
         //("loaded " + i + " " + bns + " " + bvs).print();
       } else {
         //if (TS.isEmpty(bns)) { "bns empty".print(); }
@@ -217,8 +232,8 @@ class Embedded:Config {
     for (Int lpos = 0;lpos < names.length;lpos++) {
       String name = names.get(lpos);
       String value = values.get(lpos);
-      Bool change = changes.get(lpos);
-      if (def(change) && change) {
+      Int change = changes.get(lpos);
+      if (def(change) && change > chfal) {
         if (TS.notEmpty(name) && TS.notEmpty(value)) {
             //("save " + lpos + " " + name + " " + value).print();
             fn.clear();
@@ -279,7 +294,10 @@ class Embedded:Config {
             """
           }
         }
-        changes.put(lpos, false);
+        changes.put(lpos, chfal);
+        if (change == chfog) {
+          values.put(lpos, null);
+        }
       }
     }
     //save lpos as bedmax

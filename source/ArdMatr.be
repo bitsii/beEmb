@@ -268,7 +268,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
   saveMeps() {
     if (meps.isEmpty) {
       "empty meps".print();
-      config.put(mepi, "");
+      config.putForget(mepi, "");
     } else {
       String mc = String.new();
       for (Mmep mmep in meps) {
@@ -278,14 +278,16 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
         mc += mmep.met += "," += mmep.ondid += "," += mmep.ipos += "," += mmep.spass;
       }
       ("conf putting mc " + mc).print();
-      config.put(mepi, mc);
+      config.putForget(mepi, mc);
     }
   }
 
   loadMeps() {
     String mcs = config.get(mepi);
+    config.forget(mepi);
     if (TS.notEmpty(mcs)) {
       var mce = mcs.split(".");
+      mcs.clear();
       for (String mc in mce) {
         var mcl = mc.split(",");
         meps += Mmep.new(mcl[0], mcl[1], mcl[2], mcl[3]);
@@ -301,7 +303,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
   //also, is it add, remove, or clear
 
   clearMeps() {
-    config.put(mepi, "");
+    config.putForget(mepi, "");
   }
 
   reset() {
