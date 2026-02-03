@@ -34,9 +34,6 @@ class Embedded:Hqb {
       Int zero = 0;
       Int nextPubState = zero;
     }
-    fields {
-      Bool timeToDecom = false;
-    }
   }
 
   handleCmdl(List cmdl) String {

@@ -308,7 +308,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
     "clearing meps".print();
     clearMeps();
     "meps cleared".print();
-    timeToDecom = true;
+    //timeToDecom = true; can't causes restart
   }
 
   start() {
@@ -899,9 +899,9 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
    }
    if (timeToDecom) {
      timeToDecom = false;
-     //"decom".print();
-     //decommission();
-     //"decom done".print();
+     "decom".print();
+     decommission();
+     "decom done".print();
    }
    Int nowup = ash.nowup;
    if (nowup > nextName) {
