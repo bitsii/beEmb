@@ -61,15 +61,8 @@ emit(cc) {
   bool sloo5(bool state) { return setLightOnOff(5, state); }
   bool sloo6(bool state) { return setLightOnOff(6, state); }
   bool sloo7(bool state) { return setLightOnOff(7, state); }
-  bool sloo8(bool state) { return setLightOnOff(8, state); }
-  bool sloo9(bool state) { return setLightOnOff(9, state); }
-  bool sloo10(bool state) { return setLightOnOff(10, state); }
-  bool sloo11(bool state) { return setLightOnOff(11, state); }
-  bool sloo12(bool state) { return setLightOnOff(12, state); }
-  bool sloo13(bool state) { return setLightOnOff(13, state); }
-  bool sloo14(bool state) { return setLightOnOff(14, state); }
 
-  std::vector<sloocb> sloocbs = { sloo0, sloo1, sloo2, sloo3, sloo4, sloo5, sloo6, sloo7, sloo8, sloo9, sloo10, sloo11, sloo12, sloo13, sloo14 };
+  std::vector<sloocb> sloocbs = { sloo0, sloo1, sloo2, sloo3, sloo4, sloo5, sloo6, sloo7 };
 
   bool setDimLightState(size_t idx, bool state, uint8_t brightness) {
     Serial.printf("setDimLightState %zu changed state to: %d %u\r\n", idx, state, brightness);
@@ -99,15 +92,8 @@ emit(cc) {
   bool sdls5(bool state, uint8_t brightness) { return setDimLightState(5, state, brightness); }
   bool sdls6(bool state, uint8_t brightness) { return setDimLightState(6, state, brightness); }
   bool sdls7(bool state, uint8_t brightness) { return setDimLightState(7, state, brightness); }
-  bool sdls8(bool state, uint8_t brightness) { return setDimLightState(8, state, brightness); }
-  bool sdls9(bool state, uint8_t brightness) { return setDimLightState(9, state, brightness); }
-  bool sdls10(bool state, uint8_t brightness) { return setDimLightState(10, state, brightness); }
-  bool sdls11(bool state, uint8_t brightness) { return setDimLightState(11, state, brightness); }
-  bool sdls12(bool state, uint8_t brightness) { return setDimLightState(12, state, brightness); }
-  bool sdls13(bool state, uint8_t brightness) { return setDimLightState(13, state, brightness); }
-  bool sdls14(bool state, uint8_t brightness) { return setDimLightState(14, state, brightness); }
 
-  std::vector<sdlscb> sdlscbs = { sdls0, sdls1, sdls2, sdls3, sdls4, sdls5, sdls6, sdls7, sdls8, sdls9, sdls10, sdls11, sdls12, sdls13, sdls14 };
+  std::vector<sdlscb> sdlscbs = { sdls0, sdls1, sdls2, sdls3, sdls4, sdls5, sdls6, sdls7 };
 
   bool setECLState(size_t idx, bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) {
     Serial.printf("setECLState %zu changed to: state %d bright %u temp %u\r\n", idx, state, brightness, witemp);
@@ -136,15 +122,8 @@ emit(cc) {
   bool secls5(bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) { return setECLState(5, state, color, brightness, witemp); }
   bool secls6(bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) { return setECLState(6, state, color, brightness, witemp); }
   bool secls7(bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) { return setECLState(7, state, color, brightness, witemp); }
-  bool secls8(bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) { return setECLState(8, state, color, brightness, witemp); }
-  bool secls9(bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) { return setECLState(9, state, color, brightness, witemp); }
-  bool secls10(bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) { return setECLState(10, state, color, brightness, witemp); }
-  bool secls11(bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) { return setECLState(11, state, color, brightness, witemp); }
-  bool secls12(bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) { return setECLState(12, state, color, brightness, witemp); }
-  bool secls13(bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) { return setECLState(13, state, color, brightness, witemp); }
-  bool secls14(bool state, espHsvColor_t color, uint8_t brightness, uint16_t witemp) { return setECLState(14, state, color, brightness, witemp); }
 
-  std::vector<seclscb> seclscbs = { secls0, secls1, secls2, secls3, secls4, secls5, secls6, secls7, secls8, secls9, secls10, secls11, secls12, secls13, secls14 };
+  std::vector<seclscb> seclscbs = { secls0, secls1, secls2, secls3, secls4, secls5, secls6, secls7 };
 
   """
 }
@@ -177,9 +156,8 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
       String add = "add";
       String brdok = "brdok";
       String rm = "rm";
-    }
-    fields {
       Bool timeToDecom = false;
+      Int maxMeps = 7;
     }
     nextName = ash.nowup + 2000;
   }
@@ -223,15 +201,15 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
           Int nowup = ash.nowup;
           String act = cmdl[2];
           if (act == add && cmdl.length > 6) {
-            if (meps.length > 8) {
-              return("brdtoomany");
-            }
             for (Mmep mmep in meps) {
               if (mmep.ondid == cmdl[4] && mmep.ipos == cmdl[5]) {
                 "brd add sent a dupe".print();
                 mmep.lastUp = nowup;
                 return(brdok);
               }
+            }
+            if (meps.length > maxMeps) {
+              return("brdtoomany");
             }
             brdCh = true;
             Mmep addm = Mmep.new(cmdl[3], cmdl[4], cmdl[5], cmdl[6]);
@@ -271,7 +249,10 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
       config.putForget(mepi, "");
     } else {
       String mc = String.new();
+      Int mm = 0;
       for (Mmep mmep in meps) {
+        if (mm >= maxMeps) { break; }
+        mm++;
         if (TS.notEmpty(mc)) {
           mc += ".";
         }
@@ -285,10 +266,13 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
   loadMeps() {
     String mcs = config.get(mepi);
     config.forget(mepi);
+    Int mm = 0;
     if (TS.notEmpty(mcs)) {
       var mce = mcs.split(".");
       mcs.clear();
       for (String mc in mce) {
+        if (mm >= maxMeps) { break; }
+        mm++;
         var mcl = mc.split(",");
         meps += Mmep.new(mcl[0], mcl[1], mcl[2], mcl[3]);
         ("added Mmep " + mc).print();
@@ -322,7 +306,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
     Int mepslen = meps.length;
 
     for (Int i = 0;i < mepslen;i++) {
-      if (i >= 15) {
+      if (i >= maxMeps) {
         break;
       }
       Mmep mmep = meps[i];
