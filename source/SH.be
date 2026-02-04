@@ -1532,6 +1532,11 @@ class Embedded:AppShell {
         } elseIf (cmd == "doswspec") {
           return(swSpec);
         } elseIf (cmd == "gettda") {
+          ifNotEmit(noMdns) {
+            if (def(mdserver)) {
+              return(mdserver.getAddr(cmdl[2]));
+            }
+          }
           return(CNS.ok);
         } else {
           if (def(controlDef)) {
