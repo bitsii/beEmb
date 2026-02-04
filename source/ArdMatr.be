@@ -157,7 +157,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
       String brdok = "brdok";
       String rm = "rm";
       Bool timeToDecom = false;
-      Int maxMeps = 7;
+      Int maxMeps = 6;
     }
     nextName = ash.nowup + 2000;
   }
