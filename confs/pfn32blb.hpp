@@ -9,9 +9,10 @@
 // SW - name (type) and version of the device.  Typename 10 char max ssid rules (no spaces)
 // swconfver.DeviceTypeName.DeviceVersion
 //
-#define BESPEC_SW "1,q,p6,p2.rIotBlb12Df.172"  //template for rgb cold warm bulb df,
+#define BESPEC_SW "1,q,p6,p2.Bulb.172"  //template for rgb cold warm bulb df,
 //
-#define BESPEC_CON "0.rgbcwgd.6,7,5,3,4" //all in one, red, green, blue, (cold) white, (warm) white
+#define BESPEC_CON "0.rgbcwgd.8" //all in one, red, green, blue, (cold) white, (warm) white
+//#define BESPEC_CON "0.rgbcwgd.6,7,5,3,4" //all in one, red, green, blue, (cold) white, (warm) white Athom ESP32C3 12W Bulb RGBCCT Bulb (LB01-12W-E27) https://templates.blakadder.com/athom_LB01-12W-E27.html 
 //
 // Is Reset by power on off supported
 // https://gitlab.com/bitsii/CasCon/-/wikis/Advanced-Topics#resetting-a-device
@@ -53,3 +54,7 @@
 //
 // END OF CONFIGURATION OPTIONS
 //
+//for BLE.be
+#include <NimBLEDevice.h>
+//for dev board rgbled
+#include <Adafruit_NeoPixel.h>

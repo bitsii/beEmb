@@ -8,7 +8,9 @@ echo "Profile for an Esp32C3 Bulb." > $APPBLDNM/README.txt
 
 export BEEMB_CONF=../beEmb/confs/${APPBLDNM}.hpp
 
-./scripts/bldesp32noser.sh --mainClass Embedded:RGBCWSh source/RGBCWC.be source/RGBCWSh.be
+#./scripts/bldesp32opts.sh --mainClass Embedded:RGBCWSh source/RGBCWC.be source/RGBCWSh.be
+
+./scripts/bldesp32opts.sh --mainClass Embedded:RGBCWSh source/RGBCWAFC.be source/RGBCWSh.be
 
 cp ard/* $APPBLDNM
 
