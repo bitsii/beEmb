@@ -30,7 +30,7 @@ class Embedded:Hqd {
       Bool inCt;
       //Int ctLvl;
       String rip; //it's ip if known
-      Int lastUp;//for rmold
+      //Int lastUp;//for rmold
     }
   }
 

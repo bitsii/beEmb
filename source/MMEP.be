@@ -26,7 +26,7 @@ class Embedded:Mmep {
       Bool inCtCh;
       Int ctLvl;
       String rip; //it's ip if known
-      Int lastUp;//for rmold
+      //Int lastUp;//for rmold
     }
   }
 

@@ -50,7 +50,7 @@ class Embedded:Hqb {
             brdCh = false;
             ash.needsFsRestart = true;
           }
-        } elseIf (cmdl.length > 2 && cmdl[2] == "rmold") {
+        /*} elseIf (cmdl.length > 2 && cmdl[2] == "rmold") {
           nx = List.new();
           nowup = ash.nowup;
           if (def(nowup)) {
@@ -64,7 +64,7 @@ class Embedded:Hqb {
             }
           }
           hds = nx;
-          saveHds();
+          saveHds();*/
         } elseIf (cmdl.length > 3) {
           Int nowup = ash.nowup;
           String act = cmdl[2];
@@ -75,13 +75,13 @@ class Embedded:Hqb {
             for (Hqd hd in hds) {
               if (hd.ondid == cmdl[4] && hd.ipos == cmdl[5]) {
                 "brd add sent a dupe".print();
-                hd.lastUp = nowup;
+                //hd.lastUp = nowup;
                 return("brdok");
               }
             }
             brdCh = true;
             Hqd addh = Hqd.new(cmdl[3], cmdl[4], cmdl[5], cmdl[6]);
-            addh.lastUp = nowup;
+            //addh.lastUp = nowup;
             hds += addh;
             saveHds();
             //ash.needsFsRestart = true;

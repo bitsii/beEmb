@@ -151,9 +151,10 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
       String clear = "clear";
       String brd = "brd";
       String decommish = "decommish";
-      String rmold = "rmold";
+      //String rmold = "rmold";
       String chrestart = "chrestart";
       String add = "add";
+      String addis = "addis";
       String brdok = "brdok";
       String rm = "rm";
       Bool timeToDecom = false;
@@ -175,7 +176,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
         //  commission();
         } elseIf (cmdl.length > 2 && cmdl[2] == decommish) {
           timeToDecom = true;
-        } elseIf (cmdl.length > 2 && cmdl[2] == rmold) {
+        /*} elseIf (cmdl.length > 2 && cmdl[2] == rmold) {
           nx = List.new();
           nowup = ash.nowup;
           if (def(nowup)) {
@@ -190,7 +191,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
             }
           }
           meps = nx;
-          saveMeps();
+          saveMeps();*/
         } elseIf (cmdl.length > 2 && cmdl[2] == chrestart) {
           if (brdCh) {
             "will restart chrestart".print();
@@ -200,11 +201,11 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
         } elseIf (cmdl.length > 3) {
           Int nowup = ash.nowup;
           String act = cmdl[2];
-          if (act == add && cmdl.length > 6) {
+          if ((act == add || act == addis) && cmdl.length > 6) {
             for (Mmep mmep in meps) {
               if (mmep.ondid == cmdl[4] && mmep.ipos == cmdl[5]) {
                 "brd add sent a dupe".print();
-                mmep.lastUp = nowup;
+                //mmep.lastUp = nowup;
                 return(brdok);
               }
             }
@@ -213,7 +214,7 @@ std::vector<std::shared_ptr<MatterEndPoint>> bevi_meps;
             }
             brdCh = true;
             Mmep addm = Mmep.new(cmdl[3], cmdl[4], cmdl[5], cmdl[6]);
-            addm.lastUp = nowup;
+            //addm.lastUp = nowup;
             meps += addm;
             saveMeps();
             //ash.needsFsRestart = true;
